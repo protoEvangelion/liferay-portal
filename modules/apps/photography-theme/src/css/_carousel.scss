@@ -1,0 +1,81 @@
+#carousel-ctn {
+  height: 100%;
+  position: relative;
+
+  #carousel1 {
+    @include image-generator('/o/photography-theme/images/alps.jpg');
+  }
+
+  #carousel2 {
+    @include image-generator('/o/photography-theme/images/glasses.jpg');
+  }
+
+  #carousel3 {
+    @include image-generator('/o/photography-theme/images/white.jpg');
+  }
+
+  #carousel4 {
+    @include image-generator('/o/photography-theme/images/shoes.jpg');
+  }
+
+  h2 {
+    font-style: italic;
+  }
+
+  i {
+    color: $white;
+
+    &:hover {
+      border-radius: 50%;
+
+    }
+  }
+
+  .arrow-ctn {
+    background: none;
+    border-radius: 50%;
+    cursor: pointer;
+    height: 50px;
+    padding: 10px;
+    transition: background .5s;
+    width: 50px;
+  }
+
+  .arrow-ctn.left {
+    left: 8%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .arrow-ctn.right {
+    left: 93%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .fa-angle-left {
+    position: absolute;
+    transform: translate(7px, -2px);
+  }
+
+  .fa-angle-right {
+    position: absolute;
+    transform: translate(10px, -2px);
+  }
+
+  .fa-angle-down {
+    position: absolute;
+    top: 90%;
+    left: 51.5%;
+    transform: translate(-90%, -50%);
+    cursor: pointer;
+    padding: 15px;
+
+    @media screen and (max-width: $break-point) {
+      display: none;
+    }
+  }
+
+}
