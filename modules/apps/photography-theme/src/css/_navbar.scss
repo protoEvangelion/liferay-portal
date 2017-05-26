@@ -36,7 +36,7 @@
 
   .logo {
     color: $white;
-    transition: background .5s;
+    transition: color .5s, background .5s;
   }
 
   ul {
@@ -45,6 +45,7 @@
     li {
       display: inline;
       padding: 0 30px;
+      transition: padding .5s, color .5s;
 
       @media(max-width: $break-point) {
         color: $black !important;
