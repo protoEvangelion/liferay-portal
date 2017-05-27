@@ -46,24 +46,26 @@
 
 			<nav id="main-navbar">
 				<div class="logo" id="nav-logo">Lance</div>
-				<i class="icon-reorder" aria-hidden="true"></i>
-				<i class="times icon-2x" aria-hidden="true"></i>
-				<ul>
+				<div id="icon-bars">
+					<span></span>
+				</div>
+				<div id="icon-times">
+					<span></span>
+				</div>
+				<ul id="nav-ctn">
 					<li><a href="/">Home</a></li>
 					<li><a href="/about">About</a></li>
 					<li><a href="/contact">Contact</a></li>
 					<li id="portfolio-list">
-						<div id="portfolio-dropdown">
-							Portfolio
-							<i id="menu-icon" class="icon-angle-right icon-2x menu-icon" aria-hidden="true"></i>
-							<p class="animated fadeIn">Portfolio Cards</p>
-							<p class="animated fadeIn">Gallery A</p>
-							<p class="animated fadeIn">Gallery B</p>
-							<p class="animated fadeIn">Gallery C</p>
-							<p class="animated fadeIn">Gallery D</p>
-						</div>
+						<div id="portfolio-dropdown">Portfolio</div>
+						<i id="dropdown-icon" class="icon-angle-right icon-2x" aria-hidden="true"></i>
+						<p class="animated fadeIn">Portfolio Cards</p>
+						<p class="animated fadeIn">Gallery A</p>
+						<p class="animated fadeIn">Gallery B</p>
+						<p class="animated fadeIn">Gallery C</p>
+						<p class="animated fadeIn">Gallery D</p>
 					</li>
-				</ul>
+				</ul>	
 				<div class="social-ctn">
 					<i class="icon-facebookk" aria-hidden="true"></i>
 					<i class="icon-twitter" aria-hidden="true"></i>

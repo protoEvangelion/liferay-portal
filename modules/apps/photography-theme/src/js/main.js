@@ -10,6 +10,7 @@ AUI().ready(function(){
   const breakPoint = 765
   let currentColor = 'white'
   let navbarModalOpen = false
+  const standardHeight = '80px'
   const paddingLarge = '45px 42px'
   const paddingSmall = '20px 42px'
   let scrollPosition = 0
@@ -39,72 +40,10 @@ AUI().ready(function(){
   // Navbar functionality & helper functions for slide changes
   // ==========================================================
 
-  // Small screen mode menu button click OPEN event listener
-  $('.bars').click(() => {
-    $('#main-navbar').css({
-      'background': 'white',
-      'color': 'black',
-      'height': '80vh'
-    })
-    $('.bars').hide()
-    $('.times, #main-navbar > ul > li, #menu-icon').show()
-    $('#nav-logo, #main-navbar > ul > li').css({'color': 'black'})
-    $('#menu-icon').css({'display': 'inline-block'})
-    $('.social-ctn').css({
-      'align-items': 'center',
-      'display': 'flex',
-      'flex-direction': 'row',
-      'justify-content': 'flex-start',
-      'margin-top': '-30vh'
-    })
-    $('.social-ctn > i').css({'padding': '0 20px'})
-    navbarModalOpen = true
-  })
+  const changeHeight = (height) => {
+    $('#main-navbar').css({'height': height})
+  }
 
-  // swaps the menu icons from right to down on click
-  let open = false
-  $('#menu-icon').click(function() {
-
-    if (open) {
-      $(this).css({
-        'transform': 'translateX(25px)',
-        'transition': 'transform .5s'
-      })
-      $('#portfolio-dropdown > p').hide()
-    } else {
-      $(this).css({
-        'transform': 'rotate(90deg) translateY(-25px)',
-        'transition': 'transform .5s'
-      })
-      $('#portfolio-dropdown > p').show()
-    }
-
-    open = !open
-  })
-
-  // Small screen mode menu button click CLOSE event listener
-  $('.times').click(() => {
-    $('#main-navbar > ul > li, #menu-icon').hide()
-
-    if (scrollPosition < 50) {
-      $('#main-navbar').css({
-        'background': 'none',
-        'height': '80px',
-      })
-      $('#nav-logo, #main-navbar > ul > li').css({'color': currentColor})
-    } else {
-      $('#main-navbar').css({
-        'background': 'white',
-        'height': '80px',
-      })
-      $('#nav-logo, #main-navbar > ul > li').css({'color': 'black'})
-    }
-    $('.bars').show()
-    $('.times').hide()
-    navbarModalOpen = false
-  })
-
-  // Navbar helper functions
   const changePadding = (size) => {
     size === 'small'
       ? $('#main-navbar').css({'padding': paddingSmall})
@@ -112,12 +51,15 @@ AUI().ready(function(){
   }
 
   const changeBackground = (color) => {
-    $('#main-navbar, #nav-logo').css({'background': color})
+    $('#main-navbar').css({'background': color})
   }
 
-  const changeFontColor = (color) => {
-    $('#nav-logo, #main-navbar > ul > li, #main-navbar > ul > li > a').css({'color': color})
-    currentColor = color
+  const changeFontColor = (color, setCurrentColor = true) => {
+    $('#nav-logo, #nav-ctn > li, #nav-ctn > li > a').css({'color': color})
+
+    if (setCurrentColor) {
+      currentColor = color
+    }
   }
 
   const changeIconColor = (color) => {
@@ -125,6 +67,61 @@ AUI().ready(function(){
     $('.icon-angle-down').css({'color': color})
     currentColor = color
   }
+
+  // ==========================================================
+  // Menu functionality
+  // ==========================================================
+
+  // Small screen mode menu button click OPEN event listener
+  $('#icon-bars').click(() => {
+    changeBackground('white')
+    changeFontColor('black', false)
+    changeHeight('80vh')
+
+    $('#icon-bars').hide()
+    $('#icon-times, #main-navbar > ul > li, #dropdown-icon').show()
+    $('#main-navbar > .social-ctn').css({'display': 'flex'})
+
+    navbarModalOpen = true
+  })
+
+  // swaps the menu icons from right to down on click
+  let open = false
+
+  $('#dropdown-icon').click(function() {
+    console.log('clicked', open)
+    if (open) {
+      $('#dropdown-icon').removeClass('icon-rotate-90')
+       $('#portfolio-dropdown > p').hide()
+
+    } else {
+      $(this).addClass('icon-rotate-90')
+      $('#portfolio-dropdown > p').show()
+    }
+    open = !open
+  })
+
+  // Small screen mode menu button click CLOSE event listener
+  $('#icon-times').click(() => {
+
+    $('#icon-bars').show()
+    $('#icon-times').hide()
+    $('.social-ctn').hide()
+    $('#main-navbar > ul > li, #menu-icon').hide()
+
+    if (scrollPosition < 50) {
+      changeBackground('none')
+      changeFontColor(currentColor)
+      changeHeight(standardHeight)
+      
+    } else {
+      changeBackground('white')
+      changeFontColor('black', false)
+      changeHeight(standardHeight)
+    }
+
+    navbarModalOpen = false
+  })
 
   // ==========================================================
   // adjusts the navbar css based on SCROLL position
@@ -137,7 +134,7 @@ AUI().ready(function(){
     if (scrollPosition > 50 && $(window).width() > breakPoint) {
       changePadding('small')
       changeBackground('black')
-      changeFontColor('white')
+      changeFontColor('white', false) // false prevents setting currentColo
 
     } else if (scrollPosition < 50 && $(window).width() > breakPoint) {
       changePadding('large')
@@ -147,20 +144,22 @@ AUI().ready(function(){
     } else if (scrollPosition > 50 && $(window).width() < breakPoint) {
       changePadding('small')
       changeBackground('white')
-      changeFontColor('black')
+      changeFontColor('black', false)
 
     } else if (scrollPosition < 50 && $(window).width() < breakPoint && !navbarModalOpen) {
       changePadding('small')
       changeBackground('none')
       changeFontColor(currentColor)
+      changeHeight(standardHeight)
     }
   })
 
+  // ==========================================================
   // changes font & icon color depending on the image
+  // ==========================================================
+  
   flkty.on('select', function() {
     const slide = flkty.selectedIndex
-
-    console.log('index', flkty.selectedIndex, navbarModalOpen)
     
     if (scrollPosition < 50 && !navbarModalOpen) {
 
@@ -187,6 +186,9 @@ AUI().ready(function(){
     }
   })
   
+  // ==========================================================
+  // adjusts the navbar css based on WINDOW position
+  // ==========================================================
 
   $(window).resize(function(e) {
     // Resize the mini tiles on bottom of home page into squares on window resize
@@ -200,51 +202,35 @@ AUI().ready(function(){
 
     // adjusts the navbar menu as window width fluctuates past the breakpoint
     if (e.target.innerWidth > breakPoint) {
-      $('#main-navbar > .bars').hide()
-      $('.times').hide()
-      $('#portfolio-dropdown > i, #portfolio-dropdown > p').hide()
+
+      $('#portfolio-dropdown > i, #portfolio-dropdown > p, #main-navbar > .social-ctn, #icon-bars, #icon-times').hide()
 
       navbarModalOpen = false
+      changeHeight(standardHeight)
+      $('#nav-logo, #main-navbar > ul > li').css({'display': 'inline-block'})
 
       if (scrollPosition < 50) {
-        $('#main-navbar').css({
-          'background': 'none',
-          'color': currentColor,
-          'height': 'auto',
-          'padding': paddingLarge
-        })
-        $('#nav-logo, #main-navbar > ul > li').css({
-          'color': currentColor,
-          'display': 'inline-block'
-        })
+        changeBackground('none')
+        changeFontColor(currentColor)
+        changePadding(paddingLarge)
+
       } else {
-        $('#main-navbar').css({
-          'background': 'black',
-          'color': 'white',
-          'height': 'auto'
-        })
-        $('#nav-logo, #main-navbar > ul > li').css({
-          'color': 'white',
-          'display': 'inline-block'
-        })
+        changeBackground('black')
+        changeFontColor('white')
       }
 
     } else if (!navbarModalOpen) {
-      $('#main-navbar > .bars').show()
-      $('#main-navbar > ul > li').css({'display': 'none'})
+      $('#icon-bars').show()
+      $('#main-navbar > ul > li').hide()
 
       if (scrollPosition < 50) {
-        $('#main-navbar').css({
-            'padding': paddingSmall
-          })
-        $('#nav-logo').css({'color': currentColor})
+        changePadding(paddingSmall)
+        changeFontColor(currentColor)
+
       } else {
-        $('#main-navbar').css({
-            'background': 'white',
-            'color': 'black',
-            'height': '80px'
-          })
-        $('#nav-logo').css({'color': 'black'})
+        changeBackground('white')
+        changeFontColor('black')
+        changeHeight(standardHeight)
       }
     }
 

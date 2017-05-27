@@ -7,6 +7,22 @@
   text-transform: map-get($capitalization, $type);
 }
 
+@mixin icon-generator($size, $padding, $name, $color) {
+  cursor: pointer;
+  height: $size + $padding * 2;
+  padding: $padding;
+  width: $size + $padding * 2;
+
+  span {
+    background-image: lx-icon($name, $color);
+    background-repeat: no-repeat;
+    background-size: contain;
+    display: inline-block;
+    height: $size;
+    width: $size;
+  }
+}
+
 @mixin image-generator($url) {
   background: url($url);
   background-position: center center;

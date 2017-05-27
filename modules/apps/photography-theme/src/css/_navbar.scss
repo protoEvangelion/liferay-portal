@@ -6,40 +6,38 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  height: 90px;
+  height: auto;
   padding: 45px 42px;
   position: fixed;
   transition: padding .5s, background .5s;
-  width: 100%;
+  width: 50vh;
   z-index: 9999;
 
-  @media(max-width: $break-point) {
-    box-sizing: border-box;
-    display: block;
-    background: none;
-    padding: 20px 42px;
+  #icon-bars {
+    background: $white;
+    border-radius: 50%;
+    display: none;
+    float: right;
+    padding: 10px;
 
-    ul {
-      margin-top: 15%;
-      height: 100%;
-      width: 100%;
-    }
+    @include icon-generator(15px, 10px, 'bars', $black);
+  }
 
-    .logo {
-      float: left;
-      margin-top: 3px;
-    }
-    .fa-bars, .fa-times {
-      float: right;
-    }
+  #icon-times {
+    display: none;
+    float: right;
+    padding: 10px;
+
+    @include icon-generator(15px, 10px, 'times', $black);
   }
 
   .logo {
+    background: transparent;
     color: $white;
-    transition: color .5s, background .5s;
+    transition: color .5s;
   }
 
-  ul {
+  #nav-ctn {
     display: inline-block;
 
     li {
@@ -56,12 +54,15 @@
         margin-bottom: 35px;
         text-align: center;
       }
-    }
 
+      a {
+        transition: padding .5s, color .5s;
+      }
+    }
   }
 
   #portfolio-list {
-    margin-left: 2px;
+    margin-left: -10px 0 0 19px;
   }
 
   #portfolio-dropdown {
@@ -73,7 +74,7 @@
     margin-left: 12px;
     margin-top: -10px;
 
-    .menu-icon {
+    .icon-angle-right {
       display: none;
       transform: translateX(30px);
     }
@@ -85,30 +86,59 @@
 
   }
 
-  .fa-bars {
-    background: $white;
-    border-radius: 50%;
-    color: $black;
-    cursor: pointer;
+  #dropdown-icon {
+    padding: 10px;
+    transform: translateX(50px);
     display: none;
-    float: right;
-    padding: 15px;
-
-    @media(max-width: $break-point) {
-      display: inline-block;
-    }
+    margin-top: 0;
   }
 
-  .fa-times {
-    border-radius: 50%;
+  #dropdown-ctn {    
     display: none;
-    cursor: pointer;
-    padding: 5px;
+    color: $black;
+
+    li {
+      color: $black;
+    }
   }
 
   .social-ctn {
     display: none;
     width: 100%;
+    align-items: center;
+    flex-direction: row;
+    justify-content: flex-start;
+    margin-top: 30vh;
+
+    i {
+      padding: 0 20px;
+    }
   }
 
+  @media(max-width: $break-point) {
+    box-sizing: border-box;
+    display: block;
+    background: none;
+    padding: 20px 42px;
+
+    #dropdown-ctn {
+      margin-top: 15%;
+      height: 100%;
+      width: 100%;
+    }
+
+    .logo {
+      float: left;
+      margin-top: 3px;
+    }
+
+    #icon-bars {
+      display: inline-block;
+    }
+
+    #icon-bars,
+    #icon-times {
+      float: right;
+    }
+  }
 }
