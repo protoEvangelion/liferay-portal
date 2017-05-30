@@ -11,11 +11,6 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta content="initial-scale=1.0, width=device-width" name="viewport" />
 
-
-	<!--<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css"/>-->
-
-  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
 
 	<link rel="stylesheet" type="text/css" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
@@ -32,63 +27,28 @@
 
 <@liferay.control_menu />
 
-<div class="container-fluid" id="wrapper">
+<div id="wrapper">
 	<div id="photography-theme-ctn">
-		<header>
+		<header id="banner" role="banner">
 
 			<#if !is_signed_in>
 				<a data-redirect="${is_login_redirect_required?string}" href="${sign_in_url}" id="sign-in" rel="nofollow">${sign_in_text}</a>
 			</#if>
-
-			<#if has_navigation && is_setup_complete>
+					<#if has_navigation && is_setup_complete>
 				<#include "${full_templates_path}/navigation.ftl" />
 			</#if>
 
-			<nav id="main-navbar">
-				<div class="logo" id="nav-logo">Lance</div>
-				<div id="icon-bars">
-					<span></span>
-				</div>
-				<div id="icon-times">
-					<span></span>
-				</div>
-				<ul id="nav-ctn">
-					<li><a href="/">Home</a></li>
-					<li><a href="/about">About</a></li>
-					<li><a href="/contact">Contact</a></li>
-					<li id="portfolio-list">
-						<div id="portfolio-dropdown">Portfolio</div>
-						<i id="dropdown-icon" class="icon-angle-right icon-2x" aria-hidden="true"></i>
-						<p class="animated fadeIn">Portfolio Cards</p>
-						<p class="animated fadeIn">Gallery A</p>
-						<p class="animated fadeIn">Gallery B</p>
-						<p class="animated fadeIn">Gallery C</p>
-						<p class="animated fadeIn">Gallery D</p>
-					</li>
-				</ul>	
-				<div class="social-ctn">
-					<i class="icon-facebookk" aria-hidden="true"></i>
-					<i class="icon-twitter" aria-hidden="true"></i>
-					<i class="icon-instagram" aria-hidden="true"></i>
-				</div>
-			</nav>
-
-
-				<div class="carousel">
-					<div id="carousel1" class="carousel-cell"></div>
-					<div id="carousel2" class="carousel-cell"></div>
-					<div id="carousel3" class="carousel-cell"></div>
-					<div id="carousel4" class="carousel-cell"></div>
-				</div>
-
+			<div class="carousel">
+				<div id="carousel1" class="carousel-cell"></div>
+				<div id="carousel2" class="carousel-cell"></div>
+				<div id="carousel3" class="carousel-cell"></div>
+				<div id="carousel4" class="carousel-cell"></div>
+			</div>
+			
 		</header>
 
-		<!--<section id="content">
+		<section id="content">
 			<h1 class="hide-accessible">${the_title}</h1>
-
-			<nav id="breadcrumbs">
-				<@liferay.breadcrumbs />
-			</nav>
 
 			<#if selectable>
 				<@liferay_util["include"] page=content_include />
@@ -101,9 +61,9 @@
 					<@liferay_util["include"] page=content_include />
 				</@>
 			</#if>
-		</section>-->
+		</section>
 
-		<main href="#main">
+		<main id="content" role="main" href="#main">
 			<section id="media-tiles">
 				<div data-wow-offset="10" class="tile-ctn wow fadeInUp">
 					<figure>
@@ -269,9 +229,8 @@
 <@liferay_util["include"] page=bottom_include />
 
 <!-- inject:js -->
-<!--<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>-->
 <!-- endinject -->
-<!--<script src="/o/photography-theme/js/slick.min.js"></script>-->
+
 <script type="text/javascript">
 
 </script>

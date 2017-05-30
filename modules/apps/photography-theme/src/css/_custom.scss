@@ -12,7 +12,6 @@
 @import 'utils/fonts';
 @import 'utils/reset';
 @import 'navbar';
-@import 'carousel';
 // @import 'imageTiles';
 // @import 'footer';
 
@@ -30,15 +29,16 @@ html {
   padding: 0;
 }
 
-#photography-theme-ctn, main, section, #tile-ctn, figure {
-  width: 100% !important;
-}
+// #photography-theme-ctn, main, section, #tile-ctn, figure {
+//   width: 100% !important;
+// }
 
 #photography-theme-ctn {
 
   header {
+    @import 'carousel';
     height: 100vh;
-    margin-top: -17px;
+    // margin-top: -17px;
   }
 
   h1 {
@@ -64,7 +64,6 @@ html {
 
   li, a {
     @include font-generator('link');
-    color: $white;
     cursor: pointer;
     list-style: none;
     text-decoration: none;

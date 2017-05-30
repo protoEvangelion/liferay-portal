@@ -1,144 +1,156 @@
-#main-navbar {
-  align-items: center;
+#navigation {
   background: none;
-  box-sizing: border-box;
-  color: $black;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  height: auto;
-  padding: 45px 42px;
+  border: none;
   position: fixed;
-  transition: padding .5s, background .5s;
-  width: 50vh;
+  width: 100%;
   z-index: 9999;
 
-  #icon-bars {
-    background: $white;
-    border-radius: 50%;
-    display: none;
-    float: right;
-    padding: 10px;
-
-    @include icon-generator(15px, 10px, 'bars', $black);
-  }
-
-  #icon-times {
-    display: none;
-    float: right;
-    padding: 10px;
-
-    @include icon-generator(15px, 10px, 'times', $black);
-  }
-
-  .logo {
-    background: transparent;
+  a {
     color: $white;
-    transition: color .5s;
-  }
-
-  #nav-ctn {
-    display: inline-block;
-
-    li {
-      display: inline;
-      padding: 0 30px;
-      transition: padding .5s, color .5s;
-
-      @media(max-width: $break-point) {
-        color: $black !important;
-        box-sizing: border-box;
-        display: none;
-        font-size: .9rem;
-        width: 100%;
-        margin-bottom: 35px;
-        text-align: center;
-      }
-
-      a {
-        transition: padding .5s, color .5s;
-      }
-    }
-  }
-
-  #portfolio-list {
-    margin-left: -10px 0 0 19px;
-  }
-
-  #portfolio-dropdown {
-    align-items: center;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-left: 12px;
-    margin-top: -10px;
-
-    .icon-angle-right {
-      display: none;
-      transform: translateX(30px);
-    }
-
-    p {
-      display: none;
-      width: 100%;
-    }
-
-  }
-
-  #dropdown-icon {
-    padding: 10px;
-    transform: translateX(50px);
-    display: none;
-    margin-top: 0;
-  }
-
-  #dropdown-ctn {    
-    display: none;
-    color: $black;
-
-    li {
-      color: $black;
-    }
-  }
-
-  .social-ctn {
-    display: none;
-    width: 100%;
-    align-items: center;
-    flex-direction: row;
-    justify-content: flex-start;
-    margin-top: 30vh;
-
-    i {
-      padding: 0 20px;
-    }
-  }
-
-  @media(max-width: $break-point) {
-    box-sizing: border-box;
-    display: block;
-    background: none;
-    padding: 20px 42px;
-
-    #dropdown-ctn {
-      margin-top: 15%;
-      height: 100%;
-      width: 100%;
-    }
-
-    .logo {
-      float: left;
-      margin-top: 3px;
-    }
-
-    #icon-bars {
-      display: inline-block;
-    }
-
-    #icon-bars,
-    #icon-times {
-      float: right;
-    }
   }
 }
+
+// #main-navbar {
+//   align-items: center;
+//   background: none;
+//   box-sizing: border-box;
+//   color: $black;
+//   display: flex;
+//   flex-wrap: wrap;
+//   justify-content: space-between;
+//   height: auto;
+//   padding: 45px 42px;
+//   position: fixed;
+//   transition: padding .5s, background .5s;
+//   width: 50vh;
+//   z-index: 9999;
+
+//   #icon-bars {
+//     background: $white;
+//     border-radius: 50%;
+//     display: none;
+//     float: right;
+//     padding: 10px;
+
+//     @include icon-generator(15px, 10px, 'bars', $black);
+//   }
+
+//   #icon-times {
+//     display: none;
+//     float: right;
+//     padding: 10px;
+
+//     @include icon-generator(15px, 10px, 'times', $black);
+//   }
+
+//   .logo {
+//     background: transparent;
+//     color: $white;
+//     transition: color .5s;
+//   }
+
+//   #nav-ctn {
+//     display: inline-block;
+
+//     li {
+//       display: inline;
+//       padding: 0 30px;
+//       transition: padding .5s, color .5s;
+
+//       @media(max-width: $break-point) {
+//         color: $black !important;
+//         box-sizing: border-box;
+//         display: none;
+//         font-size: .9rem;
+//         width: 100%;
+//         margin-bottom: 35px;
+//         text-align: center;
+//       }
+
+//       a {
+//         transition: padding .5s, color .5s;
+//       }
+//     }
+//   }
+
+//   #portfolio-list {
+//     margin-left: -10px 0 0 19px;
+//   }
+
+//   #portfolio-dropdown {
+//     align-items: center;
+//     display: flex;
+//     flex-direction: row;
+//     flex-wrap: wrap;
+//     justify-content: center;
+//     margin-left: 12px;
+//     margin-top: -10px;
+
+//     .icon-angle-right {
+//       display: none;
+//       transform: translateX(30px);
+//     }
+
+//     p {
+//       display: none;
+//       width: 100%;
+//     }
+
+//   }
+
+//   #dropdown-icon {
+//     padding: 10px;
+//     transform: translateX(50px);
+//     display: none;
+//     margin-top: 0;
+//   }
+
+//   #dropdown-ctn {    
+//     display: none;
+//     color: $black;
+
+//     li {
+//       color: $black;
+//     }
+//   }
+
+//   .social-ctn {
+//     display: none;
+//     width: 100%;
+//     align-items: center;
+//     flex-direction: row;
+//     justify-content: flex-start;
+//     margin-top: 30vh;
+
+//     i {
+//       padding: 0 20px;
+//     }
+//   }
+
+//   @media(max-width: $break-point) {
+//     box-sizing: border-box;
+//     display: block;
+//     background: none;
+//     padding: 20px 42px;
+
+//     #dropdown-ctn {
+//       margin-top: 15%;
+//       height: 100%;
+//       width: 100%;
+//     }
+
+//     .logo {
+//       float: left;
+//       margin-top: 3px;
+//     }
+
+//     #icon-bars {
+//       display: inline-block;
+//     }
+
+//     #icon-bars,
+//     #icon-times {
+//       float: right;
+//     }
+//   }
+// }

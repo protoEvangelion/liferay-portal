@@ -1,9 +1,27 @@
+AUI().ready(
+  'liferay-sign-in-modal',
+	function(A) {
+		var signIn = A.one('#sign-in');
+
+		if (signIn && signIn.getData('redirect') !== 'true') {
+			signIn.plug(Liferay.SignInModal);
+		}
+	}
+)
 
 AUI().ready(function(){
   // new WOW.WOW().init()
   // ======================================================
   // Variables and state initialization
   // ======================================================
+  
+  const flkty = new Flickity('.carousel', {
+    autoPlay: 5000,
+    pauseAutoPlayOnHover: false,
+    pageDots: false, 
+    contain: true
+  })  
+
   const hi = 'goodmorning'
   
   console.log(hi)
@@ -21,12 +39,7 @@ AUI().ready(function(){
 
   // carousel initialization
 
-  const flkty = new Flickity('.carousel', {
-    autoPlay: 5000,
-    pauseAutoPlayOnHover: false,
-    pageDots: false, 
-    contain: true
-  })  
+
 
   // carousel navigation
 
@@ -69,61 +82,6 @@ AUI().ready(function(){
   }
 
   // ==========================================================
-  // Menu functionality
-  // ==========================================================
-
-  // Small screen mode menu button click OPEN event listener
-  $('#icon-bars').click(() => {
-    changeBackground('white')
-    changeFontColor('black', false)
-    changeHeight('80vh')
-
-    $('#icon-bars').hide()
-    $('#icon-times, #main-navbar > ul > li, #dropdown-icon').show()
-    $('#main-navbar > .social-ctn').css({'display': 'flex'})
-
-    navbarModalOpen = true
-  })
-
-  // swaps the menu icons from right to down on click
-  let open = false
-
-  $('#dropdown-icon').click(function() {
-    console.log('clicked', open)
-    if (open) {
-      $('#dropdown-icon').removeClass('icon-rotate-90')
-       $('#portfolio-dropdown > p').hide()
-
-    } else {
-      $(this).addClass('icon-rotate-90')
-      $('#portfolio-dropdown > p').show()
-    }
-    open = !open
-  })
-
-  // Small screen mode menu button click CLOSE event listener
-  $('#icon-times').click(() => {
-
-    $('#icon-bars').show()
-    $('#icon-times').hide()
-    $('.social-ctn').hide()
-    $('#main-navbar > ul > li, #menu-icon').hide()
-
-    if (scrollPosition < 50) {
-      changeBackground('none')
-      changeFontColor(currentColor)
-      changeHeight(standardHeight)
-      
-    } else {
-      changeBackground('white')
-      changeFontColor('black', false)
-      changeHeight(standardHeight)
-    }
-
-    navbarModalOpen = false
-  })
-
-  // ==========================================================
   // adjusts the navbar css based on SCROLL position
   // ==========================================================
 
@@ -151,38 +109,6 @@ AUI().ready(function(){
       changeBackground('none')
       changeFontColor(currentColor)
       changeHeight(standardHeight)
-    }
-  })
-
-  // ==========================================================
-  // changes font & icon color depending on the image
-  // ==========================================================
-  
-  flkty.on('select', function() {
-    const slide = flkty.selectedIndex
-    
-    if (scrollPosition < 50 && !navbarModalOpen) {
-
-      if (slide === 0 || slide === 1) {
-        changeFontColor('white')
-        changeIconColor('white')
-      } else if (slide === 2) {
-        changeFontColor('black')
-        changeIconColor('black')
-      } else {
-        changeFontColor('white')
-        changeIconColor('white')
-      }
-
-    } else {
-
-      if (slide === 0 || slide === 1) {
-        changeIconColor('white')
-      } else if (slide === 2) {
-        changeIconColor('black')
-      } else {
-        changeIconColor('white')
-      }
     }
   })
   
@@ -234,5 +160,5 @@ AUI().ready(function(){
       }
     }
 
-  }).resize()
+  }).resize() */
 })
