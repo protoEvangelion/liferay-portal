@@ -27,144 +27,66 @@
 
 <@liferay.control_menu />
 
-<div id="wrapper">
-	<div id="photography-theme-ctn">
-		<header id="banner" role="banner">
+	<div id="wrapper">
+		<div id="photography-theme-ctn">
+			<header id="banner" role="banner">
 
-			<#if !is_signed_in>
-				<a data-redirect="${is_login_redirect_required?string}" href="${sign_in_url}" id="sign-in" rel="nofollow">${sign_in_text}</a>
-			</#if>
-					<#if has_navigation && is_setup_complete>
-				<#include "${full_templates_path}/navigation.ftl" />
-			</#if>
+				<#if !is_signed_in>
+					<a data-redirect="${is_login_redirect_required?string}" href="${sign_in_url}" id="sign-in" rel="nofollow">${sign_in_text}</a>
+				</#if>
+						<#if has_navigation && is_setup_complete>
+					<#include "${full_templates_path}/navigation.ftl" />
+				</#if>
 
-			<div class="carousel">
-				<div id="carousel1" class="carousel-cell"></div>
-				<div id="carousel2" class="carousel-cell"></div>
-				<div id="carousel3" class="carousel-cell"></div>
-				<div id="carousel4" class="carousel-cell"></div>
-			</div>
-			
-		</header>
+				<div class="carousel">
+					<div id="carousel1" class="carousel-cell"></div>
+					<div id="carousel2" class="carousel-cell"></div>
+					<div id="carousel3" class="carousel-cell"></div>
+					<div id="carousel4" class="carousel-cell"></div>
+				</div>
 
-		<section id="content">
-			<h1 class="hide-accessible">${the_title}</h1>
+			</header>
+		</div>
+	</div>
 
-			<#if selectable>
+
+	<section id="content">
+		<h1 class="hide-accessible">${the_title}</h1>
+
+		<#if selectable>
+			<@liferay_util["include"] page=content_include />
+		<#else>
+			${portletDisplay.recycle()}
+
+			${portletDisplay.setTitle(the_title)}
+
+			<@liferay_theme["wrap-portlet"] page="portlet.ftl">
 				<@liferay_util["include"] page=content_include />
-			<#else>
-				${portletDisplay.recycle()}
+			</@>
+		</#if>
+	</section>
 
-				${portletDisplay.setTitle(the_title)}
 
-				<@liferay_theme["wrap-portlet"] page="portlet.ftl">
-					<@liferay_util["include"] page=content_include />
-				</@>
-			</#if>
-		</section>
 
-		<main id="content" role="main" href="#main">
-			<section id="media-tiles">
-				<div data-wow-offset="10" class="tile-ctn wow fadeInUp">
-					<figure>
-						<div class="tile" id="tile1">
-							<figcaption>
-								<h3 class="tile-header">Lovely Paradise</h3>
-								<h5 class="italic">country&apos;s back</h5>
-							</figcaption>
-						</div>
-					</figure>
-					<figure class="tile">
-						<div class="tile" id="tile2" />
-						<figcaption>
-							<h3 class="tile-header">The Getaway</h3>
-							<h5 class="italic">road not taken</h5>
-						</figcaption>
-					</figure>
-				</div>
-				<div class="tile-ctn wow fadeInUp">
-					<figure class="tile">
-						<div class="tile" id="tile3" />
-						<figcaption>
-							<h3 class="tile-header">Book of Wisdom</h3>
-							<h5 class="italic">one life</h5>
-						</figcaption>
-					</figure>
-					<figure class="tile">
-						<div class="tile" id="tile4" />
-						<figcaption>
-							<h3 class="tile-header">The Beautiful Bond</h3>
-							<h5 class="italic">unity</h5>
-						</figcaption>
-					</figure>
-				</div>
-			</section>
-
-			<section id="about">
-				<div class="info-ctn info">
-					<h2 class="wow fadeInUp">Info</h2>
-					<p class="wow fadeInUp">Flo Cube is an imaginary photographer, traveling the world aiming to inspire others. Telling unforgettable tales in lands far far away, beyond mountains, across seas, flying the mechanical bird from a to b. Photography has always been a passion of Flo Cube, and videography also has a soft spot in its heart. Influenced by clean lines, subtle movements and bold typography, you’ll find Flo Cube has something to fit everyones needs. Offering you the opportunity to enhance your portfolio, and book the clients you’ve always desired.</p>
-					<p class="wow fadeInUp">...</p><br/><br/>
-					<a id="read-more-link" href="/about" class="wow fadeInUp">Read More</a>
-				</div>
-				<div class="info-ctn clients-awards">
-					<h2 class="wow fadeInUp">Clients</h2>
-					<ul id="client-list" class="wow fadeInUp">
-						<li><a href="">Cool Co.</a></li>
-						<li><a href="">Liferay</a></li>
-						<li><a href="">Fresh Kicks</a></li>
-						<li><a href="">Jesus Rocks</a></li>
-						<li><a href="">Lift em Up</a></li>
-					</ul>
-					<h2 class="wow fadeInUp">Awards</h2>
-					<ul class="wow fadeInUp">
-						<li>
-							<a href="">Wedding Guru 2016</a>
-						</li>
-						<li>
-							<a href="">Top Gun Photographer 2015</a>
-						</li>
-						<li>
-							<a href="">Ultimate editorial photographer 2014</a>
-						</li>
-					</ul>
+		<footer id="footer" role="contentinfo">
+			<div class="container-fluid-1280" id="company-info">
+				<div class="text-center" id="footer-brand">
+					<img alt="${logo_description}" height="${company_logo_height}" src="${site_logo}" width="${company_logo_width}" />
 				</div>
 
-				<div class="info-ctn projects wow fadeInUp">
-					<a href="/projects" class="no-wrap">Check All Projects</a>
-				</div>
+				<#if has_navigation>
+					<#include "${full_templates_path}/footer_navigation.ftl" />
+				</#if>
 
-			</section>
+				<#-- <#include "${full_templates_path}/social_media.ftl" /> -->
+			</div>
 
-			<section id="media-stacked">
-				<div class="media-ctn wow fadeInUp">
-					<div class="text-ctn">
-						<h2>Light</h2>
-						<h1>Ryan & Daisy</h1>
-						<h3>Unforgettable</h3>
-					</div>
-					<div id="img1" class="wide-image" />
-				</div>
-				<div class="media-ctn wow fadeInUp">
-					<div id="img2" class="wide-image" />
-					<div class="text-ctn">
-						<h2>Wedding</h2>
-						<h1>Montage</h1>
-					</div>
-				</div>
-			</section>
-
-			<aside id="photo-mini-tiles" class="wow fadeInUp">
-				<div id="mini-img1" />
-				<div id="mini-img2" />
-				<div id="mini-img3" />
-				<div id="mini-img4" />
-				<div id="mini-img5" />
-				<div id="mini-img6" />
-			</aside>
-
-		</main>
-
+			<div class="container-fluid-1280">
+				<p id="copyright">
+					<small><@liferay.language key="powered-by" /> <a href="http://www.liferay.com" rel="external">Liferay</a></small>
+				</p>
+			</div>
+		</footer>
 
 		<footer class="wow fadeInUp">
 			<div id="footer-desktop">
@@ -221,9 +143,8 @@
 				</div>
 				<h4>© 2017 Lance Photography, Inc. | Images from pixabay</h4>
 			</div>
-		</footer>
-	</div>	
-</div>
+		</footer>	
+
 <@liferay_util["include"] page=body_bottom_include />
 
 <@liferay_util["include"] page=bottom_include />

@@ -1,12 +1,23 @@
 #navigation {
-  background: none;
-  border: none;
+  background: $transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 20px 42px;
   position: fixed;
+  transition: padding .5s, background .5s;
   width: 100%;
-  z-index: 9999;
+  z-index: 1;
 
-  a {
+  .logo {
+    background: transparent;
     color: $white;
+    transition: color .5s;
+  }
+
+  .navbar-nav {
+    span {
+      color: $white;
+    }
   }
 }
 
@@ -18,36 +29,10 @@
 //   display: flex;
 //   flex-wrap: wrap;
 //   justify-content: space-between;
-//   height: auto;
-//   padding: 45px 42px;
-//   position: fixed;
-//   transition: padding .5s, background .5s;
-//   width: 50vh;
-//   z-index: 9999;
 
-//   #icon-bars {
-//     background: $white;
-//     border-radius: 50%;
-//     display: none;
-//     float: right;
-//     padding: 10px;
 
-//     @include icon-generator(15px, 10px, 'bars', $black);
-//   }
 
-//   #icon-times {
-//     display: none;
-//     float: right;
-//     padding: 10px;
-
-//     @include icon-generator(15px, 10px, 'times', $black);
-//   }
-
-//   .logo {
-//     background: transparent;
-//     color: $white;
-//     transition: color .5s;
-//   }
+  
 
 //   #nav-ctn {
 //     display: inline-block;
@@ -77,41 +62,13 @@
 //     margin-left: -10px 0 0 19px;
 //   }
 
-//   #portfolio-dropdown {
-//     align-items: center;
-//     display: flex;
-//     flex-direction: row;
-//     flex-wrap: wrap;
-//     justify-content: center;
-//     margin-left: 12px;
-//     margin-top: -10px;
 
-//     .icon-angle-right {
-//       display: none;
-//       transform: translateX(30px);
-//     }
-
-//     p {
-//       display: none;
-//       width: 100%;
-//     }
-
-//   }
 
 //   #dropdown-icon {
 //     padding: 10px;
 //     transform: translateX(50px);
 //     display: none;
 //     margin-top: 0;
-//   }
-
-//   #dropdown-ctn {    
-//     display: none;
-//     color: $black;
-
-//     li {
-//       color: $black;
-//     }
 //   }
 
 //   .social-ctn {

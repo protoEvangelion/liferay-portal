@@ -15,12 +15,6 @@ AUI().ready(function(){
   // Variables and state initialization
   // ======================================================
   
-  const flkty = new Flickity('.carousel', {
-    autoPlay: 5000,
-    pauseAutoPlayOnHover: false,
-    pageDots: false, 
-    contain: true
-  })  
 
   const hi = 'goodmorning'
   
@@ -29,8 +23,8 @@ AUI().ready(function(){
   let currentColor = 'white'
   let navbarModalOpen = false
   const standardHeight = '80px'
-  const paddingLarge = '45px 42px'
-  const paddingSmall = '20px 42px'
+  const paddingLarge = '20px 42px'
+  const paddingSmall = '5px 35px'
   let scrollPosition = 0
 
   // ======================================================
@@ -39,40 +33,36 @@ AUI().ready(function(){
 
   // carousel initialization
 
+  const flkty = new Flickity('.carousel', {
+    autoPlay: 5000,
+    pauseAutoPlayOnHover: false,
+    pageDots: false, 
+    contain: true
+  })  
 
 
   // carousel navigation
 
-  $('.icon-angle-down').on('click', () => {
-    $('html,body').animate({scrollTop:$('#media-tiles').offset().top}, 500)
-  })
-
-
+  // $('.icon-angle-down').on('click', () => {
+  //   $('html,body').animate({scrollTop:$('#media-tiles').offset().top}, 500)
+  // })
   
   // ==========================================================
   // Navbar functionality & helper functions for slide changes
   // ==========================================================
 
-  const changeHeight = (height) => {
-    $('#main-navbar').css({'height': height})
-  }
-
   const changePadding = (size) => {
     size === 'small'
-      ? $('#main-navbar').css({'padding': paddingSmall})
-      : $('#main-navbar').css({'padding': paddingLarge})
+      ? $('#navigation').css({'padding': paddingSmall})
+      : $('#navigation').css({'padding': paddingLarge})
   }
 
   const changeBackground = (color) => {
-    $('#main-navbar').css({'background': color})
+    $('.navbar-default').css({'background': color})
   }
 
-  const changeFontColor = (color, setCurrentColor = true) => {
-    $('#nav-logo, #nav-ctn > li, #nav-ctn > li > a').css({'color': color})
-
-    if (setCurrentColor) {
-      currentColor = color
-    }
+  const changeFontColor = (color) => {
+    $('.logo > span, .navbar-nav span').css({'color': color})
   }
 
   const changeIconColor = (color) => {
@@ -89,26 +79,15 @@ AUI().ready(function(){
 
     scrollPosition = $(window).scrollTop()
 
-    if (scrollPosition > 50 && $(window).width() > breakPoint) {
-      changePadding('small')
-      changeBackground('black')
-      changeFontColor('white', false) // false prevents setting currentColo
-
-    } else if (scrollPosition < 50 && $(window).width() > breakPoint) {
-      changePadding('large')
-      changeBackground('none')
-      changeFontColor(currentColor)
-
-    } else if (scrollPosition > 50 && $(window).width() < breakPoint) {
+    if (scrollPosition > 50) {
       changePadding('small')
       changeBackground('white')
-      changeFontColor('black', false)
+      changeFontColor('black')
 
-    } else if (scrollPosition < 50 && $(window).width() < breakPoint && !navbarModalOpen) {
-      changePadding('small')
-      changeBackground('none')
-      changeFontColor(currentColor)
-      changeHeight(standardHeight)
+    } else {
+      changePadding('large')
+      changeBackground('rgba(0, 0, 0, 0.1)')
+      changeFontColor('white')
     }
   })
   
@@ -126,39 +105,7 @@ AUI().ready(function(){
       $(ids[i]).height(height)
     }
 
-    // adjusts the navbar menu as window width fluctuates past the breakpoint
-    if (e.target.innerWidth > breakPoint) {
 
-      $('#portfolio-dropdown > i, #portfolio-dropdown > p, #main-navbar > .social-ctn, #icon-bars, #icon-times').hide()
 
-      navbarModalOpen = false
-      changeHeight(standardHeight)
-      $('#nav-logo, #main-navbar > ul > li').css({'display': 'inline-block'})
-
-      if (scrollPosition < 50) {
-        changeBackground('none')
-        changeFontColor(currentColor)
-        changePadding(paddingLarge)
-
-      } else {
-        changeBackground('black')
-        changeFontColor('white')
-      }
-
-    } else if (!navbarModalOpen) {
-      $('#icon-bars').show()
-      $('#main-navbar > ul > li').hide()
-
-      if (scrollPosition < 50) {
-        changePadding(paddingSmall)
-        changeFontColor(currentColor)
-
-      } else {
-        changeBackground('white')
-        changeFontColor('black')
-        changeHeight(standardHeight)
-      }
-    }
-
-  }).resize() */
+  }).resize()
 })

@@ -33,11 +33,12 @@
   .flickity-prev-next-button {
     width: 60px;
     height: 60px;
-    background: transparent;
+    background: $transparent;
     opacity: 0.6;
+    margin: 0 15px;
   }
   .flickity-prev-next-button:hover {
-    background: transparent;
+    background: $transparent;
     opacity: 1;
   }
   /* arrow color */
@@ -46,10 +47,6 @@
     transition: fill .5s;
   }
 
-  /* closer to edge */
-  .flickity-slider {
-    width: 100%;
-  }
   .flickity-prev-next-button.previous { left: 0; }
   .flickity-prev-next-button.next { right: 0; }
   /* hide disabled button */
