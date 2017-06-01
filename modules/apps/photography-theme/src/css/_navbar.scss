@@ -6,7 +6,11 @@
   position: fixed;
   transition: padding .5s, background .5s;
   width: 100%;
-  z-index: 1;
+  z-index: 3;
+
+  .navbar-toggle {
+    margin: 15px 0;
+  }
 
   .logo {
     background: transparent;
@@ -17,97 +21,21 @@
   .navbar-nav {
     span {
       color: $white;
+      line-height: 37px;
+      transition: color .5s;
+    }
+  }
+
+  #sign-in {
+    border: 1px solid $white;
+    color: $white;
+    line-height: 64px;
+    margin-left: 15px;
+    padding: 10px;
+    text-decoration: none;
+
+    @media(max-width: 768px) {
+      top: 80%;
     }
   }
 }
-
-// #main-navbar {
-//   align-items: center;
-//   background: none;
-//   box-sizing: border-box;
-//   color: $black;
-//   display: flex;
-//   flex-wrap: wrap;
-//   justify-content: space-between;
-
-
-
-  
-
-//   #nav-ctn {
-//     display: inline-block;
-
-//     li {
-//       display: inline;
-//       padding: 0 30px;
-//       transition: padding .5s, color .5s;
-
-//       @media(max-width: $break-point) {
-//         color: $black !important;
-//         box-sizing: border-box;
-//         display: none;
-//         font-size: .9rem;
-//         width: 100%;
-//         margin-bottom: 35px;
-//         text-align: center;
-//       }
-
-//       a {
-//         transition: padding .5s, color .5s;
-//       }
-//     }
-//   }
-
-//   #portfolio-list {
-//     margin-left: -10px 0 0 19px;
-//   }
-
-
-
-//   #dropdown-icon {
-//     padding: 10px;
-//     transform: translateX(50px);
-//     display: none;
-//     margin-top: 0;
-//   }
-
-//   .social-ctn {
-//     display: none;
-//     width: 100%;
-//     align-items: center;
-//     flex-direction: row;
-//     justify-content: flex-start;
-//     margin-top: 30vh;
-
-//     i {
-//       padding: 0 20px;
-//     }
-//   }
-
-//   @media(max-width: $break-point) {
-//     box-sizing: border-box;
-//     display: block;
-//     background: none;
-//     padding: 20px 42px;
-
-//     #dropdown-ctn {
-//       margin-top: 15%;
-//       height: 100%;
-//       width: 100%;
-//     }
-
-//     .logo {
-//       float: left;
-//       margin-top: 3px;
-//     }
-
-//     #icon-bars {
-//       display: inline-block;
-//     }
-
-//     #icon-bars,
-//     #icon-times {
-//       float: right;
-//     }
-//   }
-// }

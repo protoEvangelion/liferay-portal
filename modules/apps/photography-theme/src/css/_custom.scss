@@ -5,8 +5,6 @@
 
 // This file allows you to override default styles in one central location for easier upgrade and maintenance.
 
-
-
 @import 'utils/variables';
 @import 'utils/mixins';
 @import 'utils/fonts';
@@ -15,6 +13,8 @@
 // @import 'imageTiles';
 @import 'footer';
 
+// important is used below becuase it is overridden by
+// more specific default styles
 html {
   font-size: 1.15vw !important;
   height: 100% !important;
@@ -25,61 +25,59 @@ html {
   }
 }
 
+h1 {
+  @include font-generator('h1');
+}
+
+h2 {
+  @include font-generator('h2');
+}
+
+h3 {
+  @include font-generator('h3');
+}
+
+h4 {
+  @include font-generator('h4');
+}
+
+h5 {
+  @include font-generator('h5');
+  font-style: italic;
+}
+
+li,
+a {
+  @include font-generator('link');
+  cursor: pointer;
+  list-style: none;
+  text-decoration: none;
+}
+
+.logo {
+  @include font-generator('logo');
+  cursor: pointer;
+  display: inline-block;
+}
+
+p {
+  @include font-generator('p');
+}
+
 #wrapper {
   padding: 0;
 }
 
-// #photography-theme-ctn, main, section, #tile-ctn, figure {
-//   width: 100% !important;
-// }
-
-#photography-theme-ctn {
+.photography-theme-ctn {
 
   header {
     @import 'carousel';
     height: 100vh;
-    // margin-top: -17px;
   }
-
-  h1 {
-    @include font-generator('h1');
-  }
-
-  h2 {
-    @include font-generator('h2');
-  }
-
-  h3 {
-    @include font-generator('h3');
-  }
-
-  h4 {
-    @include font-generator('h4');
-  }
-
-  h5 {
-    @include font-generator('h5');
-    font-style: italic;
-  }
-
-  li, a {
-    @include font-generator('link');
-    cursor: pointer;
-    list-style: none;
-    text-decoration: none;
-  }
-
-  .logo {
-    @include font-generator('logo');
-    cursor: pointer;
-    display: inline-block;
-  }
-
-  p {
-    @include font-generator('p');
-  }
-
 }
+
+// CONVERT TO STYLES FOR WEB CONTENT
+
 //   #about {
 //     display: flex;
 //     flex-direction: row;

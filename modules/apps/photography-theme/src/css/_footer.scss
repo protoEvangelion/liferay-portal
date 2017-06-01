@@ -1,76 +1,62 @@
 footer {
   background-color: $black;
   color: $white;
-  padding: 100px 0;
+  padding: 50px 0;
 
-  #footer-desktop {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-
-    @media screen and (max-width: $break-point) {
-      display: none;
-    }
-    .top-ctn {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      @include break-point-hide();
-    }
-    .text-ctn {
-      display: flex;
-      flex-direction: row;
-      @include break-point-hide();
-    }
-    #right-ctn {
-      display: flex;
-      flex-direction: column;
-      font-style: italic;
-      @include break-point-hide();
+  .list-inline {
+    li {
+      display: block;
     }
   }
 
-  .logo {
-    @media screen and (max-width: $break-point) {
-      margin-bottom: 40px;
+  .bottom-ctn > a {
+    text-decoration: none;
+  }
+
+  .social-media-icon {
+    border: 1px solid transparent;
+    border-radius: 50%;
+    color: $white;
+    margin: 20px 10px;
+    padding: 10px;
+    transition: border .5s, background .5s;
+
+    .facebook {
+      padding: 10px 15px; // adjustment for unsquare fb icon
     }
-  }
-  h3 {
-    margin: 10px 0 20px 0;
-  }
-  h2 {
-    font-size: 1.4rem !important;
-    font-style: italic;
-  }
-  .bottom-ctn {
-    margin-top: 50px;
-  }
-  i {
-    margin: 18px 30px 0 0;
-  }
 
-  #footer-mobile {
-    display: none;
+    &:hover {
+      background: transparent;
+      border: 1px solid $white;
+      transition: border .5s, background .5s;
+    }
 
-    @media screen and (max-width: $break-point) {
-      align-items: center;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+    $icons: (
+      twitter:  #55acee,
+      youtube:   #c4302b,
+      facebook: #3b5998,
+      instagram: #c32aa3,
+      github:   #231f20,
+      linkedin: #0977b5,
+      dribbble: #ea4c89,
+    );
 
-      .footer-co {
-        margin-top: 20px;
-      }
-
-      .contact-info {
-        display: flex;
-        flex-direction: row;
-      }
-
-      .bottom-ctn {
-        margin-bottom: 50px;
-        transform: translateX(15px);
+    @each $theme, $color in $icons {
+      &--#{$theme} {
+        background-color: $color;
       }
     }
+  }
+
+  .link-ctn {
+    cursor: default;
+  }
+
+  .link {
+    color: $white;
+  }
+
+  #contact {
+    margin-top: 20px;
   }
 }

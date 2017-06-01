@@ -7,6 +7,34 @@
 	</compatibility>
 	<theme id="photography" name="photography">
 		<template-extension>ftl</template-extension>
+		<settings>
+			<setting configurable="true" key="phone" type="text" value="1-877-LIFERAY" />
+			<setting configurable="true" key="email" type="text" value="pr@liferay.com" />
+
+			<setting configurable="true" key="full-screen-navigation" type="checkbox" value="false" />
+			<setting configurable="true" key="site-logo-retina" type="checkbox" value="true" />
+
+			<setting configurable="true" key="Facebook" type="checkbox" value="true" />
+			<setting configurable="true" key="Facebook Url"  type="text" value="https://www.facebook.com/liferay/" />
+
+			<setting configurable="true" key="Twitter" type="checkbox" value="true" />
+			<setting configurable="true" key="Twitter Url" type="text" value="https://twitter.com/liferay" />
+
+			<setting configurable="true" key="Instagram" type="checkbox" value="true" />
+			<setting configurable="true" key="Instagram Url" type="text" value="https://www.instagram.com/liferayinc/" />
+
+			<setting configurable="true" key="Youtube" type="checkbox" value="true" />
+			<setting configurable="true" key="Youtube Url" type="text" value="https://www.youtube.com/user/liferayinc" />
+
+			<setting configurable="true" key="Github" type="checkbox" value="true" />
+			<setting configurable="true" key="Github Url" type="text" value="https://github.com/liferay" />
+
+			<setting configurable="true" key="Linkedin" type="checkbox" value="true" />
+			<setting configurable="true" key="Linkedin Url" type="text" value="https://www.linkedin.com/company/83609?trk=NUS_CMPY_TWIT" />
+
+			<setting configurable="true" key="Dribbble" type="checkbox" value="true" />
+			<setting configurable="true" key="Dribbble Url" type="text" value="https://dribbble.com/liferay" />
+		</settings>
 		<portlet-decorator id="barebone" name="Barebone">
 			<portlet-decorator-css-class>portlet-barebone</portlet-decorator-css-class>
 		</portlet-decorator>

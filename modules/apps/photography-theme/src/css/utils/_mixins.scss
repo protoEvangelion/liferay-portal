@@ -7,6 +7,10 @@
   text-transform: map-get($capitalization, $type);
 }
 
+@mixin font-family-generator($type) {
+  font-family: map-get($families, $type);
+}
+
 @mixin icon-generator($size, $padding, $name, $color) {
   cursor: pointer;
   height: $size + $padding * 2;
@@ -51,17 +55,17 @@
 
 @mixin wide-image-generator($url) {
   @include image-generator($url);
-  width: 66%;
   height: 70%;
+  width: 66%;
 }
 
 @mixin mini-image-generator($url) {
   @include image-generator($url);
-  width: 100%;
   height: 20%;
+  width: 100%;
 }
 
-@mixin break-point-hide() {
+@mixin break-point-hide {
   @media screen and (max-width: $break-point) {
     display: none;
   }

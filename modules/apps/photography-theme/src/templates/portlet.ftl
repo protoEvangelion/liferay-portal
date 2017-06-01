@@ -9,6 +9,7 @@
 />
 
 <section class="portlet" id="portlet_${portlet_id}">
+
 	<#if portlet_display.isPortletDecorate() && !portlet_display.isStateMax() && portlet_display.getPortletConfigurationIconMenu()?? && portlet_display.getPortletToolbar()??>
 		<#assign
 			portlet_configuration_icon_menu = portlet_display.getPortletConfigurationIconMenu()
@@ -36,13 +37,17 @@
 						<@liferay_portlet["icon-options"] portletConfigurationIcons=portlet_configuration_icons />
 					</menu>
 				</#if>
+
 			</header>
 
 			<#assign portlet_content_css_class = portlet_content_css_class + " portlet-content-editable" />
+
 		</#if>
+
 	</#if>
 
 	<div class="${portlet_content_css_class}">
+
 		<#if portlet_display.isShowBackIcon()>
 			<a class="icon-monospaced portlet-icon-back text-default" href="${portlet_back_url}" title="<@liferay.language key="return-to-full-page" />">
 				<@liferay_ui["icon"]
@@ -57,5 +62,6 @@
 		</#if>
 
 		${portlet_display.writeContent(writer)}
+		
 	</div>
 </section>
