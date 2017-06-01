@@ -13,6 +13,10 @@ footer {
     text-decoration: none;
   }
 
+  .facebook {
+    padding: 10px 15px !important; // adjustment for unsquare fb icon
+  }
+
   .social-media-icon {
     border: 1px solid transparent;
     border-radius: 50%;
@@ -20,10 +24,6 @@ footer {
     margin: 20px 10px;
     padding: 10px;
     transition: border .5s, background .5s;
-
-    .facebook {
-      padding: 10px 15px; // adjustment for unsquare fb icon
-    }
 
     &:hover {
       background: transparent;
