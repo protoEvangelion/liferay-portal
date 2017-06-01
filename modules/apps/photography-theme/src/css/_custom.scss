@@ -26,42 +26,28 @@ html {
 }
 
 h1 {
-  @include font-generator('h1');
+  @include slim-font-generator('h1');
 }
 
 h2 {
-  @include font-generator('h2');
+  @include slim-font-generator('h2');
 }
 
 h3 {
-  @include font-generator('h3');
+  @include slim-font-generator('h3');
 }
 
 h4 {
-  @include font-generator('h4');
+  @include slim-font-generator('h4');
 }
 
 h5 {
-  @include font-generator('h5');
+  @include slim-font-generator('h5');
   font-style: italic;
 }
 
-li,
-a {
-  @include font-generator('link');
-  cursor: pointer;
-  list-style: none;
-  text-decoration: none;
-}
-
-.logo {
-  @include font-generator('logo');
-  cursor: pointer;
-  display: inline-block;
-}
-
 p {
-  @include font-generator('p');
+  @include slim-font-generator('p');
 }
 
 #wrapper {
@@ -69,6 +55,44 @@ p {
 }
 
 .photography-theme-ctn {
+  h1 {
+    @include font-generator('h1');
+  }
+
+  h2 {
+    @include font-generator('h2');
+  }
+
+  h3 {
+    @include font-generator('h3');
+  }
+
+  h4 {
+    @include font-generator('h4');
+  }
+
+  h5 {
+    @include font-generator('h5');
+    font-style: italic;
+  }
+
+  li,
+  a {
+    @include font-generator('link');
+    cursor: pointer;
+    list-style: none;
+    text-decoration: none;
+  }
+
+  .logo {
+    @include font-generator('logo');
+    cursor: pointer;
+    display: inline-block;
+  }
+
+  p {
+    @include font-generator('p');
+  }
 
   header {
     @import 'carousel';
