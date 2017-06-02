@@ -13,17 +13,53 @@ footer {
     text-decoration: none;
   }
 
-  .facebook {
-    padding: 10px 15px !important; // adjustment for unsquare fb icon
+  .icon-ctn {
+    position: relative;
+
+    .tooltip {
+      color: $white;
+      left: 0;
+      opacity: 0;
+      position: absolute;
+      top: 0;
+      transform: translateX(0);
+      transition:
+        left .3s ease-in .3s,
+        opacity .3s ease-in .3s,
+        top .3s ease-in .3s,
+        transform .3s ease-in .3s,
+        visibility .3s linear .3s;
+      visibility: hidden;
+    }
+  }
+
+  .icon-ctn:hover .tooltip {
+    display: inline;
+    left: 50%;
+    opacity: 1;
+    top: -50px;
+    transform: translateX(-50%);
+    transition:
+      left .3s ease-in .3s,
+      opacity .3s ease-in .3s,
+      top .3s ease-in .3s,
+      transform .3s ease-in .3s,
+      visibility .3s linear .3s;
+    visibility: visible;
+
   }
 
   .social-media-icon {
     border: 1px solid transparent;
     border-radius: 50%;
     color: $white;
-    margin: 20px 10px;
+    display: inline-block;
+    font-size: 20px !important;
+    height: $icon-height;
+    margin: 25px 10px;
     padding: 10px;
     transition: border .5s, background .5s;
+    width: $icon-height;
 
     &:hover {
       background: transparent;

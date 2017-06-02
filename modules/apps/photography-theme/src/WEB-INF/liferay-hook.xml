@@ -9,12 +9,9 @@
     <language-properties>content/Language_da.properties</language-properties>
     <language-properties>content/Language_de.properties</language-properties>
     <language-properties>content/Language_el.properties</language-properties>
-    <language-properties>content/Language_en_GB.properties</language-properties>
-    <language-properties>content/Language_en_AU.properties</language-properties>
     <language-properties>content/Language_en.properties</language-properties>
     <language-properties>content/Language_es.properties</language-properties>
     <language-properties>content/Language_et.properties</language-properties>
-    <language-properties>content/Language_eu.properties</language-properties>
     <language-properties>content/Language_fa.properties</language-properties>
     <language-properties>content/Language_fi.properties</language-properties>
     <language-properties>content/Language_fr_CA.properties</language-properties>
@@ -22,18 +19,12 @@
     <language-properties>content/Language_hi_IN.properties</language-properties>
     <language-properties>content/Language_hr.properties</language-properties>
     <language-properties>content/Language_hu.properties</language-properties>
-    <language-properties>content/Language_in.properties</language-properties>
     <language-properties>content/Language_it.properties</language-properties>
-    <language-properties>content/Language_iw.properties</language-properties>
     <language-properties>content/Language_ja.properties</language-properties>
     <language-properties>content/Language_ko.properties</language-properties>
-    <language-properties>content/Language_lo.properties</language-properties>
     <language-properties>content/Language_lt.properties</language-properties>
-    <language-properties>content/Language_enb.properties</language-properties>
-    <language-properties>content/Language_nl_BE.properties</language-properties>
     <language-properties>content/Language_nl.properties</language-properties>
     <language-properties>content/Language_pl.properties</language-properties>
-    <language-properties>content/Language_pt_BR.properties</language-properties>
     <language-properties>content/Language_pt_PT.properties</language-properties>
     <language-properties>content/Language_ro.properties</language-properties>
     <language-properties>content/Language_ru.properties</language-properties>

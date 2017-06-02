@@ -1,23 +1,23 @@
 <#--
 This file allows you to override and define new FreeMarker variables.
 -->
-<#assign 
+<#assign
   show_header_search = getterUtil.getBoolean(themeDisplay.getThemeSetting("show-header-search"))
   year = .now
   phone = getterUtil.getString(themeDisplay.getThemeSetting("phone"))
   email = getterUtil.getString(themeDisplay.getThemeSetting("email"))
-  facebook = getterUtil.getBoolean(themeDisplay.getThemeSetting("Facebook"))
-  facebookUrl = getterUtil.getString(themeDisplay.getThemeSetting("Facebook Url"))
-  twitter = getterUtil.getBoolean(themeDisplay.getThemeSetting("Twitter"))
-  twitterUrl = getterUtil.getString(themeDisplay.getThemeSetting("Twitter Url"))
-  instagram = getterUtil.getBoolean(themeDisplay.getThemeSetting("Instagram"))
-  instagramUrl = getterUtil.getString(themeDisplay.getThemeSetting("Instagram Url"))
-  youtube = getterUtil.getBoolean(themeDisplay.getThemeSetting("Youtube"))
-  youtubeUrl = getterUtil.getString(themeDisplay.getThemeSetting("Youtube Url"))
-  linkedin = getterUtil.getBoolean(themeDisplay.getThemeSetting("Linkedin"))
-  linkedinUrl = getterUtil.getString(themeDisplay.getThemeSetting("Linkedin Url"))
-  github = getterUtil.getBoolean(themeDisplay.getThemeSetting("Github"))
-  githubUrl = getterUtil.getString(themeDisplay.getThemeSetting("Github Url"))
-  dribbble = getterUtil.getBoolean(themeDisplay.getThemeSetting("Dribbble"))
-  dribbbleUrl = getterUtil.getString(themeDisplay.getThemeSetting("Dribbble Url"))
+  facebook = getterUtil.getBoolean(themeDisplay.getThemeSetting("facebook"))
+  facebookUrl = getterUtil.getString(themeDisplay.getThemeSetting("facebook-url"))
+  twitter = getterUtil.getBoolean(themeDisplay.getThemeSetting("twitter"))
+  twitterUrl = getterUtil.getString(themeDisplay.getThemeSetting("twitter-url"))
+  instagram = getterUtil.getBoolean(themeDisplay.getThemeSetting("instagram"))
+  instagramUrl = getterUtil.getString(themeDisplay.getThemeSetting("instagram-url"))
+  youtube = getterUtil.getBoolean(themeDisplay.getThemeSetting("youtube"))
+  youtubeUrl = getterUtil.getString(themeDisplay.getThemeSetting("youtube-url"))
+  linkedin = getterUtil.getBoolean(themeDisplay.getThemeSetting("linkedin"))
+  linkedinUrl = getterUtil.getString(themeDisplay.getThemeSetting("linkedin-url"))
+  github = getterUtil.getBoolean(themeDisplay.getThemeSetting("github"))
+  githubUrl = getterUtil.getString(themeDisplay.getThemeSetting("github-url"))
+  dribbble = getterUtil.getBoolean(themeDisplay.getThemeSetting("dribbble"))
+  dribbbleUrl = getterUtil.getString(themeDisplay.getThemeSetting("dribbble-url"))
 />
