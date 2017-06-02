@@ -67,6 +67,9 @@
 				<h4 id="contact">${email} | ${phone} <@liferay.language key="hello" /></h4>
 
 				<h4>© ${year?string.yyyy} ${site_name} All Rights Reserved</h4>
+				
+				<h5><@liferay.language key="created-with-love" /></h5>
+				
 
 			</div>
 		</div>
