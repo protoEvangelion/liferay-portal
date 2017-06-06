@@ -1,20 +1,29 @@
-
+require('dotenv').config()
 const gulp = require('gulp')
 const liferayThemeTasks = require('liferay-theme-tasks')
 const path = require('path')
 const fs = require('fs')
 const MsTranslator = require('mstranslator')
+const commandLineArgs = require('command-line-args')
+
+const optionDefinitions = [
+  { name: 'translate', alias: 't', type: Boolean }
+]
+const options = commandLineArgs(optionDefinitions)
+
 
 liferayThemeTasks.registerTasks({
   gulp: gulp,
   hookFn: function (gulp) {
-    gulp.hook('before:deploy', function (done) {
-      gulp.start('add-text-to-language-properties-file')
-      done()
-    })
-    gulp.hook('after:deploy', function (done) {
-      process.exit()
-    })
+    if (options.translate) {
+      gulp.hook('before:deploy', function (done) {
+        gulp.start('add-text-to-language-properties-file')
+        done()
+      })
+      gulp.hook('after:deploy', function (done) {
+        process.exit()
+      })
+    }
   }
 })
 
@@ -33,7 +42,7 @@ gulp.task('add-text-to-language-properties-file', function () {
     return string.match(/=(.+)/)[1]
   })
 
-  const key = '39c6ec34dc684e9cae8c6be242041819'
+  const key = process.env.MICROSOFT_API_KEY
 
   const client = new MsTranslator({ api_key: key }, true)
 

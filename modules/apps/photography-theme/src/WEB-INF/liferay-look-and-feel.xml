@@ -11,8 +11,7 @@
 			<setting configurable="true" key="phone" type="text" value="1-877-LIFERAY" />
 			<setting configurable="true" key="email" type="text" value="pr@liferay.com" />
 
-			<setting configurable="true" key="full-screen-navigation" type="checkbox" value="false" />
-			<setting configurable="true" key="site-logo-retina" type="checkbox" value="true" />
+      <setting configurable="true" key="show-language-bar" type="checkbox" value="true" />
 
 			<setting configurable="true" key="facebook" type="checkbox" value="true" />
 			<setting configurable="true" key="facebook-url"  type="text" value="https://www.facebook.com/liferay/" />
@@ -34,7 +33,20 @@
 
 			<setting configurable="true" key="dribbble" type="checkbox" value="true" />
 			<setting configurable="true" key="dribbble-url" type="text" value="https://dribbble.com/liferay" />
+
+			<setting configurable="true" key="show-logo-image" type="checkbox" value="true" />
+      <setting configurable="true" key="logo-height" type="text" value="50px" />
+      <setting configurable="true" key="logo-width" type="text" value="50px" />
 		</settings>
+    <color-scheme id="01" name="Day">
+        <css-class>day</css-class>
+        <color-scheme-images-path>
+            ${images-path}/color_schemes/${css-class}
+        </color-scheme-images-path>
+    </color-scheme>
+    <color-scheme id="02" name="Night">
+        <css-class>night</css-class>
+    </color-scheme>
 		<portlet-decorator id="barebone" name="Barebone">
 			<portlet-decorator-css-class>portlet-barebone</portlet-decorator-css-class>
 		</portlet-decorator>

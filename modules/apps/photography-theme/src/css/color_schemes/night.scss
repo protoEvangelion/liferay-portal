@@ -1,0 +1,47 @@
+body.night {
+  #navigation {
+    background-color: $night-background;
+
+    .site-name {
+      color: $night-color;
+    }
+
+    .navbar-nav span {
+      color: $night-color;
+    }
+
+    .dropdown-menu {
+      background: $white;
+
+      > li > a {
+        color: $black;
+      }
+    }
+
+    #sign-in {
+      border: 1px solid $night-color;
+      color: $night-color;
+    }
+  }
+
+  footer {
+    background-color: $night-background;
+    color: $night-color;
+
+    .tooltip {
+      color: $night-color;
+    }
+
+    .social-media-icon {
+      color: $night-color;
+
+      &:hover {
+        border: 1px solid $night-color;
+      }
+    }
+
+    .link {
+      color: $night-color;
+    }
+  }
+}

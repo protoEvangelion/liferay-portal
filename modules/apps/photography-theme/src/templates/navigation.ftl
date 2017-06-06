@@ -1,12 +1,14 @@
 
 <nav class="navbar navbar-default" id="navigation" role="navigation">
-	<div class="container-fluid">
+	<div class="container-fluid" id="nav-ctn">
 		<div class="navbar-header">
-			<div class="navbar-brand logo">
+			<div class="navbar-brand logo" style="height:${logoHeight};">
 
-				<a class="${logo_css_class}" href="${site_default_url}" title="<@liferay.language_format arguments="${site_name}" key="go-to-x" />">
-					<img alt="${logo_description}" height="${site_logo_height}" src="${site_logo}" width="${site_logo_width}" />
-				</a>
+        <#if showLogoImage>
+          <a class="logo-link" href="${site_default_url}" title="<@liferay.language_format arguments="${site_name}" key="go-to-x" />" width="${logoWidth}">
+            <img alt="${logo_description}" class="site-logo" height="${logoHeight}" src="${site_logo}" />
+          </a>
+        </#if>
 
 				<#if show_site_name>
 					<span class="site-name" title="<@liferay.language_format arguments="${site_name}" key="go-to-x" />">
@@ -46,7 +48,7 @@
 							nav_item_attr_selected = "aria-selected='true'"
 							nav_item_css_class = "selected"
 						/>
-					
+
 					<#else>
 						<#assign
 							nav_item_css_class = "dropdown"
@@ -54,7 +56,7 @@
 
 					</#if>
 
-					<li ${nav_item_attr_selected} class="${nav_item_css_class}" id="layout_${nav_item.getLayoutId()}" role="presentation">		
+					<li ${nav_item_attr_selected} class="${nav_item_css_class}" id="layout_${nav_item.getLayoutId()}" role="presentation">
 
 						<#if nav_item.hasChildren()>
 
@@ -101,6 +103,15 @@
 			<#if !is_signed_in>
 				<a data-redirect="${is_login_redirect_required?string}" href="${sign_in_url}" id="sign-in" rel="nofollow">${sign_in_text}</a>
 			</#if>
+
+      <#-- <#if showLanguageBar>
+        <div id="show-language">
+          <i aria-hidden="true" class="icon-flag icon-2x"></i>
+          <div class="language-bar">
+            <@liferay_ui["language"]/>
+          </div>
+        </div>
+      </#if> -->
 
 			</ul>
 		</div>

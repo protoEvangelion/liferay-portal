@@ -1,4 +1,3 @@
-
 <nav id="footer-recursive">
 	<div class="container text-center">
 		<div class="row">

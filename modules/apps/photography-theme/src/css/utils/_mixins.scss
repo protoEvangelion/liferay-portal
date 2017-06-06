@@ -7,13 +7,6 @@
   text-transform: map-get($capitalization, $type);
 }
 
-@mixin slim-font-generator($type) {
-  font-family: map-get($families, $type);
-  font-size: map-get($sizes, $type);
-  font-weight: map-get($weights, $type);
-  letter-spacing: map-get($spacing, $type);
-}
-
 @mixin font-family-generator($type) {
   font-family: map-get($families, $type);
 }

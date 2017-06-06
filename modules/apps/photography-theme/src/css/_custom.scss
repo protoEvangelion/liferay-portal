@@ -8,10 +8,12 @@
 @import 'utils/variables';
 @import 'utils/mixins';
 @import 'utils/fonts';
-@import 'utils/reset';
+@import 'color_schemes/day';
+@import 'color_schemes/night';
 @import 'navbar';
-// @import 'imageTiles';
 @import 'footer';
+
+// @import 'imageTiles';
 
 // important is used below becuase it is overridden by
 // more specific default styles
@@ -25,36 +27,17 @@ html {
   }
 }
 
-h1 {
-  @include slim-font-generator('h1');
-}
-
-h2 {
-  @include slim-font-generator('h2');
-}
-
-h3 {
-  @include slim-font-generator('h3');
-}
-
-h4 {
-  @include slim-font-generator('h4');
-}
-
-h5 {
-  @include slim-font-generator('h5');
-  font-style: italic;
-}
-
-p {
-  @include slim-font-generator('p');
-}
-
 #wrapper {
   padding: 0;
 }
 
+.sidebar .lexicon-icon {
+  color: $white;
+}
+
+.portlet-dropzone,
 .photography-theme-ctn {
+
   h1 {
     @include font-generator('h1');
   }
@@ -79,13 +62,28 @@ p {
   li,
   a {
     @include font-generator('link');
+    text-decoration: none;
+  }
+
+  .logo {
+    @include font-generator('logo');
+    cursor: pointer;
+  }
+
+  p {
+    @include font-generator('p');
+  }
+}
+
+.photography-theme-ctn {
+  li,
+  a {
     cursor: pointer;
     list-style: none;
     text-decoration: none;
   }
 
   .logo {
-    @include font-generator('logo');
     cursor: pointer;
     display: inline-block;
   }

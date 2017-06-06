@@ -1,0 +1,49 @@
+body.day {
+  #navigation {
+    background-color: $day-background;
+
+    .site-name {
+      color: $day-color;
+    }
+
+    .navbar-nav span {
+      color: $day-color;
+    }
+
+    .dropdown-menu {
+      background: $black;
+
+      > li > a {
+        color: $white;
+      }
+    }
+
+    #sign-in {
+      border: 1px solid $white;
+      color: $white;
+    }
+  }
+
+
+  footer {
+    background-color: $night-background;
+    color: $night-color;
+
+    .tooltip {
+      color: $night-color;
+    }
+
+    .social-media-icon {
+      color: $white;
+
+      &:hover {
+        border: 1px solid $night-color;
+        color: $black;
+      }
+    }
+
+    .link {
+      color: $night-color;
+    }
+  }
+}
