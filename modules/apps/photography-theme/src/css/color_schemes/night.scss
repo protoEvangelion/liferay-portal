@@ -1,13 +1,14 @@
 body.night {
+
   #navigation {
-    background-color: $night-background;
+    background-color: $night-transparent-background;
 
     .site-name {
-      color: $night-color;
+      color: $black;
     }
 
     .navbar-nav span {
-      color: $night-color;
+      color: $black;
     }
 
     .dropdown-menu {
@@ -19,8 +20,8 @@ body.night {
     }
 
     #sign-in {
-      border: 1px solid $night-color;
-      color: $night-color;
+      border: 1px solid $black;
+      color: $black;
     }
   }
 
@@ -43,5 +44,10 @@ body.night {
     .link {
       color: $night-color;
     }
+  }
+
+  .portlet-content.portlet-content-editable {
+    background-color: $night-body-background;
+    color: $night-color;
   }
 }

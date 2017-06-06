@@ -1,13 +1,14 @@
 body.day {
+
   #navigation {
-    background-color: $day-background;
+    background-color: $day-transparent-background;
 
     .site-name {
-      color: $day-color;
+      color: $white;
     }
 
     .navbar-nav span {
-      color: $day-color;
+      color: $white;
     }
 
     .dropdown-menu {
@@ -26,24 +27,29 @@ body.day {
 
 
   footer {
-    background-color: $night-background;
-    color: $night-color;
+    background-color: $day-background;
+    color: $day-color;
 
     .tooltip {
-      color: $night-color;
+      color: $day-color;
     }
 
     .social-media-icon {
       color: $white;
 
       &:hover {
-        border: 1px solid $night-color;
-        color: $black;
+        border: 1px solid $day-color;
+        color: $day-color;
       }
     }
 
     .link {
-      color: $night-color;
+      color: $day-color;
     }
+  }
+
+  .portlet-content.portlet-content-editable {
+    background-color: $day-body-background;
+    color: $day-color;
   }
 }

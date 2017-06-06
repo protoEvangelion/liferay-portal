@@ -23,4 +23,8 @@ This file allows you to override and define new FreeMarker variables.
   showLogoImage = getterUtil.getBoolean(themeDisplay.getThemeSetting("show-logo-image"))
   logoWidth = getterUtil.getString(themeDisplay.getThemeSetting("logo-width"))
   logoHeight = getterUtil.getString(themeDisplay.getThemeSetting("logo-height"))
+  showPortletBorders = getterUtil.getBoolean(themeDisplay.getThemeSetting("portlet-setup-show-borders-default"))
+  backgroundColor1 = getterUtil.getString(themeDisplay.getThemeSetting("background-color-1"))
+  backgroundColor2 = getterUtil.getString(themeDisplay.getThemeSetting("background-color-2"))
+  backgroundGradientDirection = getterUtil.getString(themeDisplay.getThemeSetting("background-gradient-direction"))
 />

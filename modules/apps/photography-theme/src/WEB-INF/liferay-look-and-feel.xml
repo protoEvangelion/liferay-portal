@@ -8,10 +8,42 @@
 	<theme id="photography" name="photography">
 		<template-extension>ftl</template-extension>
 		<settings>
+      <setting
+        configurable="true"
+        key="portlet-setup-show-borders-default"
+        type="checkbox"
+        value="false"
+      />
+
+      <setting configurable="true" key="background-color-1" type="text" value="#1c92d2">
+        <![CDATA[
+          AUI().ready('node',function(A) {
+            A.one("#[@NAMESPACE@]background-color-1").setAttribute("type", "color");
+              A.one("#[@NAMESPACE@]background-color-1").setAttribute("style", "height: 100px; width: 100px;");
+            });
+        ]]>
+      </setting>
+      <setting configurable="true" key="background-color-2" type="text" value="#f2fcfe">
+        <![CDATA[
+          AUI().ready('node',function(A) {
+            A.one("#[@NAMESPACE@]background-color-2").setAttribute("type", "color");
+              A.one("#[@NAMESPACE@]background-color-2").setAttribute("style", "height: 100px; width: 100px;");
+            });
+        ]]>
+      </setting>
+
+      <setting
+        type="select"
+        configurable="true"
+        key="background-gradient-direction"
+        options="top,bottom,right,left"
+        value="bottom" >
+      </setting>
+
 			<setting configurable="true" key="phone" type="text" value="1-877-LIFERAY" />
 			<setting configurable="true" key="email" type="text" value="pr@liferay.com" />
 
-      <setting configurable="true" key="show-language-bar" type="checkbox" value="true" />
+      <!--<setting configurable="true" key="show-language-bar" type="checkbox" value="true" />-->
 
 			<setting configurable="true" key="facebook" type="checkbox" value="true" />
 			<setting configurable="true" key="facebook-url"  type="text" value="https://www.facebook.com/liferay/" />
@@ -49,9 +81,6 @@
     </color-scheme>
 		<portlet-decorator id="barebone" name="Barebone">
 			<portlet-decorator-css-class>portlet-barebone</portlet-decorator-css-class>
-		</portlet-decorator>
-		<portlet-decorator id="borderless" name="Borderless">
-			<portlet-decorator-css-class>portlet-borderless</portlet-decorator-css-class>
 		</portlet-decorator>
 		<portlet-decorator id="decorate" name="Decorate">
 			<default-portlet-decorator>true</default-portlet-decorator>

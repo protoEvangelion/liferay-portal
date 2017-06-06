@@ -5,8 +5,12 @@ $transparent: rgba(0, 0, 0, .15);
 $break-point: 765px;
 $icon-height: 40px;
 
-$night-background: rgba(255, 255, 255, .8);
-$night-color: $black;
+$night-background: $black;
+$night-body-background: rgba(36, 37, 31, .9);
+$night-transparent-background: rgba(255, 255, 255, .8);
+$night-color: $white;
 
-$day-background: $transparent;
-$day-color: $white;
+$day-background: $white;
+$day-body-background: rgba(255, 255, 255, .6);
+$day-transparent-background: $transparent;
+$day-color: $black;

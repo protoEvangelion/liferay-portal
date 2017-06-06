@@ -18,6 +18,20 @@
 
 	<@liferay_util["include"] page=top_head_include />
 
+  <style>
+    <#if !showPortletBorders>
+      .portlet-content.portlet-content-editable {
+        border: none;
+      }
+    </#if>
+
+    body {
+      background: ${backgroundColor1};
+      background: -webkit-linear-gradient(to ${backgroundGradientDirection}, ${backgroundColor1}, ${backgroundColor2}) fixed;
+      background: linear-gradient(to ${backgroundGradientDirection}, ${backgroundColor1}, ${backgroundColor2}) fixed;
+    }
+  </style>
+
 </head>
 
 <body class="${css_class}">
@@ -71,8 +85,8 @@
 		<#if has_navigation>
 			<#include "${full_templates_path}/footer_navigation.ftl" />
 		</#if>
-		
-	</footer>	
+
+	</footer>
 
 <@liferay_util["include"] page=body_bottom_include />
 
