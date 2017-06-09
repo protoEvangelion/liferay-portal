@@ -12,6 +12,7 @@
 @import 'color_schemes/night';
 @import 'navbar';
 @import 'footer';
+@import 'carousel';
 
 // @import 'imageTiles';
 
@@ -30,6 +31,22 @@ html {
 #wrapper {
   padding: 0;
 }
+
+// Adjust the 1st portal topper toolbar on the page
+
+#main-content {
+  > div:nth-child(1) {
+    .portlet-dropzone {
+      > div:nth-child(1) {
+        .portlet-topper {
+          top: 140px;
+          z-index: 2;
+        }
+      }
+    }
+  }
+}
+
 
 .sidebar .lexicon-icon {
   color: $white;
@@ -90,11 +107,6 @@ html {
 
   p {
     @include font-generator('p');
-  }
-
-  header {
-    @import 'carousel';
-    height: 100vh;
   }
 }
 

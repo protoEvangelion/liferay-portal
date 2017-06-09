@@ -27,14 +27,6 @@
   }
 }
 
-@mixin image-generator($url) {
-  background: url($url);
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  height: 103vh;
-}
-
 @mixin tile-generator($url) {
   @include image-generator($url);
   height: 100%;

@@ -15,7 +15,7 @@
         value="false"
       />
 
-      <setting configurable="true" key="background-color-1" type="text" value="#1c92d2">
+      <setting configurable="true" key="background-color-1" type="text" value="#f2fcfe">
         <![CDATA[
           AUI().ready('node',function(A) {
             A.one("#[@NAMESPACE@]background-color-1").setAttribute("type", "color");
@@ -23,7 +23,7 @@
             });
         ]]>
       </setting>
-      <setting configurable="true" key="background-color-2" type="text" value="#f2fcfe">
+      <setting configurable="true" key="background-color-2" type="text" value="#1c92d2">
         <![CDATA[
           AUI().ready('node',function(A) {
             A.one("#[@NAMESPACE@]background-color-2").setAttribute("type", "color");
@@ -80,10 +80,13 @@
         <css-class>night</css-class>
     </color-scheme>
 		<portlet-decorator id="barebone" name="Barebone">
+			<default-portlet-decorator>true</default-portlet-decorator>
 			<portlet-decorator-css-class>portlet-barebone</portlet-decorator-css-class>
 		</portlet-decorator>
+		<portlet-decorator id="borderless" name="Borderless">
+			<portlet-decorator-css-class>portlet-borderless</portlet-decorator-css-class>
+		</portlet-decorator>
 		<portlet-decorator id="decorate" name="Decorate">
-			<default-portlet-decorator>true</default-portlet-decorator>
 			<portlet-decorator-css-class>portlet-decorate</portlet-decorator-css-class>
 		</portlet-decorator>
 	</theme>

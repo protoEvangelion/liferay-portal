@@ -1,29 +1,41 @@
+#main-content { // adjust the margin-top to 0 when the carousel is the first child
+  > div:nth-child(1) {
+    .portlet-dropzone {
+      > div:nth-child(1) {
+        .carousel {
+          margin-top: 0;
+        }
+      }
+    }
+  }
+}
 
 .carousel {
-  height: 100%;
+  height: 95vh;
+  margin: 20px 0;
 
   .carousel-cell {
-    align-items: center;
-    display:  flex;
-    height: 100vh;
-    justify-content: center;
-    width: 102%;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    height: 100%;
+    width: 100%;
   }
 
   #carousel1 {
-    @include image-generator('/o/photography-theme/images/alps.jpg');
+    background: url('/o/photography-theme/images/alps.jpg');
   }
 
   #carousel2 {
-    @include image-generator('/o/photography-theme/images/party.jpg');
+    background: url('/o/photography-theme/images/party.jpg');
   }
 
   #carousel3 {
-    @include image-generator('/o/photography-theme/images/white.jpg');
+    background: url('/o/photography-theme/images/white.jpg');
   }
 
   #carousel4 {
-    @include image-generator('/o/photography-theme/images/shoes.jpg');
+    background: url('/o/photography-theme/images/shoes.jpg');
   }
 
   // Flickity css adjustments

@@ -25,7 +25,8 @@
     "gulp": "^3.8.10",
     "liferay-theme-deps-7.0": "~1.0.0",
     "liferay-theme-tasks": "*",
-    "mstranslator": "^3.0.0"
+    "mstranslator": "^3.0.0",
+    "sass-lint": "^1.10.2"
   },
   "publishConfig": {
     "tag": "7_0_x"
