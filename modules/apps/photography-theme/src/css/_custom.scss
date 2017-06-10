@@ -14,7 +14,7 @@
 @import 'footer';
 @import 'carousel';
 
-// @import 'imageTiles';
+@import 'imageTiles';
 
 // important is used below becuase it is overridden by
 // more specific default styles
@@ -22,6 +22,14 @@ html {
   font-size: 1.15vw !important;
   height: 100% !important;
   width: 100% !important;
+
+  .row { // Fixes horizontal scroll
+    margin-right: 0 !important;
+  }
+
+  .portlet-column { // Fixes horizontal scroll
+    padding-right: 0 !important;
+  }
 
   @media screen and (max-width: $break-point) {
     font-size: 100% !important;

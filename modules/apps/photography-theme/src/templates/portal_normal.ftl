@@ -50,13 +50,6 @@
 					<#include "${full_templates_path}/navigation.ftl" />
 				</#if>
 
-				<#-- <div class="carousel">
-					<div id="carousel1" class="carousel-cell"></div>
-					<div id="carousel2" class="carousel-cell"></div>
-					<div id="carousel3" class="carousel-cell"></div>
-					<div id="carousel4" class="carousel-cell"></div>
-				</div> -->
-
 			</header>
 		</div>
 	</div>

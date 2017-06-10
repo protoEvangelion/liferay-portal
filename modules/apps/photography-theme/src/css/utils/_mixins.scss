@@ -27,22 +27,11 @@
   }
 }
 
-@mixin tile-generator($url) {
-  @include image-generator($url);
-  height: 100%;
-  opacity: 1;
-  transition: opacity 1s;
-  width: 100%;
-
-  &:hover {
-    cursor: pointer;
-    opacity: .6;
-    transition: opacity 1s;
-  }
-
-  @media screen and (max-width: $break-point) {
-    width: 100%;
-  }
+@mixin image-generator($url) {
+  background: url($url);
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 @mixin wide-image-generator($url) {

@@ -28,3 +28,19 @@ This file allows you to override and define new FreeMarker variables.
   backgroundColor2 = getterUtil.getString(themeDisplay.getThemeSetting("background-color-2"))
   backgroundGradientDirection = getterUtil.getString(themeDisplay.getThemeSetting("background-gradient-direction"))
 />
+
+
+
+
+
+
+
+<#--
+Web content templates are used to lay out the fields defined in a web
+content structure.
+
+Please use the left panel to quickly add commonly used variables.
+Autocomplete is also available and can be invoked by typing "${".
+-->
+
+

@@ -1,9 +1,38 @@
+// Adjustments for theme color scheme
+
+body.day {
+  .heading-ctn {
+    background-color: $day-transparent-background;
+    color: $white;
+    position: absolute;
+    width: 100%;
+    padding: 20px;
+    bottom: 0;
+    text-align: center;
+
+    // h1 {
+    //   left: 50%;
+    //   top: 80%;
+    //   transform: translate(-50%, -80%);
+    // }
+    // h2 {
+    //   left: 50%;
+    //   top: 80%;
+    //   transform: translate(-50%, -80%);
+    // }
+
+  }
+}
+
 #main-content { // adjust the margin-top to 0 when the carousel is the first child
   > div:nth-child(1) {
     .portlet-dropzone {
       > div:nth-child(1) {
         .carousel {
           margin-top: 0;
+        }
+        @media screen and (max-width: $break-point) {
+          margin-top: -32px;
         }
       }
     }
@@ -20,22 +49,6 @@
     background-size: cover !important;
     height: 100%;
     width: 100%;
-  }
-
-  #carousel1 {
-    background: url('/o/photography-theme/images/alps.jpg');
-  }
-
-  #carousel2 {
-    background: url('/o/photography-theme/images/party.jpg');
-  }
-
-  #carousel3 {
-    background: url('/o/photography-theme/images/white.jpg');
-  }
-
-  #carousel4 {
-    background: url('/o/photography-theme/images/shoes.jpg');
   }
 
   // Flickity css adjustments
@@ -65,19 +78,6 @@
     }
 
     &:disabled {
-      display: none;
-    }
-  }
-
-  .icon-angle-down {
-    cursor: pointer;
-    left: 51.5%;
-    padding: 15px;
-    position: absolute;
-    top: 90%;
-    transform: translate(-90%, -50%);
-
-    @media screen and (max-width: $break-point) {
       display: none;
     }
   }
