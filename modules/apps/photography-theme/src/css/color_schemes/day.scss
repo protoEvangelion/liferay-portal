@@ -25,6 +25,19 @@ body.day {
     }
   }
 
+  .heading-ctn {
+    background-color: $day-transparent-background;
+    color: $white;
+    position: absolute;
+    width: 100%;
+    padding: 20px;
+    bottom: 0;
+    text-align: center;
+
+    h2 {
+      margin-left: -10px;
+    }
+  }
 
   footer {
     background-color: $day-background;

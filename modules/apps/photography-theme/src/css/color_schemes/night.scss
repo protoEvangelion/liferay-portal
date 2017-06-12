@@ -25,6 +25,20 @@ body.night {
     }
   }
 
+  .heading-ctn {
+    background-color: $night-transparent-background;
+    color: $black;
+    position: absolute;
+    width: 100%;
+    padding: 20px;
+    bottom: 0;
+    text-align: center;
+
+    h2 {
+      margin-left: -10px;
+    }
+  }
+
   footer {
     background-color: $night-background;
     color: $night-color;

@@ -1,28 +1,3 @@
-// Adjustments for theme color scheme
-
-body.day {
-  .heading-ctn {
-    background-color: $day-transparent-background;
-    color: $white;
-    position: absolute;
-    width: 100%;
-    padding: 20px;
-    bottom: 0;
-    text-align: center;
-
-    // h1 {
-    //   left: 50%;
-    //   top: 80%;
-    //   transform: translate(-50%, -80%);
-    // }
-    // h2 {
-    //   left: 50%;
-    //   top: 80%;
-    //   transform: translate(-50%, -80%);
-    // }
-
-  }
-}
 
 #main-content { // adjust the margin-top to 0 when the carousel is the first child
   > div:nth-child(1) {
@@ -40,7 +15,7 @@ body.day {
 }
 
 .carousel {
-  height: 95vh;
+  height: 100%;
   margin: 20px 0;
 
   .carousel-cell {

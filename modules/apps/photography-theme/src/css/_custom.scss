@@ -1,10 +1,3 @@
-// These inject tags are used for dynamically creating imports for themelet styles, you can place them where ever you like in this file.
-
-// inject:imports
-// endinject
-
-// This file allows you to override default styles in one central location for easier upgrade and maintenance.
-
 @import 'utils/variables';
 @import 'utils/mixins';
 @import 'utils/fonts';
@@ -13,11 +6,10 @@
 @import 'navbar';
 @import 'footer';
 @import 'carousel';
-
+@import 'pageHeader';
 @import 'imageTiles';
 
-// important is used below becuase it is overridden by
-// more specific default styles
+
 html {
   font-size: 1.15vw !important;
   height: 100% !important;
@@ -40,7 +32,7 @@ html {
   padding: 0;
 }
 
-// Adjust the 1st portal topper toolbar on the page
+// Adjusts the 1st portal topper toolbar on the page
 
 #main-content {
   > div:nth-child(1) {

@@ -33,16 +33,19 @@ AUI().ready(function () {
   // Carousel initialization
   // ======================================================
 
-  const flkty = new Flickity('.carousel', {
-    autoPlay: 5000,
-    pauseAutoPlayOnHover: false,
-    pageDots: false,
-    contain: true
-  })
+  const carousels = document.querySelectorAll('.carousel')
 
-  // $('.icon-angle-down').on('click', () => {
-  //   $('html,body').animate({scrollTop:$('#media-tiles').offset().top}, 500)
-  // })
+  for (let i=0, len = carousels.length; i < len; i++) {
+    let carousel = carousels[i]
+    new Flickity( carousel, {
+      autoPlay: 5000,
+      pauseAutoPlayOnHover: false,
+      pageDots: false,
+      contain: true,
+      resize: false,
+      setGallerySize: false
+    })
+  }
 
   // ==========================================================
   // Navbar functionality & helper functions
@@ -102,21 +105,4 @@ AUI().ready(function () {
 
     languageBarOpen = !languageBarOpen
   })
-
-
-  // ==========================================================
-  // Resizes the minitiles css based on WINDOW position
-  // ==========================================================
-
-  /* $(window).resize(function(e) {
-    // Resize the mini tiles on bottom of home page into squares on window resize
-    const ids = [ '#mini-img1', '#mini-img2', '#mini-img3', '#mini-img4', '#mini-img5', '#mini-img6']
-
-    const height = $('#mini-img1').width()
-
-    for (let i = 0; i < ids.length; i++) {
-      $(ids[i]).height(height)
-    }
-  }).resize() */
-
 })
