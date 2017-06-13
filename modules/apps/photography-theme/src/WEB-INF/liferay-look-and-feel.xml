@@ -8,6 +8,8 @@
 	<theme id="photography" name="photography">
 		<template-extension>ftl</template-extension>
 		<settings>
+      <setting configurable="true" key="show-language-picker" type="checkbox" value="true" />
+
       <setting
         configurable="true"
         key="portlet-setup-show-borders-default"
@@ -43,7 +45,6 @@
 			<setting configurable="true" key="phone" type="text" value="1-877-LIFERAY" />
 			<setting configurable="true" key="email" type="text" value="pr@liferay.com" />
 
-      <!--<setting configurable="true" key="show-language-bar" type="checkbox" value="true" />-->
 
 			<setting configurable="true" key="facebook" type="checkbox" value="true" />
 			<setting configurable="true" key="facebook-url"  type="text" value="https://www.facebook.com/liferay/" />

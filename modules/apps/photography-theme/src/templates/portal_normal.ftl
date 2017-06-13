@@ -42,6 +42,7 @@
 
 <@liferay.control_menu />
 
+
 	<div id="wrapper">
 		<div class="photography-theme-ctn">
 			<header id="banner" role="banner">

@@ -8,7 +8,8 @@
 @import 'carousel';
 @import 'pageHeader';
 @import 'imageTiles';
-
+@import 'textBlock';
+@import 'languagePicker';
 
 html {
   font-size: 1.15vw !important;
@@ -21,6 +22,10 @@ html {
 
   .portlet-column { // Fixes horizontal scroll
     padding-right: 0 !important;
+  }
+
+  .portlet-content {
+    border-radius: 0;
   }
 
   @media screen and (max-width: $break-point) {

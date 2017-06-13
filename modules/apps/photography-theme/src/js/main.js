@@ -16,9 +16,7 @@ AUI().ready(function () {
   // Variables and state initialization
   // ======================================================
 
-
   const status = 'Up and running'
-
   console.log(status)
 
   const paddingLarge = '20px 42px'
@@ -93,16 +91,67 @@ AUI().ready(function () {
   })
 
   // ==========================================================
-  // Opens language bar
+  // Language Bar Functionality
   // ==========================================================
 
-  let languageBarOpen = false
+  YUI().use(
+    'aui-modal',
+    function(Y) {
+      var modal = new Y.Modal(
+        {
+          bodyContent: 'How many pages do you want to print?',
+          centered: true,
+          destroyOnHide: false,
+          headerContent: '<h3>Print</h3>',
+          modal: true,
+          render: '#modal',
+          resizable: {
+            handles: 'b, r'
+          },
+          toolbars: {
+            body: [
+              {
+                icon: 'glyphicon glyphicon-file',
+                label: 'Single Page'
+              },
+              {
+                icon: 'glyphicon glyphicon-book',
+                label: 'All Pages'
+              }
+            ]
+          },
+          visible: false,
+          width: 450
+        }
+      ).render()
 
-  $('#show-language > .icon-flag').click(() => {
-    languageBarOpen
-      ? $('#show-language > .language-bar').hide()
-      : $('#show-language > .language-bar').show()
+      modal.addToolbar(
+        [
+          {
+            label: 'Cancel',
+            on: {
+              click: function() {
+                modal.hide();
+              }
+            }
+          },
+          {
+            label: 'Okay',
+            on: {
+              click: function() {
+                alert('Just an example, there will be no printing here.');
+              }
+            }
+          }
+        ]
+      );
 
-    languageBarOpen = !languageBarOpen
-  })
+      Y.one('#showModal').on(
+        'click',
+        function() {
+          modal.show();
+        }
+      );
+    }
+  );
 })

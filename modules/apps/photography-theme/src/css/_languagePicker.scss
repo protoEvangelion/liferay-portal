@@ -1,0 +1,30 @@
+.language-wrapper {
+  .flag-ctn {
+    .triangle {
+      cursor: pointer;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 0 50px 50px 0;
+      border-color: transparent white transparent transparent;
+      position: absolute;
+      display: inline-block;
+    }
+
+    .fa-flag-o {
+      position: absolute;
+      top: 8px;
+      left: 26px;
+      cursor: pointer;
+    }
+  }
+
+  #modal {
+    .yui3-widget-mask {
+      z-index: 4 !important;
+    }
+    .modal-dialog {
+      z-index: 4 !important;
+    }
+  }
+}

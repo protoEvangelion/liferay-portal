@@ -25,6 +25,11 @@
         <span class="icon-bar"></span>
 			</button>
 
+
+      <#if showLanguagePicker>
+        <#include "${full_templates_path}/language_picker.ftl" />
+      </#if>
+
 		</div>
 
 		<div class="collapse navbar-collapse" id="navbar-ctn">
@@ -103,15 +108,6 @@
 			<#if !is_signed_in>
 				<a data-redirect="${is_login_redirect_required?string}" href="${sign_in_url}" id="sign-in" rel="nofollow">${sign_in_text}</a>
 			</#if>
-
-      <#-- <#if showLanguageBar>
-        <div id="show-language">
-          <i aria-hidden="true" class="icon-flag icon-2x"></i>
-          <div class="language-bar">
-            <@liferay_ui["language"]/>
-          </div>
-        </div>
-      </#if> -->
 
 			</ul>
 		</div>

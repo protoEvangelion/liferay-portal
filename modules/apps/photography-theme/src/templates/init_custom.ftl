@@ -5,7 +5,7 @@ This file allows you to override and define new FreeMarker variables.
   year = .now
   phone = getterUtil.getString(themeDisplay.getThemeSetting("phone"))
   email = getterUtil.getString(themeDisplay.getThemeSetting("email"))
-  showLanguageBar = getterUtil.getBoolean(themeDisplay.getThemeSetting("show-language-bar"))
+  showLanguagePicker = getterUtil.getBoolean(themeDisplay.getThemeSetting("show-language-picker"))
   facebook = getterUtil.getBoolean(themeDisplay.getThemeSetting("facebook"))
   facebookUrl = getterUtil.getString(themeDisplay.getThemeSetting("facebook-url"))
   twitter = getterUtil.getBoolean(themeDisplay.getThemeSetting("twitter"))
