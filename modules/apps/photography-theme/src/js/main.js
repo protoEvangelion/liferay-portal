@@ -24,9 +24,9 @@ AUI().ready(function () {
   const paddingSmall = '5px 35px'
   let scrollPosition = 0
   const black = 'rgb(24, 24, 24)'
-  const transparentBlack = 'rgba(0, 0, 0, 0.15)'
+  const transparentWhite = 'rgba(0, 0, 0, 0.15)'
   const white = '#fff'
-  const transparentWhite = 'rgba(255, 255, 255, .8)'
+  const transparentBlack = 'rgba(255, 255, 255, .8)'
 
   // ======================================================
   // Carousel initialization
@@ -52,20 +52,28 @@ AUI().ready(function () {
 
   const changePadding = (size) => {
     size === 'small'
-      ? $('#navigation').css({'padding': paddingSmall})
-      : $('#navigation').css({'padding': paddingLarge})
+      ? $('#navigation').css({ 'padding': paddingSmall })
+      : $('#navigation').css({ 'padding': paddingLarge })
   }
 
   const changeBackground = (color) => {
-    $('.navbar-default').css({'background': color})
+    $('.navbar-default').css({ 'background': color })
   }
 
-  const changeFontColor = (color) => {
-    $('.logo > span, .navbar-nav span, #sign-in, .icon-bar').css({'color': color})
+  const changeFlagSize = (size) => {
+    if (size === 'small') {
+      $('.language-wrapper .triangle').css({ 'border-width': '0 50px 50px 0' })
+      $('.language-wrapper i').css({ 'top': '10px', 'right': '-44px' })
+
+    } else {
+      $('.language-wrapper .triangle').css({ 'border-width': '0 70px 70px 0' })
+      $('.language-wrapper i').css({ 'top': '17px', 'right': '-55px' })
+    }
+
   }
 
   const changeBorder = (color) => {
-    $('#sign-in').css({'border': '1px solid ' + color})
+    $('#sign-in').css({ 'border': '1px solid ' + color })
   }
 
   // ==========================================================
@@ -79,14 +87,14 @@ AUI().ready(function () {
     if (scrollPosition > 50) {
       changePadding('small')
       changeBackground('white')
+      changeFlagSize('small')
       $('body').hasClass('day') ? changeBackground(white) : changeBackground(black)
-      $('body').hasClass('day') ? changeFontColor(black) : changeFontColor(white)
       $('body').hasClass('day') ? changeBorder(black) : changeBorder(white)
 
     } else {
       changePadding('large')
+      changeFlagSize()
       $('body').hasClass('day') ? changeBackground(transparentBlack) : changeBackground(transparentWhite)
-      $('body').hasClass('day') ? changeFontColor(white) : changeFontColor(black)
       $('body').hasClass('day') ? changeBorder(white) : changeBorder(black)
     }
   })
@@ -115,7 +123,7 @@ AUI().ready(function () {
       Y.one('#showModal').on(
         'click',
         function () {
-          $('#bb .form-group').show()
+          $('#bb .form-group, #cb').show()
           modal.show()
         }
       )
@@ -124,7 +132,7 @@ AUI().ready(function () {
 
   // Close button handler
   $('#bb span').click(() => {
-    $('#bb .form-group').hide()
+    $('#bb .form-group, #cb').hide()
   })
 
   const countries = ['ar', 'bg', 'ca', 'cs', 'da', 'de', 'el', 'en', 'es', 'et', 'fa', 'fi', 'fr', 'hi_IN', 'hr', 'hu', 'it', 'ja', 'ko', 'lt', 'nl', 'pl', 'pt_PT', 'ro', 'ru', 'sk', 'sl', 'sr_RS_latin', 'sr_RS', 'sv', 'th', 'tr', 'uk', 'vi', 'zh_CN', 'zh_TW']

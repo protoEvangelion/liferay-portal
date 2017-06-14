@@ -7,7 +7,7 @@
   <div id="bb">
     <div id="cb">
       <div class="form-group">
-        <h3></h3>
+        <h3><@liferay.language key="choose-a-language" /></h3>
         <select class="form-control">
           <option selected="selected" value="en"><@liferay.language key="language.en" /></option>
           <option value="ar"><@liferay.language key="language.ar" /></option>

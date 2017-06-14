@@ -3,6 +3,7 @@ This file allows you to override and define new FreeMarker variables.
 -->
 <#assign
   year = .now
+  colorScheme = getterUtil.getString(themeDisplay.getColorSchemeId())
   phone = getterUtil.getString(themeDisplay.getThemeSetting("phone"))
   email = getterUtil.getString(themeDisplay.getThemeSetting("email"))
   showLanguagePicker = getterUtil.getBoolean(themeDisplay.getThemeSetting("show-language-picker"))

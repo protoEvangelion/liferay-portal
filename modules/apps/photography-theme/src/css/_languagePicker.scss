@@ -15,6 +15,7 @@
       display: inline-block;
       right: 0;
       top: 0;
+      transition: border-width .5s;
     }
 
     .icon-flag {
@@ -22,6 +23,7 @@
       top: 17px;
       right: -55px;
       cursor: pointer;
+      transition: top .5s, right .5s;
     }
   }
 
@@ -36,6 +38,7 @@
     min-height: 250px;
     max-height: 90vh;
     max-width: 97vw;
+    display: none;
   }
 
   .modal-header {

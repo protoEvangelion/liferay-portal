@@ -1,67 +1,78 @@
 body.night {
 
-  #navigation {
+  #navigation,
+  .heading-ctn {
     background-color: $night-transparent-background;
+  }
 
-    .site-name {
-      color: $black;
-    }
+  #navigation .dropdown-menu,
+  footer {
+    background: $night-background;
+  }
 
-    .navbar-nav span {
-      color: $black;
-    }
+  .portlet-content,
+  fieldset .panel-body,
+  .table-hover > tbody > tr:hover {
+    background-color: $night-body-background; // slightly transparent
+  }
 
-    .dropdown-menu {
-      background: $white;
+  #navigation .site-name,
+  #navigation .navbar-nav span,
+  #navigation .dropdown-menu > li > a,
+  #navigation #sign-in,
+  #navigation .heading-ctn,
+  .portlet-content,
+  .fieldset .legend,
+  .calendar-portlet-list-header,
+  .calendar-list-item-label,
+  .control-label,
+  .toggle-switch-label,
+  .toggle-switch-handle,
+  footer,
+  footer .tooltip,
+  footer .social-media-icon,
+  footer .link {
+    color: $night-color;
+  }
 
-      > li > a {
-        color: $black;
-      }
-    }
+  .table-striped > tbody > tr:nth-of-type(odd) {
+    color: $day-color;
 
-    #sign-in {
-      border: 1px solid $black;
-      color: $black;
+    &:hover {
+      color: $night-color;
     }
   }
 
+  .calendar-portlet-list-header:hover,
+  .calendar-list-item-hover {
+    color: $day-color;
+  }
+
+  #sign-in {
+    border: 1px solid $night-background;
+  }
+
   .heading-ctn {
-    background-color: $night-transparent-background;
-    color: $black;
-    position: absolute;
-    width: 100%;
-    padding: 20px;
     bottom: 0;
+    padding: 20px;
+    position: absolute;
     text-align: center;
+    width: 100%;
 
     h2 {
       margin-left: -10px;
     }
   }
 
+  .portlet-content {
+    border-radius: 0;
+  }
+
   footer {
-    background-color: $night-background;
-    color: $night-color;
-
-    .tooltip {
-      color: $night-color;
-    }
-
     .social-media-icon {
-      color: $night-color;
-
       &:hover {
         border: 1px solid $night-color;
       }
     }
-
-    .link {
-      color: $night-color;
-    }
-  }
-
-  .portlet-content.portlet-content-editable {
-    background-color: $night-body-background;
-    color: $night-color;
   }
 }

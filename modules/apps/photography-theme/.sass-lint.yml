@@ -1,5 +1,6 @@
 rules:
   extends-before-mixins: 2
+  force-element-nesting: 0
   indentation:
   - 2
   -

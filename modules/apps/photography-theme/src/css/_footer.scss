@@ -21,12 +21,7 @@ footer {
       position: absolute;
       top: 0;
       transform: translateX(0);
-      transition:
-        left .3s ease-in .3s,
-        opacity .3s ease-in .3s,
-        top .3s ease-in .3s,
-        transform .3s ease-in .3s,
-        visibility .3s linear .3s;
+      transition: opacity .3s ease-in .3s;
       visibility: hidden;
     }
   }
@@ -37,12 +32,7 @@ footer {
     opacity: 1;
     top: -75px;
     transform: translateX(-49%);
-    transition:
-      left .3s ease-in .3s,
-      opacity .3s ease-in .3s,
-      top .3s ease-in .3s,
-      transform .3s ease-in .3s,
-      visibility .3s linear .3s;
+    transition: opacity .5s;
     visibility: visible;
 
   }

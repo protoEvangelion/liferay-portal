@@ -1,68 +1,81 @@
 body.day {
 
-  #navigation {
+  #navigation,
+  .heading-ctn {
     background-color: $day-transparent-background;
+  }
 
-    .site-name {
-      color: $white;
-    }
+  #navigation .dropdown-menu,
+  footer {
+    background: $day-background;
+  }
 
-    .navbar-nav span {
-      color: $white;
-    }
+  .portlet-content,
+  fieldset .panel-body,
+  .table-hover > tbody > tr:hover {
+    background-color: $day-body-background; // slightly transparent
+  }
 
-    .dropdown-menu {
-      background: $black;
+  #navigation .site-name,
+  #navigation .navbar-nav span,
+  #navigation .dropdown-menu > li > a,
+  #navigation #sign-in,
+  #navigation .heading-ctn,
+  .portlet-content,
+  .fieldset .legend,
+  .calendar-portlet-list-header,
+  .calendar-list-item-label,
+  .control-label,
+  .toggle-switch-label,
+  .toggle-switch-handle,
+  footer,
+  footer .tooltip,
+  footer .social-media-icon,
+  footer .link {
+    color: $day-color;
+  }
 
-      > li > a {
-        color: $white;
-      }
-    }
+  .table-striped > tbody > tr:nth-of-type(odd) {
+    color: $night-color;
 
-    #sign-in {
-      border: 1px solid $white;
-      color: $white;
+    &:hover {
+      color: $day-color;
     }
   }
 
+  .calendar-portlet-list-header:hover,
+  .calendar-list-item-hover {
+    color: $night-color;
+  }
+
+  #sign-in {
+    border: 1px solid $day-background;
+  }
+
   .heading-ctn {
-    background-color: $day-transparent-background;
-    color: $white;
-    position: absolute;
-    width: 100%;
-    padding: 20px;
     bottom: 0;
+    padding: 20px;
+    position: absolute;
     text-align: center;
+    width: 100%;
 
     h2 {
       margin-left: -10px;
     }
   }
 
+  .portlet-content {
+    border-radius: 0;
+  }
+
   footer {
-    background-color: $day-background;
-    color: $day-color;
-
-    .tooltip {
-      color: $day-color;
-    }
-
     .social-media-icon {
-      color: $white;
+      color: $day-background;
 
       &:hover {
         border: 1px solid $day-color;
         color: $day-color;
       }
     }
-
-    .link {
-      color: $day-color;
-    }
-  }
-
-  .portlet-content {
-    background-color: $day-body-background;
-    color: $day-color;
   }
 }
