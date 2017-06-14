@@ -1,3 +1,4 @@
+
 AUI().ready(
   'liferay-sign-in-modal',
   function (A) {
@@ -96,62 +97,64 @@ AUI().ready(function () {
 
   YUI().use(
     'aui-modal',
-    function(Y) {
+    function (Y) {
       var modal = new Y.Modal(
         {
-          bodyContent: 'How many pages do you want to print?',
+          boundingBox: '#bb',
           centered: true,
-          destroyOnHide: false,
-          headerContent: '<h3>Print</h3>',
+          contentBox: '#cb',
           modal: true,
-          render: '#modal',
           resizable: {
             handles: 'b, r'
-          },
-          toolbars: {
-            body: [
-              {
-                icon: 'glyphicon glyphicon-file',
-                label: 'Single Page'
-              },
-              {
-                icon: 'glyphicon glyphicon-book',
-                label: 'All Pages'
-              }
-            ]
           },
           visible: false,
           width: 450
         }
       ).render()
 
-      modal.addToolbar(
-        [
-          {
-            label: 'Cancel',
-            on: {
-              click: function() {
-                modal.hide();
-              }
-            }
-          },
-          {
-            label: 'Okay',
-            on: {
-              click: function() {
-                alert('Just an example, there will be no printing here.');
-              }
-            }
-          }
-        ]
-      );
-
       Y.one('#showModal').on(
         'click',
-        function() {
-          modal.show();
+        function () {
+          $('#bb .form-group').show()
+          modal.show()
         }
-      );
+      )
     }
-  );
+  )
+
+  // Close button handler
+  $('#bb span').click(() => {
+    $('#bb .form-group').hide()
+  })
+
+  const countries = ['ar', 'bg', 'ca', 'cs', 'da', 'de', 'el', 'en', 'es', 'et', 'fa', 'fi', 'fr', 'hi_IN', 'hr', 'hu', 'it', 'ja', 'ko', 'lt', 'nl', 'pl', 'pt_PT', 'ro', 'ru', 'sk', 'sl', 'sr_RS_latin', 'sr_RS', 'sv', 'th', 'tr', 'uk', 'vi', 'zh_CN', 'zh_TW']
+
+  // Save handler for language picker
+  $('#save').click(() => {
+    const location = window.location
+    const protocol = location.protocol
+    const port = location.port ? ':' + location.port : ''
+    const hostname = location.hostname
+    const countryCode = $('#cb').find(':selected').val()
+    const path = location.pathname
+    const query = location.search
+
+    const pathArr = path.split('/')
+    let newPath = countryCode + path
+
+    // Check if there is already a language in the url path
+    // If so let's replace it with the user's choice
+
+    if (pathArr[1] !== undefined) {
+      countries.forEach(country => {
+        if (country === pathArr[1]) {
+          pathArr[1] = countryCode
+          newPath = pathArr.join('/').slice(1)
+        }
+      })
+    }
+
+    const newUrl = protocol + '//' + hostname + port + '/' + newPath + query
+    location.href = newUrl
+  })
 })

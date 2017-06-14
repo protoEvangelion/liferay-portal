@@ -1,7 +1,12 @@
 
 <nav class="navbar navbar-default" id="navigation" role="navigation">
+  <#if showLanguagePicker>
+    <#include "${full_templates_path}/language_picker.ftl" />
+  </#if>
 	<div class="container-fluid" id="nav-ctn">
-		<div class="navbar-header">
+
+
+    <div class="navbar-header">
 			<div class="navbar-brand logo" style="height:${logoHeight};">
 
         <#if showLogoImage>
@@ -24,11 +29,6 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
 			</button>
-
-
-      <#if showLanguagePicker>
-        <#include "${full_templates_path}/language_picker.ftl" />
-      </#if>
 
 		</div>
 
