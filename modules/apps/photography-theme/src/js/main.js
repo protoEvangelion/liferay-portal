@@ -2,6 +2,22 @@
 AUI().ready(
   'liferay-sign-in-modal',
   function (A) {
+    // if ($('body').hasClass('night')) {
+    //   const url = window.location.href
+    //   if (!url.includes('?color_scheme=night')) {
+    //     window.location = window.location.href + '?color_scheme=night'
+    //   }
+    // }
+    // <#assign
+    //   url=request.attributes.CURRENT_URL
+    // />
+    // <#if url?contains("COLOR_SCHEME")>
+    //   <#assign
+    //       queryIndex=url?index_of("COLOR_SCHEME")
+    //       valIndex=queryIndex + 16
+    //   />
+    // </#if>
+
     var signIn = A.one('#sign-in')
 
     if (signIn && signIn.getData('redirect') !== 'true') {
