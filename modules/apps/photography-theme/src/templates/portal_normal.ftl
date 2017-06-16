@@ -15,6 +15,7 @@
 
 	<link rel="stylesheet" type="text/css" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
 	<script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.js"></script>
+  <script src="https://unpkg.com/scrollreveal/dist/scrollreveal.min.js"></script>
 
 	<@liferay_util["include"] page=top_head_include />
 
@@ -36,15 +37,14 @@
 
 <body class="${css_class}">
 
-<@liferay_ui["quick-access"] contentId="#main-content" />
+  <@liferay_ui["quick-access"] contentId="#main-content" />
 
-<@liferay_util["include"] page=body_top_include />
+  <@liferay_util["include"] page=body_top_include />
 
-<@liferay.control_menu />
-
+  <@liferay.control_menu />
 
 	<div id="wrapper">
-		<div class="photography-theme-ctn">
+		<div class="photography-theme-container">
 			<header id="banner" role="banner">
 
 				<#if has_navigation && is_setup_complete>
@@ -58,6 +58,7 @@
 
 	<section id="content">
 		<h1 class="hide-accessible">${the_title}</h1>
+
 		<#if selectable>
 			<@liferay_util["include"] page=content_include />
 
@@ -73,25 +74,17 @@
 
 	</section>
 
-	<footer class="photography-theme-ctn">
+	<footer class="photography-theme-container">
 
 		<#if has_navigation>
-			<#include "${full_templates_path}/footer_navigation.ftl" />
+			<#include "${full_templates_path}/footer.ftl" />
 		</#if>
 
 	</footer>
 
-<@liferay_util["include"] page=body_bottom_include />
+  <@liferay_util["include"] page=body_bottom_include />
 
-<@liferay_util["include"] page=bottom_include />
-
-<!-- inject:js -->
-<!-- endinject -->
-
-<script type="text/javascript">
-
-</script>
-
+  <@liferay_util["include"] page=bottom_include />
 
 </body>
 

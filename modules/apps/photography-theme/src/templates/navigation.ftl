@@ -3,15 +3,24 @@
   <#if showLanguagePicker>
     <#include "${full_templates_path}/language_picker.ftl" />
   </#if>
-	<div class="container-fluid" id="nav-ctn">
-
-
+	<div class="container-fluid" id="nav-container">
     <div class="navbar-header">
-			<div class="navbar-brand logo" style="height:${logoHeight};">
+			<div class="navbar-brand logo">
 
         <#if showLogoImage>
-          <a class="logo-link" href="${site_default_url}" title="<@liferay.language_format arguments="${site_name}" key="go-to-x" />" width="${logoWidth}">
-            <img alt="${logo_description}" class="site-logo" height="${logoHeight}" src="${site_logo}" />
+
+          <#if logoSize = "small">
+            <#assign size="25px" />
+
+          <#elseif logoSize = "medium">
+            <#assign size="50px" />
+
+          <#else>
+            <#assign size="100px" />
+          </#if>
+
+          <a class="logo-link" href="${site_default_url}" title="<@liferay.language_format arguments="${site_name}" key="go-to-x" />">
+            <img alt="${logo_description}" class="site-logo" height="${size}" src="${site_logo}" />
           </a>
         </#if>
 
@@ -23,7 +32,7 @@
 
 			</div>
 
-			<button aria-expanded="false" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-ctn" type="button">
+			<button aria-expanded="false" class="navbar-toggle collapsed" data-target="#navbar-container" data-toggle="collapse" type="button">
 				<span class="sr-only">Toggle navigation</span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -32,7 +41,7 @@
 
 		</div>
 
-		<div class="collapse navbar-collapse" id="navbar-ctn">
+		<div class="collapse navbar-collapse" id="navbar-container">
 
 			<h1 class="hide-accessible"><@liferay.language key="navigation" /></h1>
 

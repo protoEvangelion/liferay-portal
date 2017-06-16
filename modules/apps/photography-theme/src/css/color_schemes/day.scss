@@ -1,7 +1,7 @@
 body.day {
 
   #navigation,
-  .heading-ctn {
+  .heading-container {
     background-color: $day-transparent-background;
   }
 
@@ -20,7 +20,7 @@ body.day {
   #navigation .navbar-nav span,
   #navigation .dropdown-menu > li > a,
   #navigation #sign-in,
-  #navigation .heading-ctn,
+  #navigation .heading-container,
   .portlet-content h1,
   .portlet-content h2,
   .portlet-content h3,
@@ -60,7 +60,7 @@ body.day {
     border: 1px solid $day-background;
   }
 
-  .heading-ctn {
+  .heading-container {
     bottom: 0;
     padding: 20px;
     position: absolute;

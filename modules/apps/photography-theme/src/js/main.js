@@ -2,23 +2,7 @@
 AUI().ready(
   'liferay-sign-in-modal',
   function (A) {
-    // if ($('body').hasClass('night')) {
-    //   const url = window.location.href
-    //   if (!url.includes('?color_scheme=night')) {
-    //     window.location = window.location.href + '?color_scheme=night'
-    //   }
-    // }
-    // <#assign
-    //   url=request.attributes.CURRENT_URL
-    // />
-    // <#if url?contains("COLOR_SCHEME")>
-    //   <#assign
-    //       queryIndex=url?index_of("COLOR_SCHEME")
-    //       valIndex=queryIndex + 16
-    //   />
-    // </#if>
-
-    var signIn = A.one('#sign-in')
+    const signIn = A.one('#sign-in')
 
     if (signIn && signIn.getData('redirect') !== 'true') {
       signIn.plug(Liferay.SignInModal)
@@ -27,14 +11,9 @@ AUI().ready(
 )
 
 AUI().ready(function () {
-  // new WOW.WOW().init()
-
   // ======================================================
   // Variables and state initialization
   // ======================================================
-
-  const status = 'Up and running'
-  console.log(status)
 
   const paddingLarge = '20px 42px'
   const paddingSmall = '5px 35px'
@@ -45,12 +24,19 @@ AUI().ready(function () {
   const transparentBlack = 'rgba(255, 255, 255, .8)'
 
   // ======================================================
+  // Animation initialization
+  // ======================================================
+
+  window.sr = ScrollReveal()
+  sr.reveal('.portlet-content')
+
+  // ======================================================
   // Carousel initialization
   // ======================================================
 
   const carousels = document.querySelectorAll('.carousel')
 
-  for (let i=0, len = carousels.length; i < len; i++) {
+  for (let i = 0, len = carousels.length; i < len; i++) {
     let carousel = carousels[i]
     new Flickity( carousel, {
       autoPlay: 5000,
@@ -85,7 +71,6 @@ AUI().ready(function () {
       $('.language-wrapper .triangle').css({ 'border-width': '0 70px 70px 0' })
       $('.language-wrapper i').css({ 'top': '17px', 'right': '-55px' })
     }
-
   }
 
   const changeBorder = (color) => {
@@ -93,7 +78,7 @@ AUI().ready(function () {
   }
 
   // ==========================================================
-  // adjusts the navbar css based on SCROLL position
+  // Adjusts the navbar css based on SCROLL position
   // ==========================================================
 
   $(window).scroll(() => {
@@ -104,14 +89,14 @@ AUI().ready(function () {
       changePadding('small')
       changeBackground('white')
       changeFlagSize('small')
-      $('body').hasClass('day') ? changeBackground(white) : changeBackground(black)
       $('body').hasClass('day') ? changeBorder(black) : changeBorder(white)
+      $('body').hasClass('day') ? changeBackground(white) : changeBackground(black)
 
     } else {
       changePadding('large')
       changeFlagSize()
-      $('body').hasClass('day') ? changeBackground(transparentBlack) : changeBackground(transparentWhite)
       $('body').hasClass('day') ? changeBorder(white) : changeBorder(black)
+      $('body').hasClass('day') ? changeBackground(transparentBlack) : changeBackground(transparentWhite)
     }
   })
 

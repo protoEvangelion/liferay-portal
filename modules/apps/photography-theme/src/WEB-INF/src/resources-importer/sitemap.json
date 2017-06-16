@@ -1,0 +1,43 @@
+{
+  "layoutTemplateId": "1_column",
+  "publicPages": [
+    {
+      "columns": [
+        [
+          {
+            "portletId": "com_liferay_journal_content_web_portlet_JournalContentPortlet",
+            "portletPreferences": {
+              "articleId": "image-carousel.xml",
+              "groupId": "${groupId}"
+            }
+          },
+          {
+            "portletId": "com_liferay_journal_content_web_portlet_JournalContentPortlet",
+            "portletPreferences": {
+              "articleId": "image-tiles.xml",
+              "groupId": "${groupId}"
+            }
+          },
+          {
+            "portletId": "com_liferay_journal_content_web_portlet_JournalContentPortlet",
+            "portletPreferences": {
+              "articleId": "header.xml",
+              "groupId": "${groupId}"
+            }
+          },
+          {
+            "portletId": "com_liferay_journal_content_web_portlet_JournalContentPortlet",
+            "portletPreferences": {
+              "articleId": "text-block.xml",
+              "groupId": "${groupId}"
+            }
+          }
+        ]
+      ],
+      "friendlyURL": "/welcome",
+      "name": "Welcome",
+      "title": "Welcome"
+    }
+  ]
+
+}

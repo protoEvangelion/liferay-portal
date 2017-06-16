@@ -8,6 +8,20 @@
   width: 100%;
   z-index: 3;
 
+  .navbar-right {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    @media(max-width: $break-point) {
+      position: static;
+      right: auto;
+      top: auto;
+      transform: none;
+    }
+  }
+
   .navbar-toggle {
     margin: 15px 0;
   }
@@ -49,7 +63,7 @@
     text-decoration: none;
     transition: color .5s, border .5s;
 
-    @media(max-width: 768px) {
+    @media(max-width: $break-point) {
       top: 80%;
     }
   }

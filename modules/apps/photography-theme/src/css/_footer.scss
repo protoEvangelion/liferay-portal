@@ -8,11 +8,11 @@ footer {
     }
   }
 
-  .bottom-ctn > a {
+  .bottom-container > a {
     text-decoration: none;
   }
 
-  .icon-ctn {
+  .icon-container {
     position: relative;
 
     .tooltip {
@@ -26,7 +26,7 @@ footer {
     }
   }
 
-  .icon-ctn:hover .tooltip {
+  .icon-container:hover .tooltip {
     display: inline;
     left: 50%;
     opacity: 1;
@@ -70,7 +70,7 @@ footer {
     }
   }
 
-  .link-ctn {
+  .link-container {
     cursor: default;
   }
 

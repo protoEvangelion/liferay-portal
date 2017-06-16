@@ -1,9 +1,10 @@
 <div class="language-wrapper">
-  <div class="flag-ctn" data-toggle="modal" data-target="#flagModal" type="button">
-    <div id="showModal" class="triangle">
-      <i class="icon-flag" aria-hidden="true"></i>
+  <div class="flag-container" data-target="#flagModal" data-toggle="modal" type="button">
+    <div class="triangle" id="showModal">
+      <i aria-hidden="true" class="icon-flag"></i>
     </div>
   </div>
+
   <div id="bb">
     <div id="cb">
       <div class="form-group">
@@ -46,8 +47,9 @@
           <option value="zh_TW"><@liferay.language key="language.zh_TW" /></option>
         </select>
       </div>
+
       <div class="text-center">
-        <button id="save" class="btn btn-primary" type="button"><@liferay.language key="save" /></button>
+        <button class="btn btn-primary" id="save" type="button"><@liferay.language key="save" /></button>
       </div>
     </div>
   </div>
