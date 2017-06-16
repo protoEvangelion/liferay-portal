@@ -2,7 +2,7 @@
 
 <root available-locales="en_US" default-locale="en_US">
 	<dynamic-element name="Height" type="ddm-number" index-type="keyword" instance-id="magy">
-		<dynamic-content language-id="en_US"><![CDATA[100]]></dynamic-content>
+		<dynamic-content language-id="en_US"><![CDATA[95]]></dynamic-content>
 	</dynamic-element>
 	<dynamic-element name="HeightUnits" type="list" index-type="keyword" instance-id="krdd">
 		<dynamic-content language-id="en_US"><![CDATA[vh]]></dynamic-content>
@@ -12,10 +12,10 @@
 			<dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
 		</dynamic-element>
 		<dynamic-element name="heading1" instance-id="ijgl" type="text" index-type="keyword">
-			<dynamic-content language-id="en_US"><![CDATA[Together Forever]]></dynamic-content>
+			<dynamic-content language-id="en_US"><![CDATA[Header]]></dynamic-content>
 		</dynamic-element>
 		<dynamic-element name="heading2" instance-id="ohsf" type="text" index-type="keyword">
-			<dynamic-content language-id="en_US"><![CDATA[Living the Dream]]></dynamic-content>
+			<dynamic-content language-id="en_US"><![CDATA[Subheader]]></dynamic-content>
 		</dynamic-element>
 		<dynamic-content language-id="en_US"><![CDATA[https://s20.postimg.org/ruh60impp/lights.jpg]]></dynamic-content>
 	</dynamic-element>
@@ -24,10 +24,10 @@
 			<dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
 		</dynamic-element>
 		<dynamic-element name="heading1" instance-id="qlag" type="text" index-type="keyword">
-			<dynamic-content language-id="en_US"><![CDATA[Life]]></dynamic-content>
+			<dynamic-content language-id="en_US"><![CDATA[Header]]></dynamic-content>
 		</dynamic-element>
 		<dynamic-element name="heading2" instance-id="hhby" type="text" index-type="keyword">
-			<dynamic-content language-id="en_US"><![CDATA[In Full]]></dynamic-content>
+			<dynamic-content language-id="en_US"><![CDATA[Subheader]]></dynamic-content>
 		</dynamic-element>
 		<dynamic-content language-id="en_US"><![CDATA[https://s20.postimg.org/6v1290l19/alps.jpg]]></dynamic-content>
 	</dynamic-element>
@@ -36,10 +36,10 @@
 			<dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
 		</dynamic-element>
 		<dynamic-element name="heading1" instance-id="jlge" type="text" index-type="keyword">
-			<dynamic-content language-id="en_US"><![CDATA[Life]]></dynamic-content>
+			<dynamic-content language-id="en_US"><![CDATA[Header]]></dynamic-content>
 		</dynamic-element>
 		<dynamic-element name="heading2" instance-id="ctom" type="text" index-type="keyword">
-			<dynamic-content language-id="en_US"><![CDATA[In Full]]></dynamic-content>
+			<dynamic-content language-id="en_US"><![CDATA[Subheader]]></dynamic-content>
 		</dynamic-element>
 		<dynamic-content language-id="en_US"><![CDATA[https://s20.postimg.org/z96hsw8l9/kiss.jpg]]></dynamic-content>
 	</dynamic-element>

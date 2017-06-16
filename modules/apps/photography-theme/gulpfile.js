@@ -1,5 +1,7 @@
 require('dotenv').config()
 const gulp = require('gulp')
+const postcss = require('gulp-postcss')
+const autoprefixer = require('autoprefixer')
 const liferayThemeTasks = require('liferay-theme-tasks')
 const path = require('path')
 const fs = require('fs')
@@ -9,13 +11,17 @@ const commandLineArgs = require('command-line-args')
 const optionDefinitions = [
   { name: 'translate', alias: 't', type: Boolean }
 ]
-const options = commandLineArgs(optionDefinitions)
-
+const opts = commandLineArgs(optionDefinitions)
 
 liferayThemeTasks.registerTasks({
   gulp: gulp,
-  hookFn: function (gulp) {
-    if (options.translate) {
+  hookFn: function (gulp, options) {
+    // gulp.hook('after:build:move-compiled-css', function (done) {
+    //   passOptions(options)
+    //   done()
+    // })
+
+    if (opts.translate) {
       gulp.hook('before:deploy', function (done) {
         gulp.start('add-text-to-language-properties-file')
         done()
@@ -26,6 +32,19 @@ liferayThemeTasks.registerTasks({
     }
   }
 })
+
+const passOptions = (options) => {
+  gulp.task('post-css', function () {
+    const plugins = [
+      autoprefixer({browsers: ['last 1 version']})
+    ]
+    console.log('options pathbuild', options.pathBuild)
+    return gulp.src(options.pathBuild + '/*.css')
+      .pipe(postcss(plugins))
+      .pipe(gulp.dest(options.pathBuild + '/css'))
+  })
+  gulp.start('post-css')
+}
 
 gulp.task('add-text-to-language-properties-file', function () {
   const dir = path.resolve(__dirname, './src/WEB-INF/src/content/Language')

@@ -11,17 +11,21 @@
 @import 'textBlock';
 @import 'languagePicker';
 
-html {
+html { // Page and portlet adjustments
   font-size: 1.15vw !important;
   height: 100% !important;
   width: 100% !important;
+
+  body {
+    padding-bottom: 0;
+  }
 
   #wrapper {
     padding: 0;
   }
 
-  .content {
-    min-height: 50vh !important;
+  #content {
+    min-height: 50vh;
   }
 
   .row { // Fixes horizontal scroll
@@ -34,6 +38,15 @@ html {
 
   .portlet-content {
     border-radius: 0;
+  }
+
+  #_com_liferay_web_form_web_portlet_WebFormPortlet_fm,
+  .basic-text {
+    padding: 50px;
+  }
+
+  .lfr-asset-item {
+    margin-top: 20px;
   }
 
   @media screen and (max-width: $break-point) {

@@ -13,6 +13,7 @@
     "version": "7.0"
   },
   "devDependencies": {
+    "autoprefixer": "^7.1.1",
     "axios": "^0.16.1",
     "command-line-args": "^4.0.6",
     "dotenv": "^4.0.0",
@@ -23,6 +24,7 @@
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
     "gulp": "^3.8.10",
+    "gulp-postcss": "^7.0.0",
     "liferay-theme-deps-7.0": "~1.0.0",
     "liferay-theme-tasks": "*",
     "mstranslator": "^3.0.0",
