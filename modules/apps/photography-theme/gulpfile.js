@@ -1,7 +1,7 @@
 require('dotenv').config()
 const gulp = require('gulp')
 const postcss = require('gulp-postcss')
-const autoprefixer = require('autoprefixer')
+const autoprefixer = require('gulp-autoprefixer')
 const liferayThemeTasks = require('liferay-theme-tasks')
 const path = require('path')
 const fs = require('fs')
@@ -16,10 +16,10 @@ const opts = commandLineArgs(optionDefinitions)
 liferayThemeTasks.registerTasks({
   gulp: gulp,
   hookFn: function (gulp, options) {
-    // gulp.hook('after:build:move-compiled-css', function (done) {
-    //   passOptions(options)
-    //   done()
-    // })
+    gulp.hook('after:build:remove-old-css-dir', function (done) {
+      passOptions(options)
+      done()
+    })
 
     if (opts.translate) {
       gulp.hook('before:deploy', function (done) {
@@ -35,12 +35,9 @@ liferayThemeTasks.registerTasks({
 
 const passOptions = (options) => {
   gulp.task('post-css', function () {
-    const plugins = [
-      autoprefixer({browsers: ['last 1 version']})
-    ]
-    console.log('options pathbuild', options.pathBuild)
-    return gulp.src(options.pathBuild + '/*.css')
-      .pipe(postcss(plugins))
+    console.log('options pathbuild', options.pathSrc)
+    return gulp.src(options.pathBuild + '/css/main.css')
+      .pipe(autoprefixer({ browsers: ['last 2 versions'] }))
       .pipe(gulp.dest(options.pathBuild + '/css'))
   })
   gulp.start('post-css')
