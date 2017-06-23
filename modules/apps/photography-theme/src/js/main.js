@@ -1,10 +1,10 @@
 
-Liferay.on('allPortletsReady', function(){
+AUI().ready(function(){
   // new WOW.WOW().init()
   // ======================================================
   // Variables and state initialization
   // ======================================================
-  const hi = 'hello'
+  const hi = 'goodmorning'
   
   console.log(hi)
   const breakPoint = 765
@@ -19,33 +19,20 @@ Liferay.on('allPortletsReady', function(){
   // ======================================================
 
   // carousel initialization
-  const flkty = new Flickity(document.getElementById('main-carousel'), {
-		autoPlay: 5000,
-		pauseAutoPlayOnHover: false
-	})
-/*
-  $('#main-carousel').slick({
-    arrows: false,
-    autoplay: true,
-    autoplaySpeed: 10000,
-    pauseOnHover: false,
-    pauseOnFocus: false,
-    waitForAnimate: false,
-  })
-  
+
+  const flkty = new Flickity('.carousel', {
+    autoPlay: 5000,
+    pauseAutoPlayOnHover: false,
+    pageDots: false, 
+    contain: true
+  })  
 
   // carousel navigation
-  $('.arrow-ctn.right').click(() => {
-    $('#main-carousel').slick('slickNext')
-  })
-  $('.arrow-ctn.left').click(() => {
-    $('#main-carousel').slick('slickPrev')
-  })
 
-  $('.fa-angle-down').on('click', () => {
+  $('.icon-angle-down').on('click', () => {
     $('html,body').animate({scrollTop:$('#media-tiles').offset().top}, 500)
   })
-*/
+
 
   
   // ==========================================================
@@ -53,14 +40,14 @@ Liferay.on('allPortletsReady', function(){
   // ==========================================================
 
   // Small screen mode menu button click OPEN event listener
-  $('.fa-bars').click(() => {
+  $('.bars').click(() => {
     $('#main-navbar').css({
       'background': 'white',
       'color': 'black',
       'height': '80vh'
     })
-    $('.fa-bars').hide()
-    $('.fa-times, #main-navbar > ul > li, #menu-icon').show()
+    $('.bars').hide()
+    $('.times, #main-navbar > ul > li, #menu-icon').show()
     $('#nav-logo, #main-navbar > ul > li').css({'color': 'black'})
     $('#menu-icon').css({'display': 'inline-block'})
     $('.social-ctn').css({
@@ -96,7 +83,7 @@ Liferay.on('allPortletsReady', function(){
   })
 
   // Small screen mode menu button click CLOSE event listener
-  $('.fa-times').click(() => {
+  $('.times').click(() => {
     $('#main-navbar > ul > li, #menu-icon').hide()
 
     if (scrollPosition < 50) {
@@ -112,29 +99,30 @@ Liferay.on('allPortletsReady', function(){
       })
       $('#nav-logo, #main-navbar > ul > li').css({'color': 'black'})
     }
-    $('.fa-bars').show()
-    $('.fa-times').hide()
+    $('.bars').show()
+    $('.times').hide()
     navbarModalOpen = false
   })
 
   // Navbar helper functions
-  const changePadding = () => {
-    $('#main-navbar').css({'padding': paddingLarge})
+  const changePadding = (size) => {
+    size === 'small'
+      ? $('#main-navbar').css({'padding': paddingSmall})
+      : $('#main-navbar').css({'padding': paddingLarge})
+  }
+
+  const changeBackground = (color) => {
+    $('#main-navbar, #nav-logo').css({'background': color})
   }
 
   const changeFontColor = (color) => {
-    $('#main-navbar, #nav-logo').css({
-      'background': 'none',
-      'color': color
-    })
-    $('#main-navbar > ul > li, #main-navbar > ul > li > a').css({'color': color})
+    $('#nav-logo, #main-navbar > ul > li, #main-navbar > ul > li > a').css({'color': color})
     currentColor = color
   }
 
   const changeIconColor = (color) => {
-    $('.arrow-ctn.left > i').css({'color': color})
-    $('.arrow-ctn.right > i').css({'color': color})
-    $('.fa-angle-down').css({'color': color})
+    $('.flickity-prev-next-button .arrow').css({'fill': color})
+    $('.icon-angle-down').css({'color': color})
     currentColor = color
   }
 
@@ -147,42 +135,39 @@ Liferay.on('allPortletsReady', function(){
     scrollPosition = $(window).scrollTop()
 
     if (scrollPosition > 50 && $(window).width() > breakPoint) {
-      $('#main-navbar').css({
-        'background': 'rgb(24, 24, 24)',
-        'color': 'white',
-        'padding': paddingSmall
-      })
-      $('#nav-logo, #main-navbar > ul > li').css({'color': 'white'})
-
-    } else if (scrollPosition > 50 && $(window).width() < breakPoint) {
-      $('#main-navbar').css({
-        'background': 'white',
-        'color': 'black',
-        'padding': paddingSmall
-      })
-      $('#nav-logo').css({'color': 'black'})
+      changePadding('small')
+      changeBackground('black')
+      changeFontColor('white')
 
     } else if (scrollPosition < 50 && $(window).width() > breakPoint) {
-      changePadding()
+      changePadding('large')
+      changeBackground('none')
       changeFontColor(currentColor)
 
+    } else if (scrollPosition > 50 && $(window).width() < breakPoint) {
+      changePadding('small')
+      changeBackground('white')
+      changeFontColor('black')
+
     } else if (scrollPosition < 50 && $(window).width() < breakPoint && !navbarModalOpen) {
-      $('#main-navbar, #nav-logo').css({
-        'background': 'none',
-        'color': currentColor
-      })
+      changePadding('small')
+      changeBackground('none')
+      changeFontColor(currentColor)
     }
   })
 
   // changes font & icon color depending on the image
-  /* $('#main-carousel').on('afterChange', function (e, slick, currentSlide, nextSlide) {
+  flkty.on('select', function() {
+    const slide = flkty.selectedIndex
 
+    console.log('index', flkty.selectedIndex, navbarModalOpen)
+    
     if (scrollPosition < 50 && !navbarModalOpen) {
 
-      if (currentSlide === 0 || currentSlide === 1) {
+      if (slide === 0 || slide === 1) {
         changeFontColor('white')
         changeIconColor('white')
-      } else if (currentSlide === 2) {
+      } else if (slide === 2) {
         changeFontColor('black')
         changeIconColor('black')
       } else {
@@ -192,16 +177,16 @@ Liferay.on('allPortletsReady', function(){
 
     } else {
 
-      if (currentSlide === 0 || currentSlide === 1) {
+      if (slide === 0 || slide === 1) {
         changeIconColor('white')
-      } else if (currentSlide === 2) {
+      } else if (slide === 2) {
         changeIconColor('black')
       } else {
         changeIconColor('white')
       }
     }
   })
-  */
+  
 
   $(window).resize(function(e) {
     // Resize the mini tiles on bottom of home page into squares on window resize
@@ -215,8 +200,8 @@ Liferay.on('allPortletsReady', function(){
 
     // adjusts the navbar menu as window width fluctuates past the breakpoint
     if (e.target.innerWidth > breakPoint) {
-      $('.fa-bars').hide()
-      $('.fa-times').hide()
+      $('#main-navbar > .bars').hide()
+      $('.times').hide()
       $('#portfolio-dropdown > i, #portfolio-dropdown > p').hide()
 
       navbarModalOpen = false
@@ -245,7 +230,7 @@ Liferay.on('allPortletsReady', function(){
       }
 
     } else if (!navbarModalOpen) {
-      $('.fa-bars').show()
+      $('#main-navbar > .bars').show()
       $('#main-navbar > ul > li').css({'display': 'none'})
 
       if (scrollPosition < 50) {

@@ -12,6 +12,7 @@
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
+  height: 103vh;
 }
 
 @mixin tile-generator($url) {
@@ -48,4 +49,8 @@
   @media screen and (max-width: $break-point) {
     display: none;
   }
+}
+
+#hello {
+  display: block;
 }
