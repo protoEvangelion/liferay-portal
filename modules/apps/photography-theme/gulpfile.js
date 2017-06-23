@@ -16,11 +16,6 @@ const opts = commandLineArgs(optionDefinitions)
 liferayThemeTasks.registerTasks({
   gulp: gulp,
   hookFn: function (gulp, options) {
-    // gulp.hook('after:build:move-compiled-css', function (done) {
-    //   passOptions(options)
-    //   done()
-    // })
-
     if (opts.translate) {
       gulp.hook('before:deploy', function (done) {
         gulp.start('add-text-to-language-properties-file')

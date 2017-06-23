@@ -46,7 +46,7 @@
 				</div>
 			</header>
 
-			<section class="container-fluid-1280" id="content">
+			<main class="container-fluid-1280" id="content">
 				<h1 class="hide-accessible">${the_title}</h1>
 
 				<#if selectable>
@@ -60,7 +60,7 @@
 						<@liferay_util["include"] page=content_include />
 					</@>
 				</#if>
-			</section>
+			</main>
 
 
 			<footer id="footer" role="contentinfo">

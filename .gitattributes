@@ -1,6 +1,2 @@
-*.pom	text eol=lf
-ivy.xml	text eol=lf
-* text=auto
-* css=auto
-* ftl=auto
-* js=auto
+*.pom text eol=lf
+ivy.xml text eol=lf
