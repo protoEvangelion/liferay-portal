@@ -1,86 +1,57 @@
 body.night {
+	.calendar-list-item-hover, .calendar-portlet-list-header:hover {
+		color: $day-color;
+	}
 
-  #navigation,
-  .heading-container {
-    background-color: $night-transparent-background;
-  }
+	footer {
+		.social-media-icon {
+			&:hover {
+				border: 1px solid $night-color;
+			}
+		}
+	}
 
-  #navigation .dropdown-menu,
-  footer {
-    background: $night-background;
-  }
+	.heading-container {
+		bottom: 0;
+		padding: 20px;
+		position: absolute;
+		text-align: center;
+		width: 100%;
 
-  .portlet-content,
-  fieldset .panel-body,
-  .table-hover > tbody > tr:hover {
-    background-color: $night-body-background; // slightly transparent
-  }
+		h2 {
+			margin-left: -10px;
+		}
+	}
 
-  #navigation .site-name,
-  #navigation .navbar-nav span,
-  #navigation .dropdown-menu > li > a,
-  #navigation #sign-in,
-  #navigation .heading-container,
-  .portlet-content h1,
-  .portlet-content h2,
-  .portlet-content h3,
-  .portlet-content h4,
-  .portlet-content h4,
-  .portlet-content h5,
-  .portlet-content p,
-  .portlet-content li,
-  .portlet-content,
-  .fieldset .legend,
-  .calendar-portlet-list-header,
-  .calendar-list-item-label,
-  .control-label,
-  .toggle-switch-label,
-  .toggle-switch-handle,
-  footer,
-  footer .tooltip,
-  footer .social-media-icon,
-  footer .link {
-    color: $night-color;
-  }
+	.portlet-content {
+		border-radius: 0;
+	}
 
-  .table-striped > tbody > tr:nth-of-type(odd) {
-    color: $day-color;
+	footer, #navigation .dropdown-menu {
+		background: $night-background;
+	}
 
-    &:hover {
-      color: $night-color;
-    }
-  }
+	.heading-container, #navigation {
+		background-color: $night-transparent-background;
+	}
 
-  .calendar-portlet-list-header:hover,
-  .calendar-list-item-hover {
-    color: $day-color;
-  }
+	.control-label, .calendar-list-item-label, .fieldset .legend, footer,  footer .link, footer .tooltip, #navigation .dropdown-menu > li > a, #navigation .heading-container, #navigation .navbar-nav span, #navigation #sign-in, #navigation .site-name, .portlet-content, .portlet-content h1, .portlet-content h2, .portlet-content h3, .portlet-content h4, .portlet-content h5, .portlet-content li, .portlet-content p, .calendar-portlet-list-header, .toggle-switch-handle, .toggle-switch-label {
+		color: $night-color;
+	}
 
-  #sign-in {
-    border: 1px solid $night-background;
-  }
+		.table-striped > tbody > tr:nth-of-type(odd) {
+		color: $day-color;
 
-  .heading-container {
-    bottom: 0;
-    padding: 20px;
-    position: absolute;
-    text-align: center;
-    width: 100%;
+		&:hover {
+			color: $night-color;
+		}
+	}
 
-    h2 {
-      margin-left: -10px;
-    }
-  }
+	fieldset .panel-body, .portlet-content, .table-hover > tbody > tr:hover {
+		background-color: $night-body-background;
+	}
 
-  .portlet-content {
-    border-radius: 0;
-  }
-
-  footer {
-    .social-media-icon {
-      &:hover {
-        border: 1px solid $night-color;
-      }
-    }
-  }
+	#sign-in {
+		border: 1px solid $night-background;
+	}
 }

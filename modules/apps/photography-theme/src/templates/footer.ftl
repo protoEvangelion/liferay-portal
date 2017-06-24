@@ -2,7 +2,6 @@
 	<div class="container text-center">
 		<div class="row">
 			<div class="col-xs-12">
-
 				<ul class="list-inline" role="menubar">
 					<#foreach nav_item in nav_items>
 						<li class="link-container" role="presentation">
@@ -19,68 +18,82 @@
 
 				<div class="bottom-container">
 
+					<#if dribbble>
+						<a class="icon-container" href="${dribbbleUrl}">
+							<i aria-hidden="true" class="icon-2x icon-dribbble social-media-icon social-media-icon--dribbble"></i>
+
+							<h3 class="tooltip"><@liferay.language key="dribbble" /></h3>
+
+						</a>
+					</#if>
+
 					<#if facebook>
 						<a class="icon-container" href="${facebookUrl}">
-							<i aria-hidden="true" class="icon-facebook icon-2x social-media-icon social-media-icon--facebook facebook"></i>
-              <h3 class="tooltip"><@liferay.language key="facebook" /></h3>
-						</a>
-					</#if>
+							<i aria-hidden="true" class="icon-facebook facebook icon-2x social-media-icon social-media-icon--facebook"></i>
 
-					<#if twitter>
-						<a class="icon-container" href="${twitterUrl}">
-							<i aria-hidden="true" class="icon-twitter icon-2x social-media-icon social-media-icon--twitter"></i>
-              <h3 class="tooltip"><@liferay.language key="twitter" /></h3>
-						</a>
-					</#if>
+							<h3 class="tooltip"><@liferay.language key="facebook" /></h3>
 
-					<#if instagram>
-						<a class="icon-container" href="${instagramUrl}">
-							<i aria-hidden="true" class="icon-instagram icon-2x social-media-icon social-media-icon--instagram"></i>
-              <h3 class="tooltip"><@liferay.language key="instagram" /></h3>
 						</a>
 					</#if>
 
 					<#if github>
 						<a class="icon-container" href="${githubUrl}">
-							<i aria-hidden="true" class="icon-github icon-2x social-media-icon social-media-icon--github"></i>
-              <h3 class="tooltip"><@liferay.language key="github" /></h3>
+							<i aria-hidden="true" class="icon-2x icon-github  social-media-icon social-media-icon--github"></i>
+
+							<h3 class="tooltip"><@liferay.language key="github" /></h3>
+
 						</a>
 					</#if>
 
-					<#if youtube>
-						<a class="icon-container" href="${youtubeUrl}">
-							<i aria-hidden="true" class="icon-youtube icon-2x social-media-icon social-media-icon--youtube"></i>
-              <h3 class="tooltip"><@liferay.language key="youtube" /></h3>
+					<#if instagram>
+						<a class="icon-container" href="${instagramUrl}">
+							<i aria-hidden="true" class="icon-2x icon-instagram social-media-icon social-media-icon--instagram"></i>
+
+							<h3 class="tooltip"><@liferay.language key="instagram" /></h3>
+
 						</a>
 					</#if>
 
 					<#if linkedin>
 						<a class="icon-container" href="${linkedinUrl}">
-							<i aria-hidden="true" class="icon-linkedin icon-2x social-media-icon social-media-icon--linkedin"></i>
-              <h3 class="tooltip"><@liferay.language key="linkedin" /></h3>
+							<i aria-hidden="true" class="icon-2x icon-linkedin social-media-icon social-media-icon--linkedin"></i>
+
+							<h3 class="tooltip"><@liferay.language key="linkedin" /></h3>
+
 						</a>
 					</#if>
 
-					<#if dribbble>
-						<a class="icon-container" href="${dribbbleUrl}">
-							<i aria-hidden="true" class="icon-dribbble icon-2x social-media-icon social-media-icon--dribbble"></i>
-              <h3 class="tooltip"><@liferay.language key="dribbble" /></h3>
+					<#if twitter>
+						<a class="icon-container" href="${twitterUrl}">
+							<i aria-hidden="true" class="icon-2x icon-twitter social-media-icon social-media-icon--twitter"></i>
+
+							<h3 class="tooltip"><@liferay.language key="twitter" /></h3>
+
+						</a>
+					</#if>
+
+					<#if youtube>
+						<a class="icon-container" href="${youtubeUrl}">
+							<i aria-hidden="true" class="icon-2x icon-youtube social-media-icon social-media-icon--youtube"></i>
+
+							<h3 class="tooltip"><@liferay.language key="youtube" /></h3>
+
 						</a>
 					</#if>
 
 				</div>
 
-        <#if showContactInfo>
-          <h4 id="contact">${email} | ${phone}</h4>
-        </#if>
+				<#if showContactInfo>
+					<h4 id="contact">${email} | ${phone}</h4>
+				</#if>
 
-        <#if showCopyrightInfo>
-				  <h4>© ${year?string.yyyy} ${site_name}</h4>
-        </#if>
+				<#if showCopyrightInfo>
+					<h4>© ${year?string.yyyy} ${site_name}</h4>
+				</#if>
 
-        <#if showAttributionInfo>
-          <h5><@liferay.language key="created-with-love" /></h5>
-        </#if>
+				<#if showAttributionInfo>
+					<h5><@liferay.language key="created-with-love" /></h5>
+				</#if>
 
 			</div>
 		</div>

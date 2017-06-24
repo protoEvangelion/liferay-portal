@@ -1,38 +1,73 @@
 <section class="media-tiles">
 	<div class="tile-container">
+
 		<figure>
-			<div class="tile" style="background-image: url(${heading1.image1.getData()})">
+			<div class="tile" style="background-image: url(${heading_1.image_1.getData()})">
 				<figcaption>
-					<h3 class="tile-header" style="color:${heading1.textColor1.getData()};">${heading1.getData()}</h3>
-					<h5 class="italic" style="color:${heading1.textColor1.getData()};">${heading1.caption1.getData()}</h5>
+
+				<#if heading_1 != ''>
+					<h3 class="tile-header" style="color:${heading_1.text_color_1.getData()};">${heading_1.getData()}</h3>
+				</#if>
+
+				<#if heading_1.caption_1 != ''>
+					<h5 style="color:${heading_1.text_color_1.getData()};">${heading_1.caption_1.getData()}</h5>
+				</#if>
 				</figcaption>
 			</div>
 		</figure>
+
 		<figure>
-			<div class="tile" style="background-image: url(${heading2.image2.getData()})">
-    			<figcaption>
-    				<h3 class="tile-header" style="color:${heading2.textColor2.getData()};">${heading2.getData()}</h3>
-    				<h5 class="italic" style="color:${heading2.textColor2.getData()};">${heading2.caption2.getData()}</h5>
-    			</figcaption>
+			<div class="tile" style="background-image: url(${heading_2.image_2.getData()})">
+				<figcaption>
+
+				<#if heading_2 != ''>
+					<h3 class="tile-header" style="color:${heading_2.text_color_2.getData()};">${heading_2.getData()}</h3>
+				</#if>
+
+				<#if heading_2.caption_2 != ''>
+					<h5 style="color:${heading_2.text_color_2.getData()};">${heading_2.caption_2.getData()}</h5>
+				</#if>
+
+				</figcaption>
 			</div>
 		</figure>
+
 	</div>
+
 	<div class="tile-container">
+
 		<figure>
-			<div class="tile" style="background-image: url(${heading3.image3.getData()})">
-    			<figcaption>
-    				<h3 class="tile-header" style="color:${heading3.textColor3.getData()};">${heading3.getData()}</h3>
-    				<h5 class="italic" style="color:${heading3.textColor3.getData()};">${heading3.caption3.getData()}</h5>
-    			</figcaption>
+			<div class="tile" style="background-image: url(${heading_3.image_3.getData()})">
+				<figcaption>
+
+				<#if heading_3 != ''>
+					<h3 class="tile-header" style="color:${heading_3.text_color_3.getData()};">${heading_3.getData()}</h3>
+				</#if>
+
+				<#if heading_3.caption_3 != ''>
+					<h5 style="color:${heading_3.text_color_3.getData
+					()};">${heading_3.caption_3.getData()}</h5>
+				</#if>
+
+				</figcaption>
 			</div>
 		</figure>
+
 		<figure>
-			<div class="tile" style="background-image: url(${heading4.image4.getData()})">
-    			<figcaption>
-    				<h3 class="tile-header" style="color:${heading4.textColor4.getData()};">${heading4.getData()}</h3>
-    				<h5 class="italic" style="color:${heading4.textColor4.getData()};">${heading4.caption4.getData()}</h5>
-    			</figcaption>
-    		</div>
+			<div class="tile" style="background-image: url(${heading_4.image_4.getData()})">
+				<figcaption>
+
+				<#if heading_4 != ''>
+					<h3 class="tile-header" style="color:${heading_4.text_color_4.getData()};">${heading_4.getData()}</h3>
+				</#if>
+
+				<#if heading_4.caption_4 != ''>
+					<h5 style="color:${heading_4.text_color_4.getData()};">${heading_4.caption_4.getData()}</h5>
+				</#if>
+
+				</figcaption>
+			</div>
 		</figure>
+
 	</div>
 </section>

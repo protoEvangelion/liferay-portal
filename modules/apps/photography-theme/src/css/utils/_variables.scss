@@ -1,18 +1,14 @@
-$white: #fff;
 $black: rgb(24, 24, 24);
-
-$transparent: rgba(0, 0, 0, 0);
-$transparent-overlay: rgba(255, 255, 255, .5);
-
-$night-background: $black;
-$night-body-background: rgba(36, 37, 31, .9);
-$night-transparent-background: rgba(0, 0, 0, .15);
-$night-color: $white;
-
-$day-background: $white;
-$day-body-background: rgba(255, 255, 255, .6);
-$day-transparent-background: rgba(255, 255, 255, .8);
-$day-color: $black;
-
 $break-point: 768px;
+$white: #FFF;
+$day-background: $white;
+$day-body-background: rgba(255, 255, 255, 0.6);
+$day-color: $black;
+$day-transparent-background: rgba(255, 255, 255, 0.8);
 $icon-height: 40px;
+$night-background: $black;
+$night-body-background: rgba(36, 37, 31, 0.9);
+$night-color: $white;
+$night-transparent-background: rgba(0, 0, 0, 0.15);
+$transparent: rgba(0, 0, 0, 0);
+$transparent-overlay: rgba(255, 255, 255, 0.5);

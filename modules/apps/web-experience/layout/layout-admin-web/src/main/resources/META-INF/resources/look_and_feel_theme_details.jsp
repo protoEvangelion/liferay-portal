@@ -21,8 +21,8 @@ String themeId = ParamUtil.getString(request, "themeId");
 
 Layout selLayout = layoutsAdminDisplayContext.getSelLayout();
 LayoutSet selLayoutSet = layoutsAdminDisplayContext.getSelLayoutSet();
-Theme selTheme = null;
 
+Theme selTheme = null;
 ColorScheme selColorScheme = null;
 
 boolean useDefaultThemeSettings = false;
@@ -102,12 +102,12 @@ List<ColorScheme> colorSchemes = selTheme.getColorSchemes();
 					<img alt="" src="<%= themeDisplay.getCDNBaseURL() %><%= HtmlUtil.escapeAttribute(selTheme.getStaticResourcePath()) %><%= HtmlUtil.escapeAttribute(curColorScheme.getColorSchemeThumbnailPath()) %>/thumbnail.png" title="<%= HtmlUtil.escapeAttribute(curColorScheme.getName()) %>" />
 				</div>
 			</div>
+
 		<%
 		}
 		%>
 
 	</div>
-
 </c:if>
 
 <%

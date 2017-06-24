@@ -8,40 +8,40 @@
 	<title>${the_title} - ${company_name}</title>
 
 	<meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta content="IE=edge" http-equiv="X-UA-Compatible">
 	<meta content="initial-scale=1.0, width=device-width" name="viewport" />
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css" rel="stylesheet">
 
-	<link rel="stylesheet" type="text/css" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+	<link href="https://unpkg.com/flickity@2/dist/flickity.min.css" rel="stylesheet" type="text/css">
 	<script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.js"></script>
-  <script src="https://unpkg.com/scrollreveal/dist/scrollreveal.min.js"></script>
+	<script src="https://unpkg.com/scrollreveal/dist/scrollreveal.min.js"></script>
 
 	<@liferay_util["include"] page=top_head_include />
 
-  <style>
-    <#if !showPortletBorders>
-      .portlet-content.portlet-content-editable {
-        border: none;
-      }
-    </#if>
+	<style>
 
-    body {
-      background: ${backgroundColor1};
-      background: -webkit-linear-gradient(to ${backgroundGradientDirection}, ${backgroundColor1}, ${backgroundColor2}) fixed;
-      background: linear-gradient(to ${backgroundGradientDirection}, ${backgroundColor1}, ${backgroundColor2}) fixed;
-    }
-  </style>
+		<#if !showPortletBorders>
+			.portlet-content.portlet-content-editable {
+				border: 0;
+			}
+		</#if>
 
+		body {
+			background: ${backgroundColor1};
+			background: -webkit-linear-gradient(to ${backgroundGradientDirection}, ${backgroundColor1}, ${backgroundColor2}) fixed;
+			background: linear-gradient(to ${backgroundGradientDirection}, ${backgroundColor1}, ${backgroundColor2}) fixed;
+		}
+	</style>
 </head>
 
 <body class="${css_class}">
 
-  <@liferay_ui["quick-access"] contentId="#main-content" />
+	<@liferay_ui["quick-access"] contentId="#main-content" />
 
-  <@liferay_util["include"] page=body_top_include />
+	<@liferay_util["include"] page=body_top_include />
 
-  <@liferay.control_menu />
+	<@liferay.control_menu />
 
 	<div id="wrapper">
 		<div class="photography-theme-container">
@@ -54,7 +54,6 @@
 			</header>
 		</div>
 	</div>
-
 
 	<section id="content">
 		<h1 class="hide-accessible">${the_title}</h1>
@@ -82,10 +81,9 @@
 
 	</footer>
 
-  <@liferay_util["include"] page=body_bottom_include />
+	<@liferay_util["include"] page=body_bottom_include />
 
-  <@liferay_util["include"] page=bottom_include />
+	<@liferay_util["include"] page=bottom_include />
 
 </body>
-
 </html>

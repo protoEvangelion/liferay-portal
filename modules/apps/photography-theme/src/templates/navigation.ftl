@@ -1,28 +1,28 @@
-
 <nav class="navbar navbar-default" id="navigation" role="navigation">
-  <#if showLanguagePicker>
-    <#include "${full_templates_path}/language_picker.ftl" />
-  </#if>
+
+	<#if showLanguagePicker>
+		<#include "${full_templates_path}/language_picker.ftl" />
+	</#if>
+
 	<div class="container-fluid" id="nav-container">
-    <div class="navbar-header">
-			<div class="navbar-brand logo">
+		<div class="navbar-header">
+			<div class="logo navbar-brand">
 
-        <#if showLogoImage>
+				<#if showLogoImage>
 
-          <#if logoSize = "small">
-            <#assign size="25px" />
+					<#assign size="100px" />
 
-          <#elseif logoSize = "medium">
-            <#assign size="50px" />
+					<#if logoSize = "small">
+						<#assign size="25px" />
 
-          <#else>
-            <#assign size="100px" />
-          </#if>
+					<#elseif logoSize = "medium">
+						<#assign size="50px" />
+					</#if>
 
-          <a class="logo-link" href="${site_default_url}" title="<@liferay.language_format arguments="${site_name}" key="go-to-x" />">
-            <img alt="${logo_description}" class="site-logo" height="${size}" src="${site_logo}" />
-          </a>
-        </#if>
+					<a class="logo-link" href="${site_default_url}" title="<@liferay.language_format arguments="${site_name}" key="go-to-x" />">
+						<img alt="${logo_description}" class="site-logo" height="${size}" src="${site_logo}" />
+					</a>
+				</#if>
 
 				<#if show_site_name>
 					<span class="site-name" title="<@liferay.language_format arguments="${site_name}" key="go-to-x" />">
@@ -32,11 +32,11 @@
 
 			</div>
 
-			<button aria-expanded="false" class="navbar-toggle collapsed" data-target="#navbar-container" data-toggle="collapse" type="button">
+			<button aria-expanded="false" class="collapsed navbar-toggle" data-target="#navbar-container" data-toggle="collapse" type="button">
 				<span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
 			</button>
 
 		</div>
@@ -64,9 +64,7 @@
 						/>
 
 					<#else>
-						<#assign
-							nav_item_css_class = "dropdown"
-						/>
+						<#assign nav_item_css_class = "dropdown" />
 
 					</#if>
 
@@ -74,7 +72,7 @@
 
 						<#if nav_item.hasChildren()>
 
-							<a aria-labelledby="layout_${nav_item.getLayoutId()}"class="dropdown-toggle" data-toggle="dropdown"  ${nav_item_attr_has_popup} href="${nav_item.getURL()}" ${nav_item.getTarget()} role="button">
+							<a aria-labelledby="layout_${nav_item.getLayoutId()}"class="dropdown-toggle" data-toggle="dropdown"	${nav_item_attr_has_popup} href="${nav_item.getURL()}" ${nav_item.getTarget()} role="button">
 								<span>
 									<@liferay_theme["layout-icon"] layout=nav_item_layout /> ${nav_item.getName()}
 								</span>

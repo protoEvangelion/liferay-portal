@@ -1,169 +1,144 @@
-
 AUI().ready(
-  'liferay-sign-in-modal',
-  function (A) {
-    const signIn = A.one('#sign-in')
+	'liferay-sign-in-modal',
+	function (A) {
+		const signIn = A.one('#sign-in');
 
-    if (signIn && signIn.getData('redirect') !== 'true') {
-      signIn.plug(Liferay.SignInModal)
-    }
-  }
-)
+		if (signIn && signIn.getData('redirect') !== 'true') {
+			signIn.plug(Liferay.SignInModal);
+		}
+	}
+);
 
 AUI().ready(function () {
-  // ======================================================
-  // Variables and state initialization
-  // ======================================================
+	const black = 'rgb(24, 24, 24)';
+	const paddingLarge = '20px 42px';
+	const paddingSmall = '5px 35px';
+	let scrollPosition = 0;
+	const transparentBlack = 'rgba(255, 255, 255, .8)';
+	const transparentWhite = 'rgba(0, 0, 0, 0.15)';
+	const white = '#FFF';
 
-  const paddingLarge = '20px 42px'
-  const paddingSmall = '5px 35px'
-  let scrollPosition = 0
-  const black = 'rgb(24, 24, 24)'
-  const transparentWhite = 'rgba(0, 0, 0, 0.15)'
-  const white = '#fff'
-  const transparentBlack = 'rgba(255, 255, 255, .8)'
+	window.sr = ScrollReveal();
+	sr.reveal('.portlet-content');
 
-  // ======================================================
-  // Animation initialization
-  // ======================================================
+	const carousels = document.querySelectorAll('.carousel');
 
-  window.sr = ScrollReveal()
-  sr.reveal('.portlet-content')
+	for (let i = 0, len = carousels.length; i < len; i++) {
+		let carousel = carousels[i];
+		new Flickity(
+			carousel,
+			{
+				autoPlay: 5000,
+				contain: true,
+				pageDots: false,
+				pauseAutoPlayOnHover: false,
+				setGallerySize: false,
+				resize: false
+			}
+		);
+	}
 
-  // ======================================================
-  // Carousel initialization
-  // ======================================================
+	const changePadding = (size) => {
+		size === 'small' ? AUI.$('#navigation').css({'padding': paddingSmall}) : AUI.$('#navigation').css({'padding': paddingLarge});
+	}
 
-  const carousels = document.querySelectorAll('.carousel')
+	const changeBackground = (color) => {
+		AUI.$('.navbar-default').css({'background': color});
+	}
 
-  for (let i = 0, len = carousels.length; i < len; i++) {
-    let carousel = carousels[i]
-    new Flickity( carousel, {
-      autoPlay: 5000,
-      pauseAutoPlayOnHover: false,
-      pageDots: false,
-      contain: true,
-      resize: false,
-      setGallerySize: false
-    })
-  }
+	const changeFlagSize = (size) => {
+		if (size === 'small') {
+			AUI.$('.language-wrapper .triangle').css({'border-width': '0 50px 50px 0'});
+			AUI.$('.language-wrapper i').css({'top': '10px', 'right': '-44px'});
 
-  // ==========================================================
-  // Navbar functionality & helper functions
-  // ==========================================================
+		}
+		else {
+			AUI.$('.language-wrapper .triangle').css({'border-width': '0 70px 70px 0'});
+			AUI.$('.language-wrapper i').css({'top': '17px', 'right': '-55px'});
+		}
+	}
 
-  const changePadding = (size) => {
-    size === 'small'
-      ? $('#navigation').css({ 'padding': paddingSmall })
-      : $('#navigation').css({ 'padding': paddingLarge })
-  }
+	const changeBorder = (color) => {
+		AUI.$('#sign-in').css({'border': '1px solid ' + color});
+	}
 
-  const changeBackground = (color) => {
-    $('.navbar-default').css({ 'background': color })
-  }
+	AUI.$(window).scroll(() => {
 
-  const changeFlagSize = (size) => {
-    if (size === 'small') {
-      $('.language-wrapper .triangle').css({ 'border-width': '0 50px 50px 0' })
-      $('.language-wrapper i').css({ 'top': '10px', 'right': '-44px' })
+		scrollPosition = AUI.$(window).scrollTop();
 
-    } else {
-      $('.language-wrapper .triangle').css({ 'border-width': '0 70px 70px 0' })
-      $('.language-wrapper i').css({ 'top': '17px', 'right': '-55px' })
-    }
-  }
+		if (scrollPosition > 50) {
+			changePadding('small');
+			changeBackground('white');
+			changeFlagSize('small');
+			AUI.$('body').hasClass('day') ? changeBorder(black) : changeBorder(white);
+			AUI.$('body').hasClass('day') ? changeBackground(white) : changeBackground(black);
 
-  const changeBorder = (color) => {
-    $('#sign-in').css({ 'border': '1px solid ' + color })
-  }
+		}
+		else {
+			changePadding('large');
+			changeFlagSize();
+			AUI.$('body').hasClass('day') ? changeBorder(white) : changeBorder(black);
+			AUI.$('body').hasClass('day') ? changeBackground(transparentBlack) : changeBackground(transparentWhite);
+		}
+	});
 
-  // ==========================================================
-  // Adjusts the navbar css based on SCROLL position
-  // ==========================================================
+	AUI().use(
+		'aui-modal',
+		function (Y) {
+			var modal = new Y.Modal(
+				{
+					boundingBox: '#bounding-box',
+					centered: true,
+					contentBox: '#content-box',
+					modal: true,
+					resizable: {
+						handles: 'b, r'
+					},
+					visible: false,
+					width: 450
+				}
+			).render();
 
-  $(window).scroll(() => {
+			Y.one('#showModal').on(
+				'click',
+				function () {
+					AUI.$('#bounding-box .form-group, #content-box').show();
+					modal.show();
+				}
+			);
+		}
+	);
 
-    scrollPosition = $(window).scrollTop()
+	AUI.$('#bounding-box span').click(() => {
+		AUI.$('#bounding-box .form-group, #content-box').hide();
+	});
 
-    if (scrollPosition > 50) {
-      changePadding('small')
-      changeBackground('white')
-      changeFlagSize('small')
-      $('body').hasClass('day') ? changeBorder(black) : changeBorder(white)
-      $('body').hasClass('day') ? changeBackground(white) : changeBackground(black)
+	const countries = ['ar', 'bg', 'ca', 'cs', 'da', 'de', 'el', 'en', 'es', 'et', 'fa', 'fi', 'fr', 'hi_IN', 'hr', 'hu', 'it', 'ja', 'ko', 'lt', 'nl', 'pl', 'pt_PT', 'ro', 'ru', 'sk', 'sl', 'sr_RS_latin', 'sr_RS', 'sv', 'th', 'tr', 'uk', 'vi', 'zh_CN', 'zh_TW'];
 
-    } else {
-      changePadding('large')
-      changeFlagSize()
-      $('body').hasClass('day') ? changeBorder(white) : changeBorder(black)
-      $('body').hasClass('day') ? changeBackground(transparentBlack) : changeBackground(transparentWhite)
-    }
-  })
+	AUI.$('#save').click(() => {
+		const location = window.location;
+		const protocol = location.protocol;
+		const port = location.port ? ':' + location.port : '';
+		const hostname = location.hostname;
+		const countryCode = AUI.$('#content-box').find(':selected').val();
+		const path = location.pathname;
+		const query = location.search;
 
-  // ==========================================================
-  // Language Bar Functionality
-  // ==========================================================
+		const pathArr = path.split('/');
+		let newPath = countryCode + path;
 
-  YUI().use(
-    'aui-modal',
-    function (Y) {
-      var modal = new Y.Modal(
-        {
-          boundingBox: '#bb',
-          centered: true,
-          contentBox: '#cb',
-          modal: true,
-          resizable: {
-            handles: 'b, r'
-          },
-          visible: false,
-          width: 450
-        }
-      ).render()
+		if (pathArr[1] !== undefined) {
+			countries.forEach(country => {
 
-      Y.one('#showModal').on(
-        'click',
-        function () {
-          $('#bb .form-group, #cb').show()
-          modal.show()
-        }
-      )
-    }
-  )
+				if (country === pathArr[1]) {
+					pathArr[1] = countryCode;
+					newPath = pathArr.join('/').slice(1);
+				}
 
-  // Close button handler
-  $('#bb span').click(() => {
-    $('#bb .form-group, #cb').hide()
-  })
+			})
+		}
 
-  const countries = ['ar', 'bg', 'ca', 'cs', 'da', 'de', 'el', 'en', 'es', 'et', 'fa', 'fi', 'fr', 'hi_IN', 'hr', 'hu', 'it', 'ja', 'ko', 'lt', 'nl', 'pl', 'pt_PT', 'ro', 'ru', 'sk', 'sl', 'sr_RS_latin', 'sr_RS', 'sv', 'th', 'tr', 'uk', 'vi', 'zh_CN', 'zh_TW']
-
-  // Save handler for language picker
-  $('#save').click(() => {
-    const location = window.location
-    const protocol = location.protocol
-    const port = location.port ? ':' + location.port : ''
-    const hostname = location.hostname
-    const countryCode = $('#cb').find(':selected').val()
-    const path = location.pathname
-    const query = location.search
-
-    const pathArr = path.split('/')
-    let newPath = countryCode + path
-
-    // Check if there is already a language in the url path
-    // If so let's replace it with the user's choice
-
-    if (pathArr[1] !== undefined) {
-      countries.forEach(country => {
-        if (country === pathArr[1]) {
-          pathArr[1] = countryCode
-          newPath = pathArr.join('/').slice(1)
-        }
-      })
-    }
-
-    const newUrl = protocol + '//' + hostname + port + '/' + newPath + query
-    location.href = newUrl
-  })
+		const newUrl = protocol + '//' + hostname + port + '/' + newPath + query;
+		location.href = newUrl;
+	})
 })

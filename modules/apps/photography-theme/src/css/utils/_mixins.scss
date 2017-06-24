@@ -1,53 +1,23 @@
-@mixin font-generator($type) {
-  font-family: map-get($families, $type);
-  font-size: map-get($sizes, $type);
-  font-weight: map-get($weights, $type);
-  letter-spacing: map-get($spacing, $type);
-  line-height: map-get($line-height, $type);
-  text-transform: map-get($capitalization, $type);
+@mixin break-point-hide {
+	@media screen and (max-width: $break-point) {
+		display: none;
+	}
 }
 
 @mixin font-family-generator($type) {
-  font-family: map-get($families, $type);
+	font-family: map-get($families, $type);
 }
 
-@mixin icon-generator($size, $padding, $name, $color) {
-  cursor: pointer;
-  height: $size + $padding * 2;
-  padding: $padding;
-  width: $size + $padding * 2;
-
-  span {
-    background-image: lx-icon($name, $color);
-    background-repeat: no-repeat;
-    background-size: contain;
-    display: inline-block;
-    height: $size;
-    width: $size;
-  }
+@mixin font-generator($type) {
+	font-family: map-get($families, $type);
+	font-size: map-get($sizes, $type);
+	font-weight: map-get($weights, $type);
+	letter-spacing: map-get($spacing, $type);
+	line-height: map-get($line-height, $type);
+	text-transform: map-get($capitalization, $type);
 }
 
 @mixin image-generator($url) {
-  background: url($url);
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: cover;
-}
-
-@mixin wide-image-generator($url) {
-  @include image-generator($url);
-  height: 70%;
-  width: 66%;
-}
-
-@mixin mini-image-generator($url) {
-  @include image-generator($url);
-  height: 20%;
-  width: 100%;
-}
-
-@mixin break-point-hide {
-  @media screen and (max-width: $break-point) {
-    display: none;
-  }
+	background: url($url) no-repeat center center;
+	background-size: cover;
 }

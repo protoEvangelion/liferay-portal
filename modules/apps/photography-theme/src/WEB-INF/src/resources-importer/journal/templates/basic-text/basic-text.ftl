@@ -1,3 +1,3 @@
 <div>
-    ${HTML9ly8.getData()}
+	${WYSIWYG_editor.getData()}
 </div>
