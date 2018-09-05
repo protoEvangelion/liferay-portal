@@ -1,0 +1,46 @@
+<definition>
+	<command name="addMessage">
+		<execute macro="JSONMBMessage#getmessageId">
+			<return name="messageId" />
+		</execute>
+
+		<execute macro="JSONCompany#getPortalURL">
+			<return name="portalURL" />
+		</execute>
+
+		<var name="curl"><![CDATA[
+			${portalURL}/api/jsonws/mbmessage/add-message \
+				-u test@liferay.com:test \
+				-d parentMessageId=${messageId} \
+				-d subject=<script>alert(123);</script> \
+				-d body=<script>alert(123);</script> \
+				-d format=bbcode \
+				-d inputStreamOVPs=[] \
+				-d anonymous=true \
+				-d priority=0 \
+				-d allowPingbacks=true \
+				-d entryURL=javascript:alert(3)
+		]]></var>
+
+		<echo message="## Adding a 'Message' with the following info using JSONWS:" />
+
+		<echo message="## * Parent messageId: ${messageId}" />
+
+		<echo message="## * Subject: ${threadSubject}" />
+
+		<echo message="## * Body: ${threadBody}" />
+
+		<var method="JSONCurlUtil#post('${curl}', '$[\'messageId\']')" name="messageId" />
+	</command>
+
+	<command name="getmessageId">
+
+		<var method="selenium#getLocation()" name="messageBoardsThreadURL" />
+
+		<var method="PropsUtil#get('portal.url')" name="portalURL" />
+
+		<var method="StringUtil#replace('${messageBoardsThreadURL}', '${portalURL}/web/guest/message-boards-page/-/message_boards/message/', '')" name="messageId" />
+
+		<return value="${messageId}" />
+	</command>
+</definition>

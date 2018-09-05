@@ -1,4 +1,5 @@
 <definition component-name="portal-deployment-mysql">
+	<property name="database.types" value="mysql" />
 	<property name="portal.release" value="true" />
 	<property name="portal.upstream" value="true" />
 	<property name="setup.wizard.enabled" value="true" />
@@ -13,8 +14,9 @@
 	</command>
 
 	<command name="MySQLtoMySQLEditedAdministratorUser" priority="4">
-		<execute macro="SetupWizard#viewDefaultPortalNamePG" />
 		<property name="test.name.skip.portal.instance" value="SetupWizardMySQL#MySQLtoMySQLEditAdministratorUser" />
+
+		<execute macro="SetupWizard#viewDefaultPortalNamePG" />
 
 		<execute macro="SetupWizard#configureSampleDataPG">
 			<var name="addSampleData" value="false" />
@@ -28,11 +30,11 @@
 
 		<execute macro="SetupWizard#configureDatabasePG">
 			<var name="databaseName" value="lportal" />
-			<var name="databasePassword" property-value="database.mysql.password" />
+			<var method="PropsUtil#get('database.mysql.password')" name="databasePassword" />
 			<var name="databaseType" value="MySQL" />
-			<var name="databaseUserName" property-value="database.mysql.username" />
-			<var name="jdbcDriverClassName" property-value="database.mysql.driver" />
-			<var name="jdbcURL" property-value="database.mysql.url" />
+			<var method="PropsUtil#get('database.mysql.username')" name="databaseUserName" />
+			<var method="PropsUtil#get('database.mysql.driver')" name="jdbcDriverClassName" />
+			<var method="PropsUtil#get('database.mysql.url')" name="jdbcURL" />
 		</execute>
 
 		<execute macro="SetupWizard#finishConfigurationPG" />
@@ -50,13 +52,40 @@
 			<var name="databaseType" value="${databaseType}" />
 		</execute>
 
-		<execute macro="User#firstLoginPG">
-			<var name="setupWizardEnabled" value="true" />
-			<var name="userEmailAddress" value="testsetupwizard@liferay.com" />
+		<if>
+			<isset var="virtualHostsURL" />
+			<then>
+				<execute macro="Navigator#openSpecificURL">
+					<var name="url" value="${virtualHostsURL}" />
+				</execute>
+			</then>
+			<else>
+				<execute macro="Navigator#openURL" />
+			</else>
+		</if>
+
+		<execute macro="User#acceptEndUserLicenseAgreement" />
+
+		<execute macro="User#resetPassword">
+			<var name="resetPassword" value="${resetPassword}" />
+			<var name="setupWizardEnabled" value="${setupWizardEnabled}" />
+			<var name="syntaxCheckingEnabled" value="${syntaxCheckingEnabled}" />
 		</execute>
 
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="Account Settings" />
+		<execute macro="User#answerPasswordReminder" />
+
+		<execute function="AssertElementPresent" locator1="UserBar#USER_AVATAR_IMAGE" />
+
+		<execute macro="User#viewLoggedInPG">
+			<var name="userFirstName" value="TestSetupWizardFN" />
+		</execute>
+
+		<execute macro="Navigator#openURL" />
+
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="My Account" />
+			<var name="panel" value="User" />
+			<var name="portlet" value="Account Settings" />
 		</execute>
 
 		<execute function="AssertTextEquals" locator1="TextInput#EMAIL_ADDRESS" value1="testsetupwizard@liferay.com" />
@@ -67,7 +96,7 @@
 
 	<command name="MySQLtoMySQLLportal1" priority="5">
 		<property name="databases.size" value="1" />
-		<property name="portal.acceptance.tomcat.mysql" value="true" />
+		<property name="portal.acceptance" value="true" />
 		<property name="test.name.skip.portal.instance" value="SetupWizardMySQL#MySQLtoMySQLLportal1" />
 
 		<execute macro="SetupWizard#configurePG">
@@ -75,11 +104,11 @@
 			<var name="administratorFirstName" value="Test" />
 			<var name="administratorLastName" value="Test" />
 			<var name="databaseName" value="lportal1" />
-			<var name="databasePassword" property-value="database.mysql.password" />
+			<var method="PropsUtil#get('database.mysql.password')" name="databasePassword" />
 			<var name="databaseType" value="MySQL" />
-			<var name="databaseUserName" property-value="database.mysql.username" />
-			<var name="jdbcDriverClassName" property-value="database.mysql.driver" />
-			<var name="jdbcURL" property-value="database.mysql.url" />
+			<var method="PropsUtil#get('database.mysql.username')" name="databaseUserName" />
+			<var method="PropsUtil#get('database.mysql.driver')" name="jdbcDriverClassName" />
+			<var method="PropsUtil#get('database.mysql.url')" name="jdbcURL" />
 		</execute>
 
 		<execute macro="Smoke#viewWelcomePage">
@@ -92,7 +121,7 @@
 
 	<command name="MySQLtoMySQLLportal1SampleDataDisabled" priority="5">
 		<property name="databases.size" value="1" />
-		<property name="portal.acceptance.tomcat.mysql" value="true" />
+		<property name="portal.acceptance" value="true" />
 		<property name="test.name.skip.portal.instance" value="SetupWizardMySQL#MySQLtoMySQLLportal1SampleDataDisabled" />
 
 		<execute macro="SetupWizard#configurePG">
@@ -101,11 +130,11 @@
 			<var name="administratorFirstName" value="Test" />
 			<var name="administratorLastName" value="Test" />
 			<var name="databaseName" value="lportal1" />
-			<var name="databasePassword" property-value="database.mysql.password" />
+			<var method="PropsUtil#get('database.mysql.password')" name="databasePassword" />
 			<var name="databaseType" value="MySQL" />
-			<var name="databaseUserName" property-value="database.mysql.username" />
-			<var name="jdbcDriverClassName" property-value="database.mysql.driver" />
-			<var name="jdbcURL" property-value="database.mysql.url" />
+			<var method="PropsUtil#get('database.mysql.username')" name="databaseUserName" />
+			<var method="PropsUtil#get('database.mysql.driver')" name="jdbcDriverClassName" />
+			<var method="PropsUtil#get('database.mysql.url')" name="jdbcURL" />
 		</execute>
 
 		<execute macro="Smoke#viewWelcomePage" />

@@ -14,12 +14,14 @@
 
 package com.liferay.portal.search.solr.internal.suggest;
 
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.suggest.NGramHolder;
 import com.liferay.portal.kernel.search.suggest.NGramHolderBuilder;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.solr.suggest.NGramQueryBuilder;
 
 import java.util.Iterator;
@@ -27,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.solr.client.solrj.SolrQuery;
 
 import org.osgi.service.component.annotations.Component;
@@ -77,9 +80,7 @@ public class NGramQueryBuilderImpl implements NGramQueryBuilder {
 			addOrQuerySeparator(sb);
 		}
 
-		sb.append(Field.SPELL_CHECK_WORD);
-		sb.append(StringPool.COLON);
-		sb.append(input);
+		addQuery(sb, Field.SPELL_CHECK_WORD, input);
 
 		solrQuery.setQuery(sb.toString());
 
@@ -136,33 +137,39 @@ public class NGramQueryBuilderImpl implements NGramQueryBuilder {
 		sb.append(_OR_QUERY_SEPARATOR);
 	}
 
-	protected void addQuery(
-		StringBundler sb, String fieldName, String fieldValue) {
-
-		sb.append(fieldName);
+	protected void addQuery(StringBundler sb, String name, String value) {
+		sb.append(name);
 		sb.append(StringPool.COLON);
-		sb.append(fieldValue);
+
+		value = QueryParser.escape(value);
+
+		value = _defuseUpperCaseLuceneBooleanOperators(value);
+
+		value = _encloseMultiword(
+			value, StringPool.OPEN_PARENTHESIS, StringPool.CLOSE_PARENTHESIS);
+
+		sb.append(value);
 	}
+
+	private String _defuseUpperCaseLuceneBooleanOperators(String value) {
+		return StringUtil.toLowerCase(value);
+	}
+
+	private String _encloseMultiword(String value, String open, String close) {
+		if (value.indexOf(CharPool.SPACE) == -1) {
+			return value;
+		}
+
+		return open + value + close;
+	}
+
+	private static final String _OR_QUERY_SEPARATOR = " OR ";
 
 	@Reference(
 		cardinality = ReferenceCardinality.OPTIONAL,
 		policy = ReferencePolicy.DYNAMIC,
 		policyOption = ReferencePolicyOption.GREEDY
 	)
-	protected void setNGramHolderBuilder(
-		NGramHolderBuilder nGramHolderBuilder) {
-
-		_nGramHolderBuilder = nGramHolderBuilder;
-	}
-
-	protected void unsetNGramHolderBuilder(
-		NGramHolderBuilder nGramHolderBuilder) {
-
-		_nGramHolderBuilder = null;
-	}
-
-	private static final String _OR_QUERY_SEPARATOR = " OR ";
-
-	private NGramHolderBuilder _nGramHolderBuilder;
+	private volatile NGramHolderBuilder _nGramHolderBuilder;
 
 }

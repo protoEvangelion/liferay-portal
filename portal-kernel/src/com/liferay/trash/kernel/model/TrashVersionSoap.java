@@ -25,8 +25,11 @@ import java.util.List;
  * This class is used by SOAP remote services.
  *
  * @author Brian Wing Shun Chan
+ * @deprecated As of Judson (7.1.x), replaced by {@link
+           com.liferay.trash.model.impl.TrashVersionImpl}
  * @generated
  */
+@Deprecated
 @ProviderType
 public class TrashVersionSoap implements Serializable {
 	public static TrashVersionSoap toSoapModel(TrashVersion model) {

@@ -14,11 +14,15 @@
 
 package com.liferay.portal.kernel.util;
 
-import com.liferay.portal.kernel.memory.SoftReferenceThreadLocal;
+import com.liferay.petra.lang.CentralizedThreadLocal;
+import com.liferay.petra.string.StringPool;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
+
+import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
 
 /**
  * <p>
@@ -30,6 +34,16 @@ import java.io.Writer;
  * @author Preston Crary
  */
 public class StringBundler implements Serializable {
+
+	public static String concat(String... strings) {
+		for (int i = 0; i < strings.length; i++) {
+			if (strings[i] == null) {
+				strings[i] = StringPool.NULL;
+			}
+		}
+
+		return _toString(strings, strings.length);
+	}
 
 	public StringBundler() {
 		_array = new String[_DEFAULT_ARRAY_CAPACITY];
@@ -69,9 +83,8 @@ public class StringBundler implements Serializable {
 		if (b) {
 			return append(StringPool.TRUE);
 		}
-		else {
-			return append(StringPool.FALSE);
-		}
+
+		return append(StringPool.FALSE);
 	}
 
 	public StringBundler append(char c) {
@@ -82,25 +95,24 @@ public class StringBundler implements Serializable {
 		if (chars == null) {
 			return append("null");
 		}
-		else {
-			return append(new String(chars));
-		}
+
+		return append(new String(chars));
 	}
 
 	public StringBundler append(double d) {
-		return append(Double.toString(d));
+		return append(String.valueOf(d));
 	}
 
 	public StringBundler append(float f) {
-		return append(Float.toString(f));
+		return append(String.valueOf(f));
 	}
 
 	public StringBundler append(int i) {
-		return append(Integer.toString(i));
+		return append(String.valueOf(i));
 	}
 
 	public StringBundler append(long l) {
-		return append(Long.toString(l));
+		return append(String.valueOf(l));
 	}
 
 	public StringBundler append(Object obj) {
@@ -227,51 +239,7 @@ public class StringBundler implements Serializable {
 
 	@Override
 	public String toString() {
-		if (_arrayIndex == 0) {
-			return StringPool.BLANK;
-		}
-
-		if (_arrayIndex == 1) {
-			return _array[0];
-		}
-
-		if (_arrayIndex == 2) {
-			return _array[0].concat(_array[1]);
-		}
-
-		if (_arrayIndex == 3) {
-			return _array[0].concat(_array[1]).concat(_array[2]);
-		}
-
-		int length = 0;
-
-		for (int i = 0; i < _arrayIndex; i++) {
-			length += _array[i].length();
-		}
-
-		UnsafeStringBuilder usb = null;
-
-		if (length > _THREAD_LOCAL_BUFFER_LIMIT) {
-			usb = _unsafeStringBuilderThreadLocal.get();
-
-			if (usb == null) {
-				usb = new UnsafeStringBuilder(length);
-
-				_unsafeStringBuilderThreadLocal.set(usb);
-			}
-			else {
-				usb.resetAndEnsureCapacity(length);
-			}
-		}
-		else {
-			usb = new UnsafeStringBuilder(length);
-		}
-
-		for (int i = 0; i < _arrayIndex; i++) {
-			usb.append(_array[i]);
-		}
-
-		return usb.toString();
+		return _toString(_array, _arrayIndex);
 	}
 
 	public void writeTo(Writer writer) throws IOException {
@@ -288,11 +256,64 @@ public class StringBundler implements Serializable {
 		_array = newArray;
 	}
 
+	private static String _toString(String[] array, int arrayIndex) {
+		if (arrayIndex == 0) {
+			return StringPool.BLANK;
+		}
+
+		if (arrayIndex == 1) {
+			return array[0];
+		}
+
+		if (arrayIndex == 2) {
+			return array[0].concat(array[1]);
+		}
+
+		if (arrayIndex == 3) {
+			return array[0].concat(array[1]).concat(array[2]);
+		}
+
+		int length = 0;
+
+		for (int i = 0; i < arrayIndex; i++) {
+			length += array[i].length();
+		}
+
+		UnsafeStringBuilder usb = null;
+
+		if (length > _THREAD_LOCAL_BUFFER_LIMIT) {
+			Reference<UnsafeStringBuilder> reference =
+				_unsafeStringBuilderThreadLocal.get();
+
+			if (reference != null) {
+				usb = reference.get();
+			}
+
+			if (usb == null) {
+				usb = new UnsafeStringBuilder(length);
+
+				_unsafeStringBuilderThreadLocal.set(new SoftReference<>(usb));
+			}
+			else {
+				usb.resetAndEnsureCapacity(length);
+			}
+		}
+		else {
+			usb = new UnsafeStringBuilder(length);
+		}
+
+		for (int i = 0; i < arrayIndex; i++) {
+			usb.append(array[i]);
+		}
+
+		return usb.toString();
+	}
+
 	private static final int _DEFAULT_ARRAY_CAPACITY = 16;
 
 	private static final int _THREAD_LOCAL_BUFFER_LIMIT;
 
-	private static final ThreadLocal<UnsafeStringBuilder>
+	private static final ThreadLocal<Reference<UnsafeStringBuilder>>
 		_unsafeStringBuilderThreadLocal;
 	private static final long serialVersionUID = 1L;
 
@@ -307,7 +328,8 @@ public class StringBundler implements Serializable {
 
 			_THREAD_LOCAL_BUFFER_LIMIT = threadLocalBufferLimit;
 
-			_unsafeStringBuilderThreadLocal = new SoftReferenceThreadLocal<>();
+			_unsafeStringBuilderThreadLocal = new CentralizedThreadLocal<>(
+				false);
 		}
 		else {
 			_THREAD_LOCAL_BUFFER_LIMIT = Integer.MAX_VALUE;

@@ -14,8 +14,8 @@
 
 package com.liferay.portal.kernel.messaging.config;
 
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.petra.lang.ClassLoaderPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.messaging.Destination;
 import com.liferay.portal.kernel.messaging.DestinationConfiguration;
 import com.liferay.portal.kernel.messaging.DestinationEventListener;
@@ -24,18 +24,11 @@ import com.liferay.portal.kernel.messaging.DestinationFactoryUtil;
 import com.liferay.portal.kernel.messaging.MessageBus;
 import com.liferay.portal.kernel.messaging.MessageBusEventListener;
 import com.liferay.portal.kernel.messaging.MessageListener;
-import com.liferay.portal.kernel.nio.intraband.RegistrationReference;
-import com.liferay.portal.kernel.nio.intraband.messaging.DestinationConfigurationProcessCallable;
-import com.liferay.portal.kernel.nio.intraband.rpc.IntrabandRPCUtil;
-import com.liferay.portal.kernel.resiliency.spi.SPI;
-import com.liferay.portal.kernel.resiliency.spi.SPIUtil;
-import com.liferay.portal.kernel.security.pacl.permission.PortalMessageBusPermission;
-import com.liferay.portal.kernel.util.ClassLoaderPool;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.registry.Filter;
 import com.liferay.registry.Registry;
 import com.liferay.registry.RegistryUtil;
+import com.liferay.registry.ServiceReference;
 import com.liferay.registry.ServiceRegistrar;
 import com.liferay.registry.dependency.ServiceDependencyListener;
 import com.liferay.registry.dependency.ServiceDependencyManager;
@@ -66,14 +59,24 @@ public abstract class AbstractMessagingConfigurator
 				public void dependenciesFulfilled() {
 					Registry registry = RegistryUtil.getRegistry();
 
-					_messageBus = registry.getService(MessageBus.class);
+					_serviceReference = registry.getServiceReference(
+						MessageBus.class);
+
+					_messageBus = registry.getService(_serviceReference);
 
 					initialize();
 				}
 
 				@Override
 				public void destroy() {
+					if (_serviceReference != null) {
+						Registry registry = RegistryUtil.getRegistry();
+
+						registry.ungetService(_serviceReference);
+					}
 				}
+
+				private ServiceReference<MessageBus> _serviceReference;
 
 			});
 
@@ -83,10 +86,6 @@ public abstract class AbstractMessagingConfigurator
 
 	@Override
 	public void connect() {
-		if (SPIUtil.isSPI() && _portalMessagingConfigurator) {
-			return;
-		}
-
 		Registry registry = RegistryUtil.getRegistry();
 
 		_messageListenerServiceRegistrar = registry.getServiceRegistrar(
@@ -114,8 +113,9 @@ public abstract class AbstractMessagingConfigurator
 						destinationName, messageListeners.getValue()));
 
 				Filter filter = registry.getFilter(
-					"(&(destination.name=" + destinationName +
-						")(objectClass=" + Destination.class.getName() + "))");
+					StringBundler.concat(
+						"(&(destination.name=", destinationName,
+						")(objectClass=", Destination.class.getName(), "))"));
 
 				serviceDependencyManager.registerDependencies(filter);
 			}
@@ -165,10 +165,6 @@ public abstract class AbstractMessagingConfigurator
 
 	@Override
 	public void disconnect() {
-		if (SPIUtil.isSPI() && _portalMessagingConfigurator) {
-			return;
-		}
-
 		for (Map.Entry<String, List<MessageListener>> messageListeners :
 				_messageListeners.entrySet()) {
 
@@ -251,7 +247,8 @@ public abstract class AbstractMessagingConfigurator
 
 	/**
 	 * @param      replacementDestinations
-	 * @deprecated As of 7.0.0, replaced by {@link #setDestinations(List)}
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	 *             #setDestinations(List)}
 	 */
 	@Deprecated
 	@Override
@@ -337,8 +334,9 @@ public abstract class AbstractMessagingConfigurator
 				});
 
 			Filter filter = registry.getFilter(
-				"(&(destination.name=" + destinationName + ")(objectClass=" +
-					Destination.class.getName() + "))");
+				StringBundler.concat(
+					"(&(destination.name=", destinationName, ")(objectClass=",
+					Destination.class.getName(), "))"));
 
 			serviceDependencyManager.registerDependencies(filter);
 		}
@@ -347,20 +345,6 @@ public abstract class AbstractMessagingConfigurator
 	protected void registerDestinations() {
 		for (DestinationConfiguration destinationConfiguration :
 				_destinationConfigurations) {
-
-			try {
-				PortalMessageBusPermission.checkListen(
-					destinationConfiguration.getDestinationName());
-			}
-			catch (SecurityException se) {
-				if (_log.isInfoEnabled()) {
-					_log.info(
-						"Rejecting destination " +
-							destinationConfiguration.getDestinationName());
-				}
-
-				continue;
-			}
 
 			_destinations.add(
 				DestinationFactoryUtil.createDestination(
@@ -377,22 +361,9 @@ public abstract class AbstractMessagingConfigurator
 			Destination.class);
 
 		for (Destination destination : _destinations) {
-			String destinationName = destination.getName();
-
-			try {
-				PortalMessageBusPermission.checkListen(destinationName);
-			}
-			catch (SecurityException se) {
-				if (_log.isInfoEnabled()) {
-					_log.info("Rejecting destination " + destinationName);
-				}
-
-				continue;
-			}
-
 			Map<String, Object> properties = new HashMap<>();
 
-			properties.put("destination.name", destinationName);
+			properties.put("destination.name", destination.getName());
 
 			_destinationServiceRegistrar.registerService(
 				Destination.class, destination, properties);
@@ -416,9 +387,6 @@ public abstract class AbstractMessagingConfigurator
 				MessageBusEventListener.class, messageBusEventListener);
 		}
 	}
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		AbstractMessagingConfigurator.class);
 
 	private final Set<DestinationConfiguration> _destinationConfigurations =
 		new HashSet<>();
@@ -451,32 +419,6 @@ public abstract class AbstractMessagingConfigurator
 		@Override
 		public void dependenciesFulfilled() {
 			ClassLoader operatingClassLoader = getOperatingClassloader();
-
-			if (SPIUtil.isSPI()) {
-				SPI spi = SPIUtil.getSPI();
-
-				try {
-					RegistrationReference registrationReference =
-						spi.getRegistrationReference();
-
-					IntrabandRPCUtil.execute(
-						registrationReference,
-						new DestinationConfigurationProcessCallable(
-							_destinationName));
-				}
-				catch (Exception e) {
-					StringBundler sb = new StringBundler(4);
-
-					sb.append("Unable to install ");
-					sb.append(
-						DestinationConfigurationProcessCallable.class.
-							getName());
-					sb.append(" on MPI for ");
-					sb.append(_destinationName);
-
-					_log.error(sb.toString(), e);
-				}
-			}
 
 			Map<String, Object> properties = new HashMap<>();
 

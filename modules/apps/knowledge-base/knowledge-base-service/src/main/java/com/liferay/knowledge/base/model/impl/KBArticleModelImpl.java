@@ -25,10 +25,13 @@ import com.liferay.knowledge.base.model.KBArticle;
 import com.liferay.knowledge.base.model.KBArticleModel;
 import com.liferay.knowledge.base.model.KBArticleSoap;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -37,8 +40,6 @@ import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import java.io.Serializable;
@@ -203,8 +204,8 @@ public class KBArticleModelImpl extends BaseModelImpl<KBArticle>
 		model.setPriority(soapModel.getPriority());
 		model.setSections(soapModel.getSections());
 		model.setViewCount(soapModel.getViewCount());
-		model.setLatest(soapModel.getLatest());
-		model.setMain(soapModel.getMain());
+		model.setLatest(soapModel.isLatest());
+		model.setMain(soapModel.isMain());
 		model.setSourceURL(soapModel.getSourceURL());
 		model.setLastPublishDate(soapModel.getLastPublishDate());
 		model.setStatus(soapModel.getStatus());
@@ -297,8 +298,8 @@ public class KBArticleModelImpl extends BaseModelImpl<KBArticle>
 		attributes.put("priority", getPriority());
 		attributes.put("sections", getSections());
 		attributes.put("viewCount", getViewCount());
-		attributes.put("latest", getLatest());
-		attributes.put("main", getMain());
+		attributes.put("latest", isLatest());
+		attributes.put("main", isMain());
 		attributes.put("sourceURL", getSourceURL());
 		attributes.put("lastPublishDate", getLastPublishDate());
 		attributes.put("status", getStatus());
@@ -495,7 +496,7 @@ public class KBArticleModelImpl extends BaseModelImpl<KBArticle>
 	@Override
 	public String getUuid() {
 		if (_uuid == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _uuid;
@@ -619,7 +620,7 @@ public class KBArticleModelImpl extends BaseModelImpl<KBArticle>
 			return user.getUuid();
 		}
 		catch (PortalException pe) {
-			return StringPool.BLANK;
+			return "";
 		}
 	}
 
@@ -631,7 +632,7 @@ public class KBArticleModelImpl extends BaseModelImpl<KBArticle>
 	@Override
 	public String getUserName() {
 		if (_userName == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _userName;
@@ -768,7 +769,7 @@ public class KBArticleModelImpl extends BaseModelImpl<KBArticle>
 	@Override
 	public String getTitle() {
 		if (_title == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _title;
@@ -784,7 +785,7 @@ public class KBArticleModelImpl extends BaseModelImpl<KBArticle>
 	@Override
 	public String getUrlTitle() {
 		if (_urlTitle == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _urlTitle;
@@ -810,7 +811,7 @@ public class KBArticleModelImpl extends BaseModelImpl<KBArticle>
 	@Override
 	public String getContent() {
 		if (_content == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _content;
@@ -826,7 +827,7 @@ public class KBArticleModelImpl extends BaseModelImpl<KBArticle>
 	@Override
 	public String getDescription() {
 		if (_description == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _description;
@@ -853,7 +854,7 @@ public class KBArticleModelImpl extends BaseModelImpl<KBArticle>
 	@Override
 	public String getSections() {
 		if (_sections == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _sections;
@@ -948,7 +949,7 @@ public class KBArticleModelImpl extends BaseModelImpl<KBArticle>
 	@Override
 	public String getSourceURL() {
 		if (_sourceURL == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _sourceURL;
@@ -1013,7 +1014,7 @@ public class KBArticleModelImpl extends BaseModelImpl<KBArticle>
 			return user.getUuid();
 		}
 		catch (PortalException pe) {
-			return StringPool.BLANK;
+			return "";
 		}
 	}
 
@@ -1025,7 +1026,7 @@ public class KBArticleModelImpl extends BaseModelImpl<KBArticle>
 	@Override
 	public String getStatusByUserName() {
 		if (_statusByUserName == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _statusByUserName;
@@ -1186,8 +1187,8 @@ public class KBArticleModelImpl extends BaseModelImpl<KBArticle>
 		kbArticleImpl.setPriority(getPriority());
 		kbArticleImpl.setSections(getSections());
 		kbArticleImpl.setViewCount(getViewCount());
-		kbArticleImpl.setLatest(getLatest());
-		kbArticleImpl.setMain(getMain());
+		kbArticleImpl.setLatest(isLatest());
+		kbArticleImpl.setMain(isMain());
 		kbArticleImpl.setSourceURL(getSourceURL());
 		kbArticleImpl.setLastPublishDate(getLastPublishDate());
 		kbArticleImpl.setStatus(getStatus());
@@ -1406,9 +1407,9 @@ public class KBArticleModelImpl extends BaseModelImpl<KBArticle>
 
 		kbArticleCacheModel.viewCount = getViewCount();
 
-		kbArticleCacheModel.latest = getLatest();
+		kbArticleCacheModel.latest = isLatest();
 
-		kbArticleCacheModel.main = getMain();
+		kbArticleCacheModel.main = isMain();
 
 		kbArticleCacheModel.sourceURL = getSourceURL();
 
@@ -1498,9 +1499,9 @@ public class KBArticleModelImpl extends BaseModelImpl<KBArticle>
 		sb.append(", viewCount=");
 		sb.append(getViewCount());
 		sb.append(", latest=");
-		sb.append(getLatest());
+		sb.append(isLatest());
 		sb.append(", main=");
-		sb.append(getMain());
+		sb.append(isMain());
 		sb.append(", sourceURL=");
 		sb.append(getSourceURL());
 		sb.append(", lastPublishDate=");
@@ -1612,11 +1613,11 @@ public class KBArticleModelImpl extends BaseModelImpl<KBArticle>
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>latest</column-name><column-value><![CDATA[");
-		sb.append(getLatest());
+		sb.append(isLatest());
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>main</column-name><column-value><![CDATA[");
-		sb.append(getMain());
+		sb.append(isMain());
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>sourceURL</column-name><column-value><![CDATA[");
@@ -1650,7 +1651,7 @@ public class KBArticleModelImpl extends BaseModelImpl<KBArticle>
 
 	private static final ClassLoader _classLoader = KBArticle.class.getClassLoader();
 	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
-			KBArticle.class
+			KBArticle.class, ModelWrapper.class
 		};
 	private String _uuid;
 	private String _originalUuid;

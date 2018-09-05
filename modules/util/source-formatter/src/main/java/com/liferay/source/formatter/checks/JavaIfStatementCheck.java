@@ -14,13 +14,16 @@
 
 package com.liferay.source.formatter.checks;
 
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.io.unsync.UnsyncBufferedReader;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringReader;
-import com.liferay.portal.kernel.util.CharPool;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.tools.ToolsUtil;
+
+import java.io.IOException;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,7 +36,7 @@ public class JavaIfStatementCheck extends IfStatementCheck {
 	@Override
 	protected String doProcess(
 			String fileName, String absolutePath, String content)
-		throws Exception {
+		throws IOException {
 
 		Matcher matcher = _ifStatementPattern.matcher(content);
 
@@ -45,6 +48,13 @@ public class JavaIfStatementCheck extends IfStatementCheck {
 			}
 
 			String lineEnding = matcher.group(3);
+
+			if (lineEnding.equals(StringPool.SEMICOLON) &&
+				ifClause.contains("{\n")) {
+
+				continue;
+			}
+
 			String type = matcher.group(1);
 
 			if (!type.equals("while") &&
@@ -52,11 +62,12 @@ public class JavaIfStatementCheck extends IfStatementCheck {
 
 				addMessage(
 					fileName, "Incorrect " + type + " statement",
-					getLineCount(content, matcher.start()));
+					getLineNumber(content, matcher.start()));
 			}
 			else {
 				String newIfClause = _formatIfClause(
-					ifClause, fileName, getLineCount(content, matcher.start()));
+					ifClause, fileName,
+					getLineNumber(content, matcher.start()));
 
 				if (!ifClause.equals(newIfClause)) {
 					return StringUtil.replace(content, ifClause, newIfClause);
@@ -65,6 +76,47 @@ public class JavaIfStatementCheck extends IfStatementCheck {
 		}
 
 		return content;
+	}
+
+	private String _adjustMissingSpaceForNegativeMultiLineGroups(
+		String ifClause) {
+
+		int x = -1;
+
+		while (true) {
+			x = ifClause.indexOf("!(", x + 1);
+
+			if (ToolsUtil.isInsideQuotes(ifClause, x)) {
+				continue;
+			}
+
+			if (x == -1) {
+				return ifClause;
+			}
+
+			int y = _getMatchingCloseParenthesesPos(ifClause, x);
+
+			for (int i = y; i > x; i--) {
+				char c1 = ifClause.charAt(i);
+
+				if (c1 != CharPool.TAB) {
+					continue;
+				}
+
+				char c2 = ifClause.charAt(i + 1);
+
+				if (c2 != CharPool.TAB) {
+					String s = ifClause.substring(x, i);
+
+					if (s.contains("|\n") || s.contains("&\n") ||
+						s.contains("^\n")) {
+
+						ifClause = StringUtil.replaceFirst(
+							ifClause, "\t", "\t ", i);
+					}
+				}
+			}
+		}
 	}
 
 	private String _fixIfClause(String ifClause, String line, int delta) {
@@ -110,12 +162,10 @@ public class JavaIfStatementCheck extends IfStatementCheck {
 		return StringUtil.replace(ifClause, line, newLine);
 	}
 
-	private String _formatIfClause(String ifClause) throws Exception {
+	private String _formatIfClause(String ifClause) throws IOException {
 		String strippedQuotesIfClause = stripQuotes(ifClause);
 
-		if (strippedQuotesIfClause.contains("!(") ||
-			strippedQuotesIfClause.contains("//")) {
-
+		if (strippedQuotesIfClause.contains("//")) {
 			return ifClause;
 		}
 
@@ -148,8 +198,9 @@ public class JavaIfStatementCheck extends IfStatementCheck {
 
 				return StringUtil.replace(
 					ifClause, line,
-					line.substring(0, x) + "\n" + leadingWhitespace +
-						line.substring(x + 1));
+					StringBundler.concat(
+						line.substring(0, x), "\n", leadingWhitespace,
+						line.substring(x + 1)));
 			}
 
 			if ((previousLineLength > 0) && previousLineIsStartCriteria &&
@@ -214,7 +265,7 @@ public class JavaIfStatementCheck extends IfStatementCheck {
 				int expectedLeadingWhitespace = 0;
 
 				if (previousLine.contains(StringPool.TAB + "else if (")) {
-					expectedLeadingWhitespace = baseLeadingWhitespace + 3;
+					expectedLeadingWhitespace = baseLeadingWhitespace + 4;
 				}
 				else if (previousLine.contains(StringPool.TAB + "if (")) {
 					expectedLeadingWhitespace = baseLeadingWhitespace + 4;
@@ -242,6 +293,11 @@ public class JavaIfStatementCheck extends IfStatementCheck {
 					if (previousLine.endsWith(StringPool.OPEN_PARENTHESIS)) {
 						insideMethodCallExpectedWhitespace =
 							expectedLeadingWhitespace;
+					}
+
+					if (trimmedLine.startsWith(")")) {
+						expectedLeadingWhitespace =
+							previousLineLeadingWhitespace - 4;
 					}
 				}
 
@@ -283,8 +339,8 @@ public class JavaIfStatementCheck extends IfStatementCheck {
 	}
 
 	private String _formatIfClause(
-			String ifClause, String fileName, int lineCount)
-		throws Exception {
+			String ifClause, String fileName, int lineNumber)
+		throws IOException {
 
 		String ifClauseSingleLine = StringUtil.replace(
 			ifClause,
@@ -298,9 +354,19 @@ public class JavaIfStatementCheck extends IfStatementCheck {
 				StringPool.SPACE
 			});
 
-		checkIfClauseParentheses(ifClauseSingleLine, fileName, lineCount);
+		checkIfClauseParentheses(ifClauseSingleLine, fileName, lineNumber);
 
-		return _formatIfClause(ifClause);
+		while (true) {
+			String newIfClause = _formatIfClause(ifClause);
+
+			if (newIfClause.equals(ifClause)) {
+				break;
+			}
+
+			ifClause = newIfClause;
+		}
+
+		return _adjustMissingSpaceForNegativeMultiLineGroups(ifClause);
 	}
 
 	private int _getIncorrectLineBreakPos(String line, String previousLine) {
@@ -331,6 +397,18 @@ public class JavaIfStatementCheck extends IfStatementCheck {
 
 			if (getLevel(line.substring(x)) > 0) {
 				return x + 3;
+			}
+		}
+	}
+
+	private int _getMatchingCloseParenthesesPos(String s, int x) {
+		int y = x;
+
+		while (true) {
+			y = s.indexOf(StringPool.CLOSE_PARENTHESIS, y + 1);
+
+			if (getLevel(s.substring(x, y + 1)) == 0) {
+				return y;
 			}
 		}
 	}

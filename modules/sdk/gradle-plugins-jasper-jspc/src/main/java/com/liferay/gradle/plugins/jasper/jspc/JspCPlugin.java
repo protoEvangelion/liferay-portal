@@ -18,7 +18,6 @@ import com.liferay.gradle.util.GradleUtil;
 
 import java.io.File;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -28,7 +27,6 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.DependencySet;
-import org.gradle.api.artifacts.ModuleDependency;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.SourceDirectorySet;
@@ -65,7 +63,7 @@ public class JspCPlugin implements Plugin<Project> {
 		final CompileJSPTask generateJSPJavaTask = _addTaskGenerateJSPJava(
 			project, jspCConfiguration, jspCToolConfiguration);
 
-		_addTaskCompileJSP(
+		final JavaCompile compileJSPTask = _addTaskCompileJSP(
 			generateJSPJavaTask, jspCConfiguration, jspCToolConfiguration);
 
 		project.afterEvaluate(
@@ -74,6 +72,7 @@ public class JspCPlugin implements Plugin<Project> {
 				@Override
 				public void execute(Project project) {
 					_addDependenciesJspC(project);
+					_configureTaskCompileJSP(compileJSPTask);
 				}
 
 			});
@@ -134,15 +133,9 @@ public class JspCPlugin implements Plugin<Project> {
 		GradleUtil.addDependency(
 			project, TOOL_CONFIGURATION_NAME, "org.apache.ant", "ant", "1.9.4");
 
-		ModuleDependency moduleDependency =
-			(ModuleDependency)GradleUtil.addDependency(
-				project, TOOL_CONFIGURATION_NAME, "com.liferay",
-				"com.liferay.jasper.jspc", "latest.release");
-
-		moduleDependency.exclude(
-			Collections.singletonMap("group", "com.liferay.portal"));
-		moduleDependency.exclude(
-			Collections.singletonMap("group", "javax.servlet"));
+		GradleUtil.addDependency(
+			project, TOOL_CONFIGURATION_NAME, "com.liferay",
+			"com.liferay.jasper.jspc", "latest.release");
 	}
 
 	private JavaCompile _addTaskCompileJSP(
@@ -155,7 +148,6 @@ public class JspCPlugin implements Plugin<Project> {
 
 		javaCompile.setClasspath(jspCToolConfiguration.plus(jspCConfiguration));
 		javaCompile.setDescription("Compile JSP files to check for errors.");
-		javaCompile.setDestinationDir(javaCompile.getTemporaryDir());
 		javaCompile.setGroup(JavaBasePlugin.VERIFICATION_GROUP);
 		javaCompile.setSource(generateJSPJavaTask.getOutputs());
 
@@ -172,8 +164,19 @@ public class JspCPlugin implements Plugin<Project> {
 		compileJSPTask.setClasspath(jspCToolConfiguration);
 		compileJSPTask.setDescription(
 			"Compiles JSP files to Java source files to check for errors.");
+
 		compileJSPTask.setDestinationDir(
-			new File(project.getBuildDir(), "jspc"));
+			new Callable<File>() {
+
+				@Override
+				public File call() throws Exception {
+					Project project = compileJSPTask.getProject();
+
+					return new File(project.getBuildDir(), "jspc");
+				}
+
+			});
+
 		compileJSPTask.setJspCClasspath(jspCConfiguration);
 
 		compileJSPTask.setWebAppDir(
@@ -204,6 +207,12 @@ public class JspCPlugin implements Plugin<Project> {
 			});
 
 		return compileJSPTask;
+	}
+
+	private void _configureTaskCompileJSP(JavaCompile compileJSPTask) {
+		if (compileJSPTask.getDestinationDir() == null) {
+			compileJSPTask.setDestinationDir(compileJSPTask.getTemporaryDir());
+		}
 	}
 
 	private void _configureTaskGenerateJSPJavaForWarPlugin(

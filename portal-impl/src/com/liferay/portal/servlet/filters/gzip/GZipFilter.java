@@ -71,27 +71,24 @@ public class GZipFilter extends BasePortalFilter {
 
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	protected boolean isAlreadyFiltered(HttpServletRequest request) {
 		if (request.getAttribute(SKIP_FILTER) != null) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	protected boolean isCompress(HttpServletRequest request) {
 		if (ParamUtil.getBoolean(request, _COMPRESS, true)) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	protected boolean isInclude(HttpServletRequest request) {
@@ -101,9 +98,8 @@ public class GZipFilter extends BasePortalFilter {
 		if (uri == null) {
 			return false;
 		}
-		else {
-			return true;
-		}
+
+		return true;
 	}
 
 	@Override
@@ -120,12 +116,12 @@ public class GZipFilter extends BasePortalFilter {
 
 		request.setAttribute(SKIP_FILTER, Boolean.TRUE);
 
-		GZipResponse gZipResponse = new GZipResponse(request, response);
+		GZipResponse gZipResponse = new GZipResponse(response);
 
 		processFilter(
 			GZipFilter.class.getName(), request, gZipResponse, filterChain);
 
-		gZipResponse.finishResponse(true);
+		gZipResponse.finishResponse();
 	}
 
 	private static final String _COMPRESS = "compress";

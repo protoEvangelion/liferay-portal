@@ -18,10 +18,10 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.chat.model.Status;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -97,14 +97,14 @@ public class StatusCacheModel implements CacheModel<Status>, Externalizable {
 		statusImpl.setAwake(awake);
 
 		if (activePanelIds == null) {
-			statusImpl.setActivePanelIds(StringPool.BLANK);
+			statusImpl.setActivePanelIds("");
 		}
 		else {
 			statusImpl.setActivePanelIds(activePanelIds);
 		}
 
 		if (message == null) {
-			statusImpl.setMessage(StringPool.BLANK);
+			statusImpl.setMessage("");
 		}
 		else {
 			statusImpl.setMessage(message);
@@ -148,14 +148,14 @@ public class StatusCacheModel implements CacheModel<Status>, Externalizable {
 		objectOutput.writeBoolean(awake);
 
 		if (activePanelIds == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(activePanelIds);
 		}
 
 		if (message == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(message);

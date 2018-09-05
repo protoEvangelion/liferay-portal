@@ -16,19 +16,23 @@ package com.liferay.gradle.plugins;
 
 import com.liferay.gradle.plugins.extensions.AppServer;
 import com.liferay.gradle.plugins.extensions.LiferayExtension;
-import com.liferay.gradle.plugins.internal.NodeDefaultsPlugin;
-import com.liferay.gradle.plugins.internal.SourceFormatterDefaultsPlugin;
+import com.liferay.gradle.plugins.internal.LangBuilderDefaultsPlugin;
 import com.liferay.gradle.plugins.internal.util.FileUtil;
 import com.liferay.gradle.plugins.internal.util.GradleUtil;
 import com.liferay.gradle.plugins.tasks.DirectDeployTask;
+import com.liferay.gradle.plugins.util.PortalTools;
+import com.liferay.gradle.util.Validator;
 
 import java.io.File;
+
+import java.net.URL;
 
 import java.util.concurrent.Callable;
 
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.DependencyResolveDetails;
@@ -36,6 +40,7 @@ import org.gradle.api.artifacts.DependencySet;
 import org.gradle.api.artifacts.ModuleVersionSelector;
 import org.gradle.api.artifacts.ResolutionStrategy;
 import org.gradle.api.file.FileTree;
+import org.gradle.api.logging.Logger;
 import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.tasks.Copy;
 import org.gradle.api.tasks.TaskContainer;
@@ -53,7 +58,9 @@ public class LiferayBasePlugin implements Plugin<Project> {
 	public void apply(Project project) {
 		LiferayExtension liferayExtension = _addLiferayExtension(project);
 
-		NodeDefaultsPlugin.INSTANCE.apply(project);
+		GradleUtil.applyPlugin(project, NodeDefaultsPlugin.class);
+
+		LangBuilderDefaultsPlugin.INSTANCE.apply(project);
 		SourceFormatterDefaultsPlugin.INSTANCE.apply(project);
 
 		_addConfigurationPortal(project, liferayExtension);
@@ -135,10 +142,18 @@ public class LiferayBasePlugin implements Plugin<Project> {
 		LiferayExtension liferayExtension = GradleUtil.addExtension(
 			project, LiferayPlugin.PLUGIN_NAME, LiferayExtension.class);
 
-		GradleUtil.applyScript(
-			project,
-			"com/liferay/gradle/plugins/dependencies/config-liferay.gradle",
-			project);
+		String name = _getConfigLiferayScriptName(
+			PortalTools.getPortalVersion(project));
+
+		ClassLoader classLoader = LiferayBasePlugin.class.getClassLoader();
+
+		URL url = classLoader.getResource(name);
+
+		if (url == null) {
+			name = _getConfigLiferayScriptName(null);
+		}
+
+		GradleUtil.applyScript(project, name, project);
 
 		return liferayExtension;
 	}
@@ -147,6 +162,24 @@ public class LiferayBasePlugin implements Plugin<Project> {
 		Project project, final LiferayExtension liferayExtension) {
 
 		Copy copy = GradleUtil.addTask(project, DEPLOY_TASK_NAME, Copy.class);
+
+		copy.doLast(
+			new Action<Task>() {
+
+				@Override
+				public void execute(Task task) {
+					Logger logger = task.getLogger();
+
+					if (logger.isLifecycleEnabled()) {
+						Copy copy = (Copy)task;
+
+						logger.lifecycle(
+							"Files of {} deployed to {}", copy.getProject(),
+							copy.getDestinationDir());
+					}
+				}
+
+			});
 
 		copy.into(
 			new Callable<File>() {
@@ -268,6 +301,21 @@ public class LiferayBasePlugin implements Plugin<Project> {
 				}
 
 			});
+	}
+
+	private String _getConfigLiferayScriptName(String portalVersion) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("com/liferay/gradle/plugins/dependencies/config-liferay");
+
+		if (Validator.isNotNull(portalVersion)) {
+			sb.append('-');
+			sb.append(portalVersion);
+		}
+
+		sb.append(".gradle");
+
+		return sb.toString();
 	}
 
 }

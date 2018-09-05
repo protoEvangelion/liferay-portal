@@ -16,12 +16,12 @@ package com.liferay.portal.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.MVCCModel;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -105,14 +105,14 @@ public class PortletCacheModel implements CacheModel<Portlet>, Externalizable,
 		portletImpl.setCompanyId(companyId);
 
 		if (portletId == null) {
-			portletImpl.setPortletId(StringPool.BLANK);
+			portletImpl.setPortletId("");
 		}
 		else {
 			portletImpl.setPortletId(portletId);
 		}
 
 		if (roles == null) {
-			portletImpl.setRoles(StringPool.BLANK);
+			portletImpl.setRoles("");
 		}
 		else {
 			portletImpl.setRoles(roles);
@@ -148,14 +148,14 @@ public class PortletCacheModel implements CacheModel<Portlet>, Externalizable,
 		objectOutput.writeLong(companyId);
 
 		if (portletId == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(portletId);
 		}
 
 		if (roles == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(roles);

@@ -20,6 +20,7 @@ import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.exportimport.kernel.lar.BaseStagedModelDataHandler;
 import com.liferay.exportimport.kernel.lar.ExportImportPathUtil;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
+import com.liferay.exportimport.kernel.lar.PortletDataException;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandler;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.exportimport.kernel.lar.StagedModelModifiedDateComparator;
@@ -31,7 +32,8 @@ import com.liferay.knowledge.base.model.KBArticle;
 import com.liferay.knowledge.base.model.KBFolder;
 import com.liferay.knowledge.base.service.KBArticleLocalService;
 import com.liferay.knowledge.base.service.KBFolderLocalService;
-import com.liferay.knowledge.base.service.util.AdminUtil;
+import com.liferay.knowledge.base.util.AdminHelper;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -41,8 +43,6 @@ import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.util.StreamUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.xml.Element;
@@ -187,26 +187,6 @@ public class KBArticleStagedModelDataHandler
 			kbArticleResourcePrimKeys, kbArticle.getParentResourcePrimKey(),
 			kbArticle.getParentResourcePrimKey());
 
-		long kbFolderClassNameId = _portal.getClassNameId(
-			KBFolderConstants.getClassName());
-
-		if ((kbArticle.getParentResourceClassNameId() !=
-				kbArticle.getClassNameId()) &&
-			(kbArticle.getParentResourceClassNameId() != kbFolderClassNameId)) {
-
-			KBArticle parentKBArticle =
-				_kbArticleLocalService.fetchLatestKBArticle(
-					parentResourcePrimKey, WorkflowConstants.STATUS_APPROVED);
-
-			if (parentKBArticle != null) {
-				kbArticle.setParentResourceClassNameId(
-					kbArticle.getClassNameId());
-			}
-			else {
-				kbArticle.setParentResourceClassNameId(kbFolderClassNameId);
-			}
-		}
-
 		if (kbArticle.getParentResourcePrimKey() !=
 				KBFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
 
@@ -250,7 +230,8 @@ public class KBArticleStagedModelDataHandler
 			kbArticle.setUrlTitle(StringPool.SLASH + urlTitle);
 		}
 
-		String[] sections = AdminUtil.unescapeSections(kbArticle.getSections());
+		String[] sections = _adminHelper.unescapeSections(
+			kbArticle.getSections());
 
 		String content =
 			_kbArticleExportImportContentProcessor.
@@ -407,30 +388,10 @@ public class KBArticleStagedModelDataHandler
 			FileEntry fileEntry =
 				(FileEntry)portletDataContext.getZipEntryAsObject(path);
 
-			InputStream inputStream = null;
+			String binPath = dlFileEntryElement.attributeValue("bin-path");
 
-			try {
-				String binPath = dlFileEntryElement.attributeValue("bin-path");
-
-				if (Validator.isNull(binPath) &&
-					portletDataContext.isPerformDirectBinaryImport()) {
-
-					try {
-						inputStream = FileEntryUtil.getContentStream(fileEntry);
-					}
-					catch (NoSuchFileException nsfe) {
-
-						// LPS-52675
-
-						if (_log.isDebugEnabled()) {
-							_log.debug(nsfe, nsfe);
-						}
-					}
-				}
-				else {
-					inputStream = portletDataContext.getZipEntryAsInputStream(
-						binPath);
-				}
+			try (InputStream inputStream = _getKBArticalAttachmentInputStream(
+					binPath, portletDataContext, fileEntry)) {
 
 				if (inputStream == null) {
 					if (_log.isWarnEnabled()) {
@@ -459,10 +420,56 @@ public class KBArticleStagedModelDataHandler
 					_log.debug(dfee, dfee);
 				}
 			}
-			finally {
-				StreamUtil.cleanUp(inputStream);
+		}
+	}
+
+	@Override
+	protected void importReferenceStagedModels(
+			PortletDataContext portletDataContext, KBArticle stagedModel)
+		throws PortletDataException {
+
+		super.importReferenceStagedModels(portletDataContext, stagedModel);
+
+		Element stagedModelElement =
+			portletDataContext.getImportDataStagedModelElement(stagedModel);
+
+		long kbArticleClassNameId = _portal.getClassNameId(
+			KBArticleConstants.getClassName());
+		long kbFolderClassNameId = _portal.getClassNameId(
+			KBFolderConstants.getClassName());
+
+		stagedModel.setParentResourceClassNameId(kbFolderClassNameId);
+
+		Element referencesElement = stagedModelElement.element("references");
+
+		if (referencesElement == null) {
+			return;
+		}
+
+		List<Element> referenceElements = referencesElement.elements();
+
+		for (Element referenceElement : referenceElements) {
+			String referenceType = referenceElement.attributeValue("type");
+
+			if (referenceType.equals(
+					PortletDataContext.REFERENCE_TYPE_PARENT)) {
+
+				String className = referenceElement.attributeValue(
+					"class-name");
+
+				if (className.equals(KBArticle.class.getName())) {
+					stagedModel.setParentResourceClassNameId(
+						kbArticleClassNameId);
+				}
+
+				break;
 			}
 		}
+	}
+
+	@Reference(unbind = "-")
+	protected void setAdminUtilHelper(AdminHelper adminHelper) {
+		_adminHelper = adminHelper;
 	}
 
 	@Reference(unbind = "-")
@@ -491,8 +498,36 @@ public class KBArticleStagedModelDataHandler
 		_portletFileRepository = portletFileRepository;
 	}
 
+	private InputStream _getKBArticalAttachmentInputStream(
+			String binPath, PortletDataContext portletDataContext,
+			FileEntry fileEntry)
+		throws Exception {
+
+		if (Validator.isNull(binPath) &&
+			portletDataContext.isPerformDirectBinaryImport()) {
+
+			try {
+				return FileEntryUtil.getContentStream(fileEntry);
+			}
+			catch (NoSuchFileException nsfe) {
+
+				// LPS-52675
+
+				if (_log.isDebugEnabled()) {
+					_log.debug(nsfe, nsfe);
+				}
+
+				return null;
+			}
+		}
+
+		return portletDataContext.getZipEntryAsInputStream(binPath);
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		KBArticleStagedModelDataHandler.class);
+
+	private AdminHelper _adminHelper;
 
 	@Reference
 	private KBArticleExportImportContentProcessor

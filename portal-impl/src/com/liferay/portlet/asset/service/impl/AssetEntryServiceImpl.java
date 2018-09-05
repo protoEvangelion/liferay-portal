@@ -18,6 +18,7 @@ import com.liferay.asset.kernel.AssetRendererFactoryRegistryUtil;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.asset.kernel.service.persistence.AssetEntryQuery;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.cache.thread.local.Lifecycle;
 import com.liferay.portal.kernel.cache.thread.local.ThreadLocalCache;
 import com.liferay.portal.kernel.cache.thread.local.ThreadLocalCacheManager;
@@ -25,9 +26,10 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.access.control.AccessControlled;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.asset.service.base.AssetEntryServiceBaseImpl;
 import com.liferay.portlet.asset.service.permission.AssetEntryPermission;
@@ -126,12 +128,26 @@ public class AssetEntryServiceImpl extends AssetEntryServiceBaseImpl {
 
 	@Override
 	public AssetEntry getEntry(long entryId) throws PortalException {
-		AssetEntryPermission.check(
-			getPermissionChecker(), entryId, ActionKeys.VIEW);
+		AssetEntry entry = assetEntryLocalService.getEntry(entryId);
 
-		return assetEntryLocalService.getEntry(entryId);
+		AssetEntryPermission.check(
+			getPermissionChecker(), entry, ActionKeys.VIEW);
+
+		return entry;
 	}
 
+	@Override
+	public void incrementViewCounter(AssetEntry assetEntry)
+		throws PortalException {
+
+		AssetEntryPermission.check(
+			getPermissionChecker(), assetEntry, ActionKeys.VIEW);
+
+		assetEntryLocalService.incrementViewCounter(
+			getGuestOrUserId(), assetEntry);
+	}
+
+	@AccessControlled(guestAccessEnabled = true)
 	@Override
 	public AssetEntry incrementViewCounter(String className, long classPK)
 		throws PortalException {
@@ -165,10 +181,10 @@ public class AssetEntryServiceImpl extends AssetEntryServiceBaseImpl {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #updateEntry(long, Date,
-	 *             Date, String, long, String, long, long[], String[], boolean,
-	 *             boolean, Date, Date, Date, Date, String, String, String,
-	 *             String, String, String, int, int, Double)}
+	 * @deprecated As of Judson (7.1.x), replaced by {@link #updateEntry(long,
+	 *             Date, Date, String, long, String, long, long[], String[],
+	 *             boolean, boolean, Date, Date, Date, Date, String, String,
+	 *             String, String, String, String, int, int, Double)}
 	 */
 	@Deprecated
 	@Override
@@ -193,10 +209,11 @@ public class AssetEntryServiceImpl extends AssetEntryServiceBaseImpl {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #updateEntry(long, Date,
-	 *             Date, String, long, String, long, long[], String[], boolean,
-	 *             boolean, Date, Date, Date, Date, String, String, String,
-	 *             String, String, String, int, int, Double)}
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	 *             #updateEntry(long, Date, Date, String, long, String, long,
+	 *             long[], String[], boolean, boolean, Date, Date, Date, Date,
+	 *             String, String, String, String, String, String, int, int,
+	 *             Double)}
 	 */
 	@Deprecated
 	@Override
@@ -349,8 +366,13 @@ public class AssetEntryServiceImpl extends AssetEntryServiceBaseImpl {
 		AssetEntryQuery originalEntryQuery,
 		AssetEntryQuery filteredEntryQuery) {
 
-		if (originalEntryQuery.getAllCategoryIds().length >
-				filteredEntryQuery.getAllCategoryIds().length) {
+		long[] filteredEntryQueryAllCategoryIds =
+			filteredEntryQuery.getAllCategoryIds();
+		long[] originalEntryQueryAllCategoryIds =
+			originalEntryQuery.getAllCategoryIds();
+
+		if (originalEntryQueryAllCategoryIds.length >
+				filteredEntryQueryAllCategoryIds.length) {
 
 			// No results will be available if the user must have access to all
 			// category ids, but the user has access to fewer category ids in
@@ -360,8 +382,11 @@ public class AssetEntryServiceImpl extends AssetEntryServiceBaseImpl {
 			return true;
 		}
 
-		if (originalEntryQuery.getAllTagIds().length >
-				filteredEntryQuery.getAllTagIds().length) {
+		long[] filteredEntryQueryAllTagIds = filteredEntryQuery.getAllTagIds();
+		long[] originalEntryQueryAllTagIds = originalEntryQuery.getAllTagIds();
+
+		if (originalEntryQueryAllTagIds.length >
+				filteredEntryQueryAllTagIds.length) {
 
 			// No results will be available if the user must have access to all
 			// tag ids, but the user has access to fewer tag ids in the filtered
@@ -370,8 +395,8 @@ public class AssetEntryServiceImpl extends AssetEntryServiceBaseImpl {
 			return true;
 		}
 
-		if ((originalEntryQuery.getAnyCategoryIds().length > 0) &&
-			(filteredEntryQuery.getAnyCategoryIds().length == 0)) {
+		if (ArrayUtil.isNotEmpty(originalEntryQuery.getAnyCategoryIds()) &&
+			ArrayUtil.isEmpty(filteredEntryQuery.getAnyCategoryIds())) {
 
 			// No results will be available if the original entry query
 			// specified at least one category id, but the filtered entry query
@@ -380,8 +405,8 @@ public class AssetEntryServiceImpl extends AssetEntryServiceBaseImpl {
 			return true;
 		}
 
-		if ((originalEntryQuery.getAnyTagIds().length > 0) &&
-			(filteredEntryQuery.getAnyTagIds().length == 0)) {
+		if (ArrayUtil.isNotEmpty(originalEntryQuery.getAnyTagIds()) &&
+			ArrayUtil.isEmpty(filteredEntryQuery.getAnyTagIds())) {
 
 			// No results will be available if the original entry query
 			// specified at least one tag id, but the filtered entry query shows

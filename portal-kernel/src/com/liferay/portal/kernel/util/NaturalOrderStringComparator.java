@@ -14,6 +14,8 @@
 
 package com.liferay.portal.kernel.util;
 
+import com.liferay.petra.string.StringPool;
+
 import java.io.Serializable;
 
 import java.util.Comparator;
@@ -139,9 +141,8 @@ public class NaturalOrderStringComparator
 		if (_ascending) {
 			return value;
 		}
-		else {
-			return -value;
-		}
+
+		return -value;
 	}
 
 	protected boolean isCheckSpecialCharacters() {
@@ -152,9 +153,8 @@ public class NaturalOrderStringComparator
 		if (Validator.isChar(c) || Validator.isDigit(c)) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	private final boolean _ascending;

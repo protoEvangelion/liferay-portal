@@ -40,20 +40,21 @@ public class SocialRequestServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.portlet.social.service.impl.SocialRequestServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static com.liferay.social.kernel.model.SocialRequest updateRequest(
-		long requestId, int status,
-		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().updateRequest(requestId, status, themeDisplay);
-	}
 
 	/**
 	* Returns the OSGi service identifier.
 	*
 	* @return the OSGi service identifier
 	*/
-	public static java.lang.String getOSGiServiceIdentifier() {
+	public static String getOSGiServiceIdentifier() {
 		return getService().getOSGiServiceIdentifier();
+	}
+
+	public static com.liferay.social.kernel.model.SocialRequest updateRequest(
+		long requestId, int status,
+		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().updateRequest(requestId, status, themeDisplay);
 	}
 
 	public static SocialRequestService getService() {

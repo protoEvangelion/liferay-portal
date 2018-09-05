@@ -19,15 +19,16 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 
 import com.liferay.social.kernel.model.SocialActivityCounter;
@@ -171,7 +172,7 @@ public class SocialActivityCounterModelImpl extends BaseModelImpl<SocialActivity
 		attributes.put("graceValue", getGraceValue());
 		attributes.put("startPeriod", getStartPeriod());
 		attributes.put("endPeriod", getEndPeriod());
-		attributes.put("active", getActive());
+		attributes.put("active", isActive());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -305,7 +306,7 @@ public class SocialActivityCounterModelImpl extends BaseModelImpl<SocialActivity
 	@Override
 	public String getClassName() {
 		if (getClassNameId() <= 0) {
-			return StringPool.BLANK;
+			return "";
 		}
 
 		return PortalUtil.getClassName(getClassNameId());
@@ -369,7 +370,7 @@ public class SocialActivityCounterModelImpl extends BaseModelImpl<SocialActivity
 	@Override
 	public String getName() {
 		if (_name == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _name;
@@ -545,7 +546,7 @@ public class SocialActivityCounterModelImpl extends BaseModelImpl<SocialActivity
 		socialActivityCounterImpl.setGraceValue(getGraceValue());
 		socialActivityCounterImpl.setStartPeriod(getStartPeriod());
 		socialActivityCounterImpl.setEndPeriod(getEndPeriod());
-		socialActivityCounterImpl.setActive(getActive());
+		socialActivityCounterImpl.setActive(isActive());
 
 		socialActivityCounterImpl.resetOriginalValues();
 
@@ -671,7 +672,7 @@ public class SocialActivityCounterModelImpl extends BaseModelImpl<SocialActivity
 
 		socialActivityCounterCacheModel.endPeriod = getEndPeriod();
 
-		socialActivityCounterCacheModel.active = getActive();
+		socialActivityCounterCacheModel.active = isActive();
 
 		return socialActivityCounterCacheModel;
 	}
@@ -705,7 +706,7 @@ public class SocialActivityCounterModelImpl extends BaseModelImpl<SocialActivity
 		sb.append(", endPeriod=");
 		sb.append(getEndPeriod());
 		sb.append(", active=");
-		sb.append(getActive());
+		sb.append(isActive());
 		sb.append("}");
 
 		return sb.toString();
@@ -769,7 +770,7 @@ public class SocialActivityCounterModelImpl extends BaseModelImpl<SocialActivity
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>active</column-name><column-value><![CDATA[");
-		sb.append(getActive());
+		sb.append(isActive());
 		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
@@ -779,7 +780,7 @@ public class SocialActivityCounterModelImpl extends BaseModelImpl<SocialActivity
 
 	private static final ClassLoader _classLoader = SocialActivityCounter.class.getClassLoader();
 	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
-			SocialActivityCounter.class
+			SocialActivityCounter.class, ModelWrapper.class
 		};
 	private long _activityCounterId;
 	private long _groupId;

@@ -14,7 +14,7 @@
 
 package com.liferay.portal.layoutconfiguration.util;
 
-import com.liferay.portal.kernel.executor.CopyThreadLocalCallable;
+import com.liferay.petra.lang.CentralizedThreadLocal;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.portlet.PortletContainerException;
 import com.liferay.portal.kernel.portlet.PortletContainerUtil;
@@ -22,11 +22,16 @@ import com.liferay.portal.kernel.portlet.RestrictPortletServletRequest;
 import com.liferay.portal.kernel.servlet.BufferCacheServletResponse;
 import com.liferay.portal.kernel.util.Mergeable;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.ThreadLocalBinder;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.io.IOException;
 
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author Shuyang Zhou
+ * @author Neil Griffin
  */
 public class PortletRenderer {
 
@@ -54,9 +60,11 @@ public class PortletRenderer {
 	}
 
 	public Callable<StringBundler> getCallable(
-		HttpServletRequest request, HttpServletResponse response) {
+		HttpServletRequest request, HttpServletResponse response,
+		Map<String, Object> headerRequestAttributes) {
 
-		return new PortletRendererCallable(request, response);
+		return new PortletRendererCallable(
+			request, response, headerRequestAttributes);
 	}
 
 	public Portlet getPortlet() {
@@ -64,11 +72,14 @@ public class PortletRenderer {
 	}
 
 	public StringBundler render(
-			HttpServletRequest request, HttpServletResponse response)
+			HttpServletRequest request, HttpServletResponse response,
+			Map<String, Object> headerRequestAttributes)
 		throws PortletContainerException {
 
 		request = PortletContainerUtil.setupOptionalRenderParameters(
 			request, null, _columnId, _columnPos, _columnCount);
+
+		_copyHeaderRequestAttributes(headerRequestAttributes, request);
 
 		return _render(request, response);
 	}
@@ -102,6 +113,61 @@ public class PortletRenderer {
 		}
 		finally {
 			request.removeAttribute(WebKeys.PARALLEL_RENDERING_TIMEOUT_ERROR);
+		}
+	}
+
+	public Map<String, Object> renderHeaders(
+			HttpServletRequest request, HttpServletResponse response,
+			List<String> attributePrefixes)
+		throws PortletContainerException {
+
+		request = PortletContainerUtil.setupOptionalRenderParameters(
+			request, null, _columnId, _columnPos, _columnCount);
+
+		BufferCacheServletResponse bufferCacheServletResponse =
+			new BufferCacheServletResponse(response);
+
+		PortletContainerUtil.renderHeaders(
+			request, bufferCacheServletResponse, _portlet);
+
+		Map<String, Object> headerRequestAttributes = new HashMap<>();
+
+		Enumeration<String> attributeNames = request.getAttributeNames();
+
+		while (attributeNames.hasMoreElements()) {
+			String attributeName = attributeNames.nextElement();
+
+			if (attributeName.contains(
+					"javax.portlet.faces.renderResponseOutput")) {
+
+				headerRequestAttributes.put(
+					attributeName, request.getAttribute(attributeName));
+			}
+			else if (attributePrefixes != null) {
+				for (String attributePrefix : attributePrefixes) {
+					if (attributeName.contains(attributePrefix)) {
+						headerRequestAttributes.put(
+							attributeName, request.getAttribute(attributeName));
+
+						break;
+					}
+				}
+			}
+		}
+
+		return headerRequestAttributes;
+	}
+
+	private void _copyHeaderRequestAttributes(
+		Map<String, Object> headerRequestAttributes,
+		HttpServletRequest request) {
+
+		if (headerRequestAttributes != null) {
+			for (Map.Entry<String, Object> entry :
+					headerRequestAttributes.entrySet()) {
+
+				request.setAttribute(entry.getKey(), entry.getValue());
+			}
 		}
 	}
 
@@ -147,11 +213,79 @@ public class PortletRenderer {
 	private final Portlet _portlet;
 	private RestrictPortletServletRequest _restrictPortletServletRequest;
 
+	private abstract class CopyThreadLocalCallable<T> implements Callable<T> {
+
+		public CopyThreadLocalCallable(boolean readOnly, boolean clearOnExit) {
+			this(null, readOnly, clearOnExit);
+		}
+
+		public CopyThreadLocalCallable(
+			ThreadLocalBinder threadLocalBinder, boolean readOnly,
+			boolean clearOnExit) {
+
+			_threadLocalBinder = threadLocalBinder;
+
+			if (_threadLocalBinder != null) {
+				_threadLocalBinder.record();
+			}
+
+			if (readOnly) {
+				_longLivedThreadLocals = Collections.unmodifiableMap(
+					CentralizedThreadLocal.getLongLivedThreadLocals());
+				_shortLivedlThreadLocals = Collections.unmodifiableMap(
+					CentralizedThreadLocal.getShortLivedThreadLocals());
+			}
+			else {
+				_longLivedThreadLocals =
+					CentralizedThreadLocal.getLongLivedThreadLocals();
+				_shortLivedlThreadLocals =
+					CentralizedThreadLocal.getShortLivedThreadLocals();
+			}
+
+			_clearOnExit = clearOnExit;
+		}
+
+		@Override
+		public final T call() throws Exception {
+			CentralizedThreadLocal.setThreadLocals(
+				_longLivedThreadLocals, _shortLivedlThreadLocals);
+
+			if (_threadLocalBinder != null) {
+				_threadLocalBinder.bind();
+			}
+
+			try {
+				return doCall();
+			}
+			finally {
+				if (_clearOnExit) {
+					if (_threadLocalBinder != null) {
+						_threadLocalBinder.cleanUp();
+					}
+
+					CentralizedThreadLocal.clearLongLivedThreadLocals();
+					CentralizedThreadLocal.clearShortLivedThreadLocals();
+				}
+			}
+		}
+
+		public abstract T doCall() throws Exception;
+
+		private final boolean _clearOnExit;
+		private final Map<CentralizedThreadLocal<?>, Object>
+			_longLivedThreadLocals;
+		private final Map<CentralizedThreadLocal<?>, Object>
+			_shortLivedlThreadLocals;
+		private final ThreadLocalBinder _threadLocalBinder;
+
+	}
+
 	private class PortletRendererCallable
 		extends CopyThreadLocalCallable<StringBundler> {
 
 		public PortletRendererCallable(
-			HttpServletRequest request, HttpServletResponse response) {
+			HttpServletRequest request, HttpServletResponse response,
+			Map<String, Object> headerRequestAttributes) {
 
 			super(
 				ParallelRenderThreadLocalBinderUtil.getThreadLocalBinder(),
@@ -159,6 +293,7 @@ public class PortletRenderer {
 
 			_request = request;
 			_response = response;
+			_headerRequestAttributes = headerRequestAttributes;
 		}
 
 		@Override
@@ -166,6 +301,8 @@ public class PortletRenderer {
 			HttpServletRequest request =
 				PortletContainerUtil.setupOptionalRenderParameters(
 					_request, null, _columnId, _columnPos, _columnCount);
+
+			_copyHeaderRequestAttributes(_headerRequestAttributes, request);
 
 			_restrictPortletServletRequest =
 				(RestrictPortletServletRequest)request;
@@ -203,8 +340,8 @@ public class PortletRenderer {
 				Object attribute = request.getAttribute(attributeName);
 
 				if (!(attribute instanceof Mergeable<?>) ||
-						!RestrictPortletServletRequest.isSharedRequestAttribute(
-							attributeName)) {
+					!RestrictPortletServletRequest.isSharedRequestAttribute(
+						attributeName)) {
 
 					continue;
 				}
@@ -216,6 +353,7 @@ public class PortletRenderer {
 			}
 		}
 
+		private final Map<String, Object> _headerRequestAttributes;
 		private final HttpServletRequest _request;
 		private final HttpServletResponse _response;
 

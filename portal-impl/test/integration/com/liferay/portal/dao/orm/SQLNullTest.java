@@ -14,6 +14,7 @@
 
 package com.liferay.portal.dao.orm;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
@@ -23,7 +24,6 @@ import com.liferay.portal.kernel.dao.orm.SQLQuery;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.TransactionalTestRule;
 
@@ -49,421 +49,421 @@ import org.junit.Test;
  *
  * <table border="1">
  *
- * 	<tr>
- * 		<th>
- * 		</th>
- * 		<th>
- * 			MySQL/DB2/SQL Server 2005/2008
- * 		</th>
- * 		<th>
- * 			PostgreSQL
- * 		</th>
- * 		<th>
- * 			Oracle 10G/11G
- * 		</th>
- * 		<th>
- * 			Sybase
- * 		</th>
- * 		<th>
- * 			Hypersonic
- * 		</th>
- * 	</tr>
+ * <tr>
+ * <th>
+ * </th>
+ * <th>
+ * MySQL/DB2/SQL Server 2005/2008
+ * </th>
+ * <th>
+ * PostgreSQL
+ * </th>
+ * <th>
+ * Oracle 10G/11G
+ * </th>
+ * <th>
+ * Sybase
+ * </th>
+ * <th>
+ * Hypersonic
+ * </th>
+ * </tr>
  *
- * 	<tr>
- * 		<td colspan="6" align="center">
- * 			<code>''</code> comparison with <code>NULL</code>
- * 		</td>
- * 	</tr>
+ * <tr>
+ * <td colspan="6" align="center">
+ * <code>''</code> comparison with <code>NULL</code>
+ * </td>
+ * </tr>
  *
- * 	<tr>
- * 		<td>
- * 			<code>''</code> = <code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>FALSE</code><sup>*</sup>
- * 		</td>
- * 	<td>
- * 			<code>NULL</code><sup>*</sup>
- * 		</td>
- * 	</tr>
+ * <tr>
+ * <td>
+ * <code>''</code> = <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>FALSE</code><sup>*</sup>
+ * </td>
+ * <td>
+ * <code>NULL</code><sup>*</sup>
+ * </td>
+ * </tr>
  *
- * 	<tr>
- * 		<td>
- * 			<code>''</code> != <code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>TRUE</code><sup>*</sup>
- * 		</td>
- * 	<td>
- * 			<code>NULL</code><sup>*</sup>
- * 		</td>
- * 	</tr>
+ * <tr>
+ * <td>
+ * <code>''</code> != <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>TRUE</code><sup>*</sup>
+ * </td>
+ * <td>
+ * <code>NULL</code><sup>*</sup>
+ * </td>
+ * </tr>
  *
- * 	<tr>
- * 		<td>
- * 			<code>''</code> IS <code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>FALSE</code>
- * 		</td>
- * 		<td>
- * 			<code>FALSE</code>
- * 		</td>
- * 		<td>
- * 			<code>TRUE</code>
- * 		</td>
- * 		<td>
- * 			<code>FALSE</code><sup>*</sup>
- * 		</td>
- * 		<td>
- * 			<code>FALSE</code>
- * 		</td>
- * 	</tr>
+ * <tr>
+ * <td>
+ * <code>''</code> IS <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>FALSE</code>
+ * </td>
+ * <td>
+ * <code>FALSE</code>
+ * </td>
+ * <td>
+ * <code>TRUE</code>
+ * </td>
+ * <td>
+ * <code>FALSE</code><sup>*</sup>
+ * </td>
+ * <td>
+ * <code>FALSE</code>
+ * </td>
+ * </tr>
  *
- * 	<tr>
- * 		<td>
- * 			<code>''</code> IS NOT <code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>TRUE</code>
- * 		</td>
- * 		<td>
- * 			<code>TRUE</code>
- * 		</td>
- * 		<td>
- * 			<code>FALSE</code>
- * 		</td>
- * 		<td>
- * 			<code>TRUE</code><sup>*</sup>
- * 		</td>
- * 		<td>
- * 			<code>TRUE</code>
- * 		</td>
- * 	</tr>
+ * <tr>
+ * <td>
+ * <code>''</code> IS NOT <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>TRUE</code>
+ * </td>
+ * <td>
+ * <code>TRUE</code>
+ * </td>
+ * <td>
+ * <code>FALSE</code>
+ * </td>
+ * <td>
+ * <code>TRUE</code><sup>*</sup>
+ * </td>
+ * <td>
+ * <code>TRUE</code>
+ * </td>
+ * </tr>
  *
- * 	<tr>
- * 		<td>
- * 			<code>''</code> LIKE <code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>FALSE</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code><sup>*</sup>
- * 		</td>
- * 	</tr>
+ * <tr>
+ * <td>
+ * <code>''</code> LIKE <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>FALSE</code>
+ * </td>
+ * <td>
+ * <code>NULL</code><sup>*</sup>
+ * </td>
+ * </tr>
  *
- * 	<tr>
- * 		<td>
- * 			<code>''</code> NOT LIKE <code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>TRUE</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code><sup>*</sup>
- * 		</td>
- * 	</tr>
+ * <tr>
+ * <td>
+ * <code>''</code> NOT LIKE <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>TRUE</code>
+ * </td>
+ * <td>
+ * <code>NULL</code><sup>*</sup>
+ * </td>
+ * </tr>
  *
- * 	<tr>
- * 		<td colspan="6" align="center">
- * 			<code>NULL</code> comparison with <code>NULL</code>
- * 		</td>
- * 	</tr>
+ * <tr>
+ * <td colspan="6" align="center">
+ * <code>NULL</code> comparison with <code>NULL</code>
+ * </td>
+ * </tr>
  *
- * 	<tr>
- * 		<td>
- * 			<code>NULL</code> = <code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>TRUE</code><sup>*</sup>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code><sup>*</sup>
- * 		</td>
- * 	</tr>
+ * <tr>
+ * <td>
+ * <code>NULL</code> = <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>TRUE</code><sup>*</sup>
+ * </td>
+ * <td>
+ * <code>NULL</code><sup>*</sup>
+ * </td>
+ * </tr>
  *
- * 	<tr>
- * 		<td>
- * 			<code>NULL</code> != <code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>FALSE</code><sup>*</sup>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code><sup>*</sup>
- * 		</td>
- * 	</tr>
+ * <tr>
+ * <td>
+ * <code>NULL</code> != <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>FALSE</code><sup>*</sup>
+ * </td>
+ * <td>
+ * <code>NULL</code><sup>*</sup>
+ * </td>
+ * </tr>
  *
- * 	<tr>
- * 		<td>
- * 			<code>NULL</code> IS <code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>TRUE</code>
- * 		</td>
- * 		<td>
- * 			<code>TRUE</code>
- * 		</td>
- * 		<td>
- * 			<code>TRUE</code>
- * 		</td>
- * 		<td>
- * 			<code>TRUE</code><sup>*</sup>
- * 		</td>
- * 		<td>
- * 			<code>TRUE</code>
- * 		</td>
- * 	</tr>
+ * <tr>
+ * <td>
+ * <code>NULL</code> IS <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>TRUE</code>
+ * </td>
+ * <td>
+ * <code>TRUE</code>
+ * </td>
+ * <td>
+ * <code>TRUE</code>
+ * </td>
+ * <td>
+ * <code>TRUE</code><sup>*</sup>
+ * </td>
+ * <td>
+ * <code>TRUE</code>
+ * </td>
+ * </tr>
  *
- * 	<tr>
- * 		<td>
- * 			<code>NULL</code> IS NOT <code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>FALSE</code>
- * 		</td>
- * 		<td>
- * 			<code>FALSE</code>
- * 		</td>
- * 		<td>
- * 			<code>FALSE</code>
- * 		</td>
- * 		<td>
- * 			<code>FALSE</code><sup>*</sup>
- * 		</td>
- * 		<td>
- * 			<code>FALSE</code>
- * 		</td>
- * 	</tr>
+ * <tr>
+ * <td>
+ * <code>NULL</code> IS NOT <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>FALSE</code>
+ * </td>
+ * <td>
+ * <code>FALSE</code>
+ * </td>
+ * <td>
+ * <code>FALSE</code>
+ * </td>
+ * <td>
+ * <code>FALSE</code><sup>*</sup>
+ * </td>
+ * <td>
+ * <code>FALSE</code>
+ * </td>
+ * </tr>
  *
- * 	<tr>
- * 		<td>
- * 			<code>NULL</code> LIKE <code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 		<code>FALSE</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code><sup>*</sup>
- * 		</td>
- * 	</tr>
+ * <tr>
+ * <td>
+ * <code>NULL</code> LIKE <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>FALSE</code>
+ * </td>
+ * <td>
+ * <code>NULL</code><sup>*</sup>
+ * </td>
+ * </tr>
  *
- * 	<tr>
- * 		<td>
- * 			<code>NULL</code> NOT LIKE <code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>TRUE</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code><sup>*</sup>
- * 		</td>
- * 	</tr>
+ * <tr>
+ * <td>
+ * <code>NULL</code> NOT LIKE <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>TRUE</code>
+ * </td>
+ * <td>
+ * <code>NULL</code><sup>*</sup>
+ * </td>
+ * </tr>
  *
- * 	<tr>
- * 		<td colspan="6" align="center">
- * 			<code>0</code> comparison with <code>NULL</code>
- * 		</td>
- * 	</tr>
+ * <tr>
+ * <td colspan="6" align="center">
+ * <code>0</code> comparison with <code>NULL</code>
+ * </td>
+ * </tr>
  *
- * 	<tr>
- * 		<td>
- * 			<code>0</code> = <code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>FALSE</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code><sup>*</sup>
- * 		</td>
- * 	</tr>
+ * <tr>
+ * <td>
+ * <code>0</code> = <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>FALSE</code>
+ * </td>
+ * <td>
+ * <code>NULL</code><sup>*</sup>
+ * </td>
+ * </tr>
  *
- * 	<tr>
- * 		<td>
- * 			<code>0</code> != <code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>TRUE</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code><sup>*</sup>
- * 		</td>
- * 	</tr>
+ * <tr>
+ * <td>
+ * <code>0</code> != <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>TRUE</code>
+ * </td>
+ * <td>
+ * <code>NULL</code><sup>*</sup>
+ * </td>
+ * </tr>
  *
- * 	<tr>
- * 		<td>
- * 			<code>0</code> IS <code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>FALSE</code>
- * 		</td>
- * 		<td>
- * 			<code>FALSE</code>
- * 		</td>
- * 		<td>
- * 			<code>FALSE</code>
- * 		</td>
- * 		<td>
- * 			<code>FALSE</code>
- * 		</td>
- * 		<td>
- * 			<code>FALSE</code>
- * 		</td>
- * 	</tr>
+ * <tr>
+ * <td>
+ * <code>0</code> IS <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>FALSE</code>
+ * </td>
+ * <td>
+ * <code>FALSE</code>
+ * </td>
+ * <td>
+ * <code>FALSE</code>
+ * </td>
+ * <td>
+ * <code>FALSE</code>
+ * </td>
+ * <td>
+ * <code>FALSE</code>
+ * </td>
+ * </tr>
  *
- * 	<tr>
- * 		<td>
- * 			<code>0</code> IS NOT <code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>TRUE</code>
- * 		</td>
- * 		<td>
- * 			<code>TRUE</code>
- * 		</td>
- * 		<td>
- * 			<code>TRUE</code>
- * 		</td>
- * 		<td>
- * 			<code>TRUE</code>
- * 		</td>
- * 		<td>
- * 			<code>TRUE</code>
- * 		</td>
- * 	</tr>
+ * <tr>
+ * <td>
+ * <code>0</code> IS NOT <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>TRUE</code>
+ * </td>
+ * <td>
+ * <code>TRUE</code>
+ * </td>
+ * <td>
+ * <code>TRUE</code>
+ * </td>
+ * <td>
+ * <code>TRUE</code>
+ * </td>
+ * <td>
+ * <code>TRUE</code>
+ * </td>
+ * </tr>
  *
- * 	<tr>
- * 		<td>
- * 			<code>0</code> LIKE <code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code><sup>*</sup>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>FALSE</code><sup>*</sup>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code><sup>*</sup>
- * 		</td>
- * 	</tr>
+ * <tr>
+ * <td>
+ * <code>0</code> LIKE <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code><sup>*</sup>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>FALSE</code><sup>*</sup>
+ * </td>
+ * <td>
+ * <code>NULL</code><sup>*</sup>
+ * </td>
+ * </tr>
  *
- * 	<tr>
- * 		<td>
- * 			<code>0</code> NOT LIKE <code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code><sup>*</sup>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code>
- * 		</td>
- * 		<td>
- * 			<code>TRUE</code><sup>*</sup>
- * 		</td>
- * 		<td>
- * 			<code>NULL</code><sup>*</sup>
- * 		</td>
- * 	</tr>
+ * <tr>
+ * <td>
+ * <code>0</code> NOT LIKE <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>NULL</code><sup>*</sup>
+ * </td>
+ * <td>
+ * <code>NULL</code>
+ * </td>
+ * <td>
+ * <code>TRUE</code><sup>*</sup>
+ * </td>
+ * <td>
+ * <code>NULL</code><sup>*</sup>
+ * </td>
+ * </tr>
  *
  * </table>
  *
@@ -525,7 +525,7 @@ public class SQLNullTest {
 
 			List<Object> list = sqlQuery.list();
 
-			Assert.assertTrue(list.isEmpty());
+			Assert.assertTrue(list.toString(), list.isEmpty());
 		}
 		finally {
 			_sessionFactory.closeSession(session);
@@ -552,10 +552,10 @@ public class SQLNullTest {
 			List<Object> list = sqlQuery.list();
 
 			if (isOracle()) {
-				Assert.assertTrue(list.isEmpty());
+				Assert.assertTrue(list.toString(), list.isEmpty());
 			}
 			else {
-				Assert.assertFalse(list.isEmpty());
+				Assert.assertFalse(list.toString(), list.isEmpty());
 			}
 		}
 		finally {
@@ -583,10 +583,10 @@ public class SQLNullTest {
 			List<Object> list = sqlQuery.list();
 
 			if (isOracle()) {
-				Assert.assertFalse(list.isEmpty());
+				Assert.assertFalse(list.toString(), list.isEmpty());
 			}
 			else {
-				Assert.assertTrue(list.isEmpty());
+				Assert.assertTrue(list.toString(), list.isEmpty());
 			}
 		}
 		finally {
@@ -613,7 +613,7 @@ public class SQLNullTest {
 
 			List<Object> list = sqlQuery.list();
 
-			Assert.assertTrue(list.isEmpty());
+			Assert.assertTrue(list.toString(), list.isEmpty());
 		}
 		finally {
 			_sessionFactory.closeSession(session);
@@ -643,10 +643,10 @@ public class SQLNullTest {
 			List<Object> list = sqlQuery.list();
 
 			if (isSybase()) {
-				Assert.assertFalse(list.isEmpty());
+				Assert.assertFalse(list.toString(), list.isEmpty());
 			}
 			else {
-				Assert.assertTrue(list.isEmpty());
+				Assert.assertTrue(list.toString(), list.isEmpty());
 			}
 		}
 		finally {
@@ -674,10 +674,10 @@ public class SQLNullTest {
 			List<Object> list = sqlQuery.list();
 
 			if (isSybase()) {
-				Assert.assertFalse(list.isEmpty());
+				Assert.assertFalse(list.toString(), list.isEmpty());
 			}
 			else {
-				Assert.assertTrue(list.isEmpty());
+				Assert.assertTrue(list.toString(), list.isEmpty());
 			}
 		}
 		finally {
@@ -708,10 +708,10 @@ public class SQLNullTest {
 			List<Object> list = sqlQuery.list();
 
 			if (isSybase()) {
-				Assert.assertFalse(list.isEmpty());
+				Assert.assertFalse(list.toString(), list.isEmpty());
 			}
 			else {
-				Assert.assertTrue(list.isEmpty());
+				Assert.assertTrue(list.toString(), list.isEmpty());
 			}
 		}
 		finally {
@@ -738,7 +738,7 @@ public class SQLNullTest {
 
 			List<Object> list = sqlQuery.list();
 
-			Assert.assertTrue(list.isEmpty());
+			Assert.assertTrue(list.toString(), list.isEmpty());
 		}
 		finally {
 			_sessionFactory.closeSession(session);
@@ -764,7 +764,7 @@ public class SQLNullTest {
 
 			List<Object> list = sqlQuery.list();
 
-			Assert.assertFalse(list.isEmpty());
+			Assert.assertFalse(list.toString(), list.isEmpty());
 		}
 		finally {
 			_sessionFactory.closeSession(session);
@@ -790,7 +790,7 @@ public class SQLNullTest {
 
 			List<Object> list = sqlQuery.list();
 
-			Assert.assertTrue(list.isEmpty());
+			Assert.assertTrue(list.toString(), list.isEmpty());
 		}
 		finally {
 			_sessionFactory.closeSession(session);
@@ -819,7 +819,7 @@ public class SQLNullTest {
 
 			List<Object> list = sqlQuery.list();
 
-			Assert.assertTrue(list.isEmpty());
+			Assert.assertTrue(list.toString(), list.isEmpty());
 		}
 		finally {
 			_sessionFactory.closeSession(session);
@@ -846,10 +846,10 @@ public class SQLNullTest {
 			List<Object> list = sqlQuery.list();
 
 			if (isSybase()) {
-				Assert.assertFalse(list.isEmpty());
+				Assert.assertFalse(list.toString(), list.isEmpty());
 			}
 			else {
-				Assert.assertTrue(list.isEmpty());
+				Assert.assertTrue(list.toString(), list.isEmpty());
 			}
 		}
 		finally {
@@ -876,7 +876,7 @@ public class SQLNullTest {
 
 			List<Object> list = sqlQuery.list();
 
-			Assert.assertTrue(list.isEmpty());
+			Assert.assertTrue(list.toString(), list.isEmpty());
 		}
 		finally {
 			_sessionFactory.closeSession(session);
@@ -897,7 +897,7 @@ public class SQLNullTest {
 
 			List<Object> list = sqlQuery.list();
 
-			Assert.assertFalse(list.isEmpty());
+			Assert.assertFalse(list.toString(), list.isEmpty());
 		}
 		finally {
 			_sessionFactory.closeSession(session);
@@ -918,7 +918,7 @@ public class SQLNullTest {
 
 			List<Object> list = sqlQuery.list();
 
-			Assert.assertTrue(list.isEmpty());
+			Assert.assertTrue(list.toString(), list.isEmpty());
 		}
 		finally {
 			_sessionFactory.closeSession(session);
@@ -950,7 +950,7 @@ public class SQLNullTest {
 
 			List<Object> list = sqlQuery.list();
 
-			Assert.assertTrue(list.isEmpty());
+			Assert.assertTrue(list.toString(), list.isEmpty());
 		}
 		finally {
 			_sessionFactory.closeSession(session);
@@ -977,10 +977,10 @@ public class SQLNullTest {
 			List<Object> list = sqlQuery.list();
 
 			if (isSybase()) {
-				Assert.assertFalse(list.isEmpty());
+				Assert.assertFalse(list.toString(), list.isEmpty());
 			}
 			else {
-				Assert.assertTrue(list.isEmpty());
+				Assert.assertTrue(list.toString(), list.isEmpty());
 			}
 		}
 		finally {
@@ -1014,10 +1014,10 @@ public class SQLNullTest {
 			List<Object> list = sqlQuery.list();
 
 			if (isSybase()) {
-				Assert.assertFalse(list.isEmpty());
+				Assert.assertFalse(list.toString(), list.isEmpty());
 			}
 			else {
-				Assert.assertTrue(list.isEmpty());
+				Assert.assertTrue(list.toString(), list.isEmpty());
 			}
 		}
 		finally {

@@ -18,11 +18,11 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.exportimport.kernel.model.ExportImportConfiguration;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.MVCCModel;
 import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -130,7 +130,7 @@ public class ExportImportConfigurationCacheModel implements CacheModel<ExportImp
 		exportImportConfigurationImpl.setUserId(userId);
 
 		if (userName == null) {
-			exportImportConfigurationImpl.setUserName(StringPool.BLANK);
+			exportImportConfigurationImpl.setUserName("");
 		}
 		else {
 			exportImportConfigurationImpl.setUserName(userName);
@@ -151,14 +151,14 @@ public class ExportImportConfigurationCacheModel implements CacheModel<ExportImp
 		}
 
 		if (name == null) {
-			exportImportConfigurationImpl.setName(StringPool.BLANK);
+			exportImportConfigurationImpl.setName("");
 		}
 		else {
 			exportImportConfigurationImpl.setName(name);
 		}
 
 		if (description == null) {
-			exportImportConfigurationImpl.setDescription(StringPool.BLANK);
+			exportImportConfigurationImpl.setDescription("");
 		}
 		else {
 			exportImportConfigurationImpl.setDescription(description);
@@ -167,7 +167,7 @@ public class ExportImportConfigurationCacheModel implements CacheModel<ExportImp
 		exportImportConfigurationImpl.setType(type);
 
 		if (settings == null) {
-			exportImportConfigurationImpl.setSettings(StringPool.BLANK);
+			exportImportConfigurationImpl.setSettings("");
 		}
 		else {
 			exportImportConfigurationImpl.setSettings(settings);
@@ -177,7 +177,7 @@ public class ExportImportConfigurationCacheModel implements CacheModel<ExportImp
 		exportImportConfigurationImpl.setStatusByUserId(statusByUserId);
 
 		if (statusByUserName == null) {
-			exportImportConfigurationImpl.setStatusByUserName(StringPool.BLANK);
+			exportImportConfigurationImpl.setStatusByUserName("");
 		}
 		else {
 			exportImportConfigurationImpl.setStatusByUserName(statusByUserName);
@@ -236,7 +236,7 @@ public class ExportImportConfigurationCacheModel implements CacheModel<ExportImp
 		objectOutput.writeLong(userId);
 
 		if (userName == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(userName);
@@ -246,14 +246,14 @@ public class ExportImportConfigurationCacheModel implements CacheModel<ExportImp
 		objectOutput.writeLong(modifiedDate);
 
 		if (name == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(name);
 		}
 
 		if (description == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(description);
@@ -262,7 +262,7 @@ public class ExportImportConfigurationCacheModel implements CacheModel<ExportImp
 		objectOutput.writeInt(type);
 
 		if (settings == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(settings);
@@ -273,7 +273,7 @@ public class ExportImportConfigurationCacheModel implements CacheModel<ExportImp
 		objectOutput.writeLong(statusByUserId);
 
 		if (statusByUserName == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(statusByUserName);

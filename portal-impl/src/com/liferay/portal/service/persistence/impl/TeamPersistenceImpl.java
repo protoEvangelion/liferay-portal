@@ -16,6 +16,8 @@ package com.liferay.portal.service.persistence.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
@@ -45,10 +47,8 @@ import com.liferay.portal.kernel.service.persistence.impl.TableMapperFactory;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.ReflectionUtil;
+import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.model.impl.TeamImpl;
@@ -57,6 +57,7 @@ import com.liferay.portal.model.impl.TeamModelImpl;
 import java.io.Serializable;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
 
 import java.util.Collections;
 import java.util.Date;
@@ -236,7 +237,7 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 			if (uuid == null) {
 				query.append(_FINDER_COLUMN_UUID_UUID_1);
 			}
-			else if (uuid.equals(StringPool.BLANK)) {
+			else if (uuid.equals("")) {
 				query.append(_FINDER_COLUMN_UUID_UUID_3);
 			}
 			else {
@@ -323,7 +324,7 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 		msg.append("uuid=");
 		msg.append(uuid);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchTeamException(msg.toString());
 	}
@@ -371,7 +372,7 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 		msg.append("uuid=");
 		msg.append(uuid);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchTeamException(msg.toString());
 	}
@@ -460,7 +461,7 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 		if (uuid == null) {
 			query.append(_FINDER_COLUMN_UUID_UUID_1);
 		}
-		else if (uuid.equals(StringPool.BLANK)) {
+		else if (uuid.equals("")) {
 			query.append(_FINDER_COLUMN_UUID_UUID_3);
 		}
 		else {
@@ -596,7 +597,7 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 			if (uuid == null) {
 				query.append(_FINDER_COLUMN_UUID_UUID_1);
 			}
-			else if (uuid.equals(StringPool.BLANK)) {
+			else if (uuid.equals("")) {
 				query.append(_FINDER_COLUMN_UUID_UUID_3);
 			}
 			else {
@@ -675,7 +676,7 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 			msg.append(", groupId=");
 			msg.append(groupId);
 
-			msg.append(StringPool.CLOSE_CURLY_BRACE);
+			msg.append("}");
 
 			if (_log.isDebugEnabled()) {
 				_log.debug(msg.toString());
@@ -738,7 +739,7 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 			if (uuid == null) {
 				query.append(_FINDER_COLUMN_UUID_G_UUID_1);
 			}
-			else if (uuid.equals(StringPool.BLANK)) {
+			else if (uuid.equals("")) {
 				query.append(_FINDER_COLUMN_UUID_G_UUID_3);
 			}
 			else {
@@ -778,13 +779,6 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 					result = team;
 
 					cacheResult(team);
-
-					if ((team.getUuid() == null) ||
-							!team.getUuid().equals(uuid) ||
-							(team.getGroupId() != groupId)) {
-						finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G,
-							finderArgs, team);
-					}
 				}
 			}
 			catch (Exception e) {
@@ -845,7 +839,7 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 			if (uuid == null) {
 				query.append(_FINDER_COLUMN_UUID_G_UUID_1);
 			}
-			else if (uuid.equals(StringPool.BLANK)) {
+			else if (uuid.equals("")) {
 				query.append(_FINDER_COLUMN_UUID_G_UUID_3);
 			}
 			else {
@@ -1042,7 +1036,7 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 			if (uuid == null) {
 				query.append(_FINDER_COLUMN_UUID_C_UUID_1);
 			}
-			else if (uuid.equals(StringPool.BLANK)) {
+			else if (uuid.equals("")) {
 				query.append(_FINDER_COLUMN_UUID_C_UUID_3);
 			}
 			else {
@@ -1137,7 +1131,7 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 		msg.append(", companyId=");
 		msg.append(companyId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchTeamException(msg.toString());
 	}
@@ -1190,7 +1184,7 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 		msg.append(", companyId=");
 		msg.append(companyId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchTeamException(msg.toString());
 	}
@@ -1284,7 +1278,7 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 		if (uuid == null) {
 			query.append(_FINDER_COLUMN_UUID_C_UUID_1);
 		}
-		else if (uuid.equals(StringPool.BLANK)) {
+		else if (uuid.equals("")) {
 			query.append(_FINDER_COLUMN_UUID_C_UUID_3);
 		}
 		else {
@@ -1426,7 +1420,7 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 			if (uuid == null) {
 				query.append(_FINDER_COLUMN_UUID_C_UUID_1);
 			}
-			else if (uuid.equals(StringPool.BLANK)) {
+			else if (uuid.equals("")) {
 				query.append(_FINDER_COLUMN_UUID_C_UUID_3);
 			}
 			else {
@@ -1683,7 +1677,7 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 		msg.append("groupId=");
 		msg.append(groupId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchTeamException(msg.toString());
 	}
@@ -1731,7 +1725,7 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 		msg.append("groupId=");
 		msg.append(groupId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchTeamException(msg.toString());
 	}
@@ -2361,7 +2355,7 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 			msg.append(", name=");
 			msg.append(name);
 
-			msg.append(StringPool.CLOSE_CURLY_BRACE);
+			msg.append("}");
 
 			if (_log.isDebugEnabled()) {
 				_log.debug(msg.toString());
@@ -2425,7 +2419,7 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 			if (name == null) {
 				query.append(_FINDER_COLUMN_G_N_NAME_1);
 			}
-			else if (name.equals(StringPool.BLANK)) {
+			else if (name.equals("")) {
 				query.append(_FINDER_COLUMN_G_N_NAME_3);
 			}
 			else {
@@ -2463,13 +2457,6 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 					result = team;
 
 					cacheResult(team);
-
-					if ((team.getGroupId() != groupId) ||
-							(team.getName() == null) ||
-							!team.getName().equals(name)) {
-						finderCache.putResult(FINDER_PATH_FETCH_BY_G_N,
-							finderArgs, team);
-					}
 				}
 			}
 			catch (Exception e) {
@@ -2532,7 +2519,7 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 			if (name == null) {
 				query.append(_FINDER_COLUMN_G_N_NAME_1);
 			}
-			else if (name.equals(StringPool.BLANK)) {
+			else if (name.equals("")) {
 				query.append(_FINDER_COLUMN_G_N_NAME_3);
 			}
 			else {
@@ -2584,8 +2571,10 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 		setModelClass(Team.class);
 
 		try {
-			Field field = ReflectionUtil.getDeclaredField(BasePersistenceImpl.class,
+			Field field = BasePersistenceImpl.class.getDeclaredField(
 					"_dbColumnNames");
+
+			field.setAccessible(true);
 
 			Map<String, String> dbColumnNames = new HashMap<String, String>();
 
@@ -2819,8 +2808,6 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 
 	@Override
 	protected Team removeImpl(Team team) {
-		team = toUnwrappedModel(team);
-
 		teamToUserTableMapper.deleteLeftPrimaryKeyTableMappings(team.getPrimaryKey());
 
 		teamToUserGroupTableMapper.deleteLeftPrimaryKeyTableMappings(team.getPrimaryKey());
@@ -2854,9 +2841,23 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 
 	@Override
 	public Team updateImpl(Team team) {
-		team = toUnwrappedModel(team);
-
 		boolean isNew = team.isNew();
+
+		if (!(team instanceof TeamModelImpl)) {
+			InvocationHandler invocationHandler = null;
+
+			if (ProxyUtil.isProxyClass(team.getClass())) {
+				invocationHandler = ProxyUtil.getInvocationHandler(team);
+
+				throw new IllegalArgumentException(
+					"Implement ModelWrapper in team proxy " +
+					invocationHandler.getClass());
+			}
+
+			throw new IllegalArgumentException(
+				"Implement ModelWrapper in custom Team implementation " +
+				team.getClass());
+		}
 
 		TeamModelImpl teamModelImpl = (TeamModelImpl)team;
 
@@ -3002,32 +3003,6 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 		team.resetOriginalValues();
 
 		return team;
-	}
-
-	protected Team toUnwrappedModel(Team team) {
-		if (team instanceof TeamImpl) {
-			return team;
-		}
-
-		TeamImpl teamImpl = new TeamImpl();
-
-		teamImpl.setNew(team.isNew());
-		teamImpl.setPrimaryKey(team.getPrimaryKey());
-
-		teamImpl.setMvccVersion(team.getMvccVersion());
-		teamImpl.setUuid(team.getUuid());
-		teamImpl.setTeamId(team.getTeamId());
-		teamImpl.setCompanyId(team.getCompanyId());
-		teamImpl.setUserId(team.getUserId());
-		teamImpl.setUserName(team.getUserName());
-		teamImpl.setCreateDate(team.getCreateDate());
-		teamImpl.setModifiedDate(team.getModifiedDate());
-		teamImpl.setGroupId(team.getGroupId());
-		teamImpl.setName(team.getName());
-		teamImpl.setDescription(team.getDescription());
-		teamImpl.setLastPublishDate(team.getLastPublishDate());
-
-		return teamImpl;
 	}
 
 	/**
@@ -3179,12 +3154,12 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 		for (Serializable primaryKey : uncachedPrimaryKeys) {
 			query.append((long)primaryKey);
 
-			query.append(StringPool.COMMA);
+			query.append(",");
 		}
 
 		query.setIndex(query.index() - 1);
 
-		query.append(StringPool.CLOSE_PARENTHESIS);
+		query.append(")");
 
 		String sql = query.toString();
 

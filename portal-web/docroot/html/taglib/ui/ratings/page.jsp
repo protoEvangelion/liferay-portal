@@ -21,6 +21,7 @@ String randomNamespace = PortalUtil.generateRandomKey(request, "taglib_ui_rating
 
 String className = (String)request.getAttribute("liferay-ui:ratings:className");
 long classPK = GetterUtil.getLong((String)request.getAttribute("liferay-ui:ratings:classPK"));
+Boolean inTrash = (Boolean)request.getAttribute("liferay-ui:ratings:inTrash");
 int numberOfStars = GetterUtil.getInteger((String)request.getAttribute("liferay-ui:ratings:numberOfStars"));
 RatingsEntry ratingsEntry = (RatingsEntry)request.getAttribute("liferay-ui:ratings:ratingsEntry");
 RatingsStats ratingsStats = (RatingsStats)request.getAttribute("liferay-ui:ratings:ratingsStats");
@@ -30,16 +31,20 @@ boolean setRatingsStats = GetterUtil.getBoolean((String)request.getAttribute("li
 String type = GetterUtil.getString((String)request.getAttribute("liferay-ui:ratings:type"));
 String url = (String)request.getAttribute("liferay-ui:ratings:url");
 
+if (inTrash == null) {
+	inTrash = TrashUtil.isInTrash(className, classPK);
+}
+
 if (numberOfStars < 1) {
 	numberOfStars = 1;
 }
 
-if (!setRatingsEntry) {
-	ratingsEntry = RatingsEntryLocalServiceUtil.fetchEntry(themeDisplay.getUserId(), className, classPK);
+if (!setRatingsStats) {
+	ratingsStats = RatingsStatsLocalServiceUtil.fetchStats(className, classPK);
 }
 
-if (!setRatingsStats) {
-	ratingsStats = RatingsStatsLocalServiceUtil.getStats(className, classPK);
+if (!setRatingsEntry && (ratingsStats != null)) {
+	ratingsEntry = RatingsEntryLocalServiceUtil.fetchEntry(themeDisplay.getUserId(), className, classPK);
 }
 
 if (Validator.isNull(url)) {
@@ -47,9 +52,13 @@ if (Validator.isNull(url)) {
 }
 
 double averageScore = 0.0;
+int totalEntries = 0;
+double totalScore = 0.0;
 
 if (ratingsStats != null) {
 	averageScore = ratingsStats.getAverageScore() * numberOfStars;
+	totalEntries = ratingsStats.getTotalEntries();
+	totalScore = ratingsStats.getTotalScore();
 }
 
 double formattedAverageScore = MathUtil.format(averageScore, 1, 1);
@@ -66,13 +75,21 @@ if (ratingsEntry != null) {
 	yourScore = ratingsEntry.getScore();
 }
 
-boolean inTrash = TrashUtil.isInTrash(className, classPK);
+boolean enabled = false;
+
+if (!inTrash) {
+	Group group = themeDisplay.getSiteGroup();
+
+	if (!group.isStagingGroup() && !group.isStagedRemotely()) {
+		enabled = true;
+	}
+}
 %>
 
 <div class="taglib-ratings <%= type %>" id="<%= randomNamespace %>ratingContainer">
 	<c:choose>
 		<c:when test="<%= type.equals(RatingsType.STARS.getValue()) %>">
-			<c:if test="<%= themeDisplay.isSignedIn() && !inTrash %>">
+			<c:if test="<%= themeDisplay.isSignedIn() && enabled %>">
 				<div class="liferay-rating-vote" id="<%= randomNamespace %>ratingStar">
 					<div id="<%= randomNamespace %>ratingStarContent">
 						<div class="rating-label"><liferay-ui:message key="your-rating" /></div>
@@ -89,7 +106,7 @@ boolean inTrash = TrashUtil.isInTrash(className, classPK);
 								<a class="rating-element <%= (i <= yourScoreStars) ? "icon-star" : "icon-star-empty" %>" href="javascript:;"></a>
 
 								<div class="rating-input-container">
-									<label for="<%= ratingId %>"><liferay-ui:message arguments="<%= new Object[] {i, numberOfStars} %>" key='<%= (yourScoreStars == i) ? (i == 1 ? "you-have-rated-this-x-star-out-of-x" : "you-have-rated-this-x-stars-out-of-x") : (i == 1 ? "rate-this-x-star-out-of-x" : "rate-this-x-stars-out-of-x") %>' translateArguments="<%= false %>" /></label>
+									<label for="<%= ratingId %>"><liferay-ui:message arguments="<%= new Object[] {i, numberOfStars} %>" key='<%= (yourScoreStars == i) ? ((i == 1) ? "you-have-rated-this-x-star-out-of-x" : "you-have-rated-this-x-stars-out-of-x") : ((i == 1) ? "rate-this-x-star-out-of-x" : "rate-this-x-stars-out-of-x") %>' translateArguments="<%= false %>" /></label>
 
 									<input checked="<%= i == yourScoreStars %>" class="rating-input" id="<%= ratingId %>" name="<portlet:namespace />rating" type="radio" value="<%= i %>">
 								</div>
@@ -108,16 +125,27 @@ boolean inTrash = TrashUtil.isInTrash(className, classPK);
 					<div class="rating-label">
 						<liferay-ui:message key="average" />
 
-						(<%= ratingsStats.getTotalEntries() %> <liferay-ui:message key='<%= (ratingsStats.getTotalEntries() == 1) ? "vote" : "votes" %>' />)
+						(<%= totalEntries %> <liferay-ui:message key='<%= (totalEntries == 1) ? "vote" : "votes" %>' />)
 					</div>
 
 					<liferay-util:whitespace-remover>
 
 						<%
 						for (int i = 1; i <= numberOfStars; i++) {
+							String message = StringPool.BLANK;
+
+							if (inTrash) {
+								message = LanguageUtil.get(resourceBundle, "ratings-are-disabled-because-this-entry-is-in-the-recycle-bin");
+							}
+							else if (!enabled) {
+								message = LanguageUtil.get(resourceBundle, "ratings-are-disabled-in-staging");
+							}
+							else if (i == 1) {
+								message = LanguageUtil.format(request, ((formattedAverageScore == 1.0) ? "the-average-rating-is-x-star-out-of-x" : "the-average-rating-is-x-stars-out-of-x"), new Object[] {formattedAverageScore, numberOfStars}, false);
+							}
 						%>
 
-							<span class="rating-element <%= (i <= averageIndex) ? "icon-star" : "icon-star-empty" %>" title="<%= inTrash ? LanguageUtil.get(resourceBundle, "ratings-are-disabled-because-this-entry-is-in-the-recycle-bin") : ((i == 1) ? LanguageUtil.format(request, ((formattedAverageScore == 1.0) ? "the-average-rating-is-x-star-out-of-x" : "the-average-rating-is-x-stars-out-of-x"), new Object[] {formattedAverageScore, numberOfStars}, false) : StringPool.BLANK) %>"></span>
+							<span class="rating-element <%= (i <= averageIndex) ? "icon-star" : "icon-star-empty" %>" title="<%= message %>"></span>
 
 						<%
 						}
@@ -142,16 +170,16 @@ boolean inTrash = TrashUtil.isInTrash(className, classPK);
 					<liferay-util:whitespace-remover>
 
 						<%
-						int positiveVotes = (int)Math.round(ratingsStats.getTotalScore());
+						int positiveVotes = (int)Math.round(totalScore);
 
-						int negativeVotes = ratingsStats.getTotalEntries() - positiveVotes;
+						int negativeVotes = totalEntries - positiveVotes;
 
 						boolean thumbUp = (yourScore != -1.0) && (yourScore >= 0.5);
 						boolean thumbDown = (yourScore != -1.0) && (yourScore < 0.5);
 						%>
 
 						<c:choose>
-							<c:when test="<%= !themeDisplay.isSignedIn() || inTrash %>">
+							<c:when test="<%= !themeDisplay.isSignedIn() || !enabled %>">
 
 								<%
 								String thumbsTitle = StringPool.BLANK;
@@ -159,37 +187,71 @@ boolean inTrash = TrashUtil.isInTrash(className, classPK);
 								if (inTrash) {
 									thumbsTitle = LanguageUtil.get(resourceBundle, "ratings-are-disabled-because-this-entry-is-in-the-recycle-bin");
 								}
+								else if (!enabled) {
+									thumbsTitle = LanguageUtil.get(resourceBundle, "ratings-are-disabled-in-staging");
+								}
 								%>
 
-								<span class="glyphicon glyphicon-thumbs-up rating-element rating-thumb-up rating-<%= (thumbUp) ? "on" : "off" %>" title="<%= thumbsTitle %>"><%= positiveVotes %></span>
+								<span class="btn btn-outline-borderless btn-outline-secondary btn-sm rating-element rating-thumb-up rating-<%= thumbUp ? "on" : "off" %>" title="<%= thumbsTitle %>">
+									<span class="inline-item inline-item-before">
+										<svg aria-hidden="true" class="lexicon-icon lexicon-icon-thumbs-up">
+											<use xlink:href="<%= themeDisplay.getPathThemeImages() %>/lexicon/icons.svg#thumbs-up" />
+										</svg>
+									</span>
+
+									<%= positiveVotes %>
+								</span>
 
 								<c:if test="<%= type.equals(RatingsType.THUMBS.getValue()) %>">
-									<span class="glyphicon glyphicon-thumbs-down rating-element rating-thumb-down rating-<%= (thumbDown) ? "on" : "off" %>" title="<%= thumbsTitle %>"><%= negativeVotes %></span>
+									<span class="rating-element rating-thumb-down rating-<%= thumbDown ? "on" : "off" %>" title="<%= thumbsTitle %>">
+										<span class="inline-item inline-item-before">
+											<svg aria-hidden="true" class="lexicon-icon lexicon-icon-thumbs-down">
+												<use xlink:href="<%= themeDisplay.getPathThemeImages() %>/lexicon/icons.svg#thumbs-down" />
+											</svg>
+										</span>
+
+										<%= negativeVotes %>
+									</span>
 								</c:if>
 							</c:when>
 							<c:otherwise>
-								<a class="glyphicon glyphicon-thumbs-up rating-element rating-thumb-up rating-<%= (thumbUp) ? "on" : "off" %>" href="javascript:;"><%= positiveVotes %></a>
+
+								<%
+								String positiveRatingMessage = null;
+
+								if (type.equals(RatingsType.THUMBS.getValue())) {
+									positiveRatingMessage = (thumbUp) ? "you-have-rated-this-as-good" : "rate-this-as-good";
+								}
+								else {
+									positiveRatingMessage = (thumbUp) ? "unlike-this" : "like-this";
+								}
+								%>
+
+								<a class="btn btn-outline-borderless btn-outline-secondary btn-sm rating-element rating-thumb-up rating-<%= thumbUp ? "on" : "off" %>" href="javascript:;" title="<liferay-ui:message key="<%= positiveRatingMessage %>" />">
+									<span class="inline-item inline-item-before">
+										<svg aria-hidden="true" class="lexicon-icon lexicon-icon-thumbs-up">
+											<use xlink:href="<%= themeDisplay.getPathThemeImages() %>/lexicon/icons.svg#thumbs-up" />
+										</svg>
+									</span>
+									<span class="votes"><%= positiveVotes %></span>
+								</a>
 
 								<c:if test="<%= type.equals(RatingsType.THUMBS.getValue()) %>">
-									<a class="glyphicon glyphicon-thumbs-down rating-element rating-thumb-down rating-<%= (thumbDown) ? "on" : "off" %>" href="javascript:;"><%= negativeVotes %></a>
+									<a class="btn btn-outline-borderless btn-outline-secondary btn-sm rating-element rating-thumb-down rating-<%= thumbDown ? "on" : "off" %>" href="javascript:;" title="<liferay-ui:message key='<%= thumbDown ? "you-have-rated-this-as-bad" : "rate-this-as-bad" %>' />">
+										<span class="inline-item inline-item-before">
+											<svg aria-hidden="true" class="lexicon-icon lexicon-icon-thumbs-down">
+												<use xlink:href="<%= themeDisplay.getPathThemeImages() %>/lexicon/icons.svg#thumbs-down" />
+											</svg>
+										</span>
+										<span class="votes"><%= negativeVotes %></span>
+									</a>
 								</c:if>
 
 								<div class="rating-input-container">
 
 									<%
 									String ratingId = PortalUtil.generateRandomKey(request, "taglib_ui_ratings_page_rating");
-
-									String positiveRatingMessage = null;
-
-									if (type.equals(RatingsType.THUMBS.getValue())) {
-										positiveRatingMessage = (thumbUp) ? "you-have-rated-this-as-good" : "rate-this-as-good";
-									}
-									else {
-										positiveRatingMessage = (thumbUp) ? "unlike-this" : "like-this";
-									}
 									%>
-
-									<label for="<%= ratingId %>"><liferay-ui:message key="<%= positiveRatingMessage %>" /></label>
 
 									<input class="rating-input" id="<%= ratingId %>" name="<portlet:namespace /><%= ratingIdPrefix %>" type="radio" value="up">
 
@@ -198,8 +260,6 @@ boolean inTrash = TrashUtil.isInTrash(className, classPK);
 										<%
 										ratingId = PortalUtil.generateRandomKey(request, "taglib_ui_ratings_page_rating");
 										%>
-
-										<label for="<%= ratingId %>"><liferay-ui:message key='<%= (thumbDown) ? "you-have-rated-this-as-bad" : "rate-this-as-bad" %>' /></label>
 
 										<input class="rating-input" id="<%= ratingId %>" name="<portlet:namespace /><%= ratingIdPrefix %>" type="radio" value="down">
 									</c:if>
@@ -213,8 +273,8 @@ boolean inTrash = TrashUtil.isInTrash(className, classPK);
 	</c:choose>
 </div>
 
-<c:if test="<%= !inTrash %>">
-	<aui:script use="liferay-ratings">
+<c:if test="<%= enabled %>">
+	<aui:script position="inline" use="liferay-ratings">
 		Liferay.Ratings.register(
 			{
 				averageScore: <%= formattedAverageScore %>,
@@ -224,8 +284,8 @@ boolean inTrash = TrashUtil.isInTrash(className, classPK);
 				namespace: '<%= randomNamespace %>',
 				round: <%= round %>,
 				size: <%= numberOfStars %>,
-				totalEntries: <%= ratingsStats.getTotalEntries() %>,
-				totalScore: <%= ratingsStats.getTotalScore() %>,
+				totalEntries: <%= totalEntries %>,
+				totalScore: <%= totalScore %>,
 				type: '<%= type %>',
 				uri: '<%= url %>',
 				yourScore: <%= yourScore %>

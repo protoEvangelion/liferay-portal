@@ -9,54 +9,48 @@
 </thead>
 <tbody>
 <tr>
-	<td>FACET_CONFIGURE</td>
-	<td>//div[label[contains(.,'${key_facetName}')]]/following-sibling::div//a[contains(.,'Configure')]</td>
+	<td>CLASSIC_SEARCH_BAR</td>
+	<td>//input[contains(@id,'templateSearch') and @type='text']</td>
 	<td></td>
 </tr>
 <tr>
-	<td>SEARCH_FIELD</td>
-	<td>//input[contains(@data-qa-id,'searchInput')] | //input[contains(@id,'searchkeywords')] | //input[contains(@name,'SearchPortlet_keywords')]</td>
+	<td>EMBEDDED_SEARCH_BAR</td>
+	<td>//header[@id='banner']//input[contains(@data-qa-id,'searchInput')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>EMBEDDED_SEARCH_BAR_ELLIPSIS_ICON</td>
+	<td>//header[@class='portlet-topper' and contains(.,'Search')][ancestor::header[@id='banner']]//div[contains(@class,'portlet-options')]/a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>EMBEDDED_SEARCH_BAR_SCOPE_SELECT</td>
+	<td>//header[@id='banner']//div/select[@title='Scope']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SEARCH_BAR_WIDGET</td>
+	<td>//input[not(ancestor::header[@id='banner'])][contains(@data-qa-id,'searchInput')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SEARCH_BAR_WIDGET_ELLIPSIS_ICON</td>
+	<td>//header[@class='portlet-topper' and contains(.,'Search Bar')][not(ancestor::header[@id='banner'])]//div[contains(@class,'portlet-options')]/a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SEARCH_BAR_WIDGET_SCOPE_SELECT</td>
+	<td>//div[not(ancestor::header[@id='banner'])]/select[@title='Scope']</td>
 	<td></td>
 </tr>
 <tr>
 	<td>SEARCH_INFO</td>
-	<td>//div[contains(@class,'search-info')]/span</td>
-	<td></td>
-</tr>
-<tr>
-	<td>SEARCH_SCOPE_SELECT</td>
-	<td>//select[contains(@name,'SearchPortlet_groupId')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>INCREMENTAL_SEARCH_SUGGESTION</td>
-	<td>//div[@class='yui3-aclist-content']//li[contains(@data-text,"${key_kbArticleTitle}")]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>SEARCH_RESULTS</td>
-	<td>//div[@class='search-results']</td>
+	<td>//span[contains(@class,'text-truncate')]/span</td>
 	<td></td>
 </tr>
 <tr>
 	<td>SEARCH_PORTLET_OPTIONS_WRENCH</td>
-	<td>//div[contains(@class,'portlet-options')]/a[@title='Options']</td>
-	<td></td>
-</tr>
-<tr>
-	<td>SEARCH_PORTLET_OPTIONS_MENULIST</td>
-	<td>//ul[contains(@class,'dropdown-menu')]//span[contains(.,'${key_searchPortletOption}')]</td>
-	<td></td>
-</tr>
-<!--The title attribute for the search comment changes depending on language.-->
-<tr>
-	<td>SEARCH_BUTTON</td>
-	<td>//button[contains(.,'${key_searchIDName}')] | //button[contains(.,'Search')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>SEARCH_PORTLET_SEARCH_BUTTON</td>
-	<td>//*[name()='a' or 'button'][contains(@onclick,'SearchPortlet_search()')]</td>
+	<td>//div[contains(@class,'portlet-options')]/a[contains(@id,'_SearchPortlet') and @title='Options']</td>
 	<td></td>
 </tr>
 </tbody>

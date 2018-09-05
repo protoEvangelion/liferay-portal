@@ -19,9 +19,8 @@ import com.liferay.mobile.fcm.Notification;
 import com.liferay.mobile.fcm.Sender;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.push.notifications.constants.PushNotificationsConstants;
 import com.liferay.push.notifications.exception.PushNotificationsException;
@@ -30,6 +29,7 @@ import com.liferay.push.notifications.sender.firebase.internal.configuration.Fir
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +44,7 @@ import org.osgi.service.component.annotations.Modified;
 @Component(
 	configurationPid = "com.liferay.push.notifications.sender.firebase.internal.configuration.FirebasePushNotificationsSenderConfiguration",
 	immediate = true,
-	property = {"platform=" + FirebasePushNotificationsSender.PLATFORM}
+	property = "platform=" + FirebasePushNotificationsSender.PLATFORM
 )
 public class FirebasePushNotificationsSender
 	implements PushNotificationsSender {
@@ -97,14 +97,31 @@ public class FirebasePushNotificationsSender
 		builder.notification(buildNotification(payloadJSONObject));
 		builder.to(tokens);
 
-		payloadJSONObject.remove(PushNotificationsConstants.KEY_SILENT);
+		JSONObject newPayloadJSONObject = JSONFactoryUtil.createJSONObject();
 
-		if (payloadJSONObject.length() > 0) {
+		Iterator<String> iterator = payloadJSONObject.keys();
+
+		while (iterator.hasNext()) {
+			String key = iterator.next();
+
+			if (!key.equals(PushNotificationsConstants.KEY_BADGE) &&
+				!key.equals(PushNotificationsConstants.KEY_BODY) &&
+				!key.equals(PushNotificationsConstants.KEY_BODY_LOCALIZED) &&
+				!key.equals(
+					PushNotificationsConstants.KEY_BODY_LOCALIZED_ARGUMENTS) &&
+				!key.equals(PushNotificationsConstants.KEY_SOUND) &&
+				!key.equals(PushNotificationsConstants.KEY_SILENT)) {
+
+				newPayloadJSONObject.put(key, payloadJSONObject.get(key));
+			}
+		}
+
+		if (newPayloadJSONObject.length() > 0) {
 			Map<String, String> data = new HashMap<>();
 
 			data.put(
 				PushNotificationsConstants.KEY_PAYLOAD,
-				payloadJSONObject.toString());
+				newPayloadJSONObject.toString());
 
 			builder.data(data);
 		}
@@ -156,12 +173,36 @@ public class FirebasePushNotificationsSender
 			builder.sound(sound);
 		}
 
-		payloadJSONObject.remove(PushNotificationsConstants.KEY_BADGE);
-		payloadJSONObject.remove(PushNotificationsConstants.KEY_BODY);
-		payloadJSONObject.remove(PushNotificationsConstants.KEY_BODY_LOCALIZED);
-		payloadJSONObject.remove(
-			PushNotificationsConstants.KEY_BODY_LOCALIZED_ARGUMENTS);
-		payloadJSONObject.remove(PushNotificationsConstants.KEY_SOUND);
+		String title = payloadJSONObject.getString(
+			PushNotificationsConstants.KEY_TITLE);
+
+		if (Validator.isNotNull(title)) {
+			builder.title(title);
+		}
+
+		JSONArray titleLocalizedArgumentsJSONArray =
+			payloadJSONObject.getJSONArray(
+				PushNotificationsConstants.KEY_TITLE_LOCALIZED_ARGUMENTS);
+
+		if (titleLocalizedArgumentsJSONArray != null) {
+			List<String> localizedArguments = new ArrayList<>();
+
+			for (int i = 0; i < titleLocalizedArgumentsJSONArray.length();
+					i++) {
+
+				localizedArguments.add(
+					titleLocalizedArgumentsJSONArray.getString(i));
+			}
+
+			builder.titleLocalizationArguments(localizedArguments);
+		}
+
+		String titleLocalizedKey = payloadJSONObject.getString(
+			PushNotificationsConstants.KEY_TITLE_LOCALIZED);
+
+		if (Validator.isNotNull(titleLocalizedKey)) {
+			builder.titleLocalizationKey(titleLocalizedKey);
+		}
 
 		return builder.build();
 	}
@@ -170,9 +211,6 @@ public class FirebasePushNotificationsSender
 	protected void deactivate() {
 		_sender = null;
 	}
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		FirebasePushNotificationsSender.class);
 
 	private volatile FirebasePushNotificationsSenderConfiguration
 		_firebasePushNotificationsSenderConfiguration;

@@ -14,8 +14,10 @@
 
 package com.liferay.portal.spring.hibernate;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.dao.orm.hibernate.DB2Dialect;
 import com.liferay.portal.dao.orm.hibernate.HSQLDialect;
+import com.liferay.portal.dao.orm.hibernate.MariaDBDialect;
 import com.liferay.portal.dao.orm.hibernate.SQLServer2005Dialect;
 import com.liferay.portal.dao.orm.hibernate.SQLServer2008Dialect;
 import com.liferay.portal.dao.orm.hibernate.SybaseASE157Dialect;
@@ -23,7 +25,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -52,6 +53,7 @@ public class DialectDetector {
 			DatabaseMetaData databaseMetaData = connection.getMetaData();
 
 			String dbName = databaseMetaData.getDatabaseProductName();
+			String driverName = databaseMetaData.getDriverName();
 			int dbMajorVersion = databaseMetaData.getDatabaseMajorVersion();
 			int dbMinorVersion = databaseMetaData.getDatabaseMinorVersion();
 
@@ -73,8 +75,10 @@ public class DialectDetector {
 
 			if (_log.isInfoEnabled()) {
 				_log.info(
-					"Determine dialect for " + dbName + " " + dbMajorVersion +
-						"." + dbMinorVersion);
+					StringBundler.concat(
+						"Determine dialect for ", dbName, " ",
+						String.valueOf(dbMajorVersion), ".",
+						String.valueOf(dbMinorVersion)));
 			}
 
 			if (dbName.startsWith("HSQL")) {
@@ -105,6 +109,9 @@ public class DialectDetector {
 			}
 			else if (dbName.startsWith("DB2") && (dbMajorVersion >= 9)) {
 				dialect = new DB2Dialect();
+			}
+			else if (driverName.startsWith("mariadb")) {
+				dialect = new MariaDBDialect();
 			}
 			else if (dbName.startsWith("Microsoft") && (dbMajorVersion == 9)) {
 				dialect = new SQLServer2005Dialect();

@@ -28,7 +28,6 @@ import java.util.Set;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterRegistration;
-import javax.servlet.FilterRegistration.Dynamic;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
@@ -48,17 +47,23 @@ public class LiferayServletContext implements ServletContext {
 	}
 
 	@Override
-	public Dynamic addFilter(String filterName, Class<? extends Filter> clazz) {
+	public FilterRegistration.Dynamic addFilter(
+		String filterName, Class<? extends Filter> clazz) {
+
 		return _servletContext.addFilter(filterName, clazz);
 	}
 
 	@Override
-	public Dynamic addFilter(String filterName, Filter filter) {
+	public FilterRegistration.Dynamic addFilter(
+		String filterName, Filter filter) {
+
 		return _servletContext.addFilter(filterName, filter);
 	}
 
 	@Override
-	public Dynamic addFilter(String filterName, String className) {
+	public FilterRegistration.Dynamic addFilter(
+		String filterName, String className) {
+
 		return _servletContext.addFilter(filterName, className);
 	}
 
@@ -146,9 +151,8 @@ public class LiferayServletContext implements ServletContext {
 		if (servletContext == _servletContext) {
 			return this;
 		}
-		else {
-			return servletContext;
-		}
+
+		return servletContext;
 	}
 
 	@Override
@@ -268,7 +272,7 @@ public class LiferayServletContext implements ServletContext {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Wilberforce (7.0.x)
 	 */
 	@Deprecated
 	@Override
@@ -282,7 +286,7 @@ public class LiferayServletContext implements ServletContext {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Wilberforce (7.0.x)
 	 */
 	@Deprecated
 	@Override
@@ -303,7 +307,7 @@ public class LiferayServletContext implements ServletContext {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Wilberforce (7.0.x)
 	 */
 	@Deprecated
 	@Override
@@ -316,8 +320,13 @@ public class LiferayServletContext implements ServletContext {
 		return _servletContext.getSessionCookieConfig();
 	}
 
+	@Override
+	public String getVirtualServerName() {
+		return _servletContext.getVirtualServerName();
+	}
+
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Wilberforce (7.0.x)
 	 */
 	@Deprecated
 	@Override

@@ -16,10 +16,9 @@ package com.liferay.portal.sanitizer.bundle.sanitizerimpl;
 
 import com.liferay.portal.kernel.sanitizer.BaseSanitizer;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
-import com.liferay.portal.kernel.util.StackTraceUtil;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -28,8 +27,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Peter Fellwock
  */
 @Component(
-	immediate = true,
-	property = {"service.ranking:Integer=" + Integer.MAX_VALUE},
+	immediate = true, property = "service.ranking:Integer=" + Integer.MAX_VALUE,
 	service = Sanitizer.class
 )
 public class TestSanitizer extends BaseSanitizer {
@@ -40,16 +38,16 @@ public class TestSanitizer extends BaseSanitizer {
 		long classPK, String contentType, String[] modes, String content,
 		Map<String, Object> options) {
 
-		_atomicReference.set(StackTraceUtil.getCallerKey());
+		_atomicBoolean.set(Boolean.TRUE);
 
 		return companyId + ":" + groupId;
 	}
 
 	@Reference(target = "(test=AtomicState)")
-	protected void setAtomicReference(AtomicReference<String> atomicReference) {
-		_atomicReference = atomicReference;
+	protected void setAtomicBoolean(AtomicBoolean atomicBoolean) {
+		_atomicBoolean = atomicBoolean;
 	}
 
-	private AtomicReference<String> _atomicReference;
+	private AtomicBoolean _atomicBoolean;
 
 }

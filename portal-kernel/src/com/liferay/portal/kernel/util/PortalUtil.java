@@ -30,10 +30,10 @@ import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.model.ResourcePermission;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.InvokerPortlet;
+import com.liferay.portal.kernel.portlet.LayoutFriendlyURLSeparatorComposite;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.PortletInstanceFactoryUtil;
-import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 import com.liferay.portal.kernel.service.PortletLocalServiceUtil;
 import com.liferay.portal.kernel.servlet.taglib.ui.BreadcrumbEntry;
 import com.liferay.portal.kernel.theme.PortletDisplay;
@@ -148,7 +148,7 @@ public class PortalUtil {
 	 * notified whenever the portal port is set.
 	 *
 	 * @param      portalPortEventListener the portal port event listener to add
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
 	 *             #addPortalInetSocketAddressEventListener(
 	 *             PortalInetSocketAddressEventListener)}
 	 */
@@ -194,6 +194,8 @@ public class PortalUtil {
 	 * @param title the title of the new breadcrumb entry
 	 * @param url the URL of the new breadcrumb entry
 	 * @param data the HTML5 data parameters of the new breadcrumb entry
+	 * @param portletBreadcrumbEntry whether the entry is a portlet breadcrumb
+	 *        entry
 	 */
 	public static void addPortletBreadcrumbEntry(
 		HttpServletRequest request, String title, String url,
@@ -207,8 +209,9 @@ public class PortalUtil {
 	 * Adds the default resource permissions for the portlet to the page in the
 	 * request.
 	 *
-	 * @param request the servlet request for the page
-	 * @param portlet the portlet
+	 * @param  request the servlet request for the page
+	 * @param  portlet the portlet
+	 * @throws PortalException if a portal exception occurred
 	 */
 	public static void addPortletDefaultResource(
 			HttpServletRequest request, Portlet portlet)
@@ -368,6 +371,7 @@ public class PortalUtil {
 	 * @param  layout the page being requested
 	 * @return the alternate URL for the requested canonical URL in the given
 	 *         locale
+	 * @throws PortalException if a portal exception occurred
 	 */
 	public static String getAlternateURL(
 			String canonicalURL, ThemeDisplay themeDisplay, Locale locale,
@@ -396,6 +400,7 @@ public class PortalUtil {
 	 * @return the base model instance, or <code>null</code> if the resource
 	 *         permission does not have a base model instance (such as if it's a
 	 *         portlet)
+	 * @throws PortalException if a portal exception occurred
 	 */
 	public static BaseModel<?> getBaseModel(
 			ResourcePermission resourcePermission)
@@ -411,6 +416,7 @@ public class PortalUtil {
 	 * @param  primKey the primary key of the model instance to get
 	 * @return the base model instance, or <code>null</code> if the model does
 	 *         not have a base model instance (such as if it's a portlet)
+	 * @throws PortalException if a portal exception occurred
 	 */
 	public static BaseModel<?> getBaseModel(String modelName, String primKey)
 		throws PortalException {
@@ -419,7 +425,7 @@ public class PortalUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
 	 *             com.liferay.portal.kernel.security.auth.http.HttpAuthManagerUtil#getBasicUserId(
 	 *             HttpServletRequest)}
 	 */
@@ -431,7 +437,7 @@ public class PortalUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
 	 *             com.liferay.portal.kernel.security.auth.http.HttpAuthManagerUtil#getBasicUserId(
 	 *             HttpServletRequest)}
 	 */
@@ -470,6 +476,7 @@ public class PortalUtil {
 	 * @param  layout the page being requested (optionally <code>null</code>).
 	 *         If <code>null</code> is specified, the current page is used.
 	 * @return the canonical URL for the page
+	 * @throws PortalException if a portal exception occurred
 	 */
 	public static String getCanonicalURL(
 			String completeURL, ThemeDisplay themeDisplay, Layout layout)
@@ -500,6 +507,7 @@ public class PortalUtil {
 	 * @param  forceLayoutFriendlyURL whether to add the page's friendly URL to
 	 *         the canonical URL
 	 * @return the canonical URL of the page
+	 * @throws PortalException if a portal exception occurred
 	 */
 	public static String getCanonicalURL(
 			String completeURL, ThemeDisplay themeDisplay, Layout layout,
@@ -508,6 +516,41 @@ public class PortalUtil {
 
 		return getPortal().getCanonicalURL(
 			completeURL, themeDisplay, layout, forceLayoutFriendlyURL);
+	}
+
+	/**
+	 * Returns the canonical URL of the page. The canonical URL is often used to
+	 * distinguish a preferred page from its translations.
+	 *
+	 * <p>
+	 * A page's canonical URL is the preferred URL to specify for a set of pages
+	 * with similar or identical content. The canonical URL is used to inform
+	 * search engines that several URLs point to the same page. It is also used
+	 * to generate the URLs for site maps, the URLs that social bookmarks
+	 * publish (Twitter, Facebook links, etc.), and the URLs in sent email. For
+	 * more information, see <a
+	 * href="https://support.google.com/webmasters/answer/139394?hl=en">https://support.google.com/webmasters/answer/139394?hl=en</a>.
+	 * </p>
+	 *
+	 * @param  completeURL the complete URL of the page
+	 * @param  themeDisplay the theme display
+	 * @param  layout the page being requested (optionally <code>null</code>).
+	 *         If <code>null</code> is specified, the current page is used.
+	 * @param  forceLayoutFriendlyURL whether to add the page's friendly URL to
+	 *         the canonical URL
+	 * @param  includeQueryString whether to add the URL query string to the
+	 *         canonical URL
+	 * @return the canonical URL
+	 * @throws PortalException if a portal exception occurred
+	 */
+	public static String getCanonicalURL(
+			String completeURL, ThemeDisplay themeDisplay, Layout layout,
+			boolean forceLayoutFriendlyURL, boolean includeQueryString)
+		throws PortalException {
+
+		return getPortal().getCanonicalURL(
+			completeURL, themeDisplay, layout, forceLayoutFriendlyURL,
+			includeQueryString);
 	}
 
 	/**
@@ -769,6 +812,7 @@ public class PortalUtil {
 	 *         date.
 	 * @return the date object, or <code>null</code> if the date is invalid and
 	 *         no exception to throw was provided
+	 * @throws PortalException if a portal exception occurred
 	 */
 	public static Date getDate(
 			int month, int day, int year,
@@ -792,6 +836,7 @@ public class PortalUtil {
 	 *         date.
 	 * @return the date object, or <code>null</code> if the date is invalid and
 	 *         no exception to throw was provided
+	 * @throws PortalException if a portal exception occurred
 	 */
 	public static Date getDate(
 			int month, int day, int year, int hour, int min,
@@ -816,6 +861,7 @@ public class PortalUtil {
 	 *         date.
 	 * @return the date object, or <code>null</code> if the date is invalid and
 	 *         no exception to throw was provided
+	 * @throws PortalException if a portal exception occurred
 	 */
 	public static Date getDate(
 			int month, int day, int year, int hour, int min, TimeZone timeZone,
@@ -839,6 +885,7 @@ public class PortalUtil {
 	 *         date.
 	 * @return the date object, or <code>null</code> if the date is invalid and
 	 *         no exception to throw was provided
+	 * @throws PortalException if a portal exception occurred
 	 */
 	public static Date getDate(
 			int month, int day, int year, TimeZone timeZone,
@@ -853,7 +900,7 @@ public class PortalUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
 	 *             com.liferay.portal.kernel.security.auth.http.HttpAuthManagerUtil#getDigestUserId(
 	 *             HttpServletRequest)}
 	 */
@@ -929,7 +976,7 @@ public class PortalUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
 	 */
 	@Deprecated
 	public static String getFacebookURL(
@@ -1062,7 +1109,7 @@ public class PortalUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Wilberforce (7.0.x), with no direct replacement
 	 */
 	@Deprecated
 	public static String getJournalArticleActualURL(
@@ -1077,7 +1124,7 @@ public class PortalUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Wilberforce (7.0.x), with no direct replacement
 	 */
 	@Deprecated
 	public static Layout getJournalArticleLayout(
@@ -1140,12 +1187,29 @@ public class PortalUtil {
 		return getPortal().getLayoutFriendlyURL(themeDisplay);
 	}
 
+	/**
+	 * @deprecated As of Judson (7.1.x), replaced by {@link
+	 *             #getLayoutFriendlyURLSeparatorComposite(long, boolean,
+	 *             String, Map<String, String[]>, Map<String, Object>)}
+	 */
+	@Deprecated
 	public static LayoutFriendlyURLComposite getLayoutFriendlyURLComposite(
 			long groupId, boolean privateLayout, String friendlyURL,
 			Map<String, String[]> params, Map<String, Object> requestContext)
 		throws PortalException {
 
 		return getPortal().getLayoutFriendlyURLComposite(
+			groupId, privateLayout, friendlyURL, params, requestContext);
+	}
+
+	public static LayoutFriendlyURLSeparatorComposite
+			getLayoutFriendlyURLSeparatorComposite(
+				long groupId, boolean privateLayout, String friendlyURL,
+				Map<String, String[]> params,
+				Map<String, Object> requestContext)
+		throws PortalException {
+
+		return getPortal().getLayoutFriendlyURLSeparatorComposite(
 			groupId, privateLayout, friendlyURL, params, requestContext);
 	}
 
@@ -1366,8 +1430,6 @@ public class PortalUtil {
 	}
 
 	public static Portal getPortal() {
-		PortalRuntimePermission.checkGetBeanProperty(PortalUtil.class);
-
 		return _portal;
 	}
 
@@ -1390,7 +1452,7 @@ public class PortalUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
 	 *             #getPortalServerPort(boolean)}
 	 */
 	@Deprecated
@@ -1459,7 +1521,7 @@ public class PortalUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
 	 *             com.liferay.portal.kernel.servlet.taglib.ui.BreadcrumbUtil#getPortletBreadcrumbEntries(
 	 *             HttpServletRequest)}
 	 */
@@ -1705,7 +1767,7 @@ public class PortalUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
 	 *             #getControlPanelPortletURL(PortletRequest, Group, String,
 	 *             long, String)}
 	 */
@@ -1719,7 +1781,7 @@ public class PortalUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
 	 *             #getControlPanelPortletURL(PortletRequest, Group, String,
 	 *             long, String)}
 	 */
@@ -1732,6 +1794,11 @@ public class PortalUtil {
 			portletResponse, themeDisplay, portletName);
 	}
 
+	/**
+	 * @deprecated As of Judson (7.1.x), replaced by {@link
+	 *             #getSiteAdminURL(ThemeDisplay, String, Map)}
+	 */
+	@Deprecated
 	public static String getSiteAdminURL(
 			Company company, Group group, String ppid,
 			Map<String, String[]> params)
@@ -1741,8 +1808,8 @@ public class PortalUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
-	 *             #getSiteAdminURL(Company, Group, String, Map)}
+	 * @deprecated As of Judson (7.1.x), replaced by {@link
+	 *             #getSiteAdminURL(ThemeDisplay, String, Map)}
 	 */
 	@Deprecated
 	public static String getSiteAdminURL(
@@ -1752,8 +1819,16 @@ public class PortalUtil {
 		return getPortal().getSiteAdminURL(group, ppid, params);
 	}
 
+	public static String getSiteAdminURL(
+			ThemeDisplay themeDisplay, String ppid,
+			Map<String, String[]> params)
+		throws PortalException {
+
+		return getPortal().getSiteAdminURL(themeDisplay, ppid, params);
+	}
+
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
 	 *             #getCurrentAndAncestorSiteGroupIds(long)}
 	 */
 	@Deprecated
@@ -1764,7 +1839,7 @@ public class PortalUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
 	 *             #getCurrentAndAncestorSiteGroupIds(long)}
 	 */
 	@Deprecated
@@ -1772,6 +1847,12 @@ public class PortalUtil {
 		throws PortalException {
 
 		return getPortal().getSiteAndCompanyGroupIds(themeDisplay);
+	}
+
+	public static Locale getSiteDefaultLocale(Group group)
+		throws PortalException {
+
+		return getPortal().getSiteDefaultLocale(group);
 	}
 
 	public static Locale getSiteDefaultLocale(long groupId)
@@ -1860,6 +1941,14 @@ public class PortalUtil {
 		return getPortal().getUploadServletRequest(request);
 	}
 
+	public static UploadServletRequest getUploadServletRequest(
+		HttpServletRequest request, int fileSizeThreshold, String location,
+		long maxRequestSize, long maxFileSize) {
+
+		return getPortal().getUploadServletRequest(
+			request, fileSizeThreshold, location, maxRequestSize, maxFileSize);
+	}
+
 	public static Date getUptime() {
 		return getPortal().getUptime();
 	}
@@ -1933,7 +2022,7 @@ public class PortalUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Wilberforce (7.0.x), with no direct replacement
 	 */
 	@Deprecated
 	public static String getUserValue(
@@ -1957,7 +2046,7 @@ public class PortalUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Wilberforce (7.0.x), with no direct replacement
 	 */
 	@Deprecated
 	public static String getVirtualLayoutActualURL(
@@ -1972,7 +2061,7 @@ public class PortalUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Wilberforce (7.0.x), with no direct replacement
 	 */
 	@Deprecated
 	public static LayoutFriendlyURLComposite
@@ -2002,7 +2091,7 @@ public class PortalUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Wilberforce (7.0.x), with no direct replacement
 	 */
 	@Deprecated
 	public static void invokeTaglibDiscussion(
@@ -2015,7 +2104,7 @@ public class PortalUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Wilberforce (7.0.x), with no direct replacement
 	 */
 	@Deprecated
 	public static void invokeTaglibDiscussionPagination(
@@ -2069,6 +2158,10 @@ public class PortalUtil {
 		String portletId, ThemeDisplay themeDisplay) {
 
 		return getPortal().isControlPanelPortlet(portletId, themeDisplay);
+	}
+
+	public static boolean isCustomPortletMode(PortletMode portletMode) {
+		return getPortal().isCustomPortletMode(portletMode);
 	}
 
 	public static boolean isForwardedSecure(HttpServletRequest request) {
@@ -2145,13 +2238,13 @@ public class PortalUtil {
 	}
 
 	public static boolean isSkipPortletContentProcesssing(
-			Group group, HttpServletRequest htpServletRequest,
+			Group group, HttpServletRequest httpServletRequest,
 			LayoutTypePortlet layoutTypePortlet, PortletDisplay portletDisplay,
 			String portletName)
 		throws Exception {
 
 		return getPortal().isSkipPortletContentProcessing(
-			group, htpServletRequest, layoutTypePortlet, portletDisplay,
+			group, httpServletRequest, layoutTypePortlet, portletDisplay,
 			portletName);
 	}
 
@@ -2286,7 +2379,7 @@ public class PortalUtil {
 	/**
 	 * Sets the port obtained on the first request to the portal.
 	 *
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
 	 *             #setPortalInetSocketAddresses(HttpServletRequest)}
 	 */
 	@Deprecated
@@ -2346,7 +2439,7 @@ public class PortalUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
 	 *             #removePortalEventListener(
 	 *             PortalInetSocketAddressEventListener)}
 	 */
@@ -2358,8 +2451,6 @@ public class PortalUtil {
 	}
 
 	public void setPortal(Portal portal) {
-		PortalRuntimePermission.checkSetBeanProperty(getClass());
-
 		_portal = portal;
 	}
 

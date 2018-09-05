@@ -15,11 +15,11 @@
 package com.liferay.portlet.asset.util;
 
 import com.liferay.asset.kernel.model.AssetCategoryConstants;
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PrefixPredicateFilter;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
@@ -198,9 +198,8 @@ public class AssetVocabularySettingsHelper {
 		if (parts.length == 1) {
 			return AssetCategoryConstants.ALL_CLASS_TYPE_PK;
 		}
-		else {
-			return GetterUtil.getLong(parts[1]);
-		}
+
+		return GetterUtil.getLong(parts[1]);
 	}
 
 	protected long[] getClassTypePKs(String[] classNameIdsAndClassTypePKs) {

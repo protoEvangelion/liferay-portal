@@ -14,20 +14,22 @@
 
 package com.liferay.source.formatter;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.CharPool;
-import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.source.formatter.checkstyle.util.CheckStyleUtil;
+import com.liferay.source.formatter.checkstyle.util.CheckstyleLogger;
+import com.liferay.source.formatter.checkstyle.util.CheckstyleUtil;
+
+import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
+import com.puppycrawl.tools.checkstyle.api.Configuration;
 
 import java.io.File;
+import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * @author Hugo Huijser
@@ -35,7 +37,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 public class JavaSourceProcessor extends BaseSourceProcessor {
 
 	@Override
-	protected List<String> doGetFileNames() throws Exception {
+	protected List<String> doGetFileNames() throws IOException {
 		String[] includes = getIncludes();
 
 		if (ArrayUtil.isEmpty(includes)) {
@@ -44,7 +46,7 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 
 		Collection<String> fileNames = null;
 
-		if (portalSource || subrepository) {
+		if (isPortalSource() || isSubrepository()) {
 			fileNames = _getPortalJavaFiles(includes);
 		}
 		else {
@@ -60,22 +62,45 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 	}
 
 	@Override
-	protected void postFormat() throws Exception {
-		_processCheckStyle();
-	}
-
-	@Override
-	protected String processSourceChecks(
+	protected File format(
 			File file, String fileName, String absolutePath, String content)
 		throws Exception {
 
-		if (_hasGeneratedTag(content)) {
-			return content;
+		file = super.format(file, fileName, absolutePath, content);
+
+		_processCheckstyle(file);
+
+		return file;
+	}
+
+	@Override
+	protected void postFormat() throws CheckstyleException {
+		_processCheckstyle(
+			_ungeneratedFiles.toArray(new File[_ungeneratedFiles.size()]));
+
+		_ungeneratedFiles.clear();
+
+		for (SourceFormatterMessage sourceFormatterMessage :
+				_sourceFormatterMessages) {
+
+			String fileName = sourceFormatterMessage.getFileName();
+
+			processMessage(fileName, sourceFormatterMessage);
+
+			printError(fileName, sourceFormatterMessage.toString());
 		}
+	}
 
-		_ungeneratedFiles.add(file);
+	@Override
+	protected void preFormat() throws CheckstyleException {
+		SourceFormatterArgs sourceFormatterArgs = getSourceFormatterArgs();
 
-		return super.processSourceChecks(file, fileName, absolutePath, content);
+		_checkstyleLogger = new CheckstyleLogger(
+			sourceFormatterArgs.getBaseDirName());
+		_checkstyleConfiguration = CheckstyleUtil.getConfiguration(
+			"checkstyle.xml", getPropertiesMap(), sourceFormatterArgs);
+
+		setCheckstyleConfiguration(_checkstyleConfiguration);
 	}
 
 	private String[] _getPluginExcludes(String pluginDirectoryName) {
@@ -107,7 +132,7 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 	}
 
 	private Collection<String> _getPluginJavaFiles(String[] includes)
-		throws Exception {
+		throws IOException {
 
 		Collection<String> fileNames = new TreeSet<>();
 
@@ -119,12 +144,12 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 	}
 
 	private Collection<String> _getPortalJavaFiles(String[] includes)
-		throws Exception {
+		throws IOException {
 
 		Collection<String> fileNames = new TreeSet<>();
 
-		String[] excludes = new String[] {
-			"**/*_IW.java", "**/counter/service/**", "**/jsp/*",
+		String[] excludes = {
+			"**/*_IW.java", "**/counter/service/**",
 			"**/model/impl/*Model.java", "**/model/impl/*ModelImpl.java",
 			"**/portal/service/**", "**/portal-client/**",
 			"**/portal-web/test/**/*Test.java", "**/test/*-generated/**"
@@ -165,97 +190,35 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 		return fileNames;
 	}
 
-	private List<File> _getSuppressionsFiles() throws Exception {
-		String fileName = "checkstyle-suppressions.xml";
+	private synchronized void _processCheckstyle(File file)
+		throws CheckstyleException {
 
-		List<File> suppressionsFiles = new ArrayList<>();
+		_ungeneratedFiles.add(file);
 
-		// Find suppressions file in portal-impl/src/
+		if (_ungeneratedFiles.size() == CheckstyleUtil.BATCH_SIZE) {
+			_processCheckstyle(
+				_ungeneratedFiles.toArray(new File[_ungeneratedFiles.size()]));
 
-		if (portalSource) {
-			File suppressionsFile = getFile(
-				"portal-impl/src/" + fileName, PORTAL_MAX_DIR_LEVEL);
-
-			if (suppressionsFile != null) {
-				suppressionsFiles.add(suppressionsFile);
-			}
-		}
-
-		// Find suppressions files in any parent directory
-
-		int maxDirLevel = PLUGINS_MAX_DIR_LEVEL;
-		String parentDirName = sourceFormatterArgs.getBaseDirName();
-
-		if (portalSource || subrepository) {
-			maxDirLevel = PORTAL_MAX_DIR_LEVEL - 1;
-			parentDirName += "../";
-		}
-
-		for (int i = 0; i < maxDirLevel; i++) {
-			File suppressionsFile = new File(parentDirName + fileName);
-
-			if (suppressionsFile.exists()) {
-				suppressionsFiles.add(suppressionsFile);
-			}
-
-			parentDirName += "../";
-		}
-
-		if (!portalSource && !subrepository) {
-			return suppressionsFiles;
-		}
-
-		// Find suppressions files in any child directory
-
-		List<String> moduleSuppressionsFileNames = getFileNames(
-			new String[0], new String[] {"**/modules/**/" + fileName}, true);
-
-		for (String moduleSuppressionsFileName : moduleSuppressionsFileNames) {
-			moduleSuppressionsFileName = StringUtil.replace(
-				moduleSuppressionsFileName, CharPool.BACK_SLASH,
-				CharPool.SLASH);
-
-			suppressionsFiles.add(new File(moduleSuppressionsFileName));
-		}
-
-		return suppressionsFiles;
-	}
-
-	private boolean _hasGeneratedTag(String content) {
-		if ((content.contains("* @generated") || content.contains("$ANTLR")) &&
-			!content.contains("hasGeneratedTag")) {
-
-			return true;
-		}
-		else {
-			return false;
+			_ungeneratedFiles.clear();
 		}
 	}
 
-	private void _processCheckStyle() throws Exception {
-		if (_ungeneratedFiles.isEmpty()) {
+	private void _processCheckstyle(File[] files) throws CheckstyleException {
+		if (ArrayUtil.isEmpty(files)) {
 			return;
 		}
 
-		Set<SourceFormatterMessage> sourceFormatterMessages =
-			CheckStyleUtil.process(
-				_ungeneratedFiles, _getSuppressionsFiles(),
-				sourceFormatterArgs.getBaseDirName());
-
-		for (SourceFormatterMessage sourceFormatterMessage :
-				sourceFormatterMessages) {
-
-			processMessage(
-				sourceFormatterMessage.getFileName(), sourceFormatterMessage);
-
-			printError(
-				sourceFormatterMessage.getFileName(),
-				sourceFormatterMessage.toString());
-		}
+		_sourceFormatterMessages.addAll(
+			processCheckstyle(
+				_checkstyleConfiguration, _checkstyleLogger, files));
 	}
 
-	private static final String[] _INCLUDES = new String[] {"**/*.java"};
+	private static final String[] _INCLUDES = {"**/*.java"};
 
-	private final Set<File> _ungeneratedFiles = new CopyOnWriteArraySet<>();
+	private Configuration _checkstyleConfiguration;
+	private CheckstyleLogger _checkstyleLogger;
+	private final Set<SourceFormatterMessage> _sourceFormatterMessages =
+		new TreeSet<>();
+	private final List<File> _ungeneratedFiles = new ArrayList<>();
 
 }

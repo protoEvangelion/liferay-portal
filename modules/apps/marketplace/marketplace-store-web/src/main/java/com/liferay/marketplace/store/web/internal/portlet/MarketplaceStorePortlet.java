@@ -14,15 +14,16 @@
 
 package com.liferay.marketplace.store.web.internal.portlet;
 
+import com.liferay.marketplace.constants.MarketplaceStorePortletKeys;
 import com.liferay.marketplace.model.App;
 import com.liferay.marketplace.service.AppLocalService;
 import com.liferay.marketplace.service.AppService;
-import com.liferay.marketplace.store.web.constants.MarketplaceConstants;
-import com.liferay.marketplace.store.web.constants.MarketplaceStorePortletKeys;
-import com.liferay.marketplace.store.web.constants.MarketplaceStoreWebKeys;
 import com.liferay.marketplace.store.web.internal.configuration.MarketplaceStoreWebConfigurationValues;
+import com.liferay.marketplace.store.web.internal.constants.MarketplaceConstants;
+import com.liferay.marketplace.store.web.internal.constants.MarketplaceStoreWebKeys;
 import com.liferay.marketplace.store.web.internal.oauth.util.OAuthManager;
 import com.liferay.marketplace.store.web.internal.util.MarketplaceLicenseUtil;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -32,8 +33,6 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.ReleaseInfo;
-import com.liferay.portal.kernel.util.ServerDetector;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 
@@ -82,14 +81,14 @@ import org.scribe.model.Verb;
 		"com.liferay.portlet.use-default-template=true",
 		"javax.portlet.description=", "javax.portlet.display-name=Store",
 		"javax.portlet.init-param.add-process-action-success-action=false",
-		"javax.portlet.init-param.template-path=/",
+		"javax.portlet.init-param.template-path=/META-INF/resources/",
 		"javax.portlet.init-param.view-template=/view.jsp",
 		"javax.portlet.name=" + MarketplaceStorePortletKeys.MARKETPLACE_STORE,
 		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.security-role-ref=administrator,guest,power-user,user",
 		"javax.portlet.supports.mime-type=text/html"
 	},
-	service = {Portlet.class}
+	service = Portlet.class
 )
 public class MarketplaceStorePortlet extends RemoteMVCPortlet {
 
@@ -513,10 +512,7 @@ public class MarketplaceStorePortlet extends RemoteMVCPortlet {
 
 		parameterMap.put("installedPatches", PatcherUtil.getInstalledPatches());
 		parameterMap.put(
-			"supportsHotDeploy",
-			new String[] {
-				String.valueOf(ServerDetector.isSupportsHotDeploy())
-			});
+			"supportsHotDeploy", new String[] {Boolean.TRUE.toString()});
 	}
 
 	@Reference(unbind = "-")

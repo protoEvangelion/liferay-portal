@@ -34,7 +34,6 @@ import com.liferay.portal.kernel.search.filter.TermsFilter;
 import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
-import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
@@ -49,9 +48,11 @@ import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 
 /**
- * @author Istvan Andras Dezsi
+ * @author     Istvan Andras Dezsi
+ * @deprecated As of Judson (7.1.x), moved to {@link
+ *             com.liferay.asset.categories.internal.search.AssetCategoryIndexer}
  */
-@OSGiBeanProperties
+@Deprecated
 public class AssetCategoryIndexer extends BaseIndexer<AssetCategory> {
 
 	public static final String CLASS_NAME = AssetCategory.class.getName();
@@ -179,9 +180,13 @@ public class AssetCategoryIndexer extends BaseIndexer<AssetCategory> {
 			assetCategory.getDescriptionMap());
 
 		document.addText(Field.NAME, assetCategory.getName());
+
 		addLocalizedField(
 			document, Field.TITLE, siteDefaultLocale,
 			assetCategory.getTitleMap());
+
+		document.addKeyword(
+			"leftCategoryId", assetCategory.getLeftCategoryId());
 
 		if (_log.isDebugEnabled()) {
 			_log.debug("Document " + assetCategory + " indexed successfully");

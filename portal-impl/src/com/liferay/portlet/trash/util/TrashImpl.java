@@ -15,6 +15,8 @@
 package com.liferay.portlet.trash.util;
 
 import com.liferay.document.library.kernel.store.DLStoreUtil;
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -29,14 +31,12 @@ import com.liferay.portal.kernel.portlet.PortletURLUtil;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
-import com.liferay.portal.kernel.security.pacl.DoPrivileged;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.trash.TrashHandler;
 import com.liferay.portal.kernel.trash.TrashHandlerRegistryUtil;
 import com.liferay.portal.kernel.trash.TrashRenderer;
-import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -45,13 +45,11 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portlet.trash.model.impl.TrashEntryImpl;
 import com.liferay.trash.kernel.model.TrashEntry;
 import com.liferay.trash.kernel.model.TrashVersion;
 import com.liferay.trash.kernel.service.TrashEntryLocalServiceUtil;
@@ -77,12 +75,11 @@ import javax.portlet.PortletURL;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * @author Sergio González
- * @author Julio Camarero
- * @deprecated As of 7.0.0
+ * @author     Sergio González
+ * @author     Julio Camarero
+ * @deprecated As of Judson (7.1.x)
  */
 @Deprecated
-@DoPrivileged
 public class TrashImpl implements Trash {
 
 	@Override
@@ -224,7 +221,7 @@ public class TrashImpl implements Trash {
 
 					Date removedDate = document.getDate(Field.REMOVED_DATE);
 
-					entry = new TrashEntryImpl();
+					entry = TrashEntryLocalServiceUtil.createTrashEntry(0);
 
 					entry.setUserName(userName);
 					entry.setCreateDate(removedDate);
@@ -258,8 +255,9 @@ public class TrashImpl implements Trash {
 			catch (Exception e) {
 				if (_log.isWarnEnabled()) {
 					_log.warn(
-						"Unable to find trash entry for " + entryClassName +
-							" with primary key " + classPK);
+						StringBundler.concat(
+							"Unable to find trash entry for ", entryClassName,
+							" with primary key ", String.valueOf(classPK)));
 				}
 			}
 		}
@@ -332,25 +330,26 @@ public class TrashImpl implements Trash {
 			trashRenderer = trashHandler.getTrashRenderer(classPK);
 		}
 
-		Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(
-			themeDisplay.getLocale(), themeDisplay.getTimeZone());
-
 		StringBundler sb = new StringBundler(3);
 
 		sb.append(StringPool.OPEN_PARENTHESIS);
+
+		Format format = FastDateFormatFactoryUtil.getDateTime(
+			themeDisplay.getLocale(), themeDisplay.getTimeZone());
+
 		sb.append(
 			StringUtil.replace(
-				dateFormatDateTime.format(new Date()),
+				format.format(new Date()),
 				new char[] {CharPool.SLASH, CharPool.COLON},
 				new char[] {CharPool.PERIOD, CharPool.PERIOD}));
+
 		sb.append(StringPool.CLOSE_PARENTHESIS);
 
 		if (trashRenderer != null) {
 			return trashRenderer.getNewName(oldName, sb.toString());
 		}
-		else {
-			return getNewName(oldName, sb.toString());
-		}
+
+		return getNewName(oldName, sb.toString());
 	}
 
 	@Override
@@ -371,7 +370,7 @@ public class TrashImpl implements Trash {
 			return StringPool.BLANK;
 		}
 
-		return title.substring(index + 1, title.length());
+		return title.substring(index + 1);
 	}
 
 	@Override

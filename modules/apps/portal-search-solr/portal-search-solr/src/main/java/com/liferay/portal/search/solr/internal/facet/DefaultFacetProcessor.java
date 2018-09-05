@@ -14,25 +14,96 @@
 
 package com.liferay.portal.search.solr.internal.facet;
 
+import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
-import com.liferay.portal.search.solr.facet.FacetProcessor;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.apache.solr.client.solrj.SolrQuery;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Michael C. Han
  */
-@Component(immediate = true, property = {"class.name=DEFAULT"})
+@Component(immediate = true, property = "class.name=DEFAULT")
 public class DefaultFacetProcessor implements FacetProcessor<SolrQuery> {
 
 	@Override
-	public void processFacet(SolrQuery solrQuery, Facet facet) {
+	public Map<String, JSONObject> processFacet(Facet facet) {
+		Map<String, JSONObject> map = new LinkedHashMap<>();
+
+		String name = FacetUtil.getAggregationName(facet);
+
+		map.put(name, getFacetParameters(facet));
+
+		return map;
+	}
+
+	protected void applyFrequencyThreshold(
+		JSONObject jsonObject, JSONObject dataJSONObject) {
+
+		int minCount = dataJSONObject.getInt("frequencyThreshold");
+
+		if (minCount > 0) {
+			jsonObject.put("mincount", minCount);
+		}
+	}
+
+	protected void applyMaxTerms(
+		JSONObject jsonObject, JSONObject dataJSONObject) {
+
+		int limit = dataJSONObject.getInt("maxTerms");
+
+		if (limit > 0) {
+			jsonObject.put("limit", limit);
+		}
+	}
+
+	protected void applySort(
+		JSONObject jsonObject, FacetConfiguration facetConfiguration) {
+
+		String sortParam = "count";
+		String sortValue = "desc";
+
+		String order = facetConfiguration.getOrder();
+
+		if (order.equals("OrderValueAsc")) {
+			sortParam = "index";
+			sortValue = "asc";
+		}
+
+		JSONObject sortJSONObject = jsonFactory.createJSONObject();
+
+		sortJSONObject.put(sortParam, sortValue);
+
+		jsonObject.put("sort", sortJSONObject);
+	}
+
+	protected JSONObject getFacetParameters(Facet facet) {
+		JSONObject jsonObject = jsonFactory.createJSONObject();
+
+		jsonObject.put("field", facet.getFieldName());
+
+		jsonObject.put("type", "terms");
+
 		FacetConfiguration facetConfiguration = facet.getFacetConfiguration();
 
-		solrQuery.addFacetField(facetConfiguration.getFieldName());
+		JSONObject dataJSONObject = facetConfiguration.getData();
+
+		applyFrequencyThreshold(jsonObject, dataJSONObject);
+		applyMaxTerms(jsonObject, dataJSONObject);
+
+		applySort(jsonObject, facetConfiguration);
+
+		return jsonObject;
 	}
+
+	@Reference
+	protected JSONFactory jsonFactory;
 
 }

@@ -30,7 +30,6 @@ import com.liferay.portal.test.rule.AspectJNewEnvTestRule;
 
 import java.io.IOException;
 
-import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.Constructor;
 
 import java.nio.ByteBuffer;
@@ -56,9 +55,9 @@ public class MailboxUtilTest {
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
 		new AggregateTestRule(
-			CodeCoverageAssertor.INSTANCE, AspectJNewEnvTestRule.INSTANCE);
+			AspectJNewEnvTestRule.INSTANCE, CodeCoverageAssertor.INSTANCE);
 
-	@AdviseWith(adviceClasses = {PropsUtilAdvice.class})
+	@AdviseWith(adviceClasses = PropsUtilAdvice.class)
 	@Test
 	public void testConstructor() {
 		new MailboxUtil();
@@ -161,7 +160,7 @@ public class MailboxUtilTest {
 		Assert.assertFalse(reaperThread.isAlive());
 	}
 
-	@AdviseWith(adviceClasses = {PropsUtilAdvice.class})
+	@AdviseWith(adviceClasses = PropsUtilAdvice.class)
 	@Test
 	public void testReceiveMailWithReaperThreadDisabled() {
 		PropsUtilAdvice.setProps(
@@ -185,7 +184,7 @@ public class MailboxUtilTest {
 		Assert.assertSame(byteBuffer1, MailboxUtil.receiveMail(receipt1));
 	}
 
-	@AdviseWith(adviceClasses = {PropsUtilAdvice.class})
+	@AdviseWith(adviceClasses = PropsUtilAdvice.class)
 	@Test
 	public void testReceiveMailWithReaperThreadEnabled() {
 		PropsUtilAdvice.setProps(
@@ -209,7 +208,7 @@ public class MailboxUtilTest {
 		Assert.assertSame(byteBuffer1, MailboxUtil.receiveMail(receipt1));
 	}
 
-	@AdviseWith(adviceClasses = {PropsUtilAdvice.class})
+	@AdviseWith(adviceClasses = PropsUtilAdvice.class)
 	@Test
 	public void testSendMailFail() {
 		MockIntraband mockIntraband = new MockIntraband();
@@ -230,7 +229,7 @@ public class MailboxUtilTest {
 		}
 	}
 
-	@AdviseWith(adviceClasses = {PropsUtilAdvice.class})
+	@AdviseWith(adviceClasses = PropsUtilAdvice.class)
 	@Test
 	public void testSendMailSuccess() throws MailboxException {
 		final long receipt = 100;
@@ -295,7 +294,7 @@ public class MailboxUtilTest {
 	}
 
 	private static class RecorderUncaughtExceptionHandler
-		implements UncaughtExceptionHandler {
+		implements Thread.UncaughtExceptionHandler {
 
 		@Override
 		public void uncaughtException(Thread thread, Throwable throwable) {

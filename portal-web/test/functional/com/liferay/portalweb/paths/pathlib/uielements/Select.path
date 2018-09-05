@@ -9,6 +9,11 @@
 </thead>
 <tbody>
 <tr>
+	<td>APPLICATION_DECORATORS</td>
+	<td>//div[label[contains(.,'Application Decorators')]]/select[contains(@id,'portletDecorator')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>PERMISSIONS_VIEW_ROLE</td>
 	<td>//select[contains(.,'${key_permissionsViewRole}')]</td>
 	<td></td>
@@ -24,18 +29,13 @@
 	<td></td>
 </tr>
 <tr>
+	<td>BLOGS_RATING</td>
+	<td>//select[contains(@id,'blogs')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>BULLET_STYLE</td>
 	<td>//div[label[contains(.,'Bullet Style')]]/select</td>
-	<td></td>
-</tr>
-<tr>
-	<td>CONTENT_ALL_CONTENT</td>
-	<td>//option[contains(@id,'allContent')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>CONTENT_CHOOSE_CONTENT</td>
-	<td>//option[contains(@id,'chooseContent')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -99,6 +99,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>GENERIC_SELECT_FIELD</td>
+	<td>//div[label[contains(.,'${key_fieldLabel}')]]/select</td>
+	<td></td>
+</tr>
+<tr>
 	<td>HEADER</td>
 	<td>//div[label[contains(.,'Header')]]/select</td>
 	<td></td>
@@ -121,11 +126,6 @@
 <tr>
 	<td>LAST_TIME</td>
 	<td>//select[contains(@id, 'last')]/option[contains(.,'${key_lastDateRange}')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>LENGTH</td>
-	<td>//select[contains(@id,'length')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -199,6 +199,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>SCOPE_CONFIGURATION</td>
+	<td>//div[label[contains(.,'Scope')]]/select</td>
+	<td></td>
+</tr>
+<tr>
 	<td>TIME_ZONE</td>
 	<td>//select[contains(@id,'timeZoneId')]</td>
 	<td></td>
@@ -206,11 +211,6 @@
 <tr>
 	<td>TYPE</td>
 	<td>//div[label[contains(.,'Type')]]/select</td>
-	<td></td>
-</tr>
-<tr>
-	<td>USER_STATUS</td>
-	<td>//select[contains(@id,'StatusSelect')]</td>
 	<td></td>
 </tr>
 <tr>

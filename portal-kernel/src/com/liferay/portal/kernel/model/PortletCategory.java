@@ -14,7 +14,7 @@
 
 package com.liferay.portal.kernel.model;
 
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.petra.string.StringPool;
 
 import java.io.Serializable;
 
@@ -110,9 +110,8 @@ public class PortletCategory implements Serializable {
 		if (_name.equals(PortletCategoryConstants.NAME_HIDDEN)) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	public void merge(PortletCategory newPortletCategory) {

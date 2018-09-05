@@ -112,9 +112,8 @@ public class OrganizationServiceSoap {
 	* @return the organization
 	*/
 	public static com.liferay.portal.kernel.model.OrganizationSoap addOrganization(
-		long parentOrganizationId, java.lang.String name,
-		java.lang.String type, long regionId, long countryId, long statusId,
-		java.lang.String comments, boolean site,
+		long parentOrganizationId, String name, String type, long regionId,
+		long countryId, long statusId, String comments, boolean site,
 		com.liferay.portal.kernel.model.AddressSoap[] addresses,
 		com.liferay.portal.kernel.model.EmailAddressSoap[] emailAddresses,
 		com.liferay.portal.kernel.model.OrgLaborSoap[] orgLabors,
@@ -169,9 +168,8 @@ public class OrganizationServiceSoap {
 	* @return the organization
 	*/
 	public static com.liferay.portal.kernel.model.OrganizationSoap addOrganization(
-		long parentOrganizationId, java.lang.String name,
-		java.lang.String type, long regionId, long countryId, long statusId,
-		java.lang.String comments, boolean site,
+		long parentOrganizationId, String name, String type, long regionId,
+		long countryId, long statusId, String comments, boolean site,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
@@ -265,6 +263,23 @@ public class OrganizationServiceSoap {
 		}
 	}
 
+	public static com.liferay.portal.kernel.model.OrganizationSoap[] getGtOrganizations(
+		long gtOrganizationId, long companyId, long parentOrganizationId,
+		int size) throws RemoteException {
+		try {
+			java.util.List<com.liferay.portal.kernel.model.Organization> returnValue =
+				OrganizationServiceUtil.getGtOrganizations(gtOrganizationId,
+					companyId, parentOrganizationId, size);
+
+			return com.liferay.portal.kernel.model.OrganizationSoap.toSoapModels(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	/**
 	* Returns the organization with the primary key.
 	*
@@ -293,7 +308,7 @@ public class OrganizationServiceSoap {
 	* @return the primary key of the organization with the name, or
 	<code>0</code> if the organization could not be found
 	*/
-	public static long getOrganizationId(long companyId, java.lang.String name)
+	public static long getOrganizationId(long companyId, String name)
 		throws RemoteException {
 		try {
 			long returnValue = OrganizationServiceUtil.getOrganizationId(companyId,
@@ -508,10 +523,10 @@ public class OrganizationServiceSoap {
 	* @return the organization
 	*/
 	public static com.liferay.portal.kernel.model.OrganizationSoap updateOrganization(
-		long organizationId, long parentOrganizationId, java.lang.String name,
-		java.lang.String type, long regionId, long countryId, long statusId,
-		java.lang.String comments, boolean logo, byte[] logoBytes,
-		boolean site, com.liferay.portal.kernel.model.AddressSoap[] addresses,
+		long organizationId, long parentOrganizationId, String name,
+		String type, long regionId, long countryId, long statusId,
+		String comments, boolean logo, byte[] logoBytes, boolean site,
+		com.liferay.portal.kernel.model.AddressSoap[] addresses,
 		com.liferay.portal.kernel.model.EmailAddressSoap[] emailAddresses,
 		com.liferay.portal.kernel.model.OrgLaborSoap[] orgLabors,
 		com.liferay.portal.kernel.model.PhoneSoap[] phones,
@@ -566,16 +581,16 @@ public class OrganizationServiceSoap {
 	names for the organization, and merge expando bridge
 	attributes for the organization.
 	* @return the organization
-	* @deprecated As of 7.0.0, replaced by {@link #updateOrganization(long,
-	long, String, String, long, long, long, String, boolean,
-	byte[], boolean, List, List, List, List, List,
-	ServiceContext)}
+	* @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	#updateOrganization(long, long, String, String, long, long,
+	long, String, boolean, byte[], boolean, List, List, List,
+	List, List, ServiceContext)}
 	*/
 	@Deprecated
 	public static com.liferay.portal.kernel.model.OrganizationSoap updateOrganization(
-		long organizationId, long parentOrganizationId, java.lang.String name,
-		java.lang.String type, long regionId, long countryId, long statusId,
-		java.lang.String comments, boolean site,
+		long organizationId, long parentOrganizationId, String name,
+		String type, long regionId, long countryId, long statusId,
+		String comments, boolean site,
 		com.liferay.portal.kernel.model.AddressSoap[] addresses,
 		com.liferay.portal.kernel.model.EmailAddressSoap[] emailAddresses,
 		com.liferay.portal.kernel.model.OrgLaborSoap[] orgLabors,
@@ -628,9 +643,9 @@ public class OrganizationServiceSoap {
 	* @return the organization
 	*/
 	public static com.liferay.portal.kernel.model.OrganizationSoap updateOrganization(
-		long organizationId, long parentOrganizationId, java.lang.String name,
-		java.lang.String type, long regionId, long countryId, long statusId,
-		java.lang.String comments, boolean site,
+		long organizationId, long parentOrganizationId, String name,
+		String type, long regionId, long countryId, long statusId,
+		String comments, boolean site,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {

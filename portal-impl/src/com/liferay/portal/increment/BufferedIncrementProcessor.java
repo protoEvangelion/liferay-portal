@@ -14,13 +14,13 @@
 
 package com.liferay.portal.increment;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.concurrent.BatchablePipe;
 import com.liferay.portal.kernel.increment.Increment;
 import com.liferay.portal.kernel.messaging.proxy.ProxyModeThreadLocal;
 import com.liferay.portal.kernel.util.ClassLoaderUtil;
 import com.liferay.portal.kernel.util.NamedThreadFactory;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Serializable;
 
@@ -29,13 +29,14 @@ import java.lang.reflect.Method;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.ThreadPoolExecutor.DiscardPolicy;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * @author Shuyang Zhou
+ * @author     Shuyang Zhou
+ * @deprecated As of Judson (7.1.x), with no direct replacement
  */
+@Deprecated
 public class BufferedIncrementProcessor {
 
 	public BufferedIncrementProcessor(
@@ -49,7 +50,8 @@ public class BufferedIncrementProcessor {
 			_bufferedIncrementConfiguration.getThreadpoolKeepAliveTime(),
 			TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
 
-		threadPoolExecutor.setRejectedExecutionHandler(new DiscardPolicy());
+		threadPoolExecutor.setRejectedExecutionHandler(
+			new ThreadPoolExecutor.DiscardPolicy());
 
 		Class<?>[] parameterTypes = method.getParameterTypes();
 

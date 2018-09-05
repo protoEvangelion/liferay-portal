@@ -16,12 +16,12 @@ package com.liferay.portal.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.MVCCModel;
 import com.liferay.portal.kernel.model.PasswordTracker;
 import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -115,7 +115,7 @@ public class PasswordTrackerCacheModel implements CacheModel<PasswordTracker>,
 		}
 
 		if (password == null) {
-			passwordTrackerImpl.setPassword(StringPool.BLANK);
+			passwordTrackerImpl.setPassword("");
 		}
 		else {
 			passwordTrackerImpl.setPassword(password);
@@ -152,7 +152,7 @@ public class PasswordTrackerCacheModel implements CacheModel<PasswordTracker>,
 		objectOutput.writeLong(createDate);
 
 		if (password == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(password);

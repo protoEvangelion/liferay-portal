@@ -31,23 +31,23 @@ public class PluginSettingServiceWrapper implements PluginSettingService,
 		_pluginSettingService = pluginSettingService;
 	}
 
-	@Override
-	public com.liferay.portal.kernel.model.PluginSetting updatePluginSetting(
-		long companyId, java.lang.String pluginId, java.lang.String pluginType,
-		java.lang.String roles, boolean active)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _pluginSettingService.updatePluginSetting(companyId, pluginId,
-			pluginType, roles, active);
-	}
-
 	/**
 	* Returns the OSGi service identifier.
 	*
 	* @return the OSGi service identifier
 	*/
 	@Override
-	public java.lang.String getOSGiServiceIdentifier() {
+	public String getOSGiServiceIdentifier() {
 		return _pluginSettingService.getOSGiServiceIdentifier();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.PluginSetting updatePluginSetting(
+		long companyId, String pluginId, String pluginType, String roles,
+		boolean active)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _pluginSettingService.updatePluginSetting(companyId, pluginId,
+			pluginType, roles, active);
 	}
 
 	@Override

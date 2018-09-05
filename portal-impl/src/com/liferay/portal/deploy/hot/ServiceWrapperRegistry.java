@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.ServiceWrapper;
+import com.liferay.portal.kernel.spring.aop.AdvisedSupport;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.spring.aop.ServiceBeanAopCacheManagerUtil;
 import com.liferay.portal.spring.aop.ServiceBeanAopProxy;
@@ -29,9 +30,6 @@ import com.liferay.registry.ServiceTracker;
 import com.liferay.registry.ServiceTrackerCustomizer;
 
 import java.lang.reflect.Method;
-
-import org.springframework.aop.TargetSource;
-import org.springframework.aop.framework.AdvisedSupport;
 
 /**
  * @author Raymond Augé
@@ -111,22 +109,6 @@ public class ServiceWrapperRegistry {
 			}
 		}
 
-		protected Object getServiceProxy(Class<?> serviceTypeClass) {
-			Object service = null;
-
-			try {
-				service = PortalBeanLocatorUtil.locate(
-					serviceTypeClass.getName());
-			}
-			catch (BeanLocatorException ble) {
-				Registry registry = RegistryUtil.getRegistry();
-
-				service = registry.getService(serviceTypeClass);
-			}
-
-			return service;
-		}
-
 		private <T> ServiceBag<?> _getServiceBag(
 				ServiceWrapper<T> serviceWrapper)
 			throws Throwable {
@@ -140,25 +122,51 @@ public class ServiceWrapperRegistry {
 
 			Class<?> serviceTypeClass = method.getReturnType();
 
-			Object serviceProxy = getServiceProxy(serviceTypeClass);
+			Object service = null;
+			ServiceReference<?> serviceReference = null;
+
+			Registry registry = RegistryUtil.getRegistry();
+
+			try {
+				service = PortalBeanLocatorUtil.locate(
+					serviceTypeClass.getName());
+			}
+			catch (BeanLocatorException ble) {
+				serviceReference = registry.getServiceReference(
+					serviceTypeClass);
+
+				service = registry.getService(serviceReference);
+			}
+
+			Object serviceProxy = service;
 
 			if (!ProxyUtil.isProxyClass(serviceProxy.getClass())) {
 				_log.error(
 					"Service hooks require Spring to be configured to use " +
 						"JdkDynamicProxy and will not work with CGLIB");
 
+				if (serviceReference != null) {
+					registry.ungetService(serviceReference);
+				}
+
 				return null;
 			}
 
-			AdvisedSupport advisedSupport =
-				ServiceBeanAopProxy.getAdvisedSupport(serviceProxy);
+			try {
+				AdvisedSupport advisedSupport =
+					ServiceBeanAopProxy.getAdvisedSupport(serviceProxy);
 
-			TargetSource targetSource = advisedSupport.getTargetSource();
+				serviceWrapper.setWrappedService((T)advisedSupport.getTarget());
 
-			serviceWrapper.setWrappedService((T)targetSource.getTarget());
-
-			return new ServiceBag<>(
-				classLoader, advisedSupport, serviceTypeClass, serviceWrapper);
+				return new ServiceBag<>(
+					classLoader, advisedSupport, serviceTypeClass,
+					serviceWrapper);
+			}
+			finally {
+				if (serviceReference != null) {
+					registry.ungetService(serviceReference);
+				}
+			}
 		}
 
 	}

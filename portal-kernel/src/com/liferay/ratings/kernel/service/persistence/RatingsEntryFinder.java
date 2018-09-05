@@ -18,13 +18,15 @@ import aQute.bnd.annotation.ProviderType;
 
 /**
  * @author Brian Wing Shun Chan
+ * @deprecated As of Judson (7.1.x), with no direct replacement
  * @generated
  */
+@Deprecated
 @ProviderType
 public interface RatingsEntryFinder {
 	public java.util.Map<java.io.Serializable, com.liferay.ratings.kernel.model.RatingsEntry> fetchByPrimaryKeys(
 		java.util.Set<java.io.Serializable> primaryKeys);
 
 	public java.util.List<com.liferay.ratings.kernel.model.RatingsEntry> findByU_C_C(
-		long userId, long classNameId, java.util.List<java.lang.Long> classPKs);
+		long userId, long classNameId, java.util.List<Long> classPKs);
 }

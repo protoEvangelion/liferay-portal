@@ -5,7 +5,7 @@
 
 	<command name="_checkForRSSTitle">
 		<if>
-			<condition function="IsElementNotPresent" locator1="CalendarRSS#FEED_TITLE"  />
+			<condition function="IsElementNotPresent" locator1="CalendarRSS#FEED_TITLE" />
 			<then>
 				<execute macro="Navigator#gotoPage">
 					<var name="pageName" value="${pageName}" />
@@ -246,9 +246,7 @@
 					<var name="name" value="${calendarNameEdit}" />
 				</execute>
 
-				<execute macro="Button#clickSave" />
-
-				<execute macro="Alert#viewSuccessMessage" />
+				<execute macro="PortletEntry#save" />
 
 				<execute function="SelectFrame" value1="relative=top" />
 			</then>
@@ -270,9 +268,7 @@
 						<var name="name" value="${calendarNameEdit}" />
 					</execute>
 
-					<execute macro="Button#clickSave" />
-
-					<execute macro="Alert#viewSuccessMessage" />
+					<execute macro="PortletEntry#save" />
 
 					<execute function="SelectFrame" value1="relative=top" />
 				</then>
@@ -291,9 +287,7 @@
 						<var name="name" value="${calendarNameEdit}" />
 					</execute>
 
-					<execute macro="Button#clickSave" />
-
-					<execute macro="Alert#viewSuccessMessage" />
+					<execute macro="PortletEntry#save" />
 
 					<execute function="SelectFrame" value1="relative=top" />
 				</then>
@@ -426,18 +420,7 @@
 
 		<execute macro="Button#clickSave" />
 
-		<if>
-			<condition function="IsElementPresent" locator1="Message#SUCCESS" />
-			<then>
-				<execute macro="Alert#viewSuccessMessage" />
-				<execute function="SelectFrame" value1="relative=top" />
-			</then>
-			<else>
-				<execute function="SelectFrame" value1="relative=top" />
-
-				<execute macro="Alert#viewSuccessMessage" />
-			</else>
-		</if>
+		<execute macro="Alert#viewSuccessMessage" />
 
 		<execute function="SelectFrame" value1="relative=top" />
 	</command>
@@ -622,9 +605,13 @@
 
 		<execute function="AssertTextEquals" locator1="CalendarManageCalendars#CALENDAR_TABLE_NAME" value1="${calendarName}" />
 
-		<execute function="Click" locator1="CalendarManageCalendars#CALENDAR_TABLE_ACTIONS" />
+		<execute macro="LexiconEntry#openEntryMenu">
+			<var name="rowEntry" value="${calendarName}" />
+		</execute>
 
-		<execute function="AssertClick" locator1="MenuItem#EXPORT" value1="Export" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Export" />
+		</execute>
 
 		<execute function="Pause" locator1="5000" />
 
@@ -649,9 +636,14 @@
 		<var name="key_calendarName" value="${calendarName}" />
 
 		<execute function="AssertTextEquals" locator1="CalendarManageCalendars#CALENDAR_TABLE_NAME" value1="${calendarName}" />
-		<execute function="Click" locator1="CalendarManageCalendars#CALENDAR_TABLE_ACTIONS" />
 
-		<execute function="AssertClick" locator1="MenuItem#IMPORT" value1="Import" />
+		<execute macro="LexiconEntry#openEntryMenu">
+			<var name="rowEntry" value="${calendarName}" />
+		</execute>
+
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Import" />
+		</execute>
 
 		<execute function="UploadCommonFile" locator1="CalendarImport#FILE_FIELD" value1="${calendarFile}" />
 
@@ -843,7 +835,7 @@
 		<execute function="AssertTextEquals" locator1="CalendarManageCalendars#CALENDAR_TABLE_DESCRIPTION" value1="${calendarDescription}" />
 		<execute function="AssertElementPresent" locator1="CalendarManageCalendars#CALENDAR_TABLE_COLOR" />
 		<execute function="AssertTextEquals" locator1="CalendarManageCalendars#CALENDAR_TABLE_DEFAULT" value1="${calendarDefault}" />
-		<execute function="AssertElementPresent" locator1="CalendarManageCalendars#CALENDAR_TABLE_ACTIONS" value1="${calendarDefault}" />
+		<execute function="AssertElementPresent" locator1="CalendarManageCalendars#CALENDAR_TABLE_ACTIONS" />
 	</command>
 
 	<command name="viewColor">
@@ -896,14 +888,14 @@
 		it reaches ${dateMonth}.
 		-->
 
-		<while>
+		<while max-iterations="100">
 			<condition function="IsTextNotEqual" locator1="Calendar#SCHEDULER_VIEW_MONTH_DATE" value1="February 2016" />
 			<then>
 				<execute function="Click" locator1="Calendar#VIEW_PREVIOUS_BUTTON" />
 			</then>
 		</while>
 
-		<while>
+		<while max-iterations="100">
 			<condition function="IsTextNotEqual" locator1="Calendar#SCHEDULER_VIEW_MONTH_DATE" value1="${dateMonth}" />
 			<then>
 				<execute function="Click" locator1="Calendar#VIEW_NEXT_BUTTON" />
@@ -919,14 +911,14 @@
 		it reaches ${dateMonth}.
 		-->
 
-		<while>
+		<while max-iterations="100">
 			<condition function="IsTextNotEqual" locator1="Calendar#SMALL_CALENDAR_DATE" value1="February 2016" />
 			<then>
 				<execute function="Click" locator1="Calendar#SMALL_CALENDAR_PREVIOUS" />
 			</then>
 		</while>
 
-		<while>
+		<while max-iterations="100">
 			<condition function="IsTextNotEqual" locator1="Calendar#SMALL_CALENDAR_DATE" value1="${dateMonth}" />
 			<then>
 				<execute function="Click" locator1="Calendar#SMALL_CALENDAR_NEXT" />
@@ -935,13 +927,13 @@
 	</command>
 
 	<command name="viewNoRSS">
-		<execute function="Open" locator1="${rssURL}" />
-
-		<var name="pageName" value="Welcome" />
-
-		<execute function="AssertVisible" locator1="Home#PAGE_ACTIVE">
-			<var name="key_pageName" value="${pageName}" />
+		<execute macro="Navigator#openSpecificURL">
+			<var name="url" value="${rssURL}" />
 		</execute>
+
+		<execute function="SelectWindow#selectPopUp" locator1="null" />
+
+		<execute function="AssertElementNotPresent" locator1="CalendarRSS#FEED_TITLE" />
 	</command>
 
 	<command name="viewOtherCalendarMenulist">
@@ -1035,7 +1027,7 @@
 
 		<execute function="SelectWindow" locator1="title=${siteName}" />
 
-		<execute function="AssertTextEquals" locator1="CalendarRSS#FEED_TITLE"  value1="${calendarName}" />
+		<execute function="AssertTextEquals" locator1="CalendarRSS#FEED_TITLE" value1="${calendarName}" />
 
 		<var name="key_eventTitle" value="${eventTitle}" />
 
@@ -1052,7 +1044,7 @@
 
 		<execute function="SelectWindow" locator1="title=${siteName}" />
 
-		<execute function="AssertTextEquals" locator1="CalendarRSS#FEED_TITLE"  value1="${calendarName}" />
+		<execute function="AssertTextEquals" locator1="CalendarRSS#FEED_TITLE" value1="${calendarName}" />
 
 		<var name="key_eventTitle" value="${eventTitle}" />
 

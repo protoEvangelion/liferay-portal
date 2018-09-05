@@ -14,6 +14,7 @@
 
 package com.liferay.portal.servlet.filters.autologin;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
@@ -27,7 +28,6 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StackTraceUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.URLCodec;
 import com.liferay.portal.kernel.util.Validator;
@@ -41,8 +41,8 @@ import com.liferay.registry.ServiceReference;
 import com.liferay.registry.ServiceTracker;
 import com.liferay.registry.ServiceTrackerCustomizer;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
@@ -55,15 +55,6 @@ import javax.servlet.http.HttpSession;
  * @author Raymond Augé
  */
 public class AutoLoginFilter extends BasePortalFilter {
-
-	public AutoLoginFilter() {
-		Registry registry = RegistryUtil.getRegistry();
-
-		_serviceTracker = registry.trackServices(
-			AutoLogin.class, new AutoLoginServiceTrackerCustomizer());
-
-		_serviceTracker.open();
-	}
 
 	protected String getLoginRemoteUser(
 			HttpServletRequest request, HttpServletResponse response,
@@ -276,15 +267,22 @@ public class AutoLoginFilter extends BasePortalFilter {
 	private static final Log _log = LogFactoryUtil.getLog(
 		AutoLoginFilter.class);
 
-	private final List<AutoLogin> _autoLogins = new CopyOnWriteArrayList<>();
-	private final ServiceTracker<?, AutoLogin> _serviceTracker;
+	private static final Set<AutoLogin> _autoLogins =
+		new CopyOnWriteArraySet<>();
+	private static final ServiceTracker<?, AutoLogin> _serviceTracker;
 
-	private class AutoLoginServiceTrackerCustomizer
+	private static class AutoLoginServiceTrackerCustomizer
 		implements ServiceTrackerCustomizer<AutoLogin, AutoLogin> {
 
 		@Override
 		public AutoLogin addingService(
 			ServiceReference<AutoLogin> serviceReference) {
+
+			if (GetterUtil.getBoolean(
+					serviceReference.getProperty("private.auto.login"))) {
+
+				return null;
+			}
 
 			Registry registry = RegistryUtil.getRegistry();
 
@@ -315,6 +313,15 @@ public class AutoLoginFilter extends BasePortalFilter {
 			_autoLogins.remove(autoLogin);
 		}
 
+	}
+
+	static {
+		Registry registry = RegistryUtil.getRegistry();
+
+		_serviceTracker = registry.trackServices(
+			AutoLogin.class, new AutoLoginServiceTrackerCustomizer());
+
+		_serviceTracker.open();
 	}
 
 }

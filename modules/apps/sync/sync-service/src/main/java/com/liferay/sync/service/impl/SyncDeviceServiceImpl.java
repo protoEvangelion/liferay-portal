@@ -14,20 +14,17 @@
 
 package com.liferay.sync.service.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.sync.constants.SyncDeviceConstants;
+import com.liferay.sync.internal.util.SyncDeviceThreadLocal;
 import com.liferay.sync.model.SyncDevice;
 import com.liferay.sync.service.base.SyncDeviceServiceBaseImpl;
-import com.liferay.sync.util.SyncDeviceThreadLocal;
 
 /**
  * @author Shinn Lok
  */
-@ProviderType
 public class SyncDeviceServiceImpl extends SyncDeviceServiceBaseImpl {
 
 	@Override

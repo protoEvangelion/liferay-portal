@@ -16,22 +16,37 @@ package com.liferay.exportimport.kernel.lar;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.model.StagedModel;
+import com.liferay.portal.kernel.security.xml.SecureXMLFactoryProviderUtil;
 import com.liferay.portal.kernel.service.PortletLocalServiceUtil;
 import com.liferay.portal.kernel.spring.orm.LastSessionRecorderHelperUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.xml.Attribute;
+import com.liferay.portal.kernel.xml.Document;
+import com.liferay.portal.kernel.xml.DocumentException;
 import com.liferay.portal.kernel.xml.Element;
+import com.liferay.portal.kernel.xml.SAXReaderUtil;
+import com.liferay.portal.kernel.zip.ZipReader;
 
 import java.io.Serializable;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 /**
  * @author Brian Wing Shun Chan
@@ -45,14 +60,15 @@ public class StagedModelDataHandlerUtil {
 		throws PortalException {
 
 		String className = deletionElement.attributeValue("class-name");
-		String extraData = deletionElement.attributeValue("extra-data");
-		String uuid = deletionElement.attributeValue("uuid");
 
 		StagedModelDataHandler<?> stagedModelDataHandler =
 			StagedModelDataHandlerRegistryUtil.getStagedModelDataHandler(
 				className);
 
 		if (stagedModelDataHandler != null) {
+			String extraData = deletionElement.attributeValue("extra-data");
+			String uuid = deletionElement.attributeValue("uuid");
+
 			stagedModelDataHandler.deleteStagedModel(
 				uuid, portletDataContext.getScopeGroupId(), className,
 				extraData);
@@ -67,7 +83,9 @@ public class StagedModelDataHandlerUtil {
 		Portlet referrerPortlet = PortletLocalServiceUtil.getPortletById(
 			referrerPortletId);
 
-		if (!ExportImportHelperUtil.isReferenceWithinExportScope(
+		if (!ExportImportHelperUtil.isAlwaysIncludeReference(
+				portletDataContext, stagedModel) ||
+			!ExportImportHelperUtil.isReferenceWithinExportScope(
 				portletDataContext, stagedModel)) {
 
 			return portletDataContext.addReferenceElement(
@@ -84,7 +102,7 @@ public class StagedModelDataHandlerUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
 	 *             #exportReferenceStagedModel(PortletDataContext, StagedModel,
 	 *             StagedModel, String)}
 	 */
@@ -102,7 +120,7 @@ public class StagedModelDataHandlerUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
 	 *             #exportReferenceStagedModel(PortletDataContext, StagedModel,
 	 *             StagedModel, String)}
 	 */
@@ -128,7 +146,9 @@ public class StagedModelDataHandlerUtil {
 		Element referrerStagedModelElement =
 			portletDataContext.getExportDataElement(referrerStagedModel);
 
-		if (!ExportImportHelperUtil.isReferenceWithinExportScope(
+		if (!ExportImportHelperUtil.isAlwaysIncludeReference(
+				portletDataContext, stagedModel) ||
+			!ExportImportHelperUtil.isReferenceWithinExportScope(
 				portletDataContext, stagedModel)) {
 
 			return portletDataContext.addReferenceElement(
@@ -146,6 +166,12 @@ public class StagedModelDataHandlerUtil {
 	public static <T extends StagedModel> void exportStagedModel(
 			PortletDataContext portletDataContext, T stagedModel)
 		throws PortletDataException {
+
+		if (!ExportImportHelperUtil.isReferenceWithinExportScope(
+				portletDataContext, stagedModel)) {
+
+			return;
+		}
 
 		StagedModelDataHandler<T> stagedModelDataHandler =
 			_getStagedModelDataHandler(stagedModel);
@@ -184,7 +210,7 @@ public class StagedModelDataHandlerUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Judson (7.1.x), replaced by {@link
 	 *             #importReferenceStagedModel(PortletDataContext, Class,
 	 *             Serializable)}
 	 */
@@ -222,7 +248,7 @@ public class StagedModelDataHandlerUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Judson (7.1.x), replaced by {@link
 	 *             #importReferenceStagedModel(PortletDataContext, String,
 	 *             Serializable)}
 	 */
@@ -263,7 +289,7 @@ public class StagedModelDataHandlerUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Judson (7.1.x), replaced by {@link
 	 *             #importReferenceStagedModel(PortletDataContext, StagedModel,
 	 *             Class, Serializable)}
 	 */
@@ -304,7 +330,7 @@ public class StagedModelDataHandlerUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Judson (7.1.x), replaced by {@link
 	 *             #importReferenceStagedModel(PortletDataContext, StagedModel,
 	 *             String, Serializable)}
 	 */
@@ -463,7 +489,156 @@ public class StagedModelDataHandlerUtil {
 			return;
 		}
 
-		importStagedModel(portletDataContext, referenceElement);
+		Attribute missingAttribute = referenceElement.attribute("missing");
+
+		if ((missingAttribute != null) &&
+			GetterUtil.getBoolean(missingAttribute.getValue())) {
+
+			StagedModel stagedModel = _getReferenceStagedModel(
+				portletDataContext, referenceElement);
+
+			Element missingReferenceElement =
+				portletDataContext.getMissingReferenceElement(stagedModel);
+
+			if (missingReferenceElement != null) {
+				String elementPath = missingReferenceElement.attributeValue(
+					"element-path");
+
+				if (Validator.isNotNull(elementPath)) {
+					Element importDataRootElement =
+						portletDataContext.getImportDataRootElement();
+
+					try {
+						Document document = SAXReaderUtil.read(
+							portletDataContext.getZipEntryAsString(
+								elementPath));
+
+						portletDataContext.setImportDataRootElement(
+							document.getRootElement());
+
+						importStagedModel(portletDataContext, referenceElement);
+					}
+					catch (DocumentException de) {
+						throw new RuntimeException(de);
+					}
+					finally {
+						portletDataContext.setImportDataRootElement(
+							importDataRootElement);
+					}
+
+					return;
+				}
+			}
+		}
+
+		boolean findReference = false;
+
+		try {
+			importStagedModel(portletDataContext, referenceElement);
+		}
+		catch (PortletDataException pde) {
+			if (pde.getCause() instanceof NullPointerException) {
+				findReference = true;
+			}
+		}
+
+		if (!findReference) {
+			return;
+		}
+
+		Element importDataRootElement =
+			portletDataContext.getImportDataRootElement();
+
+		try {
+			ZipReader zipReader = portletDataContext.getZipReader();
+
+			List<String> entries = zipReader.getEntries();
+
+			Iterator<String> iterator = entries.iterator();
+
+			StagedModel stagedModel = _getStagedModel(
+				portletDataContext, referenceElement);
+
+			while (iterator.hasNext()) {
+				String entry = iterator.next();
+
+				if (entry.endsWith(".xml")) {
+					if (_containsStagedModel(
+							portletDataContext, entry, stagedModel)) {
+
+						try {
+							Document document = SAXReaderUtil.read(
+								portletDataContext.getZipEntryAsString(entry));
+
+							portletDataContext.setImportDataRootElement(
+								document.getRootElement());
+
+							String path = ExportImportPathUtil.getModelPath(
+								stagedModel);
+
+							portletDataContext.removePrimaryKey(path);
+
+							importStagedModel(
+								portletDataContext, referenceElement);
+
+							return;
+						}
+						catch (Exception e) {
+							if (_log.isDebugEnabled()) {
+								_log.debug(e, e);
+							}
+						}
+					}
+				}
+			}
+
+			PortletDataException pde = new PortletDataException();
+
+			pde.setStagedModel(stagedModel);
+			pde.setType(PortletDataException.MISSING_REFERENCE);
+
+			throw pde;
+		}
+		finally {
+			portletDataContext.setImportDataRootElement(importDataRootElement);
+		}
+	}
+
+	private static boolean _containsStagedModel(
+		PortletDataContext portletDataContext, String path,
+		StagedModel stagedModel) {
+
+		XMLInputFactory xmlInputFactory =
+			SecureXMLFactoryProviderUtil.newXMLInputFactory();
+
+		try {
+			XMLStreamReader xmlStreamReader =
+				xmlInputFactory.createXMLStreamReader(
+					portletDataContext.getZipEntryAsInputStream(path));
+
+			Class<?> modelClass = stagedModel.getModelClass();
+
+			String simpleName = modelClass.getSimpleName();
+
+			while (xmlStreamReader.hasNext()) {
+				int event = xmlStreamReader.next();
+
+				if (event == XMLStreamConstants.START_ELEMENT) {
+					QName qName = xmlStreamReader.getName();
+
+					if (Objects.equals(qName.getLocalPart(), simpleName)) {
+						return true;
+					}
+				}
+			}
+		}
+		catch (XMLStreamException xmlse) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(xmlse, xmlse);
+			}
+		}
+
+		return false;
 	}
 
 	private static StagedModel _getReferenceStagedModel(

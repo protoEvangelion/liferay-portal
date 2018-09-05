@@ -16,12 +16,12 @@ package com.liferay.portal.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.MVCCModel;
 import com.liferay.portal.kernel.model.VirtualHost;
 import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -104,7 +104,7 @@ public class VirtualHostCacheModel implements CacheModel<VirtualHost>,
 		virtualHostImpl.setLayoutSetId(layoutSetId);
 
 		if (hostname == null) {
-			virtualHostImpl.setHostname(StringPool.BLANK);
+			virtualHostImpl.setHostname("");
 		}
 		else {
 			virtualHostImpl.setHostname(hostname);
@@ -139,7 +139,7 @@ public class VirtualHostCacheModel implements CacheModel<VirtualHost>,
 		objectOutput.writeLong(layoutSetId);
 
 		if (hostname == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(hostname);

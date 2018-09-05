@@ -19,12 +19,10 @@ import java.util.Collections;
 import org.junit.Assert;
 import org.junit.Test;
 
-import org.powermock.api.mockito.PowerMockito;
-
 /**
  * @author Iván Zaera
  */
-public class BaseSettingsTest extends PowerMockito {
+public class BaseSettingsTest {
 
 	public BaseSettingsTest() {
 		_parentSettings = new MemorySettings();
@@ -77,9 +75,8 @@ public class BaseSettingsTest extends PowerMockito {
 
 	private static final String _DEFAULT_VALUE = "defaultValue";
 
-	private static final String[] _DEFAULT_VALUES = {
-		"defaultValue0", "defaultValue1"
-	};
+	private static final String[] _DEFAULT_VALUES =
+		{"defaultValue0", "defaultValue1"};
 
 	private static final String _KEY = "key";
 

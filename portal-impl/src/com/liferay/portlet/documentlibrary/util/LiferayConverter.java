@@ -19,12 +19,12 @@ import com.liferay.portal.kernel.image.ImageTool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 
 import com.xuggle.ferry.RefCounted;
 import com.xuggle.xuggler.Global;
 import com.xuggle.xuggler.IAudioResampler;
 import com.xuggle.xuggler.IAudioSamples;
-import com.xuggle.xuggler.IAudioSamples.Format;
 import com.xuggle.xuggler.ICodec;
 import com.xuggle.xuggler.IContainer;
 import com.xuggle.xuggler.IContainerFormat;
@@ -128,8 +128,10 @@ public abstract class LiferayConverter {
 
 		IAudioResampler iAudioResampler = null;
 
-		Format inputSampleFormat = inputIStreamCoder.getSampleFormat();
-		Format outputSampleFormat = outputIStreamCoder.getSampleFormat();
+		IAudioSamples.Format inputSampleFormat =
+			inputIStreamCoder.getSampleFormat();
+		IAudioSamples.Format outputSampleFormat =
+			outputIStreamCoder.getSampleFormat();
 
 		if ((inputIStreamCoder.getChannels() ==
 				outputIStreamCoder.getChannels()) &&
@@ -455,15 +457,17 @@ public abstract class LiferayConverter {
 		return null;
 	}
 
-	protected Format getAudioSampleFormat(
-		ICodec outputICodec, Format originalSampleFormat) {
+	protected IAudioSamples.Format getAudioSampleFormat(
+		ICodec outputICodec, IAudioSamples.Format originalSampleFormat) {
 
-		Format sampleFormat = null;
+		IAudioSamples.Format sampleFormat = null;
 
-		List<Format> supportedSampleFormats =
+		List<IAudioSamples.Format> supportedSampleFormats =
 			outputICodec.getSupportedAudioSampleFormats();
 
-		for (Format supportedSampleFormat : supportedSampleFormats) {
+		for (IAudioSamples.Format supportedSampleFormat :
+				supportedSampleFormats) {
+
 			sampleFormat = supportedSampleFormat;
 
 			if (supportedSampleFormat == originalSampleFormat) {
@@ -514,7 +518,8 @@ public abstract class LiferayConverter {
 		String container, int defaultValue, int maxValue) {
 
 		int property = GetterUtil.getInteger(
-			properties.getProperty(propertyName + "[" + container + "]"),
+			properties.getProperty(
+				StringBundler.concat(propertyName, "[", container, "]")),
 			defaultValue);
 
 		if (property > maxValue) {
@@ -523,8 +528,9 @@ public abstract class LiferayConverter {
 
 		if (_log.isInfoEnabled()) {
 			_log.info(
-				"Default " + prettyPropertyName + " for " + container +
-					" configured to " + property);
+				StringBundler.concat(
+					"Default ", prettyPropertyName, " for ", container,
+					" configured to ", String.valueOf(property)));
 		}
 
 		return property;
@@ -676,8 +682,9 @@ public abstract class LiferayConverter {
 
 		if (iCodec == null) {
 			throw new RuntimeException(
-				"Unable to determine " + inputICodecType + " encoder for " +
-					outputURL);
+				StringBundler.concat(
+					"Unable to determine ", String.valueOf(inputICodecType),
+					" encoder for ", outputURL));
 		}
 
 		IStream outputIStream = outputIContainer.addNewStream(iCodec);
@@ -709,7 +716,7 @@ public abstract class LiferayConverter {
 
 		outputIStreamCoder.setGlobalQuality(0);
 
-		Format sampleFormat = inputIStreamCoder.getSampleFormat();
+		IAudioSamples.Format sampleFormat = inputIStreamCoder.getSampleFormat();
 
 		if (_log.isInfoEnabled()) {
 			_log.info(

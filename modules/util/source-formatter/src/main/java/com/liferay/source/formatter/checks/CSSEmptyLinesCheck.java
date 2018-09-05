@@ -22,11 +22,13 @@ import java.util.regex.Pattern;
 /**
  * @author Hugo Huijser
  */
-public class CSSEmptyLinesCheck extends BaseFileCheck {
+public class CSSEmptyLinesCheck extends EmptyLinesCheck {
 
 	@Override
 	protected String doProcess(
 		String fileName, String absolutePath, String content) {
+
+		content = fixMissingEmptyLinesAroundComments(content);
 
 		return _fixEmptyLines(content);
 	}
@@ -46,12 +48,30 @@ public class CSSEmptyLinesCheck extends BaseFileCheck {
 				content, "\n\n", "\n", matcher.start());
 		}
 
+		matcher = _missingEmptyLineAfterComment.matcher(content);
+
+		if (matcher.find()) {
+			return StringUtil.replaceFirst(
+				content, "\n", "\n\n", matcher.start());
+		}
+
+		matcher = _missingEmptyLineBeforeComment.matcher(content);
+
+		if (matcher.find()) {
+			return StringUtil.replaceFirst(
+				content, "\n", "\n\n", matcher.start());
+		}
+
 		return content;
 	}
 
 	private final Pattern _emptyLineAfterOpenCurlyBrace = Pattern.compile(
-		"\\{\n\n");
+		"\\{\n\n\t*(?!(/\\* --|//))\\S");
 	private final Pattern _emptyLineBeforeCloseCurlyBrace = Pattern.compile(
 		"\n\n\t*\\}");
+	private final Pattern _missingEmptyLineAfterComment = Pattern.compile(
+		"-- \\*/\n.");
+	private final Pattern _missingEmptyLineBeforeComment = Pattern.compile(
+		".\n\t*/\\* --");
 
 }

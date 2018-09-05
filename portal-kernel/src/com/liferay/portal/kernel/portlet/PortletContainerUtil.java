@@ -14,12 +14,11 @@
 
 package com.liferay.portal.kernel.portlet;
 
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.model.LayoutTypePortlet;
 import com.liferay.portal.kernel.model.Portlet;
-import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.servlet.TempAttributesServletRequest;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -45,6 +44,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author Shuyang Zhou
  * @author Raymond Augé
+ * @author Neil Griffin
  */
 public class PortletContainerUtil {
 
@@ -59,8 +59,8 @@ public class PortletContainerUtil {
 					layout.getGroupId(), layout.isPrivateLayout(),
 					LayoutConstants.TYPE_PORTLET);
 			}
-			catch (SystemException se) {
-				throw new PortletContainerException(se);
+			catch (PortalException pe) {
+				throw new PortletContainerException(pe);
 			}
 
 			List<LayoutTypePortlet> layoutTypePortlets = new ArrayList<>(
@@ -91,9 +91,6 @@ public class PortletContainerUtil {
 	}
 
 	public static PortletContainer getPortletContainer() {
-		PortalRuntimePermission.checkGetBeanProperty(
-			PortletContainerUtil.class);
-
 		return _portletContainer;
 	}
 
@@ -114,13 +111,17 @@ public class PortletContainerUtil {
 		ActionResult actionResult = portletContainer.processAction(
 			request, response, portlet);
 
-		List<Event> events = actionResult.getEvents();
-
-		if (!events.isEmpty()) {
-			_processEvents(request, response, events);
-		}
-
 		String location = actionResult.getLocation();
+
+		if (Validator.isNull(location) ||
+			(Validator.isNotNull(location) && portlet.isActionURLRedirect())) {
+
+			List<Event> events = actionResult.getEvents();
+
+			if (!events.isEmpty()) {
+				_processEvents(request, response, events);
+			}
+		}
 
 		if (Validator.isNotNull(location)) {
 			try {
@@ -147,12 +148,33 @@ public class PortletContainerUtil {
 		}
 	}
 
+	public static void processPublicRenderParameters(
+		HttpServletRequest request, Layout layout) {
+
+		getPortletContainer().processPublicRenderParameters(request, layout);
+	}
+
+	public static void processPublicRenderParameters(
+		HttpServletRequest request, Layout layout, Portlet portlet) {
+
+		getPortletContainer().processPublicRenderParameters(
+			request, layout, portlet);
+	}
+
 	public static void render(
 			HttpServletRequest request, HttpServletResponse response,
 			Portlet portlet)
 		throws PortletContainerException {
 
 		getPortletContainer().render(request, response, portlet);
+	}
+
+	public static void renderHeaders(
+			HttpServletRequest request, HttpServletResponse response,
+			Portlet portlet)
+		throws PortletContainerException {
+
+		getPortletContainer().renderHeaders(request, response, portlet);
 	}
 
 	public static void serveResource(
@@ -242,8 +264,6 @@ public class PortletContainerUtil {
 	}
 
 	public void setPortletContainer(PortletContainer portletContainer) {
-		PortalRuntimePermission.checkSetBeanProperty(getClass());
-
 		_portletContainer = portletContainer;
 	}
 

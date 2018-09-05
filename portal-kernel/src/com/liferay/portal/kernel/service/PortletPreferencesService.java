@@ -48,30 +48,29 @@ public interface PortletPreferencesService extends BaseService {
 	 *
 	 * Never modify or reference this interface directly. Always use {@link PortletPreferencesServiceUtil} to access the portlet preferences remote service. Add custom service methods to {@link com.liferay.portal.service.impl.PortletPreferencesServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	public void deleteArchivedPreferences(long portletItemId)
+		throws PortalException;
 
 	/**
 	* Returns the OSGi service identifier.
 	*
 	* @return the OSGi service identifier
 	*/
-	public java.lang.String getOSGiServiceIdentifier();
-
-	public void deleteArchivedPreferences(long portletItemId)
-		throws PortalException;
+	public String getOSGiServiceIdentifier();
 
 	public void restoreArchivedPreferences(long groupId, Layout layout,
-		java.lang.String portletId, PortletItem portletItem,
+		String portletId, long portletItemId,
 		javax.portlet.PortletPreferences preferences) throws PortalException;
 
 	public void restoreArchivedPreferences(long groupId, Layout layout,
-		java.lang.String portletId, long portletItemId,
+		String portletId, PortletItem portletItem,
 		javax.portlet.PortletPreferences preferences) throws PortalException;
 
-	public void restoreArchivedPreferences(long groupId, java.lang.String name,
-		Layout layout, java.lang.String portletId,
+	public void restoreArchivedPreferences(long groupId, String name,
+		Layout layout, String portletId,
 		javax.portlet.PortletPreferences preferences) throws PortalException;
 
 	public void updateArchivePreferences(long userId, long groupId,
-		java.lang.String name, java.lang.String portletId,
+		String name, String portletId,
 		javax.portlet.PortletPreferences preferences) throws PortalException;
 }

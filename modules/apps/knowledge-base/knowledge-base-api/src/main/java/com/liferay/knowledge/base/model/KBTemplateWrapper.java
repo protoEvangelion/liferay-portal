@@ -144,38 +144,8 @@ public class KBTemplateWrapper implements KBTemplate, ModelWrapper<KBTemplate> {
 	}
 
 	@Override
-	public KBTemplate toEscapedModel() {
-		return new KBTemplateWrapper(_kbTemplate.toEscapedModel());
-	}
-
-	@Override
-	public KBTemplate toUnescapedModel() {
-		return new KBTemplateWrapper(_kbTemplate.toUnescapedModel());
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _kbTemplate.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _kbTemplate.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _kbTemplate.isNew();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _kbTemplate.getExpandoBridge();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.CacheModel<KBTemplate> toCacheModel() {
-		return _kbTemplate.toCacheModel();
+	public Object clone() {
+		return new KBTemplateWrapper((KBTemplate)_kbTemplate.clone());
 	}
 
 	@Override
@@ -183,19 +153,14 @@ public class KBTemplateWrapper implements KBTemplate, ModelWrapper<KBTemplate> {
 		return _kbTemplate.compareTo(kbTemplate);
 	}
 
+	/**
+	* Returns the company ID of this kb template.
+	*
+	* @return the company ID of this kb template
+	*/
 	@Override
-	public int hashCode() {
-		return _kbTemplate.hashCode();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _kbTemplate.getPrimaryKeyObj();
-	}
-
-	@Override
-	public java.lang.Object clone() {
-		return new KBTemplateWrapper((KBTemplate)_kbTemplate.clone());
+	public long getCompanyId() {
+		return _kbTemplate.getCompanyId();
 	}
 
 	/**
@@ -204,58 +169,8 @@ public class KBTemplateWrapper implements KBTemplate, ModelWrapper<KBTemplate> {
 	* @return the content of this kb template
 	*/
 	@Override
-	public java.lang.String getContent() {
+	public String getContent() {
 		return _kbTemplate.getContent();
-	}
-
-	/**
-	* Returns the title of this kb template.
-	*
-	* @return the title of this kb template
-	*/
-	@Override
-	public java.lang.String getTitle() {
-		return _kbTemplate.getTitle();
-	}
-
-	/**
-	* Returns the user name of this kb template.
-	*
-	* @return the user name of this kb template
-	*/
-	@Override
-	public java.lang.String getUserName() {
-		return _kbTemplate.getUserName();
-	}
-
-	/**
-	* Returns the user uuid of this kb template.
-	*
-	* @return the user uuid of this kb template
-	*/
-	@Override
-	public java.lang.String getUserUuid() {
-		return _kbTemplate.getUserUuid();
-	}
-
-	/**
-	* Returns the uuid of this kb template.
-	*
-	* @return the uuid of this kb template
-	*/
-	@Override
-	public java.lang.String getUuid() {
-		return _kbTemplate.getUuid();
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _kbTemplate.toString();
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _kbTemplate.toXmlString();
 	}
 
 	/**
@@ -268,34 +183,9 @@ public class KBTemplateWrapper implements KBTemplate, ModelWrapper<KBTemplate> {
 		return _kbTemplate.getCreateDate();
 	}
 
-	/**
-	* Returns the last publish date of this kb template.
-	*
-	* @return the last publish date of this kb template
-	*/
 	@Override
-	public Date getLastPublishDate() {
-		return _kbTemplate.getLastPublishDate();
-	}
-
-	/**
-	* Returns the modified date of this kb template.
-	*
-	* @return the modified date of this kb template
-	*/
-	@Override
-	public Date getModifiedDate() {
-		return _kbTemplate.getModifiedDate();
-	}
-
-	/**
-	* Returns the company ID of this kb template.
-	*
-	* @return the company ID of this kb template
-	*/
-	@Override
-	public long getCompanyId() {
-		return _kbTemplate.getCompanyId();
+	public ExpandoBridge getExpandoBridge() {
+		return _kbTemplate.getExpandoBridge();
 	}
 
 	/**
@@ -319,6 +209,26 @@ public class KBTemplateWrapper implements KBTemplate, ModelWrapper<KBTemplate> {
 	}
 
 	/**
+	* Returns the last publish date of this kb template.
+	*
+	* @return the last publish date of this kb template
+	*/
+	@Override
+	public Date getLastPublishDate() {
+		return _kbTemplate.getLastPublishDate();
+	}
+
+	/**
+	* Returns the modified date of this kb template.
+	*
+	* @return the modified date of this kb template
+	*/
+	@Override
+	public Date getModifiedDate() {
+		return _kbTemplate.getModifiedDate();
+	}
+
+	/**
 	* Returns the primary key of this kb template.
 	*
 	* @return the primary key of this kb template
@@ -326,6 +236,21 @@ public class KBTemplateWrapper implements KBTemplate, ModelWrapper<KBTemplate> {
 	@Override
 	public long getPrimaryKey() {
 		return _kbTemplate.getPrimaryKey();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _kbTemplate.getPrimaryKeyObj();
+	}
+
+	/**
+	* Returns the title of this kb template.
+	*
+	* @return the title of this kb template
+	*/
+	@Override
+	public String getTitle() {
+		return _kbTemplate.getTitle();
 	}
 
 	/**
@@ -336,6 +261,56 @@ public class KBTemplateWrapper implements KBTemplate, ModelWrapper<KBTemplate> {
 	@Override
 	public long getUserId() {
 		return _kbTemplate.getUserId();
+	}
+
+	/**
+	* Returns the user name of this kb template.
+	*
+	* @return the user name of this kb template
+	*/
+	@Override
+	public String getUserName() {
+		return _kbTemplate.getUserName();
+	}
+
+	/**
+	* Returns the user uuid of this kb template.
+	*
+	* @return the user uuid of this kb template
+	*/
+	@Override
+	public String getUserUuid() {
+		return _kbTemplate.getUserUuid();
+	}
+
+	/**
+	* Returns the uuid of this kb template.
+	*
+	* @return the uuid of this kb template
+	*/
+	@Override
+	public String getUuid() {
+		return _kbTemplate.getUuid();
+	}
+
+	@Override
+	public int hashCode() {
+		return _kbTemplate.hashCode();
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _kbTemplate.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _kbTemplate.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _kbTemplate.isNew();
 	}
 
 	@Override
@@ -364,7 +339,7 @@ public class KBTemplateWrapper implements KBTemplate, ModelWrapper<KBTemplate> {
 	* @param content the content of this kb template
 	*/
 	@Override
-	public void setContent(java.lang.String content) {
+	public void setContent(String content) {
 		_kbTemplate.setContent(content);
 	}
 
@@ -379,14 +354,14 @@ public class KBTemplateWrapper implements KBTemplate, ModelWrapper<KBTemplate> {
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_kbTemplate.setExpandoBridgeAttributes(expandoBridge);
-	}
-
-	@Override
 	public void setExpandoBridgeAttributes(
 		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
 		_kbTemplate.setExpandoBridgeAttributes(baseModel);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_kbTemplate.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
@@ -460,7 +435,7 @@ public class KBTemplateWrapper implements KBTemplate, ModelWrapper<KBTemplate> {
 	* @param title the title of this kb template
 	*/
 	@Override
-	public void setTitle(java.lang.String title) {
+	public void setTitle(String title) {
 		_kbTemplate.setTitle(title);
 	}
 
@@ -480,7 +455,7 @@ public class KBTemplateWrapper implements KBTemplate, ModelWrapper<KBTemplate> {
 	* @param userName the user name of this kb template
 	*/
 	@Override
-	public void setUserName(java.lang.String userName) {
+	public void setUserName(String userName) {
 		_kbTemplate.setUserName(userName);
 	}
 
@@ -490,7 +465,7 @@ public class KBTemplateWrapper implements KBTemplate, ModelWrapper<KBTemplate> {
 	* @param userUuid the user uuid of this kb template
 	*/
 	@Override
-	public void setUserUuid(java.lang.String userUuid) {
+	public void setUserUuid(String userUuid) {
 		_kbTemplate.setUserUuid(userUuid);
 	}
 
@@ -500,8 +475,33 @@ public class KBTemplateWrapper implements KBTemplate, ModelWrapper<KBTemplate> {
 	* @param uuid the uuid of this kb template
 	*/
 	@Override
-	public void setUuid(java.lang.String uuid) {
+	public void setUuid(String uuid) {
 		_kbTemplate.setUuid(uuid);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.CacheModel<KBTemplate> toCacheModel() {
+		return _kbTemplate.toCacheModel();
+	}
+
+	@Override
+	public KBTemplate toEscapedModel() {
+		return new KBTemplateWrapper(_kbTemplate.toEscapedModel());
+	}
+
+	@Override
+	public String toString() {
+		return _kbTemplate.toString();
+	}
+
+	@Override
+	public KBTemplate toUnescapedModel() {
+		return new KBTemplateWrapper(_kbTemplate.toUnescapedModel());
+	}
+
+	@Override
+	public String toXmlString() {
+		return _kbTemplate.toXmlString();
 	}
 
 	@Override

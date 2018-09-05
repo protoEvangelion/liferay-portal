@@ -19,9 +19,12 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.model.PortletItem;
 import com.liferay.portal.kernel.model.PortletItemModel;
 import com.liferay.portal.kernel.model.User;
@@ -31,8 +34,6 @@ import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
@@ -312,7 +313,7 @@ public class PortletItemModelImpl extends BaseModelImpl<PortletItem>
 			return user.getUuid();
 		}
 		catch (PortalException pe) {
-			return StringPool.BLANK;
+			return "";
 		}
 	}
 
@@ -323,7 +324,7 @@ public class PortletItemModelImpl extends BaseModelImpl<PortletItem>
 	@Override
 	public String getUserName() {
 		if (_userName == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _userName;
@@ -364,7 +365,7 @@ public class PortletItemModelImpl extends BaseModelImpl<PortletItem>
 	@Override
 	public String getName() {
 		if (_name == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _name;
@@ -389,7 +390,7 @@ public class PortletItemModelImpl extends BaseModelImpl<PortletItem>
 	@Override
 	public String getPortletId() {
 		if (_portletId == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _portletId;
@@ -414,7 +415,7 @@ public class PortletItemModelImpl extends BaseModelImpl<PortletItem>
 	@Override
 	public String getClassName() {
 		if (getClassNameId() <= 0) {
-			return StringPool.BLANK;
+			return "";
 		}
 
 		return PortalUtil.getClassName(getClassNameId());
@@ -726,7 +727,7 @@ public class PortletItemModelImpl extends BaseModelImpl<PortletItem>
 
 	private static final ClassLoader _classLoader = PortletItem.class.getClassLoader();
 	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
-			PortletItem.class
+			PortletItem.class, ModelWrapper.class
 		};
 	private long _mvccVersion;
 	private long _portletItemId;

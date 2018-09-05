@@ -1,15 +1,15 @@
 <definition component-name="portal-security">
-	<property name="osgi.module.configuration.file.names" value="com.liferay.captcha.configuration.CaptchaConfiguration.config" />
-	<property name="osgi.module.configurations" value="maxChallenges=&quot;0&quot;" />
+	<property name="portal.release" value="true" />
 	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Security" />
+	<property name="test.assert.warning.exceptions" value="true" />
+	<property name="testray.main.component.name" value="CAPTCHA" />
 
 	<set-up>
 		<execute macro="TestCase#setUpPortalInstance" />
 	</set-up>
 
 	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
 
 		<if>
 			<equals arg1="${testPortalInstance}" arg2="true" />
@@ -19,12 +19,14 @@
 			<else>
 				<execute macro="User#firstLoginPG" />
 
-				<execute macro="Page#tearDownPG" />
+				<execute macro="Page#tearDownCP" />
 			</else>
 		</if>
 	</tear-down>
 
 	<command name="ViewCaptchaEnabled" priority="4">
+		<property name="captcha.enabled" value="true" />
+
 		<execute macro="SignInNavigator#gotoCreateAccount" />
 
 		<execute macro="User#viewCaptchaPG">
@@ -33,37 +35,70 @@
 	</command>
 
 	<command name="ViewRecaptchaEnabled" priority="4">
+		<description message="This test will deploy an OSGI configuration file to test LPS-84310" />
+
+		<property name="captcha.enabled" value="true" />
+		<property name="osgi.module.configuration.file.names" value="com.liferay.captcha.configuration.CaptchaConfiguration.config" />
+		<property name="osgi.module.configurations" value="maxChallenges=&quot;0&quot;" />
 		<property name="test.name.skip.portal.instance" value="Captcha#ViewRecaptchaEnabled" />
 
-		<var name="recaptchaPrivateKey" property-value="recaptcha.private.key" />
-		<var name="recaptchaPublicKey" property-value="recaptcha.public.key" />
+		<var method="PropsUtil#get('recaptcha.private.key')" name="recaptchaPrivateKey" />
+		<var method="PropsUtil#get('recaptcha.public.key')" name="recaptchaPublicKey" />
 
 		<execute macro="User#firstLoginPG" />
 
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="System Settings" />
 		</execute>
 
-		<execute macro="SystemSettings#gotoCategory">
-			<var name="category" value="Foundation" />
-		</execute>
-
-		<execute macro="SystemSettings#editConfiguration">
+		<execute macro="SystemSettings#gotoConfiguration">
+			<var name="configurationCategory" value="Security Tools" />
 			<var name="configurationName" value="CAPTCHA" />
+			<var name="configurationScope" value="System Scope" />
 		</execute>
 
-		<execute macro="FormFields#selectSelectOption">
-			<var name="fieldName" value="captchaEngine" />
+		<!-- LPS-84310 -->
+
+		<execute macro="SystemSettings#resetConfiguration" />
+
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
+			<var name="portlet" value="System Settings" />
+		</execute>
+
+		<execute macro="SystemSettings#gotoConfiguration">
+			<var name="configurationCategory" value="Security Tools" />
+			<var name="configurationName" value="CAPTCHA" />
+			<var name="configurationScope" value="System Scope" />
+		</execute>
+
+		<if>
+			<condition function="IsElementPresent" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
+			<then>
+				<execute macro="SystemSettings#resetConfiguration" />
+			</then>
+		</if>
+
+		<execute macro="SystemSettings#editTextSetting">
+			<var name="settingName" value="Maximum Challenges" />
+			<var name="settingValue" value="0" />
+		</execute>
+
+		<execute macro="SystemSettings#selectOptionSetting">
+			<var name="fieldName" value="CAPTCHA Engine" />
 			<var name="selectOption" value="reCAPTCHA" />
 		</execute>
 
 		<execute macro="SystemSettings#editTextAreaSetting">
-			<var name="settingName" value="reCaptchaPrivateKey" />
+			<var name="settingName" value="reCAPTCHA Private Key" />
 			<var name="settingValue" value="${recaptchaPrivateKey}" />
 		</execute>
 
 		<execute macro="SystemSettings#editTextAreaSetting">
-			<var name="settingName" value="reCaptchaPublicKey" />
+			<var name="settingName" value="reCAPTCHA Public Key" />
 			<var name="settingValue" value="${recaptchaPublicKey}" />
 		</execute>
 

@@ -16,6 +16,8 @@ package com.liferay.portal.service.persistence.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
@@ -35,16 +37,15 @@ import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.UserTrackerPathPersistence;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.ReflectionUtil;
+import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.impl.UserTrackerPathImpl;
 import com.liferay.portal.model.impl.UserTrackerPathModelImpl;
 
 import java.io.Serializable;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -311,7 +312,7 @@ public class UserTrackerPathPersistenceImpl extends BasePersistenceImpl<UserTrac
 		msg.append("userTrackerId=");
 		msg.append(userTrackerId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchUserTrackerPathException(msg.toString());
 	}
@@ -362,7 +363,7 @@ public class UserTrackerPathPersistenceImpl extends BasePersistenceImpl<UserTrac
 		msg.append("userTrackerId=");
 		msg.append(userTrackerId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchUserTrackerPathException(msg.toString());
 	}
@@ -610,8 +611,10 @@ public class UserTrackerPathPersistenceImpl extends BasePersistenceImpl<UserTrac
 		setModelClass(UserTrackerPath.class);
 
 		try {
-			Field field = ReflectionUtil.getDeclaredField(BasePersistenceImpl.class,
+			Field field = BasePersistenceImpl.class.getDeclaredField(
 					"_dbColumnNames");
+
+			field.setAccessible(true);
 
 			Map<String, String> dbColumnNames = new HashMap<String, String>();
 
@@ -776,8 +779,6 @@ public class UserTrackerPathPersistenceImpl extends BasePersistenceImpl<UserTrac
 
 	@Override
 	protected UserTrackerPath removeImpl(UserTrackerPath userTrackerPath) {
-		userTrackerPath = toUnwrappedModel(userTrackerPath);
-
 		Session session = null;
 
 		try {
@@ -808,9 +809,23 @@ public class UserTrackerPathPersistenceImpl extends BasePersistenceImpl<UserTrac
 
 	@Override
 	public UserTrackerPath updateImpl(UserTrackerPath userTrackerPath) {
-		userTrackerPath = toUnwrappedModel(userTrackerPath);
-
 		boolean isNew = userTrackerPath.isNew();
+
+		if (!(userTrackerPath instanceof UserTrackerPathModelImpl)) {
+			InvocationHandler invocationHandler = null;
+
+			if (ProxyUtil.isProxyClass(userTrackerPath.getClass())) {
+				invocationHandler = ProxyUtil.getInvocationHandler(userTrackerPath);
+
+				throw new IllegalArgumentException(
+					"Implement ModelWrapper in userTrackerPath proxy " +
+					invocationHandler.getClass());
+			}
+
+			throw new IllegalArgumentException(
+				"Implement ModelWrapper in custom UserTrackerPath implementation " +
+				userTrackerPath.getClass());
+		}
 
 		UserTrackerPathModelImpl userTrackerPathModelImpl = (UserTrackerPathModelImpl)userTrackerPath;
 
@@ -883,26 +898,6 @@ public class UserTrackerPathPersistenceImpl extends BasePersistenceImpl<UserTrac
 		userTrackerPath.resetOriginalValues();
 
 		return userTrackerPath;
-	}
-
-	protected UserTrackerPath toUnwrappedModel(UserTrackerPath userTrackerPath) {
-		if (userTrackerPath instanceof UserTrackerPathImpl) {
-			return userTrackerPath;
-		}
-
-		UserTrackerPathImpl userTrackerPathImpl = new UserTrackerPathImpl();
-
-		userTrackerPathImpl.setNew(userTrackerPath.isNew());
-		userTrackerPathImpl.setPrimaryKey(userTrackerPath.getPrimaryKey());
-
-		userTrackerPathImpl.setMvccVersion(userTrackerPath.getMvccVersion());
-		userTrackerPathImpl.setUserTrackerPathId(userTrackerPath.getUserTrackerPathId());
-		userTrackerPathImpl.setCompanyId(userTrackerPath.getCompanyId());
-		userTrackerPathImpl.setUserTrackerId(userTrackerPath.getUserTrackerId());
-		userTrackerPathImpl.setPath(userTrackerPath.getPath());
-		userTrackerPathImpl.setPathDate(userTrackerPath.getPathDate());
-
-		return userTrackerPathImpl;
 	}
 
 	/**
@@ -1056,12 +1051,12 @@ public class UserTrackerPathPersistenceImpl extends BasePersistenceImpl<UserTrac
 		for (Serializable primaryKey : uncachedPrimaryKeys) {
 			query.append((long)primaryKey);
 
-			query.append(StringPool.COMMA);
+			query.append(",");
 		}
 
 		query.setIndex(query.index() - 1);
 
-		query.append(StringPool.CLOSE_PARENTHESIS);
+		query.append(")");
 
 		String sql = query.toString();
 

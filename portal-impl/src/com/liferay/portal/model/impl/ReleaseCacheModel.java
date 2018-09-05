@@ -16,12 +16,12 @@ package com.liferay.portal.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.MVCCModel;
 import com.liferay.portal.kernel.model.Release;
 import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -130,14 +130,14 @@ public class ReleaseCacheModel implements CacheModel<Release>, Externalizable,
 		}
 
 		if (servletContextName == null) {
-			releaseImpl.setServletContextName(StringPool.BLANK);
+			releaseImpl.setServletContextName("");
 		}
 		else {
 			releaseImpl.setServletContextName(servletContextName);
 		}
 
 		if (schemaVersion == null) {
-			releaseImpl.setSchemaVersion(StringPool.BLANK);
+			releaseImpl.setSchemaVersion("");
 		}
 		else {
 			releaseImpl.setSchemaVersion(schemaVersion);
@@ -156,7 +156,7 @@ public class ReleaseCacheModel implements CacheModel<Release>, Externalizable,
 		releaseImpl.setState(state);
 
 		if (testString == null) {
-			releaseImpl.setTestString(StringPool.BLANK);
+			releaseImpl.setTestString("");
 		}
 		else {
 			releaseImpl.setTestString(testString);
@@ -196,14 +196,14 @@ public class ReleaseCacheModel implements CacheModel<Release>, Externalizable,
 		objectOutput.writeLong(modifiedDate);
 
 		if (servletContextName == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(servletContextName);
 		}
 
 		if (schemaVersion == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(schemaVersion);
@@ -217,7 +217,7 @@ public class ReleaseCacheModel implements CacheModel<Release>, Externalizable,
 		objectOutput.writeInt(state);
 
 		if (testString == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(testString);

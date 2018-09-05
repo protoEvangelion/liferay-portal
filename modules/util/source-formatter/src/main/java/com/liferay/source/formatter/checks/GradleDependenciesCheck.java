@@ -14,13 +14,19 @@
 
 package com.liferay.source.formatter.checks;
 
-import com.liferay.portal.kernel.util.CharPool;
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.tools.ToolsUtil;
+import com.liferay.source.formatter.checks.util.GradleSourceUtil;
+import com.liferay.source.formatter.checks.util.SourceUtil;
 
+import java.io.Serializable;
+
+import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
@@ -28,31 +34,52 @@ import java.util.regex.Pattern;
 
 /**
  * @author Hugo Huijser
+ * @author Peter Shin
  */
 public class GradleDependenciesCheck extends BaseFileCheck {
-
-	@Override
-	public void init() throws Exception {
-		_projectPathPrefix = getProjectPathPrefix();
-	}
 
 	@Override
 	protected String doProcess(
 		String fileName, String absolutePath, String content) {
 
-		return _formatDependencies(absolutePath, content);
+		List<String> blocks = GradleSourceUtil.getDependenciesBlocks(content);
+
+		for (String dependencies : blocks) {
+			content = _formatDependencies(content, dependencies);
+		}
+
+		return content;
 	}
 
-	private String _formatDependencies(String absolutePath, String content) {
-		Matcher matcher = _dependenciesPattern.matcher(content);
+	private static boolean _hasPatchedOSGiCore(Set<String> dependencies) {
+		if (!dependencies.contains(
+				_ORG_ECLIPSE_OSGI_3_13_0_LIFERAY_PATCHED_1)) {
 
-		if (!matcher.find()) {
+			return false;
+		}
+
+		if (!dependencies.contains(_OSGI_CORE_6_0_0_DEPENDENCY) &&
+			!dependencies.contains(_ORG_OSGI_CORE_6_0_0_DEPENDENCY)) {
+
+			return false;
+		}
+
+		return true;
+	}
+
+	private String _formatDependencies(String content, String dependencies) {
+		String indent = SourceUtil.getIndent(dependencies);
+
+		int x = dependencies.indexOf("\n");
+		int y = dependencies.lastIndexOf("\n");
+
+		if (x == y) {
 			return content;
 		}
 
-		String dependencies = matcher.group(1);
+		dependencies = dependencies.substring(x, y + 1);
 
-		matcher = _incorrectWhitespacePattern.matcher(dependencies);
+		Matcher matcher = _incorrectWhitespacePattern.matcher(dependencies);
 
 		while (matcher.find()) {
 			if (!ToolsUtil.isInsideQuotes(dependencies, matcher.start())) {
@@ -71,7 +98,8 @@ public class GradleDependenciesCheck extends BaseFileCheck {
 			return StringUtil.replace(content, dependencies, newDependencies);
 		}
 
-		Set<String> uniqueDependencies = new TreeSet<>();
+		Set<String> uniqueDependencies = new TreeSet<>(
+			new GradleDependencyComparator());
 
 		for (String dependency : StringUtil.splitLines(dependencies)) {
 			dependency = dependency.trim();
@@ -80,7 +108,35 @@ public class GradleDependenciesCheck extends BaseFileCheck {
 				continue;
 			}
 
+			matcher = _incorrectGroupNameVersionPattern.matcher(dependency);
+
+			if (matcher.find()) {
+				StringBundler sb = new StringBundler(9);
+
+				sb.append(matcher.group(1));
+				sb.append(" group: \"");
+				sb.append(matcher.group(2));
+				sb.append("\", name: \"");
+				sb.append(matcher.group(3));
+				sb.append("\", version: \"");
+				sb.append(matcher.group(4));
+				sb.append("\"");
+				sb.append(matcher.group(5));
+
+				dependency = sb.toString();
+			}
+
 			uniqueDependencies.add(dependency);
+		}
+
+		boolean patchedOSGiCore = _hasPatchedOSGiCore(uniqueDependencies);
+
+		if (patchedOSGiCore) {
+
+			// See https://github.com/brianchandotcom/liferay-portal/pull/62537
+
+			uniqueDependencies.remove(_ORG_OSGI_CORE_6_0_0_DEPENDENCY);
+			uniqueDependencies.remove(_OSGI_CORE_6_0_0_DEPENDENCY);
 		}
 
 		StringBundler sb = new StringBundler();
@@ -88,16 +144,8 @@ public class GradleDependenciesCheck extends BaseFileCheck {
 		String previousConfiguration = null;
 
 		for (String dependency : uniqueDependencies) {
-			int pos = dependency.indexOf(StringPool.SPACE);
-
-			String configuration = dependency.substring(0, pos);
-
-			if (configuration.equals("compile") &&
-				isModulesApp(absolutePath, _projectPathPrefix, false)) {
-
-				dependency = StringUtil.replaceFirst(
-					dependency, "compile", "provided");
-			}
+			String configuration = GradleSourceUtil.getConfiguration(
+				dependency);
 
 			if ((previousConfiguration == null) ||
 				!previousConfiguration.equals(configuration)) {
@@ -105,8 +153,16 @@ public class GradleDependenciesCheck extends BaseFileCheck {
 				previousConfiguration = configuration;
 
 				sb.append("\n");
+
+				if (configuration.equals("compileOnly") && patchedOSGiCore) {
+					sb.append(indent);
+					sb.append("\t");
+					sb.append(_OSGI_CORE_6_0_0_DEPENDENCY);
+					sb.append("\n\n");
+				}
 			}
 
+			sb.append(indent);
 			sb.append("\t");
 			sb.append(dependency);
 			sb.append("\n");
@@ -115,10 +171,72 @@ public class GradleDependenciesCheck extends BaseFileCheck {
 		return StringUtil.replace(content, dependencies, sb.toString());
 	}
 
-	private final Pattern _dependenciesPattern = Pattern.compile(
-		"^dependencies \\{(.+?\n)\\}", Pattern.DOTALL | Pattern.MULTILINE);
+	private static final String _ORG_ECLIPSE_OSGI_3_13_0_LIFERAY_PATCHED_1 =
+		"compileOnly group: \"com.liferay\", name: \"org.eclipse.osgi\", " +
+			"version: \"3.13.0.LIFERAY-PATCHED-1\"";
+
+	private static final String _ORG_OSGI_CORE_6_0_0_DEPENDENCY =
+		"compileOnly group: \"org.osgi\", name: \"org.osgi.core\", version: " +
+			"\"6.0.0\"";
+
+	private static final String _OSGI_CORE_6_0_0_DEPENDENCY =
+		"compileOnly group: \"org.osgi\", name: \"osgi.core\", version: " +
+			"\"6.0.0\"";
+
+	private final Pattern _incorrectGroupNameVersionPattern = Pattern.compile(
+		"(^[^\\s]+)\\s+\"([^:]+?):([^:]+?):([^\"]+?)\"(.*?)", Pattern.DOTALL);
 	private final Pattern _incorrectWhitespacePattern = Pattern.compile(
 		":[^ \n]");
-	private String _projectPathPrefix;
+
+	private class GradleDependencyComparator
+		implements Comparator<String>, Serializable {
+
+		@Override
+		public int compare(String dependency1, String dependency2) {
+			String configuration1 = GradleSourceUtil.getConfiguration(
+				dependency1);
+			String configuration2 = GradleSourceUtil.getConfiguration(
+				dependency2);
+
+			if (!configuration1.equals(configuration2)) {
+				return dependency1.compareTo(dependency2);
+			}
+
+			String group1 = _getPropertyValue(dependency1, "group");
+			String group2 = _getPropertyValue(dependency2, "group");
+
+			if ((group1 != null) && group1.equals(group2)) {
+				String name1 = _getPropertyValue(dependency1, "name");
+				String name2 = _getPropertyValue(dependency2, "name");
+
+				if ((name1 != null) && name1.equals(name2)) {
+					int length1 = dependency1.length();
+					int length2 = dependency2.length();
+
+					if (length1 == length2) {
+						return 0;
+					}
+				}
+			}
+
+			return dependency1.compareTo(dependency2);
+		}
+
+		private String _getPropertyValue(
+			String dependency, String propertyName) {
+
+			Pattern pattern = Pattern.compile(
+				".* " + propertyName + ": \"(.+?)\"");
+
+			Matcher matcher = pattern.matcher(dependency);
+
+			if (matcher.find()) {
+				return matcher.group(1);
+			}
+
+			return null;
+		}
+
+	}
 
 }

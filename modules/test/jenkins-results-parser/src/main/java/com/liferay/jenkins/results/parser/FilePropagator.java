@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeoutException;
 
 /**
  * @author Peter Yoo
@@ -119,6 +120,10 @@ public class FilePropagator {
 	}
 
 	private void _copyFromSource() {
+		if (_filePropagatorTasks.isEmpty() || _targetSlaves.isEmpty()) {
+			return;
+		}
+
 		List<String> commands = new ArrayList<>();
 
 		String targetSlave = null;
@@ -174,9 +179,10 @@ public class FilePropagator {
 	}
 
 	private int _executeBashCommands(List<String> commands, String targetSlave)
-		throws InterruptedException, IOException {
+		throws IOException, TimeoutException {
 
-		StringBuffer sb = new StringBuffer("ssh -o PasswordAuthentication=no ");
+		StringBuffer sb = new StringBuffer(
+			"ssh -o ConnectTimeout=10 -o NumberOfPasswordPrompts=0 ");
 
 		sb.append(targetSlave);
 		sb.append(" '");

@@ -86,11 +86,38 @@ public class ListTypeServiceHttp {
 		}
 	}
 
-	public static java.util.List<com.liferay.portal.kernel.model.ListType> getListTypes(
-		HttpPrincipal httpPrincipal, java.lang.String type) {
+	public static com.liferay.portal.kernel.model.ListType getListType(
+		HttpPrincipal httpPrincipal, String name, String type) {
 		try {
 			MethodKey methodKey = new MethodKey(ListTypeServiceUtil.class,
-					"getListTypes", _getListTypesParameterTypes1);
+					"getListType", _getListTypeParameterTypes1);
+
+			MethodHandler methodHandler = new MethodHandler(methodKey, name,
+					type);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				throw new com.liferay.portal.kernel.exception.SystemException(e);
+			}
+
+			return (com.liferay.portal.kernel.model.ListType)returnObj;
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
+	public static java.util.List<com.liferay.portal.kernel.model.ListType> getListTypes(
+		HttpPrincipal httpPrincipal, String type) {
+		try {
+			MethodKey methodKey = new MethodKey(ListTypeServiceUtil.class,
+					"getListTypes", _getListTypesParameterTypes2);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey, type);
 
@@ -113,11 +140,11 @@ public class ListTypeServiceHttp {
 	}
 
 	public static void validate(HttpPrincipal httpPrincipal, long listTypeId,
-		long classNameId, java.lang.String type)
+		long classNameId, String type)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(ListTypeServiceUtil.class,
-					"validate", _validateParameterTypes2);
+					"validate", _validateParameterTypes3);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey,
 					listTypeId, classNameId, type);
@@ -141,11 +168,10 @@ public class ListTypeServiceHttp {
 	}
 
 	public static void validate(HttpPrincipal httpPrincipal, long listTypeId,
-		java.lang.String type)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		String type) throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(ListTypeServiceUtil.class,
-					"validate", _validateParameterTypes3);
+					"validate", _validateParameterTypes4);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey,
 					listTypeId, type);
@@ -172,13 +198,16 @@ public class ListTypeServiceHttp {
 	private static final Class<?>[] _getListTypeParameterTypes0 = new Class[] {
 			long.class
 		};
-	private static final Class<?>[] _getListTypesParameterTypes1 = new Class[] {
-			java.lang.String.class
+	private static final Class<?>[] _getListTypeParameterTypes1 = new Class[] {
+			String.class, String.class
 		};
-	private static final Class<?>[] _validateParameterTypes2 = new Class[] {
-			long.class, long.class, java.lang.String.class
+	private static final Class<?>[] _getListTypesParameterTypes2 = new Class[] {
+			String.class
 		};
 	private static final Class<?>[] _validateParameterTypes3 = new Class[] {
-			long.class, java.lang.String.class
+			long.class, long.class, String.class
+		};
+	private static final Class<?>[] _validateParameterTypes4 = new Class[] {
+			long.class, String.class
 		};
 }

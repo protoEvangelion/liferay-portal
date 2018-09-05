@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.portlet.PortletRequest;
 
@@ -123,6 +124,8 @@ public interface Language {
 
 	public String getBCP47LanguageId(PortletRequest portletRequest);
 
+	public Set<Locale> getCompanyAvailableLocales(long companyId);
+
 	public String getLanguageId(HttpServletRequest request);
 
 	public String getLanguageId(Locale locale);
@@ -171,8 +174,19 @@ public interface Language {
 
 	public boolean isInheritLocales(long groupId) throws PortalException;
 
+	public boolean isSameLanguage(Locale locale1, Locale locale2);
+
+	/**
+	 * @deprecated As of Judson (7.1.x), replaced by {@link #process(
+	 *            Supplier, Locale, String)}
+	 */
+	@Deprecated
 	public String process(
 		ResourceBundle resourceBundle, Locale locale, String content);
+
+	public String process(
+		Supplier<ResourceBundle> resourceBundleSupplier, Locale locale,
+		String content);
 
 	public void resetAvailableGroupLocales(long groupId);
 

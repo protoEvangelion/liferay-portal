@@ -142,58 +142,13 @@ public class MembershipRequestWrapper implements MembershipRequest,
 	}
 
 	@Override
-	public CacheModel<MembershipRequest> toCacheModel() {
-		return _membershipRequest.toCacheModel();
-	}
-
-	@Override
-	public MembershipRequest toEscapedModel() {
-		return new MembershipRequestWrapper(_membershipRequest.toEscapedModel());
-	}
-
-	@Override
-	public MembershipRequest toUnescapedModel() {
-		return new MembershipRequestWrapper(_membershipRequest.toUnescapedModel());
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _membershipRequest.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _membershipRequest.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _membershipRequest.isNew();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _membershipRequest.getExpandoBridge();
+	public Object clone() {
+		return new MembershipRequestWrapper((MembershipRequest)_membershipRequest.clone());
 	}
 
 	@Override
 	public int compareTo(MembershipRequest membershipRequest) {
 		return _membershipRequest.compareTo(membershipRequest);
-	}
-
-	@Override
-	public int hashCode() {
-		return _membershipRequest.hashCode();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _membershipRequest.getPrimaryKeyObj();
-	}
-
-	@Override
-	public java.lang.Object clone() {
-		return new MembershipRequestWrapper((MembershipRequest)_membershipRequest.clone());
 	}
 
 	/**
@@ -202,48 +157,18 @@ public class MembershipRequestWrapper implements MembershipRequest,
 	* @return the comments of this membership request
 	*/
 	@Override
-	public java.lang.String getComments() {
+	public String getComments() {
 		return _membershipRequest.getComments();
 	}
 
 	/**
-	* Returns the replier user uuid of this membership request.
+	* Returns the company ID of this membership request.
 	*
-	* @return the replier user uuid of this membership request
+	* @return the company ID of this membership request
 	*/
 	@Override
-	public java.lang.String getReplierUserUuid() {
-		return _membershipRequest.getReplierUserUuid();
-	}
-
-	/**
-	* Returns the reply comments of this membership request.
-	*
-	* @return the reply comments of this membership request
-	*/
-	@Override
-	public java.lang.String getReplyComments() {
-		return _membershipRequest.getReplyComments();
-	}
-
-	/**
-	* Returns the user uuid of this membership request.
-	*
-	* @return the user uuid of this membership request
-	*/
-	@Override
-	public java.lang.String getUserUuid() {
-		return _membershipRequest.getUserUuid();
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _membershipRequest.toString();
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _membershipRequest.toXmlString();
+	public long getCompanyId() {
+		return _membershipRequest.getCompanyId();
 	}
 
 	/**
@@ -256,24 +181,9 @@ public class MembershipRequestWrapper implements MembershipRequest,
 		return _membershipRequest.getCreateDate();
 	}
 
-	/**
-	* Returns the reply date of this membership request.
-	*
-	* @return the reply date of this membership request
-	*/
 	@Override
-	public Date getReplyDate() {
-		return _membershipRequest.getReplyDate();
-	}
-
-	/**
-	* Returns the company ID of this membership request.
-	*
-	* @return the company ID of this membership request
-	*/
-	@Override
-	public long getCompanyId() {
-		return _membershipRequest.getCompanyId();
+	public ExpandoBridge getExpandoBridge() {
+		return _membershipRequest.getExpandoBridge();
 	}
 
 	/**
@@ -316,6 +226,11 @@ public class MembershipRequestWrapper implements MembershipRequest,
 		return _membershipRequest.getPrimaryKey();
 	}
 
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _membershipRequest.getPrimaryKeyObj();
+	}
+
 	/**
 	* Returns the replier user ID of this membership request.
 	*
@@ -324,6 +239,36 @@ public class MembershipRequestWrapper implements MembershipRequest,
 	@Override
 	public long getReplierUserId() {
 		return _membershipRequest.getReplierUserId();
+	}
+
+	/**
+	* Returns the replier user uuid of this membership request.
+	*
+	* @return the replier user uuid of this membership request
+	*/
+	@Override
+	public String getReplierUserUuid() {
+		return _membershipRequest.getReplierUserUuid();
+	}
+
+	/**
+	* Returns the reply comments of this membership request.
+	*
+	* @return the reply comments of this membership request
+	*/
+	@Override
+	public String getReplyComments() {
+		return _membershipRequest.getReplyComments();
+	}
+
+	/**
+	* Returns the reply date of this membership request.
+	*
+	* @return the reply date of this membership request
+	*/
+	@Override
+	public Date getReplyDate() {
+		return _membershipRequest.getReplyDate();
 	}
 
 	/**
@@ -346,6 +291,36 @@ public class MembershipRequestWrapper implements MembershipRequest,
 		return _membershipRequest.getUserId();
 	}
 
+	/**
+	* Returns the user uuid of this membership request.
+	*
+	* @return the user uuid of this membership request
+	*/
+	@Override
+	public String getUserUuid() {
+		return _membershipRequest.getUserUuid();
+	}
+
+	@Override
+	public int hashCode() {
+		return _membershipRequest.hashCode();
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _membershipRequest.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _membershipRequest.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _membershipRequest.isNew();
+	}
+
 	@Override
 	public void persist() {
 		_membershipRequest.persist();
@@ -362,7 +337,7 @@ public class MembershipRequestWrapper implements MembershipRequest,
 	* @param comments the comments of this membership request
 	*/
 	@Override
-	public void setComments(java.lang.String comments) {
+	public void setComments(String comments) {
 		_membershipRequest.setComments(comments);
 	}
 
@@ -467,7 +442,7 @@ public class MembershipRequestWrapper implements MembershipRequest,
 	* @param replierUserUuid the replier user uuid of this membership request
 	*/
 	@Override
-	public void setReplierUserUuid(java.lang.String replierUserUuid) {
+	public void setReplierUserUuid(String replierUserUuid) {
 		_membershipRequest.setReplierUserUuid(replierUserUuid);
 	}
 
@@ -477,7 +452,7 @@ public class MembershipRequestWrapper implements MembershipRequest,
 	* @param replyComments the reply comments of this membership request
 	*/
 	@Override
-	public void setReplyComments(java.lang.String replyComments) {
+	public void setReplyComments(String replyComments) {
 		_membershipRequest.setReplyComments(replyComments);
 	}
 
@@ -517,8 +492,33 @@ public class MembershipRequestWrapper implements MembershipRequest,
 	* @param userUuid the user uuid of this membership request
 	*/
 	@Override
-	public void setUserUuid(java.lang.String userUuid) {
+	public void setUserUuid(String userUuid) {
 		_membershipRequest.setUserUuid(userUuid);
+	}
+
+	@Override
+	public CacheModel<MembershipRequest> toCacheModel() {
+		return _membershipRequest.toCacheModel();
+	}
+
+	@Override
+	public MembershipRequest toEscapedModel() {
+		return new MembershipRequestWrapper(_membershipRequest.toEscapedModel());
+	}
+
+	@Override
+	public String toString() {
+		return _membershipRequest.toString();
+	}
+
+	@Override
+	public MembershipRequest toUnescapedModel() {
+		return new MembershipRequestWrapper(_membershipRequest.toUnescapedModel());
+	}
+
+	@Override
+	public String toXmlString() {
+		return _membershipRequest.toXmlString();
 	}
 
 	@Override

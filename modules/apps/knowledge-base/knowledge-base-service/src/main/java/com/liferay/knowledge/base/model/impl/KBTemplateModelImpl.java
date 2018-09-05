@@ -25,10 +25,13 @@ import com.liferay.knowledge.base.model.KBTemplate;
 import com.liferay.knowledge.base.model.KBTemplateModel;
 import com.liferay.knowledge.base.model.KBTemplateSoap;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -37,8 +40,6 @@ import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Serializable;
 
@@ -302,7 +303,7 @@ public class KBTemplateModelImpl extends BaseModelImpl<KBTemplate>
 	@Override
 	public String getUuid() {
 		if (_uuid == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _uuid;
@@ -398,7 +399,7 @@ public class KBTemplateModelImpl extends BaseModelImpl<KBTemplate>
 			return user.getUuid();
 		}
 		catch (PortalException pe) {
-			return StringPool.BLANK;
+			return "";
 		}
 	}
 
@@ -410,7 +411,7 @@ public class KBTemplateModelImpl extends BaseModelImpl<KBTemplate>
 	@Override
 	public String getUserName() {
 		if (_userName == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _userName;
@@ -456,7 +457,7 @@ public class KBTemplateModelImpl extends BaseModelImpl<KBTemplate>
 	@Override
 	public String getTitle() {
 		if (_title == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _title;
@@ -472,7 +473,7 @@ public class KBTemplateModelImpl extends BaseModelImpl<KBTemplate>
 	@Override
 	public String getContent() {
 		if (_content == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _content;
@@ -786,7 +787,7 @@ public class KBTemplateModelImpl extends BaseModelImpl<KBTemplate>
 
 	private static final ClassLoader _classLoader = KBTemplate.class.getClassLoader();
 	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
-			KBTemplate.class
+			KBTemplate.class, ModelWrapper.class
 		};
 	private String _uuid;
 	private String _originalUuid;

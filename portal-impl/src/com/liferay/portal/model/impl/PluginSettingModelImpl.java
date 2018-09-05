@@ -19,9 +19,12 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.model.PluginSetting;
 import com.liferay.portal.kernel.model.PluginSettingModel;
 import com.liferay.portal.kernel.model.PluginSettingSoap;
@@ -29,8 +32,6 @@ import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Serializable;
 
@@ -125,7 +126,7 @@ public class PluginSettingModelImpl extends BaseModelImpl<PluginSetting>
 		model.setPluginId(soapModel.getPluginId());
 		model.setPluginType(soapModel.getPluginType());
 		model.setRoles(soapModel.getRoles());
-		model.setActive(soapModel.getActive());
+		model.setActive(soapModel.isActive());
 
 		return model;
 	}
@@ -196,7 +197,7 @@ public class PluginSettingModelImpl extends BaseModelImpl<PluginSetting>
 		attributes.put("pluginId", getPluginId());
 		attributes.put("pluginType", getPluginType());
 		attributes.put("roles", getRoles());
-		attributes.put("active", getActive());
+		attributes.put("active", isActive());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -298,7 +299,7 @@ public class PluginSettingModelImpl extends BaseModelImpl<PluginSetting>
 	@Override
 	public String getPluginId() {
 		if (_pluginId == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _pluginId;
@@ -324,7 +325,7 @@ public class PluginSettingModelImpl extends BaseModelImpl<PluginSetting>
 	@Override
 	public String getPluginType() {
 		if (_pluginType == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _pluginType;
@@ -350,7 +351,7 @@ public class PluginSettingModelImpl extends BaseModelImpl<PluginSetting>
 	@Override
 	public String getRoles() {
 		if (_roles == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _roles;
@@ -416,7 +417,7 @@ public class PluginSettingModelImpl extends BaseModelImpl<PluginSetting>
 		pluginSettingImpl.setPluginId(getPluginId());
 		pluginSettingImpl.setPluginType(getPluginType());
 		pluginSettingImpl.setRoles(getRoles());
-		pluginSettingImpl.setActive(getActive());
+		pluginSettingImpl.setActive(isActive());
 
 		pluginSettingImpl.resetOriginalValues();
 
@@ -524,7 +525,7 @@ public class PluginSettingModelImpl extends BaseModelImpl<PluginSetting>
 			pluginSettingCacheModel.roles = null;
 		}
 
-		pluginSettingCacheModel.active = getActive();
+		pluginSettingCacheModel.active = isActive();
 
 		return pluginSettingCacheModel;
 	}
@@ -546,7 +547,7 @@ public class PluginSettingModelImpl extends BaseModelImpl<PluginSetting>
 		sb.append(", roles=");
 		sb.append(getRoles());
 		sb.append(", active=");
-		sb.append(getActive());
+		sb.append(isActive());
 		sb.append("}");
 
 		return sb.toString();
@@ -586,7 +587,7 @@ public class PluginSettingModelImpl extends BaseModelImpl<PluginSetting>
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>active</column-name><column-value><![CDATA[");
-		sb.append(getActive());
+		sb.append(isActive());
 		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
@@ -596,7 +597,7 @@ public class PluginSettingModelImpl extends BaseModelImpl<PluginSetting>
 
 	private static final ClassLoader _classLoader = PluginSetting.class.getClassLoader();
 	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
-			PluginSetting.class
+			PluginSetting.class, ModelWrapper.class
 		};
 	private long _mvccVersion;
 	private long _pluginSettingId;

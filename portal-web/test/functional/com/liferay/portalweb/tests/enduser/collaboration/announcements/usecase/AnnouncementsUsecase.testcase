@@ -12,7 +12,25 @@
 
 		<execute macro="User#firstLoginPG" />
 
-		<execute macro="Page#add">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Build" />
+			<var name="panel" value="Site Administration" />
+			<var name="portlet" value="Pages" />
+		</execute>
+
+		<execute macro="SitePages#addPublicPage">
+			<var name="pageName" value="Announcements Page" />
+			<var name="sitePageType" value="Widget Page" />
+		</execute>
+
+		<execute macro="SitePages#configurePage">
+			<var name="columnName" value="1 Column" />
+			<var name="pageName" value="Announcements Page" />
+			<var name="privacy" value="Public Pages" />
+			<var name="sitePageType" value="Widget Page" />
+		</execute>
+
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Announcements Page" />
 		</execute>
 
@@ -22,7 +40,7 @@
 	</set-up>
 
 	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
 
 		<if>
 			<equals arg1="${testPortalInstance}" arg2="true" />
@@ -36,7 +54,7 @@
 
 				<execute macro="AnnouncementsEntry#tearDownPG" />
 
-				<execute macro="Page#tearDownPG" />
+				<execute macro="Page#tearDownCP" />
 
 				<execute macro="User#tearDownCP" />
 
@@ -68,7 +86,9 @@
 			<var name="entryTitle" value="Announcements Entry Title" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoControlPanelSites">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Sites" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Sites" />
 		</execute>
 
@@ -77,13 +97,22 @@
 			<var name="siteType" value="Community" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Build" />
+			<var name="panel" value="Site Administration" />
+			<var name="portlet" value="Pages" />
 		</execute>
 
-		<execute macro="Page#add">
+		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Community Site Name" />
+			<var name="sitePageType" value="Widget Page" />
+		</execute>
+
+		<execute macro="SitePages#configurePage">
+			<var name="columnName" value="1 Column" />
+			<var name="pageName" value="Site Page Name" />
+			<var name="privacy" value="Public Pages" />
+			<var name="sitePageType" value="Widget Page" />
 		</execute>
 
 		<execute macro="Navigator#gotoSitePage">
@@ -103,7 +132,7 @@
 		</execute>
 
 		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
+			<return name="siteName" />
 			<var name="siteName" value="${siteName}" />
 		</execute>
 
@@ -123,9 +152,8 @@
 			<var name="entryTitle" value="Announcements Entry2 Scoped Title" />
 		</execute>
 
-		<execute macro="Navigator#gotoSitePage">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Announcements Page" />
-			<var name="siteName" value="${siteName}" />
 		</execute>
 
 		<execute macro="AnnouncementsEntry#viewPG">
@@ -135,18 +163,16 @@
 			<var name="entryTitle" value="Announcements Entry2 Scoped Title" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
+		<execute macro="JSONUser#addUser">
 			<var name="userEmailAddress" value="userea@liferay.com" />
 			<var name="userFirstName" value="userfn" />
 			<var name="userLastName" value="userln" />
 			<var name="userScreenName" value="usersn" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoControlPanelUsers">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Users" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
@@ -162,9 +188,8 @@
 			<var name="userEmailAddress" value="userea@liferay.com" />
 		</execute>
 
-		<execute macro="Navigator#gotoSitePage">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Announcements Page" />
-			<var name="siteName" value="${siteName}" />
 		</execute>
 
 		<execute macro="AnnouncementsEntry#viewViaEntriesPG">
@@ -181,9 +206,7 @@
 	</command>
 
 	<command name="ViewAnnouncementsPagination" priority="3">
-		<var name="entryCountList" value="1,2,3,4,5,6,7" />
-
-		<for list="${entryCountList}" param="entryCount">
+		<for list="1,2,3,4,5,6,7" param="entryCount">
 			<execute macro="Navigator#gotoPage">
 				<var name="pageName" value="Announcements Page" />
 			</execute>
@@ -209,9 +232,7 @@
 			<var name="pageName" value="Announcements Page" />
 		</execute>
 
-		<var name="viewEntryList" value="3,4,5,6,7" />
-
-		<for list="${viewEntryList}" param="viewEntryCount">
+		<for list="3,4,5,6,7" param="viewEntryCount">
 			<execute macro="AnnouncementsEntry#viewViaEntriesPG">
 				<var name="distributionScope" value="General" />
 				<var name="entryContent" value="Announcements Entry Content ${viewEntryCount}" />
@@ -220,15 +241,15 @@
 			</execute>
 		</for>
 
-		<var name="key_entryTitle" value="Announcements Entry Title" />
+		<for list="1,2" param="viewEntryCount">
+			<execute function="AssertElementNotPresent" locator1="Announcements#CARD_VIEW_ENTRY_TITLE">
+				<var name="key_entryTitle" value="Announcements Entry Title ${viewEntryCount}" />
+			</execute>
+		</for>
 
-		<execute function="AssertTextNotPresent" locator1="Announcements#CARD_VIEW_ENTRY_TITLE" value1="Announcements Entry Title 1" />
-		<execute function="AssertTextNotPresent" locator1="Announcements#CARD_VIEW_ENTRY_TITLE" value1="Announcements Entry Title 2" />
 		<execute function="AssertClick" locator1="Pagination#NEXT_LINK" value1="Next" />
 
-		<var name="viewEntryList" value="1,2" />
-
-		<for list="${viewEntryList}" param="viewEntryCount">
+		<for list="1,2" param="viewEntryCount">
 			<execute macro="AnnouncementsEntry#viewViaEntriesPG">
 				<var name="distributionScope" value="General" />
 				<var name="entryContent" value="Announcements Entry Content ${viewEntryCount}" />
@@ -237,18 +258,15 @@
 			</execute>
 		</for>
 
-		<var name="key_entryTitle" value="Announcements Entry Title" />
-		<var name="viewEntryList" value="3,4,5,6,7" />
-
-		<for list="${viewEntryList}" param="viewEntryCount">
-			<execute function="AssertTextNotPresent" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TITLE" value1="Announcements Entry Title ${viewEntryCount}" />
+		<for list="3,4,5,6,7" param="viewEntryCount">
+			<execute function="AssertElementNotPresent" locator1="Announcements#CARD_VIEW_ENTRY_TITLE">
+				<var name="key_entryTitle" value="Announcements Entry Title ${viewEntryCount}" />
+			</execute>
 		</for>
 
 		<execute function="AssertClick" locator1="Pagination#PREVIOUS_LINK" value1="Previous" />
 
-		<var name="viewEntryList" value="3,4,5,6,7" />
-
-		<for list="${viewEntryList}" param="viewEntryCount">
+		<for list="3,4,5,6,7" param="viewEntryCount">
 			<execute macro="AnnouncementsEntry#viewViaEntriesPG">
 				<var name="distributionScope" value="General" />
 				<var name="entryContent" value="Announcements Entry Content ${viewEntryCount}" />
@@ -257,63 +275,63 @@
 			</execute>
 		</for>
 
-		<var name="key_entryTitle" value="Announcements Entry Title" />
+		<for list="1,2" param="viewEntryCount">
+			<execute function="AssertElementNotPresent" locator1="Announcements#CARD_VIEW_ENTRY_TITLE">
+				<var name="key_entryTitle" value="Announcements Entry Title ${viewEntryCount}" />
+			</execute>
+		</for>
 
-		<execute function="AssertTextNotPresent" locator1="Announcements#CARD_VIEW_ENTRY_TITLE" value1="Announcements Entry Title 1" />
-		<execute function="AssertTextNotPresent" locator1="Announcements#CARD_VIEW_ENTRY_TITLE" value1="Announcements Entry Title 2" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Announcements and Alerts" />
 		</execute>
 
-		<execute function="AssertTextEquals" locator1="Dropdown#FILTER" value1="General" />
-
 		<execute macro="AnnouncementsPortlet#configurePaginationCP">
-			<var name="distributionScope" value="General" />
 			<var name="itemsPerPage" value="5" />
 		</execute>
 
-		<var name="viewEntryList" value="1,2,3,4,5" />
-
-		<for list="${viewEntryList}" param="viewEntryCount">
+		<for list="1,2,3,4,5" param="viewEntryCount">
 			<execute macro="AnnouncementsEntry#viewList">
 				<var name="distributionScope" value="General" />
 				<var name="entryTitle" value="Announcements Entry Title ${viewEntryCount}" />
 			</execute>
 		</for>
 
-		<execute function="AssertTextNotPresent" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TITLE" value1="Announcements Entry Title 6" />
-		<execute function="AssertTextNotPresent" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TITLE" value1="Announcements Entry Title 7" />
+		<for list="6,7" param="viewEntryCount">
+			<execute function="AssertElementNotPresent" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TITLE">
+				<var name="key_entryTitle" value="Announcements Entry Title ${viewEntryCount}" />
+			</execute>
+		</for>
 
 		<execute function="Click" locator1="Pagination#NEXT_LINK" />
 
-		<var name="viewEntryList" value="6,7" />
-
-		<for list="${viewEntryList}" param="viewEntryCount">
+		<for list="6,7" param="viewEntryCount">
 			<execute macro="AnnouncementsEntry#viewList">
 				<var name="distributionScope" value="General" />
 				<var name="entryTitle" value="Announcements Entry Title ${viewEntryCount}" />
 			</execute>
 		</for>
 
-		<var name="viewEntryList" value="1,2,3,4,5" />
-
-		<for list="${viewEntryList}" param="viewEntryCount">
-			<execute function="AssertTextNotPresent" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TITLE" value1="Announcements Entry Title ${viewEntryCount}" />
+		<for list="1,2,3,4,5" param="viewEntryCount">
+			<execute function="AssertElementNotPresent" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TITLE">
+				<var name="key_entryTitle" value="Announcements Entry Title ${viewEntryCount}" />
+			</execute>
 		</for>
 
 		<execute function="Click" locator1="Pagination#PREVIOUS_LINK" />
 
-		<var name="viewEntryList" value="1,2,3,4,5" />
-
-		<for list="${viewEntryList}" param="viewEntryCount">
+		<for list="1,2,3,4,5" param="viewEntryCount">
 			<execute macro="AnnouncementsEntry#viewList">
 				<var name="distributionScope" value="General" />
 				<var name="entryTitle" value="Announcements Entry Title ${viewEntryCount}" />
 			</execute>
 		</for>
 
-		<execute function="AssertTextNotPresent" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TITLE" value1="Announcements Entry Title 6" />
-		<execute function="AssertTextNotPresent" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TITLE" value1="Announcements Entry Title 7" />
+		<for list="6,7" param="viewEntryCount">
+			<execute function="AssertElementNotPresent" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TITLE">
+				<var name="key_entryTitle" value="Announcements Entry Title ${viewEntryCount}" />
+			</execute>
+		</for>
 	</command>
 </definition>

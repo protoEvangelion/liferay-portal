@@ -14,17 +14,14 @@
 
 package com.liferay.source.formatter.checkstyle.checks;
 
-import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
-import com.puppycrawl.tools.checkstyle.utils.ScopeUtils;
+import com.puppycrawl.tools.checkstyle.utils.ScopeUtil;
 
 /**
  * @author Hugo Huijser
  */
-public class MissingModifierCheck extends AbstractCheck {
-
-	public static final String MSG_MISSING_MODIFIER = "modifier.missing";
+public class MissingModifierCheck extends BaseCheck {
 
 	@Override
 	public int[] getDefaultTokens() {
@@ -36,8 +33,8 @@ public class MissingModifierCheck extends AbstractCheck {
 	}
 
 	@Override
-	public void visitToken(DetailAST detailAST) {
-		if (ScopeUtils.isLocalVariableDef(detailAST)) {
+	protected void doVisitToken(DetailAST detailAST) {
+		if (ScopeUtil.isLocalVariableDef(detailAST)) {
 			return;
 		}
 
@@ -52,7 +49,9 @@ public class MissingModifierCheck extends AbstractCheck {
 
 		DetailAST nameAST = detailAST.findFirstToken(TokenTypes.IDENT);
 
-		log(detailAST.getLineNo(), MSG_MISSING_MODIFIER, nameAST.getText());
+		log(detailAST.getLineNo(), _MSG_MISSING_MODIFIER, nameAST.getText());
 	}
+
+	private static final String _MSG_MISSING_MODIFIER = "modifier.missing";
 
 }

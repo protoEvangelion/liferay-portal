@@ -12,7 +12,7 @@
 	</set-up>
 
 	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
 
 		<if>
 			<equals arg1="${testPortalInstance}" arg2="true" />
@@ -24,7 +24,7 @@
 
 				<execute macro="Site#tearDownCP" />
 
-				<execute macro="Page#tearDownPG" />
+				<execute macro="Page#tearDownCP" />
 
 				<execute macro="WebContent#tearDownCP">
 					<var name="siteScopeName" value="Global" />
@@ -41,13 +41,129 @@
 		</if>
 	</tear-down>
 
+	<command ignore="true" name="AddChildSiteFromImportedSiteTemplate" priority="5">
+		<property name="testray.component.names" value="Training" />
+
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Users" />
+			<var name="panel" value="Control Panel" />
+			<var name="portlet" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
+
+		<execute macro="LAR#importPortlet">
+			<var name="larFileName" value="organizations-7.0.lar" />
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="Organization#viewCP">
+			<var name="orgName" value="Space Program Academy of Continuing Education" />
+			<var name="orgType" value="Organization" />
+		</execute>
+
+		<execute macro="Navigator#openURL" />
+
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Users" />
+			<var name="panel" value="Control Panel" />
+			<var name="portlet" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="Organization#addSiteCP">
+			<var name="orgName" value="College of Agricultural Science" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoSite">
+			<var name="site" value="College of Agricultural Science" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Sites" />
+			<var name="panel" value="Control Panel" />
+			<var name="portlet" value="Site Templates" />
+		</execute>
+
+		<execute macro="LAR#importPortlet">
+			<var name="larFileName" value="class-site-template-7.0.lar" />
+			<var name="portletName" value="Site Templates" />
+		</execute>
+
+		<execute macro="SiteTemplates#viewCP">
+			<var name="siteTemplateName" value="Digital Class Room" />
+		</execute>
+
+		<execute macro="Navigator#openURL" />
+
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Sites" />
+			<var name="panel" value="Control Panel" />
+			<var name="portlet" value="Sites" />
+		</execute>
+
+		<execute macro="Site#addBlankCP">
+			<var name="membershipType" value="Private" />
+			<var name="parentSiteName" value="College of Agricultural Science" />
+			<var name="siteName" value="Moon Rocks 101" />
+			<var name="siteType" value="Blank" />
+		</execute>
+
+		<execute macro="Site#selectPageType">
+			<var name="selectPrivatePages" value="true" />
+			<var name="siteTemplate" value="Digital Class Room" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Sites" />
+			<var name="panel" value="Control Panel" />
+			<var name="portlet" value="Sites" />
+		</execute>
+
+		<execute macro="Site#addBlankCP">
+			<var name="membershipType" value="Private" />
+			<var name="parentSiteName" value="College of Agricultural Science" />
+			<var name="siteName" value="Moon Rocks 202" />
+			<var name="siteType" value="Blank" />
+		</execute>
+
+		<execute macro="Site#selectPageType">
+			<var name="checkPrivatePagesPropagation" value="true" />
+			<var name="selectPrivatePages" value="true" />
+			<var name="siteTemplate" value="Digital Class Room" />
+		</execute>
+
+		<execute macro="Navigator#openPrivateSiteURL">
+			<var name="siteName" value="Moon Rocks 101" />
+		</execute>
+
+		<for list="Courses,Student Boards,Materials" param="pageName">
+			<execute macro="Navigator#gotoPrivateSitePage">
+				<var name="pageName" value="${pageName}" />
+				<var name="siteName" value="Moon Rocks 101" />
+			</execute>
+		</for>
+
+		<execute macro="Navigator#openPrivateSiteURL">
+			<var name="siteName" value="Moon Rocks 202" />
+		</execute>
+
+		<for list="Courses,Student Boards,Materials" param="pageName">
+			<execute macro="Navigator#gotoPrivateSitePage">
+				<var name="pageName" value="${pageName}" />
+				<var name="siteName" value="Moon Rocks 202" />
+			</execute>
+		</for>
+	</command>
+
 	<command name="AddPageAndChildPageTranslations" priority="3">
 		<property name="test.name.skip.portal.instance" value="SitesUsecase#AddPageAndChildPageTranslations" />
 		<property name="testray.component.names" value="Localization,Site Administration,Site Localization,Site Pages Administration" />
 
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
+		<var method="PropsUtil#get('portal.url')" name="portalURL" />
 
-		<execute macro="ProductMenu#gotoControlPanelSites">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Sites" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Sites" />
 		</execute>
 
@@ -55,11 +171,13 @@
 			<var name="siteName" value="Site Name" />
 		</execute>
 
-		<execute macro="SitePageNavigator#gotoPages">
-			<var name="page" value="Public Pages" />
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Build" />
+			<var name="panel" value="Site Administration" />
+			<var name="portlet" value="Pages" />
 		</execute>
 
-		<execute macro="Page#add">
+		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Home" />
 		</execute>
 
@@ -74,10 +192,11 @@
 		</execute>
 
 		<execute macro="Page#viewTranslationsPG">
-			<var name="pageLocalizationMessage" value="This page is displayed in Spanish (Spain). Display the page in English (United States). Set Spanish (Spain) as your preferred language." />
-			<var name="pageLocalizationPreferredLanguage" value="Set Spanish (Spain) as your preferred language." />
+			<var name="defaultLanguageLocalizationMessage" value="Display the page in English (United States)." />
 			<var name="pageName" value="Casa" />
+			<var name="preferredLanguageLocalizationMessage" value="Establecer español (España) como su idioma preferido." />
 			<var name="sitePageURL" value="${portalURL}/es/web/site-name/home" />
+			<var name="translationLanguageLocalizationMessage" value="This page is displayed in Spanish (Spain)." />
 		</execute>
 
 		<execute macro="Navigator#openSiteURL">
@@ -88,16 +207,15 @@
 			<var name="pageLocale" value="Display the page in English (United States)" />
 		</execute>
 
-		<execute macro="Page#addChild">
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Home" />
-			<var name="siteChildPageName" value="Blog Page" />
-			<var name="siteName" value="Site Name" />
-			<var name="siteScopeSelected" value="true" />
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Build" />
+			<var name="panel" value="Site Administration" />
+			<var name="portlet" value="Pages" />
 		</execute>
 
-		<execute macro="SitePageNavigator#gotoPages">
-			<var name="page" value="Public Pages" />
+		<execute macro="SitePages#addPublicChildPage">
+			<var name="childPageName" value="Blog Page" />
+			<var name="parentPageName" value="Home" />
 		</execute>
 
 		<execute macro="Page#addPageTranslations">
@@ -112,16 +230,31 @@
 
 		<execute macro="Page#viewTranslationsPG">
 			<var name="childPageName" value="Blog Página" />
-			<var name="pageLocalizationMessage" value="This page is displayed in Spanish (Spain). Display the page in English (United States). Set Spanish (Spain) as your preferred language." />
-			<var name="pageLocalizationPreferredLanguage" value="Set Spanish (Spain) as your preferred language." />
+			<var name="defaultLanguageLocalizationMessage" value="Display the page in English (United States)." />
+			<var name="preferredLanguageLocalizationMessage" value="Establecer español (España) como su idioma preferido." />
 			<var name="sitePageURL" value="${portalURL}/es/web/site-name/blog-page" />
+			<var name="translationLanguageLocalizationMessage" value="This page is displayed in Spanish (Spain)." />
 		</execute>
 	</command>
 
 	<command name="SitesTemplatePermissionPersistence" priority="3">
 		<property name="testray.component.names" value="Permissions,Site Administration" />
 
-		<execute macro="ProductMenu#gotoControlPanelSites">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Sites" />
+			<var name="panel" value="Control Panel" />
+			<var name="portlet" value="Site Templates" />
+		</execute>
+
+		<execute macro="SiteTemplates#addSitePageViaSiteTemplateCP">
+			<var name="pageName" value="search" />
+			<var name="pageTemplateName" value="Search" />
+			<var name="siteTemplateName" value="Community Site" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Sites" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Sites" />
 		</execute>
 
@@ -133,7 +266,7 @@
 			<var name="siteName" value="Site Name" />
 		</execute>
 
-		<execute macro="PermissionsInline#gotoConfigurationPG" >
+		<execute macro="PermissionsInline#gotoConfigurationPG">
 			<var name="portletName" value="Polls Display" />
 		</execute>
 
@@ -145,7 +278,7 @@
 			<var name="siteName" value="Site Name" />
 		</execute>
 
-		<execute macro="PermissionsInline#gotoConfigurationPG" >
+		<execute macro="PermissionsInline#gotoConfigurationPG">
 			<var name="portletName" value="Message Boards" />
 		</execute>
 
@@ -182,7 +315,7 @@
 			<var name="portletName" value="Asset Publisher" />
 		</execute>
 
-		<execute macro="PermissionsInline#gotoConfigurationPG" >
+		<execute macro="PermissionsInline#gotoConfigurationPG">
 			<var name="portletName" value="Polls Display" />
 		</execute>
 
@@ -218,7 +351,7 @@
 			<var name="pollsQuestionChoiceList" value="The Economy,The National Debt" />
 		</execute>
 
-		<execute macro="PermissionsInline#gotoConfigurationPG" >
+		<execute macro="PermissionsInline#gotoConfigurationPG">
 			<var name="portletName" value="Message Boards" />
 		</execute>
 
@@ -241,7 +374,7 @@
 
 		<execute macro="MessageboardsThread#gotoPG">
 			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
+			<var name="replyCount" value="0" />
 			<var name="threadBody" value="This is the message boards thread." />
 			<var name="threadSubject" value="Thread" />
 		</execute>
@@ -253,9 +386,11 @@
 
 		<execute macro="User#logoutPG" />
 
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
+		<var method="PropsUtil#get('portal.url')" name="portalURL" />
 
-		<execute function="Open" locator1="${portalURL}/web/site-name/home" />
+		<execute macro="Navigator#openSpecificURL">
+			<var name="url" value="${portalURL}/web/site-name/home" />
+		</execute>
 
 		<execute macro="Portlet#viewTitle">
 			<var name="portletName" value="Message Boards" />
@@ -263,7 +398,7 @@
 
 		<execute macro="MessageboardsThread#gotoPG">
 			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
+			<var name="replyCount" value="0" />
 			<var name="threadBody" value="This is the message boards thread." />
 			<var name="threadSubject" value="Thread" />
 		</execute>
@@ -274,25 +409,23 @@
 		</execute>
 
 		<execute macro="Portlet#viewTitle">
-			<var name="portletName" value="Polls Display" />
+			<var name="portletName" value="Election Poll" />
 		</execute>
 
 		<execute function="AssertTextEquals" locator1="Message#INFO" value1="Please sign in to vote." />
 
-		<execute function="AssertElementPresent" locator1="Search#SEARCH_FIELD" />
-
-		<execute macro="Portlet#viewTitle">
-			<var name="portletName" value="User Statistics" />
-		</execute>
+		<execute function="AssertElementPresent" locator1="Search#EMBEDDED_SEARCH_BAR" />
 
 		<execute macro="SignIn#signIn">
 			<var name="userEmailAddress" value="test@liferay.com" />
 			<var name="userPassword" value="test" />
 		</execute>
 
-		<execute function="Open" locator1="${portalURL}/web/site-name/home" />
+		<execute macro="Navigator#openSpecificURL">
+			<var name="url" value="${portalURL}/web/site-name/home" />
+		</execute>
 
-		<execute macro="PermissionsInline#gotoConfigurationPG" >
+		<execute macro="PermissionsInline#gotoConfigurationPG">
 			<var name="portletName" value="Polls Display" />
 		</execute>
 
@@ -305,7 +438,7 @@
 			<var name="siteName" value="Site Name" />
 		</execute>
 
-		<execute macro="PermissionsInline#gotoConfigurationPG" >
+		<execute macro="PermissionsInline#gotoConfigurationPG">
 			<var name="portletName" value="Message Boards" />
 		</execute>
 
@@ -316,7 +449,9 @@
 
 		<execute macro="User#logoutPG" />
 
-		<execute function="Open" locator1="${portalURL}/web/site-name/home" />
+		<execute macro="Navigator#openSpecificURL">
+			<var name="url" value="${portalURL}/web/site-name/home" />
+		</execute>
 
 		<execute function="AssertTextEquals" locator1="Message#ERROR_1_COLUMN_1" value1="You do not have the roles required to access this portlet." />
 		<execute function="AssertTextEquals" locator1="Message#ERROR_1_COLUMN_2" value1="You do not have the roles required to access this portlet." />
@@ -325,7 +460,9 @@
 	<command name="ViewDefaultGlobalScopeLandingPage" priority="4">
 		<property name="testray.component.names" value="Site Administration" />
 
-		<execute macro="ProductMenu#gotoControlPanelSites">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Sites" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Sites" />
 		</execute>
 
@@ -337,7 +474,9 @@
 			<var name="site" value="Global" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Web Content" />
 		</execute>
 

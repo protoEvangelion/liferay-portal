@@ -14,8 +14,9 @@
 
 package com.liferay.portal.service.test;
 
+import com.liferay.petra.executor.PortalExecutorManager;
+import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.portal.kernel.concurrent.ThreadPoolExecutor;
-import com.liferay.portal.kernel.executor.PortalExecutorManager;
 import com.liferay.portal.kernel.executor.PortalExecutorManagerUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -27,7 +28,6 @@ import com.liferay.portal.kernel.messaging.MessageBusUtil;
 import com.liferay.portal.kernel.messaging.SynchronousDestination;
 import com.liferay.portal.kernel.messaging.sender.SynchronousMessageSender;
 import com.liferay.portal.kernel.model.Portlet;
-import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.scheduler.SchedulerEngineHelper;
 import com.liferay.portal.kernel.scheduler.SchedulerEngineHelperUtil;
@@ -41,13 +41,12 @@ import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
-import com.liferay.portal.kernel.test.util.RoleTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.kernel.util.ReflectionUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.model.impl.PortletImpl;
 import com.liferay.portal.repository.liferayrepository.LiferayRepository;
 import com.liferay.portal.tools.DBUpgrader;
@@ -68,8 +67,10 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Function;
 
 import org.osgi.framework.Constants;
 
@@ -84,53 +85,6 @@ public class ServiceTestUtil {
 	public static final int RETRY_COUNT = 10;
 
 	public static final int THREAD_COUNT = 10;
-
-	/**
-	 * @deprecated As of 7.0.0
-	 */
-	@Deprecated
-	public static void addResourcePermission(
-			Role role, String resourceName, int scope, String primKey,
-			String actionId)
-		throws Exception {
-
-		RoleTestUtil.addResourcePermission(
-			role, resourceName, scope, primKey, actionId);
-	}
-
-	/**
-	 * @deprecated As of 7.0.0
-	 */
-	@Deprecated
-	public static void addResourcePermission(
-			String roleName, String resourceName, int scope, String primKey,
-			String actionId)
-		throws Exception {
-
-		RoleTestUtil.addResourcePermission(
-			roleName, resourceName, scope, primKey, actionId);
-	}
-
-	/**
-	 * @deprecated As of 7.0.0
-	 */
-	@Deprecated
-	public static Role addRole(String roleName, int roleType) throws Exception {
-		return RoleTestUtil.addRole(roleName, roleType);
-	}
-
-	/**
-	 * @deprecated As of 7.0.0
-	 */
-	@Deprecated
-	public static Role addRole(
-			String roleName, int roleType, String resourceName, int scope,
-			String primKey, String actionId)
-		throws Exception {
-
-		return RoleTestUtil.addRole(
-			roleName, roleType, resourceName, scope, primKey, actionId);
-	}
 
 	public static void initMainServletServices() {
 
@@ -259,8 +213,6 @@ public class ServiceTestUtil {
 			_replaceWithSynchronousDestination(
 				DestinationNames.DOCUMENT_LIBRARY_RAW_METADATA_PROCESSOR);
 			_replaceWithSynchronousDestination(
-				DestinationNames.DOCUMENT_LIBRARY_SYNC_EVENT_PROCESSOR);
-			_replaceWithSynchronousDestination(
 				DestinationNames.DOCUMENT_LIBRARY_VIDEO_PROCESSOR);
 		}
 
@@ -288,13 +240,6 @@ public class ServiceTestUtil {
 		registry.registerService(
 			PortalExecutorManager.class, _portalExecutorManagerWrapper,
 			portalExecutorManagerProperties);
-
-		if (PortalExecutorManagerUtil.getPortalExecutorManager() !=
-				_portalExecutorManagerWrapper) {
-
-			throw new IllegalStateException(
-				"PortalExecutorManager should be set");
-		}
 
 		// Class names
 
@@ -376,8 +321,9 @@ public class ServiceTestUtil {
 		Registry registry = RegistryUtil.getRegistry();
 
 		return registry.getFilter(
-			"(&(destination.name=" + destinationName + ")(objectClass=" +
-				Destination.class.getName() + "))");
+			StringBundler.concat(
+				"(&(destination.name=", destinationName, ")(objectClass=",
+				Destination.class.getName(), "))"));
 	}
 
 	private static void _replaceWithSynchronousDestination(String name) {
@@ -391,18 +337,18 @@ public class ServiceTestUtil {
 
 		messageBus.replace(baseDestination, false);
 
-		ThreadPoolExecutor threadPoolExecutor =
+		ExecutorService executorService =
 			PortalExecutorManagerUtil.getPortalExecutor(
-				oldDestination.getName(), false);
+				oldDestination.getName());
 
-		if (threadPoolExecutor == null) {
+		if (executorService == null) {
 			return;
 		}
 
-		threadPoolExecutor.shutdown();
+		executorService.shutdown();
 
 		try {
-			if (!threadPoolExecutor.awaitTermination(
+			if (!executorService.awaitTermination(
 					TestPropsValues.CI_TEST_TIMEOUT_TIME,
 					TimeUnit.MILLISECONDS)) {
 
@@ -434,7 +380,6 @@ public class ServiceTestUtil {
 		(MessageBus)ProxyUtil.newProxyInstance(
 			MessageBus.class.getClassLoader(),
 			new Class<?>[] {MessageBus.class},
-
 			new InvocationHandler() {
 
 				@Override
@@ -459,51 +404,57 @@ public class ServiceTestUtil {
 		(PortalExecutorManager)ProxyUtil.newProxyInstance(
 			PortalExecutorManager.class.getClassLoader(),
 			new Class<?>[] {PortalExecutorManager.class},
-			new InvocationHandler() {
+			new PortalExecutorManagerInvocationHandler());
 
-				@Override
-				public Object invoke(Object proxy, Method method, Object[] args)
-					throws Throwable {
+	private static class PortalExecutorManagerInvocationHandler
+		implements InvocationHandler {
 
-					if (!"shutdown".equals(method.getName()) ||
-						(args.length != 1)) {
+		@Override
+		public Object invoke(Object proxy, Method method, Object[] args)
+			throws Throwable {
 
-						return method.invoke(_portalExecutorManager, args);
+			if (!"shutdown".equals(method.getName()) || (args.length != 1)) {
+				return method.invoke(_portalExecutorManager, args);
+			}
+
+			Map<String, ThreadPoolExecutor> threadPoolExecutors =
+				ReflectionTestUtil.getFieldValue(
+					_portalExecutorManager, "_executorServices");
+
+			for (Map.Entry<String, ThreadPoolExecutor> entry :
+					threadPoolExecutors.entrySet()) {
+
+				ThreadPoolExecutor threadPoolExecutor = entry.getValue();
+
+				threadPoolExecutor.shutdown();
+
+				try {
+					if (!threadPoolExecutor.awaitTermination(
+							TestPropsValues.CI_TEST_TIMEOUT_TIME,
+							TimeUnit.MILLISECONDS)) {
+
+						throw new TimeoutException(
+							"Thread pool executor " + entry.getKey() +
+								" termination waiting timeout");
 					}
-
-					Map<String, ThreadPoolExecutor> threadPoolExecutors =
-						ReflectionTestUtil.getFieldValue(
-							_portalExecutorManager, "_threadPoolExecutors");
-
-					for (Map.Entry<String, ThreadPoolExecutor> entry :
-							threadPoolExecutors.entrySet()) {
-
-						ThreadPoolExecutor threadPoolExecutor =
-							entry.getValue();
-
-						threadPoolExecutor.shutdown();
-
-						try {
-							if (!threadPoolExecutor.awaitTermination(
-									TestPropsValues.CI_TEST_TIMEOUT_TIME,
-									TimeUnit.MILLISECONDS)) {
-
-								throw new TimeoutException(
-									"Thread pool executor " + entry.getKey() +
-										" termination waiting timeout");
-							}
-						}
-						catch (InterruptedException ie) {
-							ReflectionUtil.throwException(ie);
-						}
-					}
-
-					return null;
 				}
+				catch (InterruptedException ie) {
+					ReflectionUtil.throwException(ie);
+				}
+			}
 
-				private final PortalExecutorManager _portalExecutorManager =
-					PortalExecutorManagerUtil.getPortalExecutorManager();
+			return null;
+		}
 
-			});
+		private PortalExecutorManagerInvocationHandler() {
+			Registry registry = RegistryUtil.getRegistry();
+
+			_portalExecutorManager = registry.callService(
+				PortalExecutorManager.class, Function.identity());
+		}
+
+		private final PortalExecutorManager _portalExecutorManager;
+
+	}
 
 }

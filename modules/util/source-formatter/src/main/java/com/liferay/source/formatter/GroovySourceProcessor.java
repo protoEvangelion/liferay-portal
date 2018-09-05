@@ -14,6 +14,8 @@
 
 package com.liferay.source.formatter;
 
+import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,8 +25,8 @@ import java.util.List;
 public class GroovySourceProcessor extends BaseSourceProcessor {
 
 	@Override
-	protected List<String> doGetFileNames() throws Exception {
-		if (!portalSource && !subrepository) {
+	protected List<String> doGetFileNames() throws IOException {
+		if (!isPortalSource() && !isSubrepository()) {
 			return new ArrayList<>();
 		}
 
@@ -36,6 +38,6 @@ public class GroovySourceProcessor extends BaseSourceProcessor {
 		return _INCLUDES;
 	}
 
-	private static final String[] _INCLUDES = new String[] {"**/*.groovy"};
+	private static final String[] _INCLUDES = {"**/*.groovy"};
 
 }

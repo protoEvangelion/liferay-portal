@@ -14,57 +14,58 @@
 
 package com.liferay.source.formatter;
 
-import com.liferay.portal.kernel.nio.charset.CharsetDecoderUtil;
+import com.liferay.petra.nio.CharsetDecoderUtil;
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.CharPool;
-import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.ListUtil;
-import com.liferay.portal.kernel.util.ReflectionUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.tools.ToolsUtil;
-import com.liferay.source.formatter.checks.FileCheck;
-import com.liferay.source.formatter.checks.JavaTermCheck;
 import com.liferay.source.formatter.checks.SourceCheck;
-import com.liferay.source.formatter.checks.configuration.ConfigurationLoader;
-import com.liferay.source.formatter.checks.configuration.SourceCheckConfiguration;
+import com.liferay.source.formatter.checks.configuration.SourceChecksResult;
 import com.liferay.source.formatter.checks.configuration.SourceFormatterConfiguration;
-import com.liferay.source.formatter.checks.util.JavaSourceUtil;
-import com.liferay.source.formatter.parser.JavaClass;
-import com.liferay.source.formatter.parser.JavaClassParser;
-import com.liferay.source.formatter.parser.ParseException;
+import com.liferay.source.formatter.checks.configuration.SourceFormatterSuppressions;
+import com.liferay.source.formatter.checks.util.SourceChecksUtil;
+import com.liferay.source.formatter.checks.util.SourceUtil;
+import com.liferay.source.formatter.checkstyle.Checker;
+import com.liferay.source.formatter.checkstyle.util.CheckstyleLogger;
+import com.liferay.source.formatter.util.DebugUtil;
 import com.liferay.source.formatter.util.FileUtil;
 import com.liferay.source.formatter.util.SourceFormatterUtil;
+
+import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
+import com.puppycrawl.tools.checkstyle.api.Configuration;
 
 import java.awt.Desktop;
 
 import java.io.File;
-
-import java.lang.reflect.Constructor;
+import java.io.IOException;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.regex.Pattern;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.tools.ant.types.selectors.SelectorUtils;
 
 /**
@@ -83,23 +84,36 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 
 	@Override
 	public final void format() throws Exception {
-		if (sourceFormatterArgs.isShowDocumentation()) {
-			System.setProperty("java.awt.headless", "false");
-		}
-
 		List<String> fileNames = getFileNames();
 
+		if (_sourceFormatterArgs.isShowDebugInformation()) {
+			Class<?> clazz = getClass();
+
+			DebugUtil.addProcessorFileCount(
+				clazz.getSimpleName(), fileNames.size());
+		}
+
 		if (fileNames.isEmpty()) {
+			addProgressStatusUpdate(
+				new ProgressStatusUpdate(ProgressStatus.CHECKS_INITIALIZED, 0));
+
 			return;
 		}
 
-		_pluginsInsideModulesDirectoryNames =
-			getPluginsInsideModulesDirectoryNames();
+		preFormat();
 
-		_sourceChecks = _getSourceChecks(_containsModuleFile(fileNames));
+		_sourceFormatterMessagesMap = new HashMap<>();
+
+		_sourceChecks = _getSourceChecks(
+			_sourceFormatterConfiguration, _containsModuleFile(fileNames),
+			_sourceFormatterArgs.getCheckName());
+
+		addProgressStatusUpdate(
+			new ProgressStatusUpdate(
+				ProgressStatus.CHECKS_INITIALIZED, fileNames.size()));
 
 		ExecutorService executorService = Executors.newFixedThreadPool(
-			sourceFormatterArgs.getProcessorThreadCount());
+			_sourceFormatterArgs.getProcessorThreadCount());
 
 		List<Future<Void>> futures = new ArrayList<>(fileNames.size());
 
@@ -108,16 +122,10 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 				new Callable<Void>() {
 
 					@Override
-					public Void call() throws Exception {
-						try {
-							_format(fileName);
+					public Void call() {
+						_performTask(fileName);
 
-							return null;
-						}
-						catch (Exception e) {
-							throw new RuntimeException(
-								"Unable to format " + fileName, e);
-						}
+						return null;
 					}
 
 				});
@@ -135,18 +143,15 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 	}
 
 	public final List<String> getFileNames() throws Exception {
-		List<String> fileNames = sourceFormatterArgs.getFileNames();
+		List<String> fileNames = _sourceFormatterArgs.getFileNames();
 
 		if (fileNames != null) {
-			return fileNames;
+			return SourceFormatterUtil.filterFileNames(
+				fileNames, new String[0], getIncludes(),
+				new SourceFormatterExcludes(), false);
 		}
 
 		return doGetFileNames();
-	}
-
-	@Override
-	public SourceMismatchException getFirstSourceMismatchException() {
-		return _firstSourceMismatchException;
 	}
 
 	@Override
@@ -157,6 +162,11 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 	@Override
 	public List<String> getModifiedFileNames() {
 		return _modifiedFileNames;
+	}
+
+	@Override
+	public SourceFormatterArgs getSourceFormatterArgs() {
+		return _sourceFormatterArgs;
 	}
 
 	@Override
@@ -173,22 +183,93 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 	}
 
 	@Override
+	public List<SourceMismatchException> getSourceMismatchExceptions() {
+		return _sourceMismatchExceptions;
+	}
+
+	@Override
+	public boolean isPortalSource() {
+		return _portalSource;
+	}
+
+	@Override
+	public boolean isSubrepository() {
+		return _subrepository;
+	}
+
+	@Override
 	public void setAllFileNames(List<String> allFileNames) {
 		_allFileNames = allFileNames;
 	}
 
 	@Override
-	public void setProperties(Properties properties) {
-		_properties = properties;
+	public void setPluginsInsideModulesDirectoryNames(
+		List<String> pluginsInsideModulesDirectoryNames) {
+
+		_pluginsInsideModulesDirectoryNames =
+			pluginsInsideModulesDirectoryNames;
+	}
+
+	@Override
+	public void setPortalSource(boolean portalSource) {
+		_portalSource = portalSource;
+	}
+
+	@Override
+	public void setProgressStatusQueue(
+		BlockingQueue<ProgressStatusUpdate> progressStatusQueue) {
+
+		_progressStatusQueue = progressStatusQueue;
+	}
+
+	@Override
+	public void setProjectPathPrefix(String projectPathPrefix) {
+		_projectPathPrefix = projectPathPrefix;
+	}
+
+	@Override
+	public void setPropertiesMap(Map<String, Properties> propertiesMap) {
+		_propertiesMap = propertiesMap;
 	}
 
 	@Override
 	public void setSourceFormatterArgs(
 		SourceFormatterArgs sourceFormatterArgs) {
 
-		this.sourceFormatterArgs = sourceFormatterArgs;
+		_sourceFormatterArgs = sourceFormatterArgs;
+	}
 
-		_init();
+	@Override
+	public void setSourceFormatterConfiguration(
+		SourceFormatterConfiguration sourceFormatterConfiguration) {
+
+		_sourceFormatterConfiguration = sourceFormatterConfiguration;
+	}
+
+	@Override
+	public void setSourceFormatterExcludes(
+		SourceFormatterExcludes sourceFormatterExcludes) {
+
+		_sourceFormatterExcludes = sourceFormatterExcludes;
+	}
+
+	@Override
+	public void setSourceFormatterSuppressions(
+		SourceFormatterSuppressions sourceFormatterSuppressions) {
+
+		_sourceFormatterSuppressions = sourceFormatterSuppressions;
+	}
+
+	@Override
+	public void setSubrepository(boolean subrepository) {
+		_subrepository = subrepository;
+	}
+
+	protected void addProgressStatusUpdate(
+			ProgressStatusUpdate progressStatusUpdate)
+		throws InterruptedException {
+
+		_progressStatusQueue.put(progressStatusUpdate);
 	}
 
 	protected abstract List<String> doGetFileNames() throws Exception;
@@ -196,7 +277,7 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 	protected abstract String[] doGetIncludes();
 
 	protected String[] filterIncludes(String[] includes) {
-		List<String> fileExtensions = sourceFormatterArgs.getFileExtensions();
+		List<String> fileExtensions = _sourceFormatterArgs.getFileExtensions();
 
 		if (fileExtensions.isEmpty()) {
 			return includes;
@@ -216,127 +297,211 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		return filteredIncludes;
 	}
 
-	protected File getFile(String fileName, int level) {
-		return SourceFormatterUtil.getFile(
-			sourceFormatterArgs.getBaseDirName(), fileName, level);
-	}
-
-	protected List<String> getFileNames(
-			String basedir, String[] excludes, String[] includes)
+	protected File format(
+			File file, String fileName, String absolutePath, String content)
 		throws Exception {
 
-		if (_excludes != null) {
-			excludes = ArrayUtil.append(excludes, _excludes);
+		Set<String> modifiedContents = new HashSet<>();
+		Set<String> modifiedMessages = new TreeSet<>();
+
+		String newContent = format(
+			file, fileName, absolutePath, content, content, modifiedContents,
+			modifiedMessages, 0);
+
+		return processFormattedFile(
+			file, fileName, content, newContent, modifiedMessages);
+	}
+
+	protected String format(
+			File file, String fileName, String absolutePath, String content,
+			String originalContent, Set<String> modifiedContents,
+			Set<String> modifiedMessages, int count)
+		throws Exception {
+
+		_sourceFormatterMessagesMap.remove(fileName);
+
+		_checkUTF8(file, fileName);
+
+		String newContent = _processSourceChecks(
+			file, fileName, absolutePath, content, modifiedMessages);
+
+		if ((newContent == null) || content.equals(newContent)) {
+			return newContent;
 		}
 
-		return SourceFormatterUtil.scanForFiles(
-			basedir, excludes, includes,
-			sourceFormatterArgs.isIncludeSubrepositories());
+		if (!modifiedContents.add(newContent)) {
+			_sourceFormatterMessagesMap.remove(fileName);
+
+			processMessage(fileName, "Infinite loop in SourceFormatter");
+
+			return originalContent;
+		}
+
+		if (newContent.length() > content.length()) {
+			count++;
+
+			if (count > 500) {
+				_sourceFormatterMessagesMap.remove(fileName);
+
+				processMessage(fileName, "Infinite loop in SourceFormatter");
+
+				return originalContent;
+			}
+		}
+		else {
+			count = 0;
+		}
+
+		return format(
+			file, fileName, absolutePath, newContent, originalContent,
+			modifiedContents, modifiedMessages, count);
+	}
+
+	protected List<String> getAllFileNames() {
+		return _allFileNames;
+	}
+
+	protected File getFile(String fileName, int level) {
+		return SourceFormatterUtil.getFile(
+			_sourceFormatterArgs.getBaseDirName(), fileName, level);
 	}
 
 	protected List<String> getFileNames(String[] excludes, String[] includes)
-		throws Exception {
+		throws IOException {
 
 		return getFileNames(excludes, includes, false);
 	}
 
 	protected List<String> getFileNames(
 			String[] excludes, String[] includes, boolean forceIncludeAllFiles)
-		throws Exception {
-
-		if (_excludes != null) {
-			excludes = ArrayUtil.append(excludes, _excludes);
-		}
+		throws IOException {
 
 		if (!forceIncludeAllFiles &&
-			(sourceFormatterArgs.getRecentChangesFileNames() != null)) {
+			(_sourceFormatterArgs.getRecentChangesFileNames() != null)) {
 
 			return SourceFormatterUtil.filterRecentChangesFileNames(
-				sourceFormatterArgs.getBaseDirName(),
-				sourceFormatterArgs.getRecentChangesFileNames(), excludes,
-				includes, sourceFormatterArgs.isIncludeSubrepositories());
+				_sourceFormatterArgs.getBaseDirName(),
+				_sourceFormatterArgs.getRecentChangesFileNames(), excludes,
+				includes, _sourceFormatterExcludes,
+				_sourceFormatterArgs.isIncludeSubrepositories());
 		}
 
 		return SourceFormatterUtil.filterFileNames(
-			_allFileNames, excludes, includes);
+			_allFileNames, excludes, includes, _sourceFormatterExcludes,
+			forceIncludeAllFiles);
 	}
 
-	protected List<String> getPluginsInsideModulesDirectoryNames()
-		throws Exception {
+	protected List<String> getPluginsInsideModulesDirectoryNames() {
+		return _pluginsInsideModulesDirectoryNames;
+	}
 
-		if (_pluginsInsideModulesDirectoryNames != null) {
-			return _pluginsInsideModulesDirectoryNames;
+	protected File getPortalDir() {
+		File portalImplDir = SourceFormatterUtil.getFile(
+			_sourceFormatterArgs.getBaseDirName(), "portal-impl",
+			ToolsUtil.PORTAL_MAX_DIR_LEVEL);
+
+		if (portalImplDir == null) {
+			return null;
 		}
 
-		List<String> pluginsInsideModulesDirectoryNames = new ArrayList<>();
+		return portalImplDir.getParentFile();
+	}
 
-		List<String> pluginBuildFileNames = getFileNames(
-			new String[0],
-			new String[] {
-				"**/modules/apps/**/build.xml",
-				"**/modules/private/apps/**/build.xml"
-			},
-			true);
+	protected BlockingQueue<ProgressStatusUpdate> getProgressStatusQueue() {
+		return _progressStatusQueue;
+	}
 
-		for (String pluginBuildFileName : pluginBuildFileNames) {
-			pluginBuildFileName = StringUtil.replace(
-				pluginBuildFileName, CharPool.BACK_SLASH, CharPool.SLASH);
+	protected Map<String, Properties> getPropertiesMap() {
+		return _propertiesMap;
+	}
 
-			String absolutePath = JavaSourceUtil.getAbsolutePath(
-				pluginBuildFileName);
+	protected SourceFormatterExcludes getSourceFormatterExcludes() {
+		return _sourceFormatterExcludes;
+	}
 
-			int x = absolutePath.indexOf("/modules/apps/");
+	protected SourceFormatterSuppressions getSourceFormatterSuppressions() {
+		return _sourceFormatterSuppressions;
+	}
 
-			if (x == -1) {
-				x = absolutePath.indexOf("/modules/private/apps/");
-			}
+	protected boolean hasGeneratedTag(String content) {
+		if (_containsUnquoted(content, "@generated") ||
+			_containsUnquoted(content, "$ANTLR")) {
 
-			int y = absolutePath.lastIndexOf(StringPool.SLASH);
-
-			pluginsInsideModulesDirectoryNames.add(
-				absolutePath.substring(x, y + 1));
+			return true;
 		}
 
-		return pluginsInsideModulesDirectoryNames;
-	}
-
-	protected String getProperty(String key) {
-		return _properties.getProperty(key);
-	}
-
-	protected List<String> getPropertyList(String key) {
-		return ListUtil.fromString(
-			GetterUtil.getString(getProperty(key)), StringPool.COMMA);
+		return false;
 	}
 
 	protected void postFormat() throws Exception {
 	}
 
+	protected void preFormat() throws Exception {
+	}
+
 	protected void printError(String fileName, String message) {
-		if (sourceFormatterArgs.isPrintErrors()) {
+		if (_sourceFormatterArgs.isPrintErrors()) {
 			SourceFormatterUtil.printError(fileName, message);
 		}
 	}
 
-	protected void processFormattedFile(
-			File file, String fileName, String content, String newContent)
-		throws Exception {
+	protected synchronized Set<SourceFormatterMessage> processCheckstyle(
+			Configuration configuration, CheckstyleLogger checkstyleLogger,
+			File[] files)
+		throws CheckstyleException {
+
+		if (ArrayUtil.isEmpty(files)) {
+			return Collections.emptySet();
+		}
+
+		Checker checker = new Checker();
+
+		Class<?> clazz = getClass();
+
+		checker.setModuleClassLoader(clazz.getClassLoader());
+
+		SourceFormatterSuppressions sourceFormatterSuppressions =
+			getSourceFormatterSuppressions();
+
+		checker.addFilter(sourceFormatterSuppressions.getCheckstyleFilterSet());
+
+		checker.configure(configuration);
+
+		checker.addListener(checkstyleLogger);
+		checker.setCheckstyleLogger(checkstyleLogger);
+
+		checker.process(Arrays.asList(files));
+
+		return checker.getSourceFormatterMessages();
+	}
+
+	protected File processFormattedFile(
+			File file, String fileName, String content, String newContent,
+			Set<String> modifiedMessages)
+		throws IOException, URISyntaxException {
 
 		if (!content.equals(newContent)) {
-			if (sourceFormatterArgs.isPrintErrors()) {
-				SourceFormatterUtil.printError(fileName, file);
+			if (_sourceFormatterArgs.isPrintErrors()) {
+				for (String modifiedMessage : modifiedMessages) {
+					SourceFormatterUtil.printError(fileName, modifiedMessage);
+				}
 			}
 
-			if (sourceFormatterArgs.isAutoFix()) {
-				FileUtil.write(file, newContent);
+			if (_sourceFormatterArgs.isAutoFix()) {
+				if (newContent != null) {
+					FileUtil.write(file, newContent);
+				}
+				else {
+					file.delete();
+				}
 			}
-			else if (_firstSourceMismatchException == null) {
-				_firstSourceMismatchException = new SourceMismatchException(
-					fileName, content, newContent);
+			else {
+				_sourceMismatchExceptions.add(
+					new SourceMismatchException(fileName, content, newContent));
 			}
 		}
 
-		if (sourceFormatterArgs.isPrintErrors()) {
+		if (_sourceFormatterArgs.isPrintErrors()) {
 			Set<SourceFormatterMessage> sourceFormatterMessages =
 				_sourceFormatterMessagesMap.get(fileName);
 
@@ -348,20 +513,19 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 						fileName, sourceFormatterMessage.toString());
 
 					if (_browserStarted ||
-						!sourceFormatterArgs.isShowDocumentation() ||
+						!_sourceFormatterArgs.isShowDocumentation() ||
 						!Desktop.isDesktopSupported()) {
 
 						continue;
 					}
 
-					String markdownFileName =
-						sourceFormatterMessage.getMarkdownFileName();
+					String markdownFilePath =
+						sourceFormatterMessage.getMarkdownFilePath();
 
-					if (Validator.isNotNull(markdownFileName)) {
+					if (Validator.isNotNull(markdownFilePath)) {
 						Desktop desktop = Desktop.getDesktop();
 
-						desktop.browse(
-							new URI(_DOCUMENTATION_URL + markdownFileName));
+						desktop.browse(new URI(markdownFilePath));
 
 						_browserStarted = true;
 					}
@@ -370,6 +534,8 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		}
 
 		_modifiedFileNames.add(file.getAbsolutePath());
+
+		return file;
 	}
 
 	protected void processMessage(
@@ -392,66 +558,13 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 			fileName, new SourceFormatterMessage(fileName, message, null, -1));
 	}
 
-	protected String processSourceChecks(
-			File file, String fileName, String absolutePath, String content)
-		throws Exception {
+	protected void setCheckstyleConfiguration(
+		Configuration checkstyleConfiguration) {
 
-		if (ListUtil.isEmpty(_sourceChecks)) {
-			return content;
-		}
-
-		JavaClass javaClass = null;
-		List<JavaClass> anonymousClasses = null;
-
-		for (SourceCheck sourceCheck : _sourceChecks) {
-			if (sourceCheck.isModulesCheck() && !_isModulesFile(absolutePath)) {
-				continue;
-			}
-
-			String newContent = null;
-
-			if (sourceCheck instanceof FileCheck) {
-				newContent = _processFileCheck(
-					(FileCheck)sourceCheck, fileName, absolutePath, content);
-			}
-			else if ((sourceCheck instanceof JavaTermCheck) &&
-					 (this instanceof JavaSourceProcessor)) {
-
-				if (javaClass == null) {
-					try {
-						anonymousClasses =
-							JavaClassParser.parseAnonymousClasses(content);
-						javaClass = JavaClassParser.parseJavaClass(
-							fileName, content);
-					}
-					catch (ParseException pe) {
-						processMessage(fileName, pe.getMessage());
-
-						continue;
-					}
-				}
-
-				newContent = _processJavaTermCheck(
-					(JavaTermCheck)sourceCheck, javaClass, anonymousClasses,
-					fileName, absolutePath, content);
-			}
-
-			if (!newContent.equals(content)) {
-				return newContent;
-			}
-		}
-
-		return content;
+		_checkstyleConfiguration = checkstyleConfiguration;
 	}
 
-	protected static Pattern javaSourceInsideJSPLinePattern = Pattern.compile(
-		"<%=(.+?)%>");
-	protected static boolean portalSource;
-	protected static boolean subrepository;
-
-	protected SourceFormatterArgs sourceFormatterArgs;
-
-	private void _checkUTF8(File file, String fileName) throws Exception {
+	private void _checkUTF8(File file, String fileName) throws IOException {
 		byte[] bytes = FileUtil.getBytes(file);
 
 		try {
@@ -467,12 +580,20 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 	}
 
 	private boolean _containsModuleFile(List<String> fileNames) {
+		if (_subrepository) {
+			return true;
+		}
+
+		if (!_portalSource) {
+			return false;
+		}
+
 		for (String fileName : fileNames) {
 			if (!_isMatchPath(fileName)) {
 				continue;
 			}
 
-			String absolutePath = JavaSourceUtil.getAbsolutePath(fileName);
+			String absolutePath = SourceUtil.getAbsolutePath(fileName);
 
 			if (_isModulesFile(absolutePath, true)) {
 				return true;
@@ -482,175 +603,81 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		return false;
 	}
 
-	private final String _format(
-			File file, String fileName, String absolutePath, String content)
-		throws Exception {
+	private boolean _containsUnquoted(String s, String text) {
+		int x = -1;
 
-		_sourceFormatterMessagesMap.remove(fileName);
+		while (true) {
+			x = s.indexOf(text, x + 1);
 
-		_checkUTF8(file, fileName);
+			if (x == -1) {
+				return false;
+			}
 
-		String newContent = processSourceChecks(
-			file, fileName, absolutePath, content);
-
-		if (content.equals(newContent)) {
-			return content;
+			if (!ToolsUtil.isInsideQuotes(s, x)) {
+				return true;
+			}
 		}
-
-		return _format(file, fileName, absolutePath, newContent);
 	}
 
-	private final void _format(String fileName) throws Exception {
+	private void _format(String fileName) throws Exception {
 		if (!_isMatchPath(fileName)) {
+			addProgressStatusUpdate(
+				new ProgressStatusUpdate(ProgressStatus.CHECK_FILE_COMPLETED));
+
 			return;
 		}
 
 		fileName = StringUtil.replace(
 			fileName, CharPool.BACK_SLASH, CharPool.SLASH);
 
-		String absolutePath = JavaSourceUtil.getAbsolutePath(fileName);
+		String absolutePath = SourceUtil.getAbsolutePath(fileName);
 
 		File file = new File(absolutePath);
 
 		String content = FileUtil.read(file);
 
-		String newContent = _format(file, fileName, absolutePath, content);
-
-		processFormattedFile(file, fileName, content, newContent);
-	}
-
-	private String[] _getExcludes() {
-		if (sourceFormatterArgs.getFileNames() != null) {
-			return new String[0];
+		if (hasGeneratedTag(content)) {
+			return;
 		}
 
-		List<String> excludesList = ListUtil.fromString(
-			GetterUtil.getString(
-				System.getProperty("source.formatter.excludes")));
+		format(file, fileName, absolutePath, content);
 
-		excludesList.addAll(getPropertyList("source.formatter.excludes"));
-
-		return excludesList.toArray(new String[excludesList.size()]);
-	}
-
-	private List<SourceCheck> _getSourceChecks(boolean includeModuleChecks)
-		throws Exception {
-
-		SourceFormatterConfiguration sourceFormatterConfiguration =
-			ConfigurationLoader.loadConfiguration("sourcechecks.xml");
-
-		Class<?> clazz = getClass();
-
-		List<SourceCheck> sourceChecks = _getSourceChecks(
-			sourceFormatterConfiguration, clazz.getSimpleName(),
-			includeModuleChecks);
-
-		sourceChecks.addAll(
-			_getSourceChecks(
-				sourceFormatterConfiguration, "all", includeModuleChecks));
-
-		return sourceChecks;
+		addProgressStatusUpdate(
+			new ProgressStatusUpdate(ProgressStatus.CHECK_FILE_COMPLETED));
 	}
 
 	private List<SourceCheck> _getSourceChecks(
 			SourceFormatterConfiguration sourceFormatterConfiguration,
-			String sourceProcessorName, boolean includeModuleChecks)
+			boolean includeModuleChecks, String checkName)
 		throws Exception {
 
-		List<SourceCheck> sourceChecks = new ArrayList<>();
+		Class<?> clazz = getClass();
 
-		List<SourceCheckConfiguration> sourceCheckConfigurations =
-			sourceFormatterConfiguration.getSourceCheckConfigurations(
-				sourceProcessorName);
+		List<SourceCheck> sourceChecks = SourceChecksUtil.getSourceChecks(
+			sourceFormatterConfiguration, clazz.getSimpleName(),
+			getPropertiesMap(), _portalSource, _subrepository,
+			includeModuleChecks, checkName);
 
-		if (sourceCheckConfigurations == null) {
-			return sourceChecks;
-		}
-
-		for (SourceCheckConfiguration sourceCheckConfiguration :
-				sourceCheckConfigurations) {
-
-			String sourceCheckName = sourceCheckConfiguration.getName();
-
-			if (!sourceCheckName.contains(StringPool.PERIOD)) {
-				sourceCheckName =
-					"com.liferay.source.formatter.checks." + sourceCheckName;
-			}
-
-			Class<?> sourceCheckClass = null;
-
-			try {
-				sourceCheckClass = Class.forName(sourceCheckName);
-			}
-			catch (ClassNotFoundException cnfe) {
-				SourceFormatterUtil.printError(
-					"sourcechecks.xml",
-					"sourcechecks.xml: Class " + sourceCheckName +
-						" cannot be found");
-
-				continue;
-			}
-
-			Constructor<?> declaredConstructor =
-				sourceCheckClass.getDeclaredConstructor();
-
-			Object instance = declaredConstructor.newInstance();
-
-			if (!(instance instanceof SourceCheck)) {
-				continue;
-			}
-
-			SourceCheck sourceCheck = (SourceCheck)instance;
-
-			if ((!portalSource && !subrepository &&
-				 sourceCheck.isPortalCheck()) ||
-				(!includeModuleChecks && sourceCheck.isModulesCheck())) {
-
-				continue;
-			}
-
-			for (String attributeName :
-					sourceCheckConfiguration.attributeNames()) {
-
-				BeanUtils.setProperty(
-					sourceCheck, attributeName,
-					sourceCheckConfiguration.getAttributeValue(attributeName));
-			}
-
+		for (SourceCheck sourceCheck : sourceChecks) {
 			_initSourceCheck(sourceCheck);
-
-			sourceChecks.add(sourceCheck);
 		}
 
 		return sourceChecks;
 	}
 
-	private void _init() {
-		try {
-			portalSource = _isPortalSource();
-			subrepository = _isSubrepository();
-
-			_sourceFormatterMessagesMap = new HashMap<>();
-		}
-		catch (Exception e) {
-			ReflectionUtil.throwException(e);
-		}
-
-		_excludes = _getExcludes();
-	}
-
-	private void _initSourceCheck(SourceCheck sourceCheck) throws Exception {
+	private void _initSourceCheck(SourceCheck sourceCheck) {
 		sourceCheck.setAllFileNames(_allFileNames);
-		sourceCheck.setBaseDirName(sourceFormatterArgs.getBaseDirName());
-		sourceCheck.setExcludes(_excludes);
-		sourceCheck.setMaxLineLength(sourceFormatterArgs.getMaxLineLength());
+		sourceCheck.setBaseDirName(_sourceFormatterArgs.getBaseDirName());
+		sourceCheck.setCheckstyleConfiguration(_checkstyleConfiguration);
+		sourceCheck.setFileExtensions(_sourceFormatterArgs.getFileExtensions());
+		sourceCheck.setMaxLineLength(_sourceFormatterArgs.getMaxLineLength());
 		sourceCheck.setPluginsInsideModulesDirectoryNames(
 			_pluginsInsideModulesDirectoryNames);
-		sourceCheck.setPortalSource(portalSource);
-		sourceCheck.setProperties(_properties);
-		sourceCheck.setSubrepository(subrepository);
-
-		sourceCheck.init();
+		sourceCheck.setPortalSource(_portalSource);
+		sourceCheck.setProjectPathPrefix(_projectPathPrefix);
+		sourceCheck.setPropertiesMap(_propertiesMap);
+		sourceCheck.setSourceFormatterExcludes(_sourceFormatterExcludes);
+		sourceCheck.setSubrepository(_subrepository);
 	}
 
 	private boolean _isMatchPath(String fileName) {
@@ -670,8 +697,12 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 	private boolean _isModulesFile(
 		String absolutePath, boolean includePlugins) {
 
-		if (subrepository) {
+		if (_subrepository) {
 			return true;
+		}
+
+		if (!_portalSource) {
+			return false;
 		}
 
 		if (includePlugins) {
@@ -679,9 +710,7 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		}
 
 		try {
-			for (String directoryName :
-					getPluginsInsideModulesDirectoryNames()) {
-
+			for (String directoryName : _pluginsInsideModulesDirectoryNames) {
 				if (absolutePath.contains(directoryName)) {
 					return false;
 				}
@@ -691,37 +720,6 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		}
 
 		return absolutePath.contains("/modules/");
-	}
-
-	private boolean _isPortalSource() {
-		if (getFile("portal-impl", PORTAL_MAX_DIR_LEVEL) != null) {
-			return true;
-		}
-
-		return false;
-	}
-
-	private boolean _isSubrepository() {
-		String baseDirAbsolutePath = JavaSourceUtil.getAbsolutePath(
-			sourceFormatterArgs.getBaseDirName());
-
-		int x = baseDirAbsolutePath.length();
-
-		for (int i = 0; i < _SUBREPOSITORY_MAX_DIR_LEVEL; i++) {
-			x = baseDirAbsolutePath.lastIndexOf(CharPool.FORWARD_SLASH, x - 1);
-
-			if (x == -1) {
-				return false;
-			}
-
-			String dirName = baseDirAbsolutePath.substring(x + 1);
-
-			if (dirName.startsWith("com-liferay-")) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	private String _normalizePattern(String originalPattern) {
@@ -737,67 +735,65 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		return pattern;
 	}
 
-	private String _processFileCheck(
-			FileCheck fileCheck, String fileName, String absolutePath,
-			String content)
-		throws Exception {
+	private void _performTask(String fileName) {
+		try {
+			if (!_sourceFormatterArgs.isShowDebugInformation()) {
+				_format(fileName);
 
-		content = fileCheck.process(fileName, absolutePath, content);
-
-		for (SourceFormatterMessage sourceFormatterMessage :
-				fileCheck.getSourceFormatterMessages(fileName)) {
-
-			processMessage(fileName, sourceFormatterMessage);
-		}
-
-		return content;
-	}
-
-	private String _processJavaTermCheck(
-			JavaTermCheck javaTermCheck, JavaClass javaClass,
-			List<JavaClass> anonymousClasses, String fileName,
-			String absolutePath, String content)
-		throws Exception {
-
-		content = javaTermCheck.process(
-			fileName, absolutePath, javaClass, content);
-
-		for (SourceFormatterMessage sourceFormatterMessage :
-				javaTermCheck.getSourceFormatterMessages(fileName)) {
-
-			processMessage(fileName, sourceFormatterMessage);
-		}
-
-		for (JavaClass anonymousClass : anonymousClasses) {
-			content = javaTermCheck.process(
-				fileName, absolutePath, anonymousClass, content);
-
-			for (SourceFormatterMessage sourceFormatterMessage :
-					javaTermCheck.getSourceFormatterMessages(fileName)) {
-
-				processMessage(fileName, sourceFormatterMessage);
+				return;
 			}
-		}
 
-		return content;
+			DebugUtil.startTask();
+
+			_format(fileName);
+
+			DebugUtil.finishTask();
+		}
+		catch (Throwable t) {
+			throw new RuntimeException("Unable to format " + fileName, t);
+		}
 	}
 
-	private static final String _DOCUMENTATION_URL =
-		"https://github.com/liferay/liferay-portal/blob/master/modules/util" +
-			"/source-formatter/documentation/";
+	private String _processSourceChecks(
+			File file, String fileName, String absolutePath, String content,
+			Set<String> modifiedMessages)
+		throws Exception {
 
-	private static final int _SUBREPOSITORY_MAX_DIR_LEVEL = 3;
+		SourceChecksResult sourceChecksResult =
+			SourceChecksUtil.processSourceChecks(
+				file, fileName, absolutePath, content, modifiedMessages,
+				_isModulesFile(absolutePath), _sourceChecks,
+				_sourceFormatterSuppressions,
+				_sourceFormatterArgs.isShowDebugInformation());
+
+		for (SourceFormatterMessage sourceFormatterMessage :
+				sourceChecksResult.getSourceFormatterMessages()) {
+
+			processMessage(fileName, sourceFormatterMessage);
+		}
+
+		return sourceChecksResult.getContent();
+	}
 
 	private List<String> _allFileNames;
 	private boolean _browserStarted;
-	private String[] _excludes;
-	private SourceMismatchException _firstSourceMismatchException;
+	private Configuration _checkstyleConfiguration;
 	private final List<String> _modifiedFileNames =
 		new CopyOnWriteArrayList<>();
 	private List<String> _pluginsInsideModulesDirectoryNames;
-	private Properties _properties;
+	private boolean _portalSource;
+	private BlockingQueue<ProgressStatusUpdate> _progressStatusQueue;
+	private String _projectPathPrefix;
+	private Map<String, Properties> _propertiesMap;
 	private List<SourceCheck> _sourceChecks = new ArrayList<>();
+	private SourceFormatterArgs _sourceFormatterArgs;
+	private SourceFormatterConfiguration _sourceFormatterConfiguration;
+	private SourceFormatterExcludes _sourceFormatterExcludes;
 	private Map<String, Set<SourceFormatterMessage>>
 		_sourceFormatterMessagesMap = new ConcurrentHashMap<>();
+	private SourceFormatterSuppressions _sourceFormatterSuppressions;
+	private final List<SourceMismatchException> _sourceMismatchExceptions =
+		new ArrayList<>();
+	private boolean _subrepository;
 
 }

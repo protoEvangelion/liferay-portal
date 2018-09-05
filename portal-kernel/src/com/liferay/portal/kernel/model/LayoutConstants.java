@@ -32,7 +32,7 @@ public class LayoutConstants {
 	public static final String NAME_CONTROL_PANEL_DEFAULT = "Control Panel";
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Wilberforce (7.0.x), with no direct replacement
 	 */
 	@Deprecated
 	public static final String TYPE_ARTICLE = "article";
@@ -41,12 +41,19 @@ public class LayoutConstants {
 
 	public static final String TYPE_EMBEDDED = "embedded";
 
+	public static final String TYPE_FULL_PAGE_APPLICATION =
+		"full_page_application";
+
 	public static final String TYPE_LINK_TO_LAYOUT = "link_to_layout";
 
 	public static final String TYPE_PANEL = "panel";
 
 	public static final String TYPE_PORTLET = "portlet";
 
+	/**
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
+	 */
+	@Deprecated
 	public static final String TYPE_SHARED_PORTLET = "shared_portlet";
 
 	public static final String TYPE_URL = "url";

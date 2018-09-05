@@ -16,13 +16,16 @@ package com.liferay.portal.kernel.backgroundtask;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.lock.Lock;
 import com.liferay.portal.kernel.lock.LockManagerUtil;
-import com.liferay.portal.kernel.util.StringPool;
 
 /**
- * @author Daniel Kocsis
+ * @author     Daniel Kocsis
+ * @deprecated As of Judson (7.1.x), moved to {@link
+ *             com.liferay.portal.background.task.internal.lock.BackgroundTaskLockHelper}
  */
+@Deprecated
 @ProviderType
 public class BackgroundTaskLockHelperUtil {
 
@@ -66,26 +69,26 @@ public class BackgroundTaskLockHelperUtil {
 			lockKey = backgroundTask.getTaskExecutorClassName();
 		}
 		else if (backgroundTaskExecutor.getIsolationLevel() ==
-					BackgroundTaskConstants.ISOLATION_LEVEL_COMPANY) {
+					 BackgroundTaskConstants.ISOLATION_LEVEL_COMPANY) {
 
 			lockKey =
 				backgroundTask.getTaskExecutorClassName() + StringPool.POUND +
 					backgroundTask.getCompanyId();
 		}
 		else if (backgroundTaskExecutor.getIsolationLevel() ==
-					BackgroundTaskConstants.ISOLATION_LEVEL_CUSTOM) {
+					 BackgroundTaskConstants.ISOLATION_LEVEL_CUSTOM) {
 
 			lockKey = backgroundTaskExecutor.generateLockKey(backgroundTask);
 		}
 		else if (backgroundTaskExecutor.getIsolationLevel() ==
-					BackgroundTaskConstants.ISOLATION_LEVEL_GROUP) {
+					 BackgroundTaskConstants.ISOLATION_LEVEL_GROUP) {
 
 			lockKey =
 				backgroundTask.getTaskExecutorClassName() + StringPool.POUND +
 					backgroundTask.getGroupId();
 		}
 		else if (backgroundTaskExecutor.getIsolationLevel() ==
-					BackgroundTaskConstants.ISOLATION_LEVEL_TASK_NAME) {
+					 BackgroundTaskConstants.ISOLATION_LEVEL_TASK_NAME) {
 
 			lockKey =
 				backgroundTask.getTaskExecutorClassName() + StringPool.POUND +

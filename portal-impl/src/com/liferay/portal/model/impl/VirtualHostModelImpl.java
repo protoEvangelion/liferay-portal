@@ -19,16 +19,17 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.model.VirtualHost;
 import com.liferay.portal.kernel.model.VirtualHostModel;
 import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Serializable;
 
@@ -76,7 +77,7 @@ public class VirtualHostModelImpl extends BaseModelImpl<VirtualHost>
 		TABLE_COLUMNS_MAP.put("hostname", Types.VARCHAR);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table VirtualHost (mvccVersion LONG default 0 not null,virtualHostId LONG not null primary key,companyId LONG,layoutSetId LONG,hostname VARCHAR(75) null)";
+	public static final String TABLE_SQL_CREATE = "create table VirtualHost (mvccVersion LONG default 0 not null,virtualHostId LONG not null primary key,companyId LONG,layoutSetId LONG,hostname VARCHAR(200) null)";
 	public static final String TABLE_SQL_DROP = "drop table VirtualHost";
 	public static final String ORDER_BY_JPQL = " ORDER BY virtualHost.virtualHostId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY VirtualHost.virtualHostId ASC";
@@ -248,7 +249,7 @@ public class VirtualHostModelImpl extends BaseModelImpl<VirtualHost>
 	@Override
 	public String getHostname() {
 		if (_hostname == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _hostname;
@@ -459,7 +460,7 @@ public class VirtualHostModelImpl extends BaseModelImpl<VirtualHost>
 
 	private static final ClassLoader _classLoader = VirtualHost.class.getClassLoader();
 	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
-			VirtualHost.class
+			VirtualHost.class, ModelWrapper.class
 		};
 	private long _mvccVersion;
 	private long _virtualHostId;

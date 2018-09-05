@@ -34,34 +34,121 @@ public class DLAppHelperLocalServiceWrapper implements DLAppHelperLocalService,
 	}
 
 	@Override
-	public com.liferay.asset.kernel.model.AssetEntry updateAsset(long userId,
-		com.liferay.portal.kernel.repository.model.FileEntry fileEntry,
-		com.liferay.portal.kernel.repository.model.FileVersion fileVersion,
-		long assetClassPK)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _dlAppHelperLocalService.updateAsset(userId, fileEntry,
-			fileVersion, assetClassPK);
-	}
-
-	@Override
-	public com.liferay.asset.kernel.model.AssetEntry updateAsset(long userId,
-		com.liferay.portal.kernel.repository.model.FileEntry fileEntry,
-		com.liferay.portal.kernel.repository.model.FileVersion fileVersion,
-		long[] assetCategoryIds, java.lang.String[] assetTagNames,
-		long[] assetLinkEntryIds)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _dlAppHelperLocalService.updateAsset(userId, fileEntry,
-			fileVersion, assetCategoryIds, assetTagNames, assetLinkEntryIds);
-	}
-
-	@Override
-	public com.liferay.asset.kernel.model.AssetEntry updateAsset(long userId,
+	public void addFolder(long userId,
 		com.liferay.portal.kernel.repository.model.Folder folder,
-		long[] assetCategoryIds, java.lang.String[] assetTagNames,
-		long[] assetLinkEntryIds)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _dlAppHelperLocalService.updateAsset(userId, folder,
-			assetCategoryIds, assetTagNames, assetLinkEntryIds);
+		_dlAppHelperLocalService.addFolder(userId, folder, serviceContext);
+	}
+
+	@Override
+	public void cancelCheckOut(long userId,
+		com.liferay.portal.kernel.repository.model.FileEntry fileEntry,
+		com.liferay.portal.kernel.repository.model.FileVersion sourceFileVersion,
+		com.liferay.portal.kernel.repository.model.FileVersion destinationFileVersion,
+		com.liferay.portal.kernel.repository.model.FileVersion draftFileVersion,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_dlAppHelperLocalService.cancelCheckOut(userId, fileEntry,
+			sourceFileVersion, destinationFileVersion, draftFileVersion,
+			serviceContext);
+	}
+
+	@Override
+	public void cancelCheckOuts(long groupId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_dlAppHelperLocalService.cancelCheckOuts(groupId);
+	}
+
+	@Override
+	public void checkAssetEntry(long userId,
+		com.liferay.portal.kernel.repository.model.FileEntry fileEntry,
+		com.liferay.portal.kernel.repository.model.FileVersion fileVersion)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_dlAppHelperLocalService.checkAssetEntry(userId, fileEntry, fileVersion);
+	}
+
+	@Override
+	public void deleteFileEntry(
+		com.liferay.portal.kernel.repository.model.FileEntry fileEntry)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_dlAppHelperLocalService.deleteFileEntry(fileEntry);
+	}
+
+	@Override
+	public void deleteFolder(
+		com.liferay.portal.kernel.repository.model.Folder folder)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_dlAppHelperLocalService.deleteFolder(folder);
+	}
+
+	@Override
+	public void deleteRepositoryFileEntries(long repositoryId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_dlAppHelperLocalService.deleteRepositoryFileEntries(repositoryId);
+	}
+
+	@Override
+	public long getCheckedOutFileEntriesCount(long groupId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _dlAppHelperLocalService.getCheckedOutFileEntriesCount(groupId);
+	}
+
+	@Override
+	public void getFileAsStream(long userId,
+		com.liferay.portal.kernel.repository.model.FileEntry fileEntry,
+		boolean incrementCounter) {
+		_dlAppHelperLocalService.getFileAsStream(userId, fileEntry,
+			incrementCounter);
+	}
+
+	@Override
+	public java.util.List<com.liferay.document.library.kernel.model.DLFileShortcut> getFileShortcuts(
+		long groupId, long folderId, boolean active, int status) {
+		return _dlAppHelperLocalService.getFileShortcuts(groupId, folderId,
+			active, status);
+	}
+
+	@Override
+	public int getFileShortcutsCount(long groupId, long folderId,
+		boolean active, int status) {
+		return _dlAppHelperLocalService.getFileShortcutsCount(groupId,
+			folderId, active, status);
+	}
+
+	@Override
+	public java.util.List<com.liferay.portal.kernel.repository.model.FileEntry> getNoAssetFileEntries() {
+		return _dlAppHelperLocalService.getNoAssetFileEntries();
+	}
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	@Override
+	public String getOSGiServiceIdentifier() {
+		return _dlAppHelperLocalService.getOSGiServiceIdentifier();
+	}
+
+	@Override
+	public void moveDependentsToTrash(
+		com.liferay.document.library.kernel.model.DLFolder dlFolder)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_dlAppHelperLocalService.moveDependentsToTrash(dlFolder);
+	}
+
+	/**
+	* @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	#moveDependentsToTrash(DLFolder)}
+	*/
+	@Deprecated
+	@Override
+	public void moveDependentsToTrash(
+		java.util.List<Object> dlFileEntriesAndDLFolders, long trashEntryId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_dlAppHelperLocalService.moveDependentsToTrash(dlFileEntriesAndDLFolders,
+			trashEntryId);
 	}
 
 	@Override
@@ -142,113 +229,6 @@ public class DLAppHelperLocalServiceWrapper implements DLAppHelperLocalService,
 	}
 
 	@Override
-	public int getFileShortcutsCount(long groupId, long folderId,
-		boolean active, int status) {
-		return _dlAppHelperLocalService.getFileShortcutsCount(groupId,
-			folderId, active, status);
-	}
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	@Override
-	public java.lang.String getOSGiServiceIdentifier() {
-		return _dlAppHelperLocalService.getOSGiServiceIdentifier();
-	}
-
-	@Override
-	public java.util.List<com.liferay.document.library.kernel.model.DLFileShortcut> getFileShortcuts(
-		long groupId, long folderId, boolean active, int status) {
-		return _dlAppHelperLocalService.getFileShortcuts(groupId, folderId,
-			active, status);
-	}
-
-	@Override
-	public java.util.List<com.liferay.portal.kernel.repository.model.FileEntry> getNoAssetFileEntries() {
-		return _dlAppHelperLocalService.getNoAssetFileEntries();
-	}
-
-	@Override
-	public void addFolder(long userId,
-		com.liferay.portal.kernel.repository.model.Folder folder,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_dlAppHelperLocalService.addFolder(userId, folder, serviceContext);
-	}
-
-	@Override
-	public void cancelCheckOut(long userId,
-		com.liferay.portal.kernel.repository.model.FileEntry fileEntry,
-		com.liferay.portal.kernel.repository.model.FileVersion sourceFileVersion,
-		com.liferay.portal.kernel.repository.model.FileVersion destinationFileVersion,
-		com.liferay.portal.kernel.repository.model.FileVersion draftFileVersion,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_dlAppHelperLocalService.cancelCheckOut(userId, fileEntry,
-			sourceFileVersion, destinationFileVersion, draftFileVersion,
-			serviceContext);
-	}
-
-	@Override
-	public void checkAssetEntry(long userId,
-		com.liferay.portal.kernel.repository.model.FileEntry fileEntry,
-		com.liferay.portal.kernel.repository.model.FileVersion fileVersion)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_dlAppHelperLocalService.checkAssetEntry(userId, fileEntry, fileVersion);
-	}
-
-	@Override
-	public void deleteFileEntry(
-		com.liferay.portal.kernel.repository.model.FileEntry fileEntry)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_dlAppHelperLocalService.deleteFileEntry(fileEntry);
-	}
-
-	@Override
-	public void deleteFolder(
-		com.liferay.portal.kernel.repository.model.Folder folder)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_dlAppHelperLocalService.deleteFolder(folder);
-	}
-
-	@Override
-	public void deleteRepositoryFileEntries(long repositoryId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_dlAppHelperLocalService.deleteRepositoryFileEntries(repositoryId);
-	}
-
-	@Override
-	public void getFileAsStream(long userId,
-		com.liferay.portal.kernel.repository.model.FileEntry fileEntry,
-		boolean incrementCounter) {
-		_dlAppHelperLocalService.getFileAsStream(userId, fileEntry,
-			incrementCounter);
-	}
-
-	@Override
-	public void moveDependentsToTrash(
-		com.liferay.document.library.kernel.model.DLFolder dlFolder)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_dlAppHelperLocalService.moveDependentsToTrash(dlFolder);
-	}
-
-	/**
-	* @deprecated As of 7.0.0, replaced by {@link
-	#moveDependentsToTrash(DLFolder)}
-	*/
-	@Deprecated
-	@Override
-	public void moveDependentsToTrash(
-		java.util.List<java.lang.Object> dlFileEntriesAndDLFolders,
-		long trashEntryId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_dlAppHelperLocalService.moveDependentsToTrash(dlFileEntriesAndDLFolders,
-			trashEntryId);
-	}
-
-	@Override
 	public void restoreDependentsFromTrash(
 		com.liferay.document.library.kernel.model.DLFolder dlFolder)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -256,26 +236,25 @@ public class DLAppHelperLocalServiceWrapper implements DLAppHelperLocalService,
 	}
 
 	/**
-	* @deprecated As of 7.0.0, replaced by {@link
+	* @deprecated As of Wilberforce (7.0.x), replaced by {@link
 	#restoreDependentsFromTrash(DLFolder)}
 	*/
 	@Deprecated
 	@Override
 	public void restoreDependentsFromTrash(
-		java.util.List<java.lang.Object> dlFileEntriesAndDLFolders)
+		java.util.List<Object> dlFileEntriesAndDLFolders)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_dlAppHelperLocalService.restoreDependentsFromTrash(dlFileEntriesAndDLFolders);
 	}
 
 	/**
-	* @deprecated As of 7.0.0, replaced by {@link
+	* @deprecated As of Wilberforce (7.0.x), replaced by {@link
 	#restoreDependentsFromTrash(List)}
 	*/
 	@Deprecated
 	@Override
 	public void restoreDependentsFromTrash(
-		java.util.List<java.lang.Object> dlFileEntriesAndDLFolders,
-		long trashEntryId)
+		java.util.List<Object> dlFileEntriesAndDLFolders, long trashEntryId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_dlAppHelperLocalService.restoreDependentsFromTrash(dlFileEntriesAndDLFolders,
 			trashEntryId);
@@ -304,14 +283,34 @@ public class DLAppHelperLocalServiceWrapper implements DLAppHelperLocalService,
 	}
 
 	@Override
-	public void updateFileEntry(long userId,
+	public com.liferay.asset.kernel.model.AssetEntry updateAsset(long userId,
 		com.liferay.portal.kernel.repository.model.FileEntry fileEntry,
-		com.liferay.portal.kernel.repository.model.FileVersion sourceFileVersion,
-		com.liferay.portal.kernel.repository.model.FileVersion destinationFileVersion,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.repository.model.FileVersion fileVersion,
+		long assetClassPK)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		_dlAppHelperLocalService.updateFileEntry(userId, fileEntry,
-			sourceFileVersion, destinationFileVersion, serviceContext);
+		return _dlAppHelperLocalService.updateAsset(userId, fileEntry,
+			fileVersion, assetClassPK);
+	}
+
+	@Override
+	public com.liferay.asset.kernel.model.AssetEntry updateAsset(long userId,
+		com.liferay.portal.kernel.repository.model.FileEntry fileEntry,
+		com.liferay.portal.kernel.repository.model.FileVersion fileVersion,
+		long[] assetCategoryIds, String[] assetTagNames,
+		long[] assetLinkEntryIds)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _dlAppHelperLocalService.updateAsset(userId, fileEntry,
+			fileVersion, assetCategoryIds, assetTagNames, assetLinkEntryIds);
+	}
+
+	@Override
+	public com.liferay.asset.kernel.model.AssetEntry updateAsset(long userId,
+		com.liferay.portal.kernel.repository.model.Folder folder,
+		long[] assetCategoryIds, String[] assetTagNames,
+		long[] assetLinkEntryIds)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _dlAppHelperLocalService.updateAsset(userId, folder,
+			assetCategoryIds, assetTagNames, assetLinkEntryIds);
 	}
 
 	@Override
@@ -323,6 +322,17 @@ public class DLAppHelperLocalServiceWrapper implements DLAppHelperLocalService,
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_dlAppHelperLocalService.updateFileEntry(userId, fileEntry,
 			sourceFileVersion, destinationFileVersion, assetClassPK);
+	}
+
+	@Override
+	public void updateFileEntry(long userId,
+		com.liferay.portal.kernel.repository.model.FileEntry fileEntry,
+		com.liferay.portal.kernel.repository.model.FileVersion sourceFileVersion,
+		com.liferay.portal.kernel.repository.model.FileVersion destinationFileVersion,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_dlAppHelperLocalService.updateFileEntry(userId, fileEntry,
+			sourceFileVersion, destinationFileVersion, serviceContext);
 	}
 
 	@Override
@@ -339,7 +349,7 @@ public class DLAppHelperLocalServiceWrapper implements DLAppHelperLocalService,
 		com.liferay.portal.kernel.repository.model.FileVersion latestFileVersion,
 		int oldStatus, int newStatus,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext,
-		java.util.Map<java.lang.String, java.io.Serializable> workflowContext)
+		java.util.Map<String, java.io.Serializable> workflowContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_dlAppHelperLocalService.updateStatus(userId, fileEntry,
 			latestFileVersion, oldStatus, newStatus, serviceContext,

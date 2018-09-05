@@ -11,15 +11,17 @@ buildscript {
 
 ext {
 	projectTemplateTokens = [
-		"com.liferay.ant.bnd.version": "2.0.32",
-		"com.liferay.css.builder.version": "1.0.26",
-		"com.liferay.gradle.plugins.theme.builder.version": "2.0.1",
-		"com.liferay.gradle.plugins.version": "3.2.3",
-		"com.liferay.gradle.plugins.workspace.version": "1.2.4",
-		"com.liferay.portal.tools.bundle.support.version": "2.0.2",
-		"com.liferay.portal.tools.service.builder.version": "1.0.143",
-		"com.liferay.portal.tools.soy.builder.version": "3.0.0",
-		"com.liferay.portal.tools.theme.builder.version": "1.1.2"
+		"biz.aQute.bnd.version": "3.5.0",
+		"com.liferay.ant.bnd.version": "2.0.52",
+		"com.liferay.css.builder.version": "2.1.2",
+		"com.liferay.gradle.plugins.css.builder.version": "2.2.2",
+		"com.liferay.gradle.plugins.theme.builder.version": "2.0.4",
+		"com.liferay.gradle.plugins.version": "3.12.109",
+		"com.liferay.gradle.plugins.workspace.version": "1.10.7",
+		"com.liferay.portal.tools.bundle.support.version": "3.2.1",
+		"com.liferay.portal.tools.service.builder.version": "1.0.237",
+		"com.liferay.portal.tools.soy.builder.version": "3.0.1",
+		"com.liferay.portal.tools.theme.builder.version": "1.1.5"
 	]
 }
 
@@ -31,12 +33,12 @@ if (Boolean.getBoolean("build.bnd.print.enabled") && System.getenv("JENKINS_HOME
 	}
 
 	dependencies {
-		bnd group: "biz.aQute.bnd", name: "biz.aQute.bnd", version: "3.2.0"
+		bnd group: "biz.aQute.bnd", name: "biz.aQute.bnd", version: "3.5.0"
 	}
 
 	repositories {
 		maven {
-			url System.properties["repository.url"] ?: "https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public"
+			url System.properties["repository.url"] ?: "https://repository-cdn.liferay.com/nexus/content/groups/public"
 		}
 	}
 
@@ -73,7 +75,17 @@ gradle.beforeProject {
 	configure(project) {
 		apply plugin: "com.liferay.defaults.plugin"
 
+		task printProjectPath
+
 		afterEvaluate {
+			String forcedUpdateFilesVersion = GradleUtil.getProperty(project, "forced.update.files.version", (String)null)
+
+			if (forcedUpdateFilesVersion && tasks.findByName("updateFileVersions")) {
+				updateFileVersions {
+					replacement = forcedUpdateFilesVersion
+				}
+			}
+
 			String forcedUpdateVersion = GradleUtil.getProperty(project, "forced.update.version", (String)null)
 
 			if (forcedUpdateVersion && tasks.findByName("updateVersion")) {
@@ -83,10 +95,26 @@ gradle.beforeProject {
 			}
 		}
 
-		if (project.path.startsWith(":sdk:project-templates-")) {
+		printProjectPath {
+			doLast {
+				println project.path
+			}
+		}
+
+		if (project.path.startsWith(":sdk:project-templates:project-templates-")) {
+			buildCSS {
+				enabled = false
+			}
+
 			processResources {
+				exclude "**/.sass-cache/"
+
 				filesMatching(["**/*.gradle", "**/pom.xml"]) {
 					filter(ReplaceTokens, tokens: projectTemplateTokens)
+				}
+
+				outputs.upToDateWhen {
+					false
 				}
 
 				rename "gitignore", ".gitignore"
@@ -100,17 +128,18 @@ gradle.beforeProject {
 				task buildService(dependsOn: "build-service")
 				task buildWSDD(dependsOn: "build-wsdd")
 			}
+
+			// See the "compile-jsp" target in tools/sdk/build-common-plugin.xml
+			// for more information.
+
+			if (ant.properties["app.server.type"] == "tomcat") {
+				task compileJSP(dependsOn: "compile-jsp")
+			}
 		}
 
 		pluginManager.withPlugin("com.liferay.osgi.plugin") {
 			afterEvaluate {
 				bundle.jarBuilderFactory.contextClassLoader = buildscript.classLoader
-
-				File forcedDeployDir = GradleUtil.getProperty(project, "forced.deploy.dir", (File)null)
-
-				if (forcedDeployDir) {
-					liferay.deployDir = forcedDeployDir
-				}
 			}
 
 			configurations {
@@ -174,6 +203,38 @@ gradle.beforeProject {
 				}
 			}
 		}
+
+		pluginManager.withPlugin("eclipse") {
+			tasks.eclipse.dependsOn {
+				Set<ProjectDependency> projectDependencies = configurations.runtime.allDependencies.withType(ProjectDependency)
+
+				projectDependencies.collect {
+					ProjectDependency projectDependency ->
+
+					"${projectDependency.dependencyProject.path}:eclipse"
+				}
+			}
+		}
+
+		pluginManager.withPlugin("org.ysb33r.gradletest") {
+			task prepareGradleTestInputs
+
+			gradleTest {
+				dependsOn prepareGradleTestInputs
+			}
+
+			prepareGradleTestInputs {
+				doLast {
+					File dir = file("build/classes/test")
+
+					dir.mkdirs()
+
+					File tmpFile = new File(dir, "tmp")
+
+					tmpFile.createNewFile()
+				}
+			}
+		}
 	}
 }
 
@@ -218,6 +279,13 @@ gradle.taskGraph.useFilter {
 		FileTree jspFileTree = fileTree(dir: task.project.projectDir, excludes: ["**/custom_jsps/**/*", "**/dependencies/**/*"], includes: ["docroot/**/*.jsp", "src/main/resources/META-INF/resources/**/*.jsp"])
 
 		if (jspFileTree.empty) {
+			return false
+		}
+	}
+	else if (task.name == "deploy") {
+		String deployOnlyProfile = System.properties["deploy.only.profile"]
+
+		if (deployOnlyProfile && !FileUtil.exists(task.project, ".lfrbuild-${deployOnlyProfile}")) {
 			return false
 		}
 	}

@@ -14,12 +14,12 @@
 
 package com.liferay.portal.kernel.search;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.suggest.QuerySuggester;
 import com.liferay.portal.kernel.search.suggest.Suggester;
 import com.liferay.portal.kernel.search.suggest.SuggesterResults;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Collections;
@@ -33,8 +33,8 @@ public abstract class BaseIndexSearcher
 	implements IndexSearcher, QuerySuggester {
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #search(SearchContext,
-	 *             Query)}
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	 *             #search(SearchContext, Query)}
 	 */
 	@Deprecated
 	@Override

@@ -16,6 +16,8 @@ package com.liferay.portlet.social.service.persistence.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
@@ -32,8 +34,7 @@ import com.liferay.portal.kernel.service.persistence.CompanyProvider;
 import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.ProxyUtil;
 
 import com.liferay.portlet.social.model.impl.SocialActivityLimitImpl;
 import com.liferay.portlet.social.model.impl.SocialActivityLimitModelImpl;
@@ -43,6 +44,8 @@ import com.liferay.social.kernel.model.SocialActivityLimit;
 import com.liferay.social.kernel.service.persistence.SocialActivityLimitPersistence;
 
 import java.io.Serializable;
+
+import java.lang.reflect.InvocationHandler;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -302,7 +305,7 @@ public class SocialActivityLimitPersistenceImpl extends BasePersistenceImpl<Soci
 		msg.append("groupId=");
 		msg.append(groupId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchActivityLimitException(msg.toString());
 	}
@@ -353,7 +356,7 @@ public class SocialActivityLimitPersistenceImpl extends BasePersistenceImpl<Soci
 		msg.append("groupId=");
 		msg.append(groupId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchActivityLimitException(msg.toString());
 	}
@@ -810,7 +813,7 @@ public class SocialActivityLimitPersistenceImpl extends BasePersistenceImpl<Soci
 		msg.append("userId=");
 		msg.append(userId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchActivityLimitException(msg.toString());
 	}
@@ -861,7 +864,7 @@ public class SocialActivityLimitPersistenceImpl extends BasePersistenceImpl<Soci
 		msg.append("userId=");
 		msg.append(userId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchActivityLimitException(msg.toString());
 	}
@@ -1339,7 +1342,7 @@ public class SocialActivityLimitPersistenceImpl extends BasePersistenceImpl<Soci
 		msg.append(", classPK=");
 		msg.append(classPK);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchActivityLimitException(msg.toString());
 	}
@@ -1395,7 +1398,7 @@ public class SocialActivityLimitPersistenceImpl extends BasePersistenceImpl<Soci
 		msg.append(", classPK=");
 		msg.append(classPK);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchActivityLimitException(msg.toString());
 	}
@@ -1718,7 +1721,7 @@ public class SocialActivityLimitPersistenceImpl extends BasePersistenceImpl<Soci
 			msg.append(", activityCounterName=");
 			msg.append(activityCounterName);
 
-			msg.append(StringPool.CLOSE_CURLY_BRACE);
+			msg.append("}");
 
 			if (_log.isDebugEnabled()) {
 				_log.debug(msg.toString());
@@ -1811,7 +1814,7 @@ public class SocialActivityLimitPersistenceImpl extends BasePersistenceImpl<Soci
 			if (activityCounterName == null) {
 				query.append(_FINDER_COLUMN_G_U_C_C_A_A_ACTIVITYCOUNTERNAME_1);
 			}
-			else if (activityCounterName.equals(StringPool.BLANK)) {
+			else if (activityCounterName.equals("")) {
 				query.append(_FINDER_COLUMN_G_U_C_C_A_A_ACTIVITYCOUNTERNAME_3);
 			}
 			else {
@@ -1857,18 +1860,6 @@ public class SocialActivityLimitPersistenceImpl extends BasePersistenceImpl<Soci
 					result = socialActivityLimit;
 
 					cacheResult(socialActivityLimit);
-
-					if ((socialActivityLimit.getGroupId() != groupId) ||
-							(socialActivityLimit.getUserId() != userId) ||
-							(socialActivityLimit.getClassNameId() != classNameId) ||
-							(socialActivityLimit.getClassPK() != classPK) ||
-							(socialActivityLimit.getActivityType() != activityType) ||
-							(socialActivityLimit.getActivityCounterName() == null) ||
-							!socialActivityLimit.getActivityCounterName()
-													.equals(activityCounterName)) {
-						finderCache.putResult(FINDER_PATH_FETCH_BY_G_U_C_C_A_A,
-							finderArgs, socialActivityLimit);
-					}
 				}
 			}
 			catch (Exception e) {
@@ -1954,7 +1945,7 @@ public class SocialActivityLimitPersistenceImpl extends BasePersistenceImpl<Soci
 			if (activityCounterName == null) {
 				query.append(_FINDER_COLUMN_G_U_C_C_A_A_ACTIVITYCOUNTERNAME_1);
 			}
-			else if (activityCounterName.equals(StringPool.BLANK)) {
+			else if (activityCounterName.equals("")) {
 				query.append(_FINDER_COLUMN_G_U_C_C_A_A_ACTIVITYCOUNTERNAME_3);
 			}
 			else {
@@ -2239,8 +2230,6 @@ public class SocialActivityLimitPersistenceImpl extends BasePersistenceImpl<Soci
 	@Override
 	protected SocialActivityLimit removeImpl(
 		SocialActivityLimit socialActivityLimit) {
-		socialActivityLimit = toUnwrappedModel(socialActivityLimit);
-
 		Session session = null;
 
 		try {
@@ -2272,9 +2261,23 @@ public class SocialActivityLimitPersistenceImpl extends BasePersistenceImpl<Soci
 	@Override
 	public SocialActivityLimit updateImpl(
 		SocialActivityLimit socialActivityLimit) {
-		socialActivityLimit = toUnwrappedModel(socialActivityLimit);
-
 		boolean isNew = socialActivityLimit.isNew();
+
+		if (!(socialActivityLimit instanceof SocialActivityLimitModelImpl)) {
+			InvocationHandler invocationHandler = null;
+
+			if (ProxyUtil.isProxyClass(socialActivityLimit.getClass())) {
+				invocationHandler = ProxyUtil.getInvocationHandler(socialActivityLimit);
+
+				throw new IllegalArgumentException(
+					"Implement ModelWrapper in socialActivityLimit proxy " +
+					invocationHandler.getClass());
+			}
+
+			throw new IllegalArgumentException(
+				"Implement ModelWrapper in custom SocialActivityLimit implementation " +
+				socialActivityLimit.getClass());
+		}
 
 		SocialActivityLimitModelImpl socialActivityLimitModelImpl = (SocialActivityLimitModelImpl)socialActivityLimit;
 
@@ -2401,30 +2404,6 @@ public class SocialActivityLimitPersistenceImpl extends BasePersistenceImpl<Soci
 		socialActivityLimit.resetOriginalValues();
 
 		return socialActivityLimit;
-	}
-
-	protected SocialActivityLimit toUnwrappedModel(
-		SocialActivityLimit socialActivityLimit) {
-		if (socialActivityLimit instanceof SocialActivityLimitImpl) {
-			return socialActivityLimit;
-		}
-
-		SocialActivityLimitImpl socialActivityLimitImpl = new SocialActivityLimitImpl();
-
-		socialActivityLimitImpl.setNew(socialActivityLimit.isNew());
-		socialActivityLimitImpl.setPrimaryKey(socialActivityLimit.getPrimaryKey());
-
-		socialActivityLimitImpl.setActivityLimitId(socialActivityLimit.getActivityLimitId());
-		socialActivityLimitImpl.setGroupId(socialActivityLimit.getGroupId());
-		socialActivityLimitImpl.setCompanyId(socialActivityLimit.getCompanyId());
-		socialActivityLimitImpl.setUserId(socialActivityLimit.getUserId());
-		socialActivityLimitImpl.setClassNameId(socialActivityLimit.getClassNameId());
-		socialActivityLimitImpl.setClassPK(socialActivityLimit.getClassPK());
-		socialActivityLimitImpl.setActivityType(socialActivityLimit.getActivityType());
-		socialActivityLimitImpl.setActivityCounterName(socialActivityLimit.getActivityCounterName());
-		socialActivityLimitImpl.setValue(socialActivityLimit.getValue());
-
-		return socialActivityLimitImpl;
 	}
 
 	/**
@@ -2578,12 +2557,12 @@ public class SocialActivityLimitPersistenceImpl extends BasePersistenceImpl<Soci
 		for (Serializable primaryKey : uncachedPrimaryKeys) {
 			query.append((long)primaryKey);
 
-			query.append(StringPool.COMMA);
+			query.append(",");
 		}
 
 		query.setIndex(query.index() - 1);
 
-		query.append(StringPool.CLOSE_PARENTHESIS);
+		query.append(")");
 
 		String sql = query.toString();
 

@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.model.LayoutSetPrototype;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.SystemEventConstants;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -106,7 +107,7 @@ public class LayoutSetPrototypeLocalServiceImpl
 
 			layoutLocalService.addLayout(
 				userId, group.getGroupId(), true,
-				LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, "home", null, null,
+				LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, "Home", null, null,
 				LayoutConstants.TYPE_PORTLET, false, "/home", serviceContext);
 		}
 
@@ -114,8 +115,9 @@ public class LayoutSetPrototypeLocalServiceImpl
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #addLayoutSetPrototype(long,
-	 *             long, Map, Map, boolean, boolean, ServiceContext)}
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	 *             #addLayoutSetPrototype(long, long, Map, Map, boolean,
+	 *             boolean, ServiceContext)}
 	 */
 	@Deprecated
 	@Override
@@ -145,8 +147,9 @@ public class LayoutSetPrototypeLocalServiceImpl
 
 		// Group
 
-		if (layoutSetPersistence.countByLayoutSetPrototypeUuid(
-				layoutSetPrototype.getUuid()) > 0) {
+		if (!CompanyThreadLocal.isDeleteInProcess() &&
+			(layoutSetPersistence.countByLayoutSetPrototypeUuid(
+				layoutSetPrototype.getUuid()) > 0)) {
 
 			throw new RequiredLayoutSetPrototypeException();
 		}
@@ -232,10 +235,9 @@ public class LayoutSetPrototypeLocalServiceImpl
 			return layoutSetPrototypePersistence.findByC_A(
 				companyId, active, start, end, obc);
 		}
-		else {
-			return layoutSetPrototypePersistence.findByCompanyId(
-				companyId, start, end, obc);
-		}
+
+		return layoutSetPrototypePersistence.findByCompanyId(
+			companyId, start, end, obc);
 	}
 
 	@Override
@@ -243,9 +245,8 @@ public class LayoutSetPrototypeLocalServiceImpl
 		if (active != null) {
 			return layoutSetPrototypePersistence.countByC_A(companyId, active);
 		}
-		else {
-			return layoutSetPrototypePersistence.countByCompanyId(companyId);
-		}
+
+		return layoutSetPrototypePersistence.countByCompanyId(companyId);
 	}
 
 	@Override
@@ -281,7 +282,7 @@ public class LayoutSetPrototypeLocalServiceImpl
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
 	 *             #updateLayoutSetPrototype(long, Map, Map, boolean, boolean,
 	 *             ServiceContext)}
 	 */

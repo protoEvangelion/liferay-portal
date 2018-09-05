@@ -57,7 +57,6 @@ public class DAOParamUtil {
 		int year = ParamUtil.getInteger(request, param + "Year");
 		int hour = ParamUtil.getInteger(request, param + "Hour", -1);
 		int minute = ParamUtil.getInteger(request, param + "Minute", -1);
-		int amPm = ParamUtil.getInteger(request, param + "AmPm");
 
 		if ((month >= 0) && (day > 0) && (year > 0)) {
 			Calendar cal = CalendarFactoryUtil.getCalendar();
@@ -66,6 +65,8 @@ public class DAOParamUtil {
 				cal.set(year, month, day);
 			}
 			else {
+				int amPm = ParamUtil.getInteger(request, param + "AmPm");
+
 				if (amPm == Calendar.PM) {
 					hour += 12;
 				}
@@ -77,9 +78,8 @@ public class DAOParamUtil {
 
 			return isoFormat.format(cal.getTime());
 		}
-		else {
-			return null;
-		}
+
+		return null;
 	}
 
 	public static String getISODate(
@@ -90,7 +90,6 @@ public class DAOParamUtil {
 		int year = ParamUtil.getInteger(portletRequest, param + "Year");
 		int hour = ParamUtil.getInteger(portletRequest, param + "Hour", -1);
 		int minute = ParamUtil.getInteger(portletRequest, param + "Minute", -1);
-		int amPm = ParamUtil.getInteger(portletRequest, param + "AmPm");
 
 		if ((month >= 0) && (day > 0) && (year > 0)) {
 			Calendar cal = CalendarFactoryUtil.getCalendar();
@@ -99,6 +98,8 @@ public class DAOParamUtil {
 				cal.set(year, month, day);
 			}
 			else {
+				int amPm = ParamUtil.getInteger(portletRequest, param + "AmPm");
+
 				if (amPm == Calendar.PM) {
 					hour += 12;
 				}
@@ -110,9 +111,8 @@ public class DAOParamUtil {
 
 			return isoFormat.format(cal.getTime());
 		}
-		else {
-			return null;
-		}
+
+		return null;
 	}
 
 	public static long getLong(HttpServletRequest request, String param) {
@@ -137,9 +137,8 @@ public class DAOParamUtil {
 		if (Validator.isNull(value)) {
 			return null;
 		}
-		else {
-			return value;
-		}
+
+		return value;
 	}
 
 	public static String getString(
@@ -150,9 +149,8 @@ public class DAOParamUtil {
 		if (Validator.isNull(value)) {
 			return null;
 		}
-		else {
-			return value;
-		}
+
+		return value;
 	}
 
 }

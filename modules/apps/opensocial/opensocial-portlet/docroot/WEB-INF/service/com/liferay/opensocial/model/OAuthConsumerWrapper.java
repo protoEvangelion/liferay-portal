@@ -129,38 +129,8 @@ public class OAuthConsumerWrapper implements OAuthConsumer,
 	}
 
 	@Override
-	public OAuthConsumer toEscapedModel() {
-		return new OAuthConsumerWrapper(_oAuthConsumer.toEscapedModel());
-	}
-
-	@Override
-	public OAuthConsumer toUnescapedModel() {
-		return new OAuthConsumerWrapper(_oAuthConsumer.toUnescapedModel());
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _oAuthConsumer.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _oAuthConsumer.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _oAuthConsumer.isNew();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _oAuthConsumer.getExpandoBridge();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.CacheModel<OAuthConsumer> toCacheModel() {
-		return _oAuthConsumer.toCacheModel();
+	public Object clone() {
+		return new OAuthConsumerWrapper((OAuthConsumer)_oAuthConsumer.clone());
 	}
 
 	@Override
@@ -168,19 +138,14 @@ public class OAuthConsumerWrapper implements OAuthConsumer,
 		return _oAuthConsumer.compareTo(oAuthConsumer);
 	}
 
+	/**
+	* Returns the company ID of this o auth consumer.
+	*
+	* @return the company ID of this o auth consumer
+	*/
 	@Override
-	public int hashCode() {
-		return _oAuthConsumer.hashCode();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _oAuthConsumer.getPrimaryKeyObj();
-	}
-
-	@Override
-	public java.lang.Object clone() {
-		return new OAuthConsumerWrapper((OAuthConsumer)_oAuthConsumer.clone());
+	public long getCompanyId() {
+		return _oAuthConsumer.getCompanyId();
 	}
 
 	/**
@@ -189,7 +154,7 @@ public class OAuthConsumerWrapper implements OAuthConsumer,
 	* @return the consumer key of this o auth consumer
 	*/
 	@Override
-	public java.lang.String getConsumerKey() {
+	public String getConsumerKey() {
 		return _oAuthConsumer.getConsumerKey();
 	}
 
@@ -199,53 +164,8 @@ public class OAuthConsumerWrapper implements OAuthConsumer,
 	* @return the consumer secret of this o auth consumer
 	*/
 	@Override
-	public java.lang.String getConsumerSecret() {
+	public String getConsumerSecret() {
 		return _oAuthConsumer.getConsumerSecret();
-	}
-
-	/**
-	* Returns the gadget key of this o auth consumer.
-	*
-	* @return the gadget key of this o auth consumer
-	*/
-	@Override
-	public java.lang.String getGadgetKey() {
-		return _oAuthConsumer.getGadgetKey();
-	}
-
-	@Override
-	public java.lang.String getKeyName() {
-		return _oAuthConsumer.getKeyName();
-	}
-
-	/**
-	* Returns the key type of this o auth consumer.
-	*
-	* @return the key type of this o auth consumer
-	*/
-	@Override
-	public java.lang.String getKeyType() {
-		return _oAuthConsumer.getKeyType();
-	}
-
-	/**
-	* Returns the service name of this o auth consumer.
-	*
-	* @return the service name of this o auth consumer
-	*/
-	@Override
-	public java.lang.String getServiceName() {
-		return _oAuthConsumer.getServiceName();
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _oAuthConsumer.toString();
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _oAuthConsumer.toXmlString();
 	}
 
 	/**
@@ -258,6 +178,36 @@ public class OAuthConsumerWrapper implements OAuthConsumer,
 		return _oAuthConsumer.getCreateDate();
 	}
 
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _oAuthConsumer.getExpandoBridge();
+	}
+
+	/**
+	* Returns the gadget key of this o auth consumer.
+	*
+	* @return the gadget key of this o auth consumer
+	*/
+	@Override
+	public String getGadgetKey() {
+		return _oAuthConsumer.getGadgetKey();
+	}
+
+	@Override
+	public String getKeyName() {
+		return _oAuthConsumer.getKeyName();
+	}
+
+	/**
+	* Returns the key type of this o auth consumer.
+	*
+	* @return the key type of this o auth consumer
+	*/
+	@Override
+	public String getKeyType() {
+		return _oAuthConsumer.getKeyType();
+	}
+
 	/**
 	* Returns the modified date of this o auth consumer.
 	*
@@ -266,16 +216,6 @@ public class OAuthConsumerWrapper implements OAuthConsumer,
 	@Override
 	public Date getModifiedDate() {
 		return _oAuthConsumer.getModifiedDate();
-	}
-
-	/**
-	* Returns the company ID of this o auth consumer.
-	*
-	* @return the company ID of this o auth consumer
-	*/
-	@Override
-	public long getCompanyId() {
-		return _oAuthConsumer.getCompanyId();
 	}
 
 	/**
@@ -296,6 +236,41 @@ public class OAuthConsumerWrapper implements OAuthConsumer,
 	@Override
 	public long getPrimaryKey() {
 		return _oAuthConsumer.getPrimaryKey();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _oAuthConsumer.getPrimaryKeyObj();
+	}
+
+	/**
+	* Returns the service name of this o auth consumer.
+	*
+	* @return the service name of this o auth consumer
+	*/
+	@Override
+	public String getServiceName() {
+		return _oAuthConsumer.getServiceName();
+	}
+
+	@Override
+	public int hashCode() {
+		return _oAuthConsumer.hashCode();
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _oAuthConsumer.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _oAuthConsumer.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _oAuthConsumer.isNew();
 	}
 
 	@Override
@@ -324,7 +299,7 @@ public class OAuthConsumerWrapper implements OAuthConsumer,
 	* @param consumerKey the consumer key of this o auth consumer
 	*/
 	@Override
-	public void setConsumerKey(java.lang.String consumerKey) {
+	public void setConsumerKey(String consumerKey) {
 		_oAuthConsumer.setConsumerKey(consumerKey);
 	}
 
@@ -334,7 +309,7 @@ public class OAuthConsumerWrapper implements OAuthConsumer,
 	* @param consumerSecret the consumer secret of this o auth consumer
 	*/
 	@Override
-	public void setConsumerSecret(java.lang.String consumerSecret) {
+	public void setConsumerSecret(String consumerSecret) {
 		_oAuthConsumer.setConsumerSecret(consumerSecret);
 	}
 
@@ -349,14 +324,14 @@ public class OAuthConsumerWrapper implements OAuthConsumer,
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_oAuthConsumer.setExpandoBridgeAttributes(expandoBridge);
-	}
-
-	@Override
 	public void setExpandoBridgeAttributes(
 		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
 		_oAuthConsumer.setExpandoBridgeAttributes(baseModel);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_oAuthConsumer.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
@@ -370,12 +345,12 @@ public class OAuthConsumerWrapper implements OAuthConsumer,
 	* @param gadgetKey the gadget key of this o auth consumer
 	*/
 	@Override
-	public void setGadgetKey(java.lang.String gadgetKey) {
+	public void setGadgetKey(String gadgetKey) {
 		_oAuthConsumer.setGadgetKey(gadgetKey);
 	}
 
 	@Override
-	public void setKeyName(java.lang.String keyName) {
+	public void setKeyName(String keyName) {
 		_oAuthConsumer.setKeyName(keyName);
 	}
 
@@ -385,7 +360,7 @@ public class OAuthConsumerWrapper implements OAuthConsumer,
 	* @param keyType the key type of this o auth consumer
 	*/
 	@Override
-	public void setKeyType(java.lang.String keyType) {
+	public void setKeyType(String keyType) {
 		_oAuthConsumer.setKeyType(keyType);
 	}
 
@@ -435,8 +410,33 @@ public class OAuthConsumerWrapper implements OAuthConsumer,
 	* @param serviceName the service name of this o auth consumer
 	*/
 	@Override
-	public void setServiceName(java.lang.String serviceName) {
+	public void setServiceName(String serviceName) {
 		_oAuthConsumer.setServiceName(serviceName);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.CacheModel<OAuthConsumer> toCacheModel() {
+		return _oAuthConsumer.toCacheModel();
+	}
+
+	@Override
+	public OAuthConsumer toEscapedModel() {
+		return new OAuthConsumerWrapper(_oAuthConsumer.toEscapedModel());
+	}
+
+	@Override
+	public String toString() {
+		return _oAuthConsumer.toString();
+	}
+
+	@Override
+	public OAuthConsumer toUnescapedModel() {
+		return new OAuthConsumerWrapper(_oAuthConsumer.toUnescapedModel());
+	}
+
+	@Override
+	public String toXmlString() {
+		return _oAuthConsumer.toXmlString();
 	}
 
 	@Override

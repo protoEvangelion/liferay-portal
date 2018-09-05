@@ -14,8 +14,8 @@
 
 package com.liferay.source.formatter.checks;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.source.formatter.checks.comparator.ElementComparator;
 import com.liferay.source.formatter.checks.util.SourceUtil;
@@ -27,6 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.Element;
 
 /**
@@ -37,7 +38,7 @@ public class XMLPoshiFileCheck extends BaseFileCheck {
 	@Override
 	protected String doProcess(
 			String fileName, String absolutePath, String content)
-		throws Exception {
+		throws DocumentException {
 
 		if (fileName.endsWith(".action") || fileName.endsWith(".function") ||
 			fileName.endsWith(".macro") || fileName.endsWith(".testcase")) {
@@ -112,7 +113,7 @@ public class XMLPoshiFileCheck extends BaseFileCheck {
 				content = StringUtil.replace(content, statement, newStatement);
 			}
 			else if (!StringUtil.equalsIgnoreCase(
-						"</var>", closingElementName)) {
+						 "</var>", closingElementName)) {
 
 				String newStatement = StringUtil.replace(
 					statement, matcher.group(2), "\n\n");
@@ -140,92 +141,8 @@ public class XMLPoshiFileCheck extends BaseFileCheck {
 		return content;
 	}
 
-	private String _fixPoshiXMLNumberOfTabs(String content) {
-		Matcher matcher = _poshiTabsPattern.matcher(content);
-
-		int tabCount = 0;
-
-		boolean ignoredCdataBlock = false;
-		boolean ignoredCommentBlock = false;
-
-		while (matcher.find()) {
-			String statement = matcher.group();
-
-			Matcher quoteWithSlashMatcher = _poshiQuoteWithSlashPattern.matcher(
-				statement);
-
-			String fixedQuoteStatement = statement;
-
-			if (quoteWithSlashMatcher.find()) {
-				fixedQuoteStatement = StringUtil.replace(
-					statement, quoteWithSlashMatcher.group(), "\"\"");
-			}
-
-			Matcher closingTagMatcher = _poshiClosingTagPattern.matcher(
-				fixedQuoteStatement);
-			Matcher openingTagMatcher = _poshiOpeningTagPattern.matcher(
-				fixedQuoteStatement);
-			Matcher wholeTagMatcher = _poshiWholeTagPattern.matcher(
-				fixedQuoteStatement);
-
-			if (closingTagMatcher.find() && !openingTagMatcher.find() &&
-				!wholeTagMatcher.find() && !statement.contains("<!--") &&
-				!statement.contains("-->") &&
-				!statement.contains("<![CDATA[") &&
-				!statement.contains("]]>")) {
-
-				tabCount--;
-			}
-
-			if (statement.contains("]]>")) {
-				ignoredCdataBlock = false;
-			}
-			else if (statement.contains("<![CDATA[")) {
-				ignoredCdataBlock = true;
-			}
-
-			if (statement.contains("-->")) {
-				ignoredCommentBlock = false;
-			}
-			else if (statement.contains("<!--")) {
-				ignoredCommentBlock = true;
-			}
-
-			if (!ignoredCommentBlock && !ignoredCdataBlock) {
-				StringBundler sb = new StringBundler(tabCount + 1);
-
-				for (int i = 0; i < tabCount; i++) {
-					sb.append(StringPool.TAB);
-				}
-
-				sb.append(StringPool.LESS_THAN);
-
-				String replacement = sb.toString();
-
-				if (!replacement.equals(matcher.group(1))) {
-					String newStatement = StringUtil.replace(
-						statement, matcher.group(1), replacement);
-
-					return StringUtil.replaceFirst(
-						content, statement, newStatement, matcher.start());
-				}
-			}
-
-			if (openingTagMatcher.find() && !closingTagMatcher.find() &&
-				!wholeTagMatcher.find() && !statement.contains("<!--") &&
-				!statement.contains("-->") &&
-				!statement.contains("<![CDATA[") &&
-				!statement.contains("]]>")) {
-
-				tabCount++;
-			}
-		}
-
-		return content;
-	}
-
 	private String _formatPoshiXML(String fileName, String content)
-		throws Exception {
+		throws DocumentException {
 
 		_checkPoshiCharactersAfterDefinition(fileName, content);
 		_checkPoshiCharactersBeforeDefinition(fileName, content);
@@ -255,9 +172,7 @@ public class XMLPoshiFileCheck extends BaseFileCheck {
 
 		content = _fixPoshiXMLEndLinesBeforeClosingElement(content);
 
-		content = _fixPoshiXMLEndLines(content);
-
-		return _fixPoshiXMLNumberOfTabs(content);
+		return _fixPoshiXMLEndLines(content);
 	}
 
 	private String _sortPoshiCommands(String content) {
@@ -392,8 +307,6 @@ public class XMLPoshiFileCheck extends BaseFileCheck {
 		return content;
 	}
 
-	private final Pattern _poshiClosingTagPattern = Pattern.compile(
-		"</[^>/]*>");
 	private final Pattern _poshiCommandsPattern = Pattern.compile(
 		"\\<command.*name=\\\"([^\\\"]*)\\\".*\\>[\\s\\S]*?\\</command\\>" +
 			"[\\n|\\t]*?(?:[^(?:/\\>)]*?--\\>)*+");
@@ -405,15 +318,9 @@ public class XMLPoshiFileCheck extends BaseFileCheck {
 		Pattern.compile("(\\n+)(\\t*</[a-z\\-]+>)");
 	private final Pattern _poshiEndLinesPattern = Pattern.compile(
 		"\\>\\n\\n\\n+(\\t*\\<)");
-	private final Pattern _poshiOpeningTagPattern = Pattern.compile(
-		"<[^/][^>]*[^/]>");
-	private final Pattern _poshiQuoteWithSlashPattern = Pattern.compile(
-		"\"[^\"]*\\>[^\"]*\"");
 	private final Pattern _poshiSetUpPattern = Pattern.compile(
 		"\\n[\\t]++\\<set-up\\>([\\s\\S]*?)\\</set-up\\>" +
 			"[\\n|\\t]*?(?:[^(?:/\\>)]*?--\\>)*+\\n");
-	private final Pattern _poshiTabsPattern = Pattern.compile(
-		"\\n*([ \\t]*<).*");
 	private final Pattern _poshiTearDownPattern = Pattern.compile(
 		"\\n[\\t]++\\<tear-down\\>([\\s\\S]*?)\\</tear-down\\>" +
 			"[\\n|\\t]*?(?:[^(?:/\\>)]*?--\\>)*+\\n");
@@ -423,7 +330,5 @@ public class XMLPoshiFileCheck extends BaseFileCheck {
 	private final Pattern _poshiVariablesBlockPattern = Pattern.compile(
 		"((?:[\\t]*+\\<var.*?\\>\\n[\\t]*+){2,}?)" +
 			"(?:(?:\\n){1,}+|\\</execute\\>)");
-	private final Pattern _poshiWholeTagPattern = Pattern.compile(
-		"<[^\\>^/]*\\/>");
 
 }

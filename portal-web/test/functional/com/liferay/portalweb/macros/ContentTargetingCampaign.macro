@@ -62,9 +62,9 @@
 
 		<execute function="Click" locator1="EditCampaign#CAMPAIGN_TRACKING_ACTIONS_CONTENT_SELECT_CONTENT_BUTTON" />
 
-		<var name="key_menuItem" value="${menulistContent}" />
-
-		<execute function="Click" locator1="MenuItem#ANY_MENU_ITEM" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="${menulistContent}" />
+		</execute>
 
 		<execute function="SelectFrame" locator1="IFrame#SELECT_CONTENT" />
 
@@ -101,7 +101,7 @@
 
 		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 
-		<execute macro="FormsAdmin#searchFormEntry">
+		<execute macro="Search#searchCP">
 			<var name="searchTerm" value="${formName}" />
 		</execute>
 
@@ -157,7 +157,7 @@
 			<var name="navItem" value="Campaigns" />
 		</execute>
 
-		<execute function="Check#checkAll" locator1="Checkbox#SELECT_ALL" />
+		<execute macro="PortletEntry#selectAll" />
 
 		<execute function="ClickNoError" locator1="Icon#DELETE" />
 
@@ -171,11 +171,9 @@
 			<var name="navItem" value="Campaigns" />
 		</execute>
 
-		<var name="key_rowEntry" value="${campaignName}" />
-
-		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
-
-		<execute function="ClickNoError" locator1="MenuItem#DELETE" />
+		<execute macro="LexiconEntry#gotoEllipsisMenuItemNoError">
+			<var name="menuItem" value="Delete" />
+		</execute>
 
 		<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
 	</command>
@@ -185,11 +183,9 @@
 			<var name="navItem" value="Campaigns" />
 		</execute>
 
-		<var name="key_rowEntry" value="${campaignName}" />
-
-		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
-
-		<execute function="Click" locator1="MenuItem#EDIT" />
+		<execute macro="LexiconEntry#gotoEllipsisMenuItem">
+			<var name="menuItem" value="Edit" />
+		</execute>
 
 		<execute macro="PortletEntry#inputName">
 			<var name="name" value="${campaignNameEdit}" />
@@ -336,7 +332,7 @@
 			<var name="navItem" value="Reports" />
 		</execute>
 
-		<execute function="Click" locator1="Button#PLUS" />
+		<execute macro="LexiconEntry#gotoAdd" />
 	</command>
 
 	<command name="gotoEditReport">
@@ -356,8 +352,8 @@
 			<var name="key_rowEntry" value="${reportName}" />
 		</execute>
 
-		<execute function="Click" locator1="MenuItem#ANY_MENU_ITEM">
-			<var name="key_menuItem" value="Edit" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Edit" />
 		</execute>
 	</command>
 
@@ -395,10 +391,8 @@
 
 		<var name="key_reportType" value="${viewReportType}" />
 
-		<execute function="Click" locator1="Icon#HEADER_VERTICAL_ELLIPSIS" />
-
-		<execute function="Click" locator1="MenuItem#ANY_MENU_ITEM">
-			<var name="key_menuItem" value="Update" />
+		<execute macro="LexiconEntry#gotoHeaderMenuItem">
+			<var name="menuItem" value="Update" />
 		</execute>
 
 		<execute function="Pause" locator1="1000" />
@@ -435,9 +429,9 @@
 		<if>
 			<isset var="userSegmentSelect" />
 			<then>
-				<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
-
-				<execute function="Click" locator1="MenuItem#EDIT" />
+				<execute macro="MenuItem#click">
+					<var name="menuItem" value="Edit" />
+				</execute>
 
 				<execute function="AssertTextEquals" locator1="EditCampaign#CAMPAIGN_USER_SEGMENT_APPLIED" value1="${userSegmentSelect}" />
 			</then>
@@ -471,7 +465,7 @@
 
 		<var name="key_rowEntry" value="${metricName}" />
 
-		<execute function="AssertElementNotPresent" locator1="ContentRow#ENTRY_CONTENT_ENTRY_NAME_LINK" value1="${metricName}" />
+		<execute function="AssertElementNotPresent" locator1="ContentRow#ENTRY_CONTENT_ENTRY_NAME_LINK" />
 	</command>
 
 	<command name="viewMetricReport">
@@ -491,7 +485,7 @@
 
 		<var name="key_campaignName" value="${campaignName}" />
 
-		<execute function="AssertElementNotPresent" locator1="ContentRow#ENTRY_CONTENT_ENTRY_NAME_LINK" value1="${campaignName}" />
+		<execute function="AssertElementNotPresent" locator1="ContentRow#ENTRY_CONTENT_ENTRY_NAME_LINK" />
 	</command>
 
 	<command name="viewTrackingActionsCP">

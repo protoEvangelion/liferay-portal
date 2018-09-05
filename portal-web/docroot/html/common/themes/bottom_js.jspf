@@ -65,15 +65,34 @@
 	}
 </aui:script>
 
+<aui:script require="clay-tooltip/src/ClayTooltip as ClayTooltip">
+	if (!Liferay.Data.LFR_PORTAL_CLAY_TOOLTIP) {
+		Liferay.Data.LFR_PORTAL_CLAY_TOOLTIP = ClayTooltip.default.init(
+			{
+				selectors: [
+					'.management-bar [data-title]:not(.lfr-portal-tooltip)',
+					'.management-bar [title]:not(.lfr-portal-tooltip)'
+				]
+			}
+		);
+	}
+</aui:script>
+
 <aui:script use="aui-tooltip">
 	if (!Liferay.Data.LFR_PORTAL_TOOLTIP) {
+		var triggerShowEvent = ['mouseenter', 'MSPointerDown', 'touchstart'];
+
+		if (A.UA.ios) {
+			triggerShowEvent = ['touchstart'];
+		}
+
 		Liferay.Data.LFR_PORTAL_TOOLTIP = new A.TooltipDelegate(
 			{
 				constrain: true,
 				opacity: 1,
 				trigger: '.lfr-portal-tooltip',
 				triggerHideEvent: ['click', 'mouseleave', 'MSPointerUp', 'touchend'],
-				triggerShowEvent: ['mouseenter', 'MSPointerDown', 'touchstart'],
+				triggerShowEvent: triggerShowEvent,
 				visible: false,
 				zIndex: Liferay.zIndex.TOOLTIP
 			}
@@ -130,6 +149,8 @@ if (layout != null) {
 				nestedPortletId: '_<%= PortletKeys.NESTED_PORTLETS %>_INSTANCE',
 				portletBoundary: '.portlet-boundary'
 			};
+
+			Liferay.fire('dataLayoutConfigReady');
 		</aui:script>
 
 		<aui:script use="liferay-layout">
@@ -145,34 +166,6 @@ if (layout != null) {
 			function() {
 				new Liferay.Navigation(
 					{
-						hasAddLayoutPermission: <%= GroupPermissionUtil.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_LAYOUT) %>,
-						layoutIds: [
-
-							<%
-							Group scopeGroup = GroupLocalServiceUtil.getGroup(scopeGroupId);
-
-							for (int i = 0; (layouts != null) && (i < layouts.size()); i++) {
-								Layout curLayout = (Layout)layouts.get(i);
-							%>
-
-								<c:if test="<%= (i > 0) %>">,</c:if>
-
-								{
-									deletable: !A.UA.touchMobile && <%= LayoutPermissionUtil.contains(permissionChecker, curLayout, ActionKeys.DELETE) %>,
-									id: <%= curLayout.getLayoutId() %>,
-									sortable: <%= GroupPermissionUtil.contains(permissionChecker, scopeGroup, ActionKeys.MANAGE_LAYOUTS) && SitesUtil.isLayoutSortable(curLayout) %>
-								}
-
-							<%
-							}
-							%>
-
-							],
-
-						<c:if test="<%= layoutRevision != null %>">
-							layoutSetBranchId: '<%= layoutRevision.getLayoutSetBranchId() %>',
-						</c:if>
-
 						navBlock: navBlock
 					}
 				);

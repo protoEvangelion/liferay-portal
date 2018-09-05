@@ -23,12 +23,13 @@ import com.liferay.portal.kernel.comment.WorkflowableComment;
 import com.liferay.portal.kernel.comment.display.context.CommentTreeDisplayContext;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.trash.kernel.util.TrashUtil;
 
 import java.util.Locale;
 
@@ -76,24 +77,22 @@ public class DefaultCommentTreeDisplayContext
 	@Override
 	public boolean isActionControlsVisible() throws PortalException {
 		if ((_discussionComment == null) ||
-			_discussionTaglibHelper.isHideControls()) {
+			_discussionTaglibHelper.isHideControls() || _isStagingGroup()) {
 
 			return false;
 		}
 
-		return !TrashUtil.isInTrash(
-			_discussionComment.getModelClassName(),
-			_discussionComment.getCommentId());
+		return !_discussionComment.isInTrash();
 	}
 
 	@Override
 	public boolean isDeleteActionControlVisible() throws PortalException {
-		if (_discussionPermission == null) {
+		if ((_discussionPermission == null) || _isStagingGroup()) {
 			return false;
 		}
 
-		return _discussionPermission.hasDeletePermission(
-			_discussionComment.getCommentId());
+		return _discussionPermission.hasPermission(
+			_discussionComment, ActionKeys.DELETE_DISCUSSION);
 	}
 
 	@Override
@@ -107,17 +106,16 @@ public class DefaultCommentTreeDisplayContext
 
 	@Override
 	public boolean isEditActionControlVisible() throws PortalException {
-		if (_discussionPermission == null) {
+		if (!hasUpdatePermission() || _isStagingGroup()) {
 			return false;
 		}
 
-		return _discussionPermission.hasUpdatePermission(
-			_discussionComment.getCommentId());
+		return true;
 	}
 
 	@Override
 	public boolean isEditControlsVisible() throws PortalException {
-		if (_discussionTaglibHelper.isHideControls()) {
+		if (_discussionTaglibHelper.isHideControls() || _isStagingGroup()) {
 			return false;
 		}
 
@@ -132,14 +130,12 @@ public class DefaultCommentTreeDisplayContext
 			return false;
 		}
 
-		return !TrashUtil.isInTrash(
-			_discussionComment.getModelClassName(),
-			_discussionComment.getCommentId());
+		return !_discussionComment.isInTrash();
 	}
 
 	@Override
 	public boolean isReplyActionControlVisible() throws PortalException {
-		if (_discussionPermission == null) {
+		if ((_discussionPermission == null) || _isStagingGroup()) {
 			return false;
 		}
 
@@ -175,8 +171,12 @@ public class DefaultCommentTreeDisplayContext
 			return false;
 		}
 
-		return _discussionPermission.hasUpdatePermission(
-			_discussionComment.getCommentId());
+		if (_hasUpdatePermission == null) {
+			_hasUpdatePermission = _discussionPermission.hasPermission(
+				_discussionComment, ActionKeys.UPDATE_DISCUSSION);
+		}
+
+		return _hasUpdatePermission;
 	}
 
 	protected boolean hasViewPermission() throws PortalException {
@@ -252,9 +252,18 @@ public class DefaultCommentTreeDisplayContext
 			_discussionRequestHelper.getScopeGroupId());
 	}
 
+	private boolean _isStagingGroup() {
+		ThemeDisplay themeDisplay = getThemeDisplay();
+
+		Group siteGroup = themeDisplay.getSiteGroup();
+
+		return siteGroup.isStagingGroup();
+	}
+
 	private final DiscussionComment _discussionComment;
 	private final DiscussionPermission _discussionPermission;
 	private final DiscussionRequestHelper _discussionRequestHelper;
 	private final DiscussionTaglibHelper _discussionTaglibHelper;
+	private Boolean _hasUpdatePermission;
 
 }

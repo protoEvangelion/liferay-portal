@@ -62,8 +62,8 @@ public class CountryWrapper implements Country, ModelWrapper<Country> {
 		attributes.put("a3", getA3());
 		attributes.put("number", getNumber());
 		attributes.put("idd", getIdd());
-		attributes.put("zipRequired", getZipRequired());
-		attributes.put("active", getActive());
+		attributes.put("zipRequired", isZipRequired());
+		attributes.put("active", isActive());
 
 		return attributes;
 	}
@@ -126,18 +126,33 @@ public class CountryWrapper implements Country, ModelWrapper<Country> {
 	}
 
 	@Override
-	public CacheModel<Country> toCacheModel() {
-		return _country.toCacheModel();
+	public Object clone() {
+		return new CountryWrapper((Country)_country.clone());
 	}
 
 	@Override
-	public Country toEscapedModel() {
-		return new CountryWrapper(_country.toEscapedModel());
+	public int compareTo(Country country) {
+		return _country.compareTo(country);
 	}
 
+	/**
+	* Returns the a2 of this country.
+	*
+	* @return the a2 of this country
+	*/
 	@Override
-	public Country toUnescapedModel() {
-		return new CountryWrapper(_country.toUnescapedModel());
+	public String getA2() {
+		return _country.getA2();
+	}
+
+	/**
+	* Returns the a3 of this country.
+	*
+	* @return the a3 of this country
+	*/
+	@Override
+	public String getA3() {
+		return _country.getA3();
 	}
 
 	/**
@@ -151,6 +166,91 @@ public class CountryWrapper implements Country, ModelWrapper<Country> {
 	}
 
 	/**
+	* Returns the country ID of this country.
+	*
+	* @return the country ID of this country
+	*/
+	@Override
+	public long getCountryId() {
+		return _country.getCountryId();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _country.getExpandoBridge();
+	}
+
+	/**
+	* Returns the idd of this country.
+	*
+	* @return the idd of this country
+	*/
+	@Override
+	public String getIdd() {
+		return _country.getIdd();
+	}
+
+	/**
+	* Returns the mvcc version of this country.
+	*
+	* @return the mvcc version of this country
+	*/
+	@Override
+	public long getMvccVersion() {
+		return _country.getMvccVersion();
+	}
+
+	/**
+	* Returns the name of this country.
+	*
+	* @return the name of this country
+	*/
+	@Override
+	public String getName() {
+		return _country.getName();
+	}
+
+	@Override
+	public String getName(java.util.Locale locale) {
+		return _country.getName(locale);
+	}
+
+	@Override
+	public String getNameCurrentLanguageId() {
+		return _country.getNameCurrentLanguageId();
+	}
+
+	@Override
+	public String getNameCurrentValue() {
+		return _country.getNameCurrentValue();
+	}
+
+	/**
+	* Returns the number of this country.
+	*
+	* @return the number of this country
+	*/
+	@Override
+	public String getNumber() {
+		return _country.getNumber();
+	}
+
+	/**
+	* Returns the primary key of this country.
+	*
+	* @return the primary key of this country
+	*/
+	@Override
+	public long getPrimaryKey() {
+		return _country.getPrimaryKey();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _country.getPrimaryKeyObj();
+	}
+
+	/**
 	* Returns the zip required of this country.
 	*
 	* @return the zip required of this country
@@ -158,6 +258,11 @@ public class CountryWrapper implements Country, ModelWrapper<Country> {
 	@Override
 	public boolean getZipRequired() {
 		return _country.getZipRequired();
+	}
+
+	@Override
+	public int hashCode() {
+		return _country.hashCode();
 	}
 
 	/**
@@ -195,143 +300,13 @@ public class CountryWrapper implements Country, ModelWrapper<Country> {
 		return _country.isZipRequired();
 	}
 
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _country.getExpandoBridge();
-	}
-
-	@Override
-	public int compareTo(Country country) {
-		return _country.compareTo(country);
-	}
-
-	@Override
-	public int hashCode() {
-		return _country.hashCode();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _country.getPrimaryKeyObj();
-	}
-
-	@Override
-	public java.lang.Object clone() {
-		return new CountryWrapper((Country)_country.clone());
-	}
-
-	/**
-	* Returns the a2 of this country.
-	*
-	* @return the a2 of this country
-	*/
-	@Override
-	public java.lang.String getA2() {
-		return _country.getA2();
-	}
-
-	/**
-	* Returns the a3 of this country.
-	*
-	* @return the a3 of this country
-	*/
-	@Override
-	public java.lang.String getA3() {
-		return _country.getA3();
-	}
-
-	/**
-	* Returns the idd of this country.
-	*
-	* @return the idd of this country
-	*/
-	@Override
-	public java.lang.String getIdd() {
-		return _country.getIdd();
-	}
-
-	/**
-	* Returns the name of this country.
-	*
-	* @return the name of this country
-	*/
-	@Override
-	public java.lang.String getName() {
-		return _country.getName();
-	}
-
-	@Override
-	public java.lang.String getName(java.util.Locale locale) {
-		return _country.getName(locale);
-	}
-
-	@Override
-	public java.lang.String getNameCurrentLanguageId() {
-		return _country.getNameCurrentLanguageId();
-	}
-
-	@Override
-	public java.lang.String getNameCurrentValue() {
-		return _country.getNameCurrentValue();
-	}
-
-	/**
-	* Returns the number of this country.
-	*
-	* @return the number of this country
-	*/
-	@Override
-	public java.lang.String getNumber() {
-		return _country.getNumber();
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _country.toString();
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _country.toXmlString();
-	}
-
-	/**
-	* Returns the country ID of this country.
-	*
-	* @return the country ID of this country
-	*/
-	@Override
-	public long getCountryId() {
-		return _country.getCountryId();
-	}
-
-	/**
-	* Returns the mvcc version of this country.
-	*
-	* @return the mvcc version of this country
-	*/
-	@Override
-	public long getMvccVersion() {
-		return _country.getMvccVersion();
-	}
-
-	/**
-	* Returns the primary key of this country.
-	*
-	* @return the primary key of this country
-	*/
-	@Override
-	public long getPrimaryKey() {
-		return _country.getPrimaryKey();
-	}
-
 	/**
 	* Sets the a2 of this country.
 	*
 	* @param a2 the a2 of this country
 	*/
 	@Override
-	public void setA2(java.lang.String a2) {
+	public void setA2(String a2) {
 		_country.setA2(a2);
 	}
 
@@ -341,7 +316,7 @@ public class CountryWrapper implements Country, ModelWrapper<Country> {
 	* @param a3 the a3 of this country
 	*/
 	@Override
-	public void setA3(java.lang.String a3) {
+	public void setA3(String a3) {
 		_country.setA3(a3);
 	}
 
@@ -391,7 +366,7 @@ public class CountryWrapper implements Country, ModelWrapper<Country> {
 	* @param idd the idd of this country
 	*/
 	@Override
-	public void setIdd(java.lang.String idd) {
+	public void setIdd(String idd) {
 		_country.setIdd(idd);
 	}
 
@@ -411,12 +386,12 @@ public class CountryWrapper implements Country, ModelWrapper<Country> {
 	* @param name the name of this country
 	*/
 	@Override
-	public void setName(java.lang.String name) {
+	public void setName(String name) {
 		_country.setName(name);
 	}
 
 	@Override
-	public void setNameCurrentLanguageId(java.lang.String languageId) {
+	public void setNameCurrentLanguageId(String languageId) {
 		_country.setNameCurrentLanguageId(languageId);
 	}
 
@@ -431,7 +406,7 @@ public class CountryWrapper implements Country, ModelWrapper<Country> {
 	* @param number the number of this country
 	*/
 	@Override
-	public void setNumber(java.lang.String number) {
+	public void setNumber(String number) {
 		_country.setNumber(number);
 	}
 
@@ -458,6 +433,31 @@ public class CountryWrapper implements Country, ModelWrapper<Country> {
 	@Override
 	public void setZipRequired(boolean zipRequired) {
 		_country.setZipRequired(zipRequired);
+	}
+
+	@Override
+	public CacheModel<Country> toCacheModel() {
+		return _country.toCacheModel();
+	}
+
+	@Override
+	public Country toEscapedModel() {
+		return new CountryWrapper(_country.toEscapedModel());
+	}
+
+	@Override
+	public String toString() {
+		return _country.toString();
+	}
+
+	@Override
+	public Country toUnescapedModel() {
+		return new CountryWrapper(_country.toUnescapedModel());
+	}
+
+	@Override
+	public String toXmlString() {
+		return _country.toXmlString();
 	}
 
 	@Override

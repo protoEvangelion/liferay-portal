@@ -28,7 +28,6 @@ import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalService;
-import com.liferay.portal.kernel.service.InvokableLocalService;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
@@ -55,12 +54,16 @@ import java.util.List;
 @Transactional(isolation = Isolation.PORTAL, rollbackFor =  {
 	PortalException.class, SystemException.class})
 public interface OAuthTokenLocalService extends BaseLocalService,
-	InvokableLocalService, PersistedModelLocalService {
+	PersistedModelLocalService {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
 	 * Never modify or reference this interface directly. Always use {@link OAuthTokenLocalServiceUtil} to access the o auth token local service. Add custom service methods to {@link com.liferay.opensocial.service.impl.OAuthTokenLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	public OAuthToken addOAuthToken(long userId, String gadgetKey,
+		String serviceName, long moduleId, String accessToken,
+		String tokenName, String tokenSecret, String sessionHandle,
+		long expiration) throws PortalException;
 
 	/**
 	* Adds the o auth token to the database. Also notifies the appropriate model listeners.
@@ -71,28 +74,14 @@ public interface OAuthTokenLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.REINDEX)
 	public OAuthToken addOAuthToken(OAuthToken oAuthToken);
 
-	public OAuthToken addOAuthToken(long userId, java.lang.String gadgetKey,
-		java.lang.String serviceName, long moduleId,
-		java.lang.String accessToken, java.lang.String tokenName,
-		java.lang.String tokenSecret, java.lang.String sessionHandle,
-		long expiration) throws PortalException;
-
 	/**
 	* Creates a new o auth token with the primary key. Does not add the o auth token to the database.
 	*
 	* @param oAuthTokenId the primary key for the new o auth token
 	* @return the new o auth token
 	*/
+	@Transactional(enabled = false)
 	public OAuthToken createOAuthToken(long oAuthTokenId);
-
-	/**
-	* Deletes the o auth token from the database. Also notifies the appropriate model listeners.
-	*
-	* @param oAuthToken the o auth token
-	* @return the o auth token that was removed
-	*/
-	@Indexable(type = IndexableType.DELETE)
-	public OAuthToken deleteOAuthToken(OAuthToken oAuthToken);
 
 	/**
 	* Deletes the o auth token with the primary key from the database. Also notifies the appropriate model listeners.
@@ -105,45 +94,20 @@ public interface OAuthTokenLocalService extends BaseLocalService,
 	public OAuthToken deleteOAuthToken(long oAuthTokenId)
 		throws PortalException;
 
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public OAuthToken fetchOAuthToken(long oAuthTokenId);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public OAuthToken fetchOAuthToken(long userId, java.lang.String gadgetKey,
-		java.lang.String serviceName, long moduleId, java.lang.String tokenName);
-
-	/**
-	* Returns the o auth token with the primary key.
-	*
-	* @param oAuthTokenId the primary key of the o auth token
-	* @return the o auth token
-	* @throws PortalException if a o auth token with the primary key could not be found
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public OAuthToken getOAuthToken(long oAuthTokenId)
-		throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public OAuthToken getOAuthToken(long userId, java.lang.String gadgetKey,
-		java.lang.String serviceName, long moduleId, java.lang.String tokenName)
+	public void deleteOAuthToken(long userId, String gadgetKey,
+		String serviceName, long moduleId, String tokenName)
 		throws PortalException;
 
 	/**
-	* Updates the o auth token in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	* Deletes the o auth token from the database. Also notifies the appropriate model listeners.
 	*
 	* @param oAuthToken the o auth token
-	* @return the o auth token that was updated
+	* @return the o auth token that was removed
 	*/
-	@Indexable(type = IndexableType.REINDEX)
-	public OAuthToken updateOAuthToken(OAuthToken oAuthToken);
+	@Indexable(type = IndexableType.DELETE)
+	public OAuthToken deleteOAuthToken(OAuthToken oAuthToken);
 
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public ActionableDynamicQuery getActionableDynamicQuery();
-
-	public DynamicQuery dynamicQuery();
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
+	public void deleteOAuthTokens(String gadgetKey, String serviceName);
 
 	/**
 	* @throws PortalException
@@ -152,30 +116,7 @@ public interface OAuthTokenLocalService extends BaseLocalService,
 	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
 		throws PortalException;
 
-	@Override
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException;
-
-	/**
-	* Returns the number of o auth tokens.
-	*
-	* @return the number of o auth tokens
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getOAuthTokensCount();
-
-	@Override
-	public java.lang.Object invokeMethod(java.lang.String name,
-		java.lang.String[] parameterTypes, java.lang.Object[] arguments)
-		throws java.lang.Throwable;
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	public java.lang.String getOSGiServiceIdentifier();
+	public DynamicQuery dynamicQuery();
 
 	/**
 	* Performs a dynamic query on the database and returns the matching rows.
@@ -217,24 +158,6 @@ public interface OAuthTokenLocalService extends BaseLocalService,
 		int end, OrderByComparator<T> orderByComparator);
 
 	/**
-	* Returns a range of all the o auth tokens.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.opensocial.model.impl.OAuthTokenModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param start the lower bound of the range of o auth tokens
-	* @param end the upper bound of the range of o auth tokens (not inclusive)
-	* @return the range of o auth tokens
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<OAuthToken> getOAuthTokens(int start, int end);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<OAuthToken> getOAuthTokens(java.lang.String gadgetKey,
-		java.lang.String serviceName);
-
-	/**
 	* Returns the number of rows matching the dynamic query.
 	*
 	* @param dynamicQuery the dynamic query
@@ -252,10 +175,78 @@ public interface OAuthTokenLocalService extends BaseLocalService,
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
 		Projection projection);
 
-	public void deleteOAuthToken(long userId, java.lang.String gadgetKey,
-		java.lang.String serviceName, long moduleId, java.lang.String tokenName)
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public OAuthToken fetchOAuthToken(long oAuthTokenId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public OAuthToken fetchOAuthToken(long userId, String gadgetKey,
+		String serviceName, long moduleId, String tokenName);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public ActionableDynamicQuery getActionableDynamicQuery();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
+
+	/**
+	* Returns the o auth token with the primary key.
+	*
+	* @param oAuthTokenId the primary key of the o auth token
+	* @return the o auth token
+	* @throws PortalException if a o auth token with the primary key could not be found
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public OAuthToken getOAuthToken(long oAuthTokenId)
 		throws PortalException;
 
-	public void deleteOAuthTokens(java.lang.String gadgetKey,
-		java.lang.String serviceName);
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public OAuthToken getOAuthToken(long userId, String gadgetKey,
+		String serviceName, long moduleId, String tokenName)
+		throws PortalException;
+
+	/**
+	* Returns a range of all the o auth tokens.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.opensocial.model.impl.OAuthTokenModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param start the lower bound of the range of o auth tokens
+	* @param end the upper bound of the range of o auth tokens (not inclusive)
+	* @return the range of o auth tokens
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<OAuthToken> getOAuthTokens(int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<OAuthToken> getOAuthTokens(String gadgetKey, String serviceName);
+
+	/**
+	* Returns the number of o auth tokens.
+	*
+	* @return the number of o auth tokens
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getOAuthTokensCount();
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	public String getOSGiServiceIdentifier();
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
+		throws PortalException;
+
+	/**
+	* Updates the o auth token in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param oAuthToken the o auth token
+	* @return the o auth token that was updated
+	*/
+	@Indexable(type = IndexableType.REINDEX)
+	public OAuthToken updateOAuthToken(OAuthToken oAuthToken);
 }

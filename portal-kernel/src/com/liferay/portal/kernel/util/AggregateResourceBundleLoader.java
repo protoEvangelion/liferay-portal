@@ -14,6 +14,8 @@
 
 package com.liferay.portal.kernel.util;
 
+import com.liferay.petra.string.StringPool;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -27,6 +29,13 @@ public class AggregateResourceBundleLoader implements ResourceBundleLoader {
 
 	public AggregateResourceBundleLoader(
 		ResourceBundleLoader... resourceBundleLoaders) {
+
+		for (int i = 0; i < resourceBundleLoaders.length; i++) {
+			if (resourceBundleLoaders[i] == null) {
+				throw new NullPointerException(
+					"Null resource bundle loader at index " + i);
+			}
+		}
 
 		_resourceBundleLoaders = resourceBundleLoaders;
 	}
@@ -54,8 +63,9 @@ public class AggregateResourceBundleLoader implements ResourceBundleLoader {
 			String languageId = LocaleUtil.toLanguageId(locale);
 
 			throw new MissingResourceException(
-				"Resource bundle loader " + this + " was unable to load " +
-					"resource bundle for " + languageId,
+				StringBundler.concat(
+					"Resource bundle loader ", String.valueOf(this),
+					" was unable to load resource bundle for ", languageId),
 				StringPool.BLANK, languageId);
 		}
 
@@ -69,12 +79,13 @@ public class AggregateResourceBundleLoader implements ResourceBundleLoader {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #loadResourceBundle(Locale)}
+	 * @deprecated As of Judson (7.1.x), replaced by {@link
+	 *             #loadResourceBundle(Locale)}
 	 */
 	@Deprecated
 	@Override
 	public ResourceBundle loadResourceBundle(String languageId) {
-		return loadResourceBundle(LocaleUtil.fromLanguageId(languageId));
+		return ResourceBundleLoader.super.loadResourceBundle(languageId);
 	}
 
 	private final ResourceBundleLoader[] _resourceBundleLoaders;

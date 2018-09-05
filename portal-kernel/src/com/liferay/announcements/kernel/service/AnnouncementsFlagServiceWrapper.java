@@ -34,6 +34,18 @@ public class AnnouncementsFlagServiceWrapper implements AnnouncementsFlagService
 	}
 
 	@Override
+	public void addFlag(long entryId, int value)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_announcementsFlagService.addFlag(entryId, value);
+	}
+
+	@Override
+	public void deleteFlag(long flagId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_announcementsFlagService.deleteFlag(flagId);
+	}
+
+	@Override
 	public com.liferay.announcements.kernel.model.AnnouncementsFlag getFlag(
 		long entryId, int value)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -46,20 +58,8 @@ public class AnnouncementsFlagServiceWrapper implements AnnouncementsFlagService
 	* @return the OSGi service identifier
 	*/
 	@Override
-	public java.lang.String getOSGiServiceIdentifier() {
+	public String getOSGiServiceIdentifier() {
 		return _announcementsFlagService.getOSGiServiceIdentifier();
-	}
-
-	@Override
-	public void addFlag(long entryId, int value)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_announcementsFlagService.addFlag(entryId, value);
-	}
-
-	@Override
-	public void deleteFlag(long flagId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_announcementsFlagService.deleteFlag(flagId);
 	}
 
 	@Override

@@ -33,7 +33,6 @@ import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
-import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -45,9 +44,11 @@ import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 
 /**
- * @author Istvan Andras Dezsi
+ * @author     Istvan Andras Dezsi
+ * @deprecated As of Judson (7.1.x), moved to {@link
+ *             com.liferay.asset.categories.internal.search.AssetVocabularyIndexer}
  */
-@OSGiBeanProperties
+@Deprecated
 public class AssetVocabularyIndexer extends BaseIndexer<AssetVocabulary> {
 
 	public static final String CLASS_NAME = AssetVocabulary.class.getName();
@@ -123,6 +124,7 @@ public class AssetVocabularyIndexer extends BaseIndexer<AssetVocabulary> {
 			assetVocabulary.getDescriptionMap());
 
 		document.addText(Field.NAME, assetVocabulary.getName());
+
 		addLocalizedField(
 			document, Field.TITLE, siteDefaultLocale,
 			assetVocabulary.getTitleMap());

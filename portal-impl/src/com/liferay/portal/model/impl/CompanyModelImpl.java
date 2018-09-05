@@ -19,18 +19,19 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.CompanyModel;
 import com.liferay.portal.kernel.model.CompanySoap;
+import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Serializable;
 
@@ -93,7 +94,7 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 		TABLE_COLUMNS_MAP.put("active_", Types.BOOLEAN);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table Company (mvccVersion LONG default 0 not null,companyId LONG not null primary key,accountId LONG,webId VARCHAR(75) null,key_ TEXT null,mx VARCHAR(75) null,homeURL STRING null,logoId LONG,system BOOLEAN,maxUsers INTEGER,active_ BOOLEAN)";
+	public static final String TABLE_SQL_CREATE = "create table Company (mvccVersion LONG default 0 not null,companyId LONG not null primary key,accountId LONG,webId VARCHAR(75) null,key_ TEXT null,mx VARCHAR(200) null,homeURL STRING null,logoId LONG,system BOOLEAN,maxUsers INTEGER,active_ BOOLEAN)";
 	public static final String TABLE_SQL_DROP = "drop table Company";
 	public static final String ORDER_BY_JPQL = " ORDER BY company.companyId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY Company.companyId ASC";
@@ -136,9 +137,9 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 		model.setMx(soapModel.getMx());
 		model.setHomeURL(soapModel.getHomeURL());
 		model.setLogoId(soapModel.getLogoId());
-		model.setSystem(soapModel.getSystem());
+		model.setSystem(soapModel.isSystem());
 		model.setMaxUsers(soapModel.getMaxUsers());
-		model.setActive(soapModel.getActive());
+		model.setActive(soapModel.isActive());
 
 		return model;
 	}
@@ -211,9 +212,9 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 		attributes.put("mx", getMx());
 		attributes.put("homeURL", getHomeURL());
 		attributes.put("logoId", getLogoId());
-		attributes.put("system", getSystem());
+		attributes.put("system", isSystem());
 		attributes.put("maxUsers", getMaxUsers());
-		attributes.put("active", getActive());
+		attributes.put("active", isActive());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -327,7 +328,7 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 	@Override
 	public String getWebId() {
 		if (_webId == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _webId;
@@ -353,7 +354,7 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 	@Override
 	public String getKey() {
 		if (_key == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _key;
@@ -369,7 +370,7 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 	@Override
 	public String getMx() {
 		if (_mx == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _mx;
@@ -395,7 +396,7 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 	@Override
 	public String getHomeURL() {
 		if (_homeURL == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _homeURL;
@@ -502,11 +503,11 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 	public void setKeyObj(java.security.Key keyObj) {
 	}
 
-	public java.lang.String getVirtualHostname() {
+	public String getVirtualHostname() {
 		return null;
 	}
 
-	public void setVirtualHostname(java.lang.String virtualHostname) {
+	public void setVirtualHostname(String virtualHostname) {
 	}
 
 	public long getColumnBitmask() {
@@ -548,9 +549,9 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 		companyImpl.setMx(getMx());
 		companyImpl.setHomeURL(getHomeURL());
 		companyImpl.setLogoId(getLogoId());
-		companyImpl.setSystem(getSystem());
+		companyImpl.setSystem(isSystem());
 		companyImpl.setMaxUsers(getMaxUsers());
-		companyImpl.setActive(getActive());
+		companyImpl.setActive(isActive());
 
 		companyImpl.resetOriginalValues();
 
@@ -678,11 +679,11 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 
 		companyCacheModel.logoId = getLogoId();
 
-		companyCacheModel.system = getSystem();
+		companyCacheModel.system = isSystem();
 
 		companyCacheModel.maxUsers = getMaxUsers();
 
-		companyCacheModel.active = getActive();
+		companyCacheModel.active = isActive();
 
 		companyCacheModel._companySecurityBag = getCompanySecurityBag();
 
@@ -714,11 +715,11 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 		sb.append(", logoId=");
 		sb.append(getLogoId());
 		sb.append(", system=");
-		sb.append(getSystem());
+		sb.append(isSystem());
 		sb.append(", maxUsers=");
 		sb.append(getMaxUsers());
 		sb.append(", active=");
-		sb.append(getActive());
+		sb.append(isActive());
 		sb.append("}");
 
 		return sb.toString();
@@ -766,7 +767,7 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>system</column-name><column-value><![CDATA[");
-		sb.append(getSystem());
+		sb.append(isSystem());
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>maxUsers</column-name><column-value><![CDATA[");
@@ -774,7 +775,7 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>active</column-name><column-value><![CDATA[");
-		sb.append(getActive());
+		sb.append(isActive());
 		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
@@ -784,7 +785,7 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 
 	private static final ClassLoader _classLoader = Company.class.getClassLoader();
 	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
-			Company.class
+			Company.class, ModelWrapper.class
 		};
 	private long _mvccVersion;
 	private long _companyId;

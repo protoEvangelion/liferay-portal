@@ -14,7 +14,7 @@
 
 package com.liferay.source.formatter.checks;
 
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import java.util.regex.Matcher;
@@ -54,7 +54,8 @@ public class JavaFinderCacheCheck extends BaseFileCheck {
 			addMessage(
 				fileName,
 				"Missing override of BasePersistenceImpl." +
-					"fetchByPrimaryKeys(Set<Serializable>), see LPS-49552");
+					"fetchByPrimaryKeys(Set<Serializable>)",
+				"finderpath.markdown");
 		}
 	}
 

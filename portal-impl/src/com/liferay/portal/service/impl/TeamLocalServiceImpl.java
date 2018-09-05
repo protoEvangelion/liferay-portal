@@ -14,6 +14,7 @@
 
 package com.liferay.portal.service.impl;
 
+import com.liferay.petra.string.CharPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.DuplicateTeamException;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -24,7 +25,6 @@ import com.liferay.portal.kernel.model.RoleConstants;
 import com.liferay.portal.kernel.model.Team;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.service.base.TeamLocalServiceBaseImpl;
@@ -38,8 +38,8 @@ import java.util.List;
 public class TeamLocalServiceImpl extends TeamLocalServiceBaseImpl {
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #addTeam(long, long, String,
-	 *             String, ServiceContext)}
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link #addTeam(long,
+	 *             long, String, String, ServiceContext)}
 	 */
 	@Deprecated
 	@Override
@@ -68,8 +68,8 @@ public class TeamLocalServiceImpl extends TeamLocalServiceBaseImpl {
 		Team team = teamPersistence.create(teamId);
 
 		team.setUuid(serviceContext.getUuid());
-		team.setUserId(userId);
 		team.setCompanyId(user.getCompanyId());
+		team.setUserId(userId);
 		team.setUserName(user.getFullName());
 		team.setGroupId(groupId);
 		team.setName(name);
@@ -138,6 +138,11 @@ public class TeamLocalServiceImpl extends TeamLocalServiceBaseImpl {
 	@Override
 	public List<Team> getGroupTeams(long groupId) {
 		return teamPersistence.findByGroupId(groupId);
+	}
+
+	@Override
+	public int getGroupTeamsCount(long groupId) {
+		return teamPersistence.countByGroupId(groupId);
 	}
 
 	@Override

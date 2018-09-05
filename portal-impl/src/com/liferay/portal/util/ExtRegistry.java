@@ -101,9 +101,8 @@ public class ExtRegistry {
 		if (_extMap.containsKey(servletContextName)) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	public static void registerExt(ServletContext servletContext)
@@ -168,9 +167,9 @@ public class ExtRegistry {
 	}
 
 	private static final String[] _IGNORED_FILE_NAMES =
-		new String[] {"log4j.dtd", "service.xml", "sql/"};
+		{"log4j.dtd", "service.xml", "sql/"};
 
-	private static final String[] _SUPPORTED_MERGING_FILE_NAMES = new String[] {
+	private static final String[] _SUPPORTED_MERGING_FILE_NAMES = {
 		"content/Language-ext", "ext-hbm.xml", "ext-model-hints.xml",
 		"ext-spring.xml", "portal-log4j-ext.xml"
 	};

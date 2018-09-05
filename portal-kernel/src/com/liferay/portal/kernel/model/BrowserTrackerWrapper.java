@@ -99,78 +99,13 @@ public class BrowserTrackerWrapper implements BrowserTracker,
 	}
 
 	@Override
-	public BrowserTracker toEscapedModel() {
-		return new BrowserTrackerWrapper(_browserTracker.toEscapedModel());
-	}
-
-	@Override
-	public BrowserTracker toUnescapedModel() {
-		return new BrowserTrackerWrapper(_browserTracker.toUnescapedModel());
-	}
-
-	@Override
-	public CacheModel<BrowserTracker> toCacheModel() {
-		return _browserTracker.toCacheModel();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _browserTracker.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _browserTracker.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _browserTracker.isNew();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _browserTracker.getExpandoBridge();
+	public Object clone() {
+		return new BrowserTrackerWrapper((BrowserTracker)_browserTracker.clone());
 	}
 
 	@Override
 	public int compareTo(BrowserTracker browserTracker) {
 		return _browserTracker.compareTo(browserTracker);
-	}
-
-	@Override
-	public int hashCode() {
-		return _browserTracker.hashCode();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _browserTracker.getPrimaryKeyObj();
-	}
-
-	@Override
-	public java.lang.Object clone() {
-		return new BrowserTrackerWrapper((BrowserTracker)_browserTracker.clone());
-	}
-
-	/**
-	* Returns the user uuid of this browser tracker.
-	*
-	* @return the user uuid of this browser tracker
-	*/
-	@Override
-	public java.lang.String getUserUuid() {
-		return _browserTracker.getUserUuid();
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _browserTracker.toString();
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _browserTracker.toXmlString();
 	}
 
 	/**
@@ -203,6 +138,11 @@ public class BrowserTrackerWrapper implements BrowserTracker,
 		return _browserTracker.getCompanyId();
 	}
 
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _browserTracker.getExpandoBridge();
+	}
+
 	/**
 	* Returns the mvcc version of this browser tracker.
 	*
@@ -223,6 +163,11 @@ public class BrowserTrackerWrapper implements BrowserTracker,
 		return _browserTracker.getPrimaryKey();
 	}
 
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _browserTracker.getPrimaryKeyObj();
+	}
+
 	/**
 	* Returns the user ID of this browser tracker.
 	*
@@ -231,6 +176,36 @@ public class BrowserTrackerWrapper implements BrowserTracker,
 	@Override
 	public long getUserId() {
 		return _browserTracker.getUserId();
+	}
+
+	/**
+	* Returns the user uuid of this browser tracker.
+	*
+	* @return the user uuid of this browser tracker
+	*/
+	@Override
+	public String getUserUuid() {
+		return _browserTracker.getUserUuid();
+	}
+
+	@Override
+	public int hashCode() {
+		return _browserTracker.hashCode();
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _browserTracker.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _browserTracker.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _browserTracker.isNew();
 	}
 
 	@Override
@@ -334,8 +309,33 @@ public class BrowserTrackerWrapper implements BrowserTracker,
 	* @param userUuid the user uuid of this browser tracker
 	*/
 	@Override
-	public void setUserUuid(java.lang.String userUuid) {
+	public void setUserUuid(String userUuid) {
 		_browserTracker.setUserUuid(userUuid);
+	}
+
+	@Override
+	public CacheModel<BrowserTracker> toCacheModel() {
+		return _browserTracker.toCacheModel();
+	}
+
+	@Override
+	public BrowserTracker toEscapedModel() {
+		return new BrowserTrackerWrapper(_browserTracker.toEscapedModel());
+	}
+
+	@Override
+	public String toString() {
+		return _browserTracker.toString();
+	}
+
+	@Override
+	public BrowserTracker toUnescapedModel() {
+		return new BrowserTrackerWrapper(_browserTracker.toUnescapedModel());
+	}
+
+	@Override
+	public String toXmlString() {
+		return _browserTracker.toXmlString();
 	}
 
 	@Override

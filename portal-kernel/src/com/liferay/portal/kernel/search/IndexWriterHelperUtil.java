@@ -170,17 +170,23 @@ public class IndexWriterHelperUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
 	 *             com.liferay.portal.search.index.IndexStatusManager#
 	 *             isIndexReadOnly}
 	 */
 	@Deprecated
 	public static boolean isIndexReadOnly() {
-		return _indexWriterHelper.isIndexReadOnly();
+		if (IndexStatusManagerThreadLocal.isIndexReadOnly() ||
+			_indexWriterHelper.isIndexReadOnly()) {
+
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Judson (7.1.x), replaced by {@link
 	 *             com.liferay.portal.search.index.IndexStatusManager#
 	 *             isIndexReadOnly(String)}
 	 */
@@ -226,7 +232,7 @@ public class IndexWriterHelperUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
 	 *             com.liferay.portal.search.index.IndexStatusManager#
 	 *             setIndexReadOnly(boolean)}
 	 */
@@ -236,7 +242,7 @@ public class IndexWriterHelperUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Judson (7.1.x), replaced by {@link
 	 *             com.liferay.portal.search.index.IndexStatusManager#
 	 *             setIndexReadOnly(String, boolean)}
 	 */

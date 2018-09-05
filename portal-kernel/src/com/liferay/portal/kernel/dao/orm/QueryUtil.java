@@ -71,9 +71,8 @@ public class QueryUtil {
 			if (unmodifiable) {
 				return Collections.emptyList();
 			}
-			else {
-				return new ArrayList<>();
-			}
+
+			return new ArrayList<>();
 		}
 
 		if (dialect.supportsLimit()) {
@@ -117,9 +116,8 @@ public class QueryUtil {
 		if (unmodifiable) {
 			return Collections.unmodifiableList(list);
 		}
-		else {
-			return list;
-		}
+
+		return list;
 	}
 
 	public static List<?> randomList(
@@ -156,8 +154,8 @@ public class QueryUtil {
 
 		ScrollableResults sr = query.scroll();
 
-		for (int i = 0; i < scrollIds.length; i++) {
-			if (sr.scroll(scrollIds[i])) {
+		for (int scrollId : scrollIds) {
+			if (sr.scroll(scrollId)) {
 				Object[] array = sr.get();
 
 				if (array.length == 1) {
@@ -174,9 +172,8 @@ public class QueryUtil {
 		if (unmodifiable) {
 			return Collections.unmodifiableList(list);
 		}
-		else {
-			return list;
-		}
+
+		return list;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(QueryUtil.class);

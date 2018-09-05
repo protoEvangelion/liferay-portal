@@ -15,11 +15,13 @@
 package com.liferay.portal.osgi.web.portlet.container.embedded.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutTypePortlet;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.model.PortletPreferences;
+import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.service.PortletLocalServiceUtil;
 import com.liferay.portal.kernel.service.PortletPreferencesLocalServiceUtil;
 import com.liferay.portal.kernel.template.TemplateHandler;
@@ -31,7 +33,6 @@ import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.HashMapDictionary;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.osgi.web.portlet.container.test.BasePortletContainerTestCase;
 import com.liferay.portal.osgi.web.portlet.container.test.TestPortlet;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -39,8 +40,6 @@ import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.util.test.LayoutTestUtil;
 import com.liferay.portal.util.test.PortletContainerTestUtil;
-import com.liferay.portal.util.test.PortletContainerTestUtil.Response;
-import com.liferay.portlet.PortletURLImpl;
 
 import java.io.IOException;
 
@@ -110,7 +109,9 @@ public class EmbeddedPortletTest {
 			List<Portlet> explicitlyAddedPortlets =
 				_layoutTypePortlet.getExplicitlyAddedPortlets();
 
-			Assert.assertFalse(explicitlyAddedPortlets.contains(portlet));
+			Assert.assertFalse(
+				explicitlyAddedPortlets.toString(),
+				explicitlyAddedPortlets.contains(portlet));
 		}
 
 		@Test
@@ -132,7 +133,8 @@ public class EmbeddedPortletTest {
 
 			List<Portlet> allPortlets = _layoutTypePortlet.getAllPortlets();
 
-			Assert.assertTrue(allPortlets.contains(portlet));
+			Assert.assertTrue(
+				allPortlets.toString(), allPortlets.contains(portlet));
 		}
 
 		@Test
@@ -155,7 +157,9 @@ public class EmbeddedPortletTest {
 			List<Portlet> embeddedPortlets =
 				_layoutTypePortlet.getEmbeddedPortlets();
 
-			Assert.assertTrue(embeddedPortlets.contains(portlet));
+			Assert.assertTrue(
+				embeddedPortlets.toString(),
+				embeddedPortlets.contains(portlet));
 		}
 
 		@Test
@@ -237,7 +241,9 @@ public class EmbeddedPortletTest {
 
 			List<Portlet> allPortlets = _layoutTypePortlet.getAllPortlets();
 
-			Assert.assertFalse(allPortlets.contains(_testNonembeddedPortlet));
+			Assert.assertFalse(
+				allPortlets.toString(),
+				allPortlets.contains(_testNonembeddedPortlet));
 		}
 
 		@Test
@@ -253,6 +259,7 @@ public class EmbeddedPortletTest {
 				_layoutTypePortlet.getEmbeddedPortlets();
 
 			Assert.assertFalse(
+				embeddedPortlets.toString(),
 				embeddedPortlets.contains(_testNonembeddedPortlet));
 		}
 
@@ -271,6 +278,7 @@ public class EmbeddedPortletTest {
 				_layoutTypePortlet.getExplicitlyAddedPortlets();
 
 			Assert.assertFalse(
+				explicitlyAddedPortlets.toString(),
 				explicitlyAddedPortlets.contains(_testNonembeddedPortlet));
 		}
 
@@ -378,7 +386,7 @@ public class EmbeddedPortletTest {
 			HttpServletRequest httpServletRequest =
 				PortletContainerTestUtil.getHttpServletRequest(group, layout);
 
-			PortletURL portletURL = new PortletURLImpl(
+			PortletURL portletURL = PortletURLFactoryUtil.create(
 				httpServletRequest, TEST_PORTLET_ID, layout.getPlid(),
 				PortletRequest.RENDER_PHASE);
 
@@ -391,8 +399,8 @@ public class EmbeddedPortletTest {
 			portletURL.setParameter(
 				"testRuntimePortletId", testRuntimePortletId);
 
-			Response response = PortletContainerTestUtil.request(
-				portletURL.toString());
+			PortletContainerTestUtil.Response response =
+				PortletContainerTestUtil.request(portletURL.toString());
 
 			Assert.assertEquals(200, response.getCode());
 
@@ -458,7 +466,7 @@ public class EmbeddedPortletTest {
 			HttpServletRequest httpServletRequest =
 				PortletContainerTestUtil.getHttpServletRequest(group, layout);
 
-			PortletURL portletURL = new PortletURLImpl(
+			PortletURL portletURL = PortletURLFactoryUtil.create(
 				httpServletRequest, TEST_PORTLET_ID, layout.getPlid(),
 				PortletRequest.RESOURCE_PHASE);
 
@@ -471,8 +479,8 @@ public class EmbeddedPortletTest {
 			portletURL.setParameter(
 				"testRuntimePortletId", testRuntimePortletId);
 
-			Response response = PortletContainerTestUtil.request(
-				portletURL.toString());
+			PortletContainerTestUtil.Response response =
+				PortletContainerTestUtil.request(portletURL.toString());
 
 			Assert.assertEquals(200, response.getCode());
 

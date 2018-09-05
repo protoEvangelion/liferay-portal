@@ -14,6 +14,8 @@
 
 package com.liferay.portal.scripting.ruby.internal;
 
+import com.liferay.petra.reflect.ReflectionUtil;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -24,8 +26,6 @@ import com.liferay.portal.kernel.scripting.ScriptingExecutor;
 import com.liferay.portal.kernel.util.NamedThreadFactory;
 import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.ReflectionUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.scripting.BaseScriptingExecutor;
 import com.liferay.portal.scripting.ruby.configuration.RubyScriptingConfiguration;
 
@@ -48,7 +48,6 @@ import java.util.concurrent.ThreadFactory;
 import org.jruby.Ruby;
 import org.jruby.RubyException;
 import org.jruby.RubyInstanceConfig;
-import org.jruby.RubyInstanceConfig.CompileMode;
 import org.jruby.embed.LocalContextScope;
 import org.jruby.embed.internal.LocalContextProvider;
 import org.jruby.exceptions.RaiseException;
@@ -59,15 +58,16 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * @author Alberto Montero
- * @author Raymond Augé
+ * @author     Alberto Montero
+ * @author     Raymond Augé
+ * @deprecated As of Judson (7.1.x), with no direct replacement
  */
 @Component(
 	configurationPid = "com.liferay.portal.scripting.ruby.configuration.RubyScriptingConfiguration",
-	immediate = true,
-	property = {"scripting.language=" + RubyExecutor.LANGUAGE},
+	immediate = true, property = "scripting.language=" + RubyExecutor.LANGUAGE,
 	service = ScriptingExecutor.class
 )
+@Deprecated
 public class RubyExecutor extends BaseScriptingExecutor {
 
 	public static final String LANGUAGE = "ruby";
@@ -252,10 +252,12 @@ public class RubyExecutor extends BaseScriptingExecutor {
 		String compileMode = _rubyScriptingConfiguration.compileMode();
 
 		if (compileMode.equals(_COMPILE_MODE_FORCE)) {
-			rubyInstanceConfig.setCompileMode(CompileMode.FORCE);
+			rubyInstanceConfig.setCompileMode(
+				RubyInstanceConfig.CompileMode.FORCE);
 		}
 		else if (compileMode.equals(_COMPILE_MODE_JIT)) {
-			rubyInstanceConfig.setCompileMode(CompileMode.JIT);
+			rubyInstanceConfig.setCompileMode(
+				RubyInstanceConfig.CompileMode.JIT);
 		}
 
 		rubyInstanceConfig.setJitThreshold(

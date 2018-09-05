@@ -19,9 +19,12 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.UserTracker;
 import com.liferay.portal.kernel.model.UserTrackerModel;
@@ -30,8 +33,6 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Serializable;
 
@@ -289,7 +290,7 @@ public class UserTrackerModelImpl extends BaseModelImpl<UserTracker>
 			return user.getUuid();
 		}
 		catch (PortalException pe) {
-			return StringPool.BLANK;
+			return "";
 		}
 	}
 
@@ -314,7 +315,7 @@ public class UserTrackerModelImpl extends BaseModelImpl<UserTracker>
 	@Override
 	public String getSessionId() {
 		if (_sessionId == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _sessionId;
@@ -339,7 +340,7 @@ public class UserTrackerModelImpl extends BaseModelImpl<UserTracker>
 	@Override
 	public String getRemoteAddr() {
 		if (_remoteAddr == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _remoteAddr;
@@ -354,7 +355,7 @@ public class UserTrackerModelImpl extends BaseModelImpl<UserTracker>
 	@Override
 	public String getRemoteHost() {
 		if (_remoteHost == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _remoteHost;
@@ -369,7 +370,7 @@ public class UserTrackerModelImpl extends BaseModelImpl<UserTracker>
 	@Override
 	public String getUserAgent() {
 		if (_userAgent == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _userAgent;
@@ -631,7 +632,7 @@ public class UserTrackerModelImpl extends BaseModelImpl<UserTracker>
 
 	private static final ClassLoader _classLoader = UserTracker.class.getClassLoader();
 	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
-			UserTracker.class
+			UserTracker.class, ModelWrapper.class
 		};
 	private long _mvccVersion;
 	private long _userTrackerId;

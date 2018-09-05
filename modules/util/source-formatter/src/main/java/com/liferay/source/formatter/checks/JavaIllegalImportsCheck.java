@@ -26,10 +26,6 @@ public class JavaIllegalImportsCheck extends BaseFileCheck {
 	protected String doProcess(
 		String fileName, String absolutePath, String content) {
 
-		if (fileName.endsWith("JavaIllegalImportsCheck.java")) {
-			return content;
-		}
-
 		content = StringUtil.replace(
 			content,
 			new String[] {
@@ -173,6 +169,15 @@ public class JavaIllegalImportsCheck extends BaseFileCheck {
 				fileName,
 				"Do not use java.util.WeakHashMap because it is not " +
 					"thread-safe, see LPS-70963");
+		}
+
+		if (!isExcludedPath(RUN_OUTSIDE_PORTAL_EXCLUDES, absolutePath) &&
+			content.contains("org.slf4j.Logger")) {
+
+			addMessage(
+				fileName,
+				"Use com.liferay.portal.kernel.log.Log instead of " +
+					"org.slf4j.Logger");
 		}
 
 		return content;

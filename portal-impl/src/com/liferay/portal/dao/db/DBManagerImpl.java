@@ -14,17 +14,18 @@
 
 package com.liferay.portal.dao.db;
 
+import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.portal.dao.orm.hibernate.DialectImpl;
+import com.liferay.portal.dao.orm.hibernate.MariaDBDialect;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBFactory;
 import com.liferay.portal.kernel.dao.db.DBManager;
 import com.liferay.portal.kernel.dao.db.DBType;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.security.pacl.DoPrivileged;
 import com.liferay.portal.kernel.util.InfrastructureUtil;
 import com.liferay.portal.kernel.util.InstanceFactory;
-import com.liferay.portal.kernel.util.ReflectionUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.util.PropsValues;
 
 import java.sql.Connection;
@@ -32,7 +33,9 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 import java.util.EnumMap;
+import java.util.LinkedHashSet;
 import java.util.ServiceLoader;
+import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -53,7 +56,6 @@ import org.hibernate.dialect.SybaseDialect;
  * @author Alexander Chow
  * @author Brian Wing Shun Chan
  */
-@DoPrivileged
 @SuppressWarnings("deprecation")
 public class DBManagerImpl implements DBManager {
 
@@ -133,6 +135,10 @@ public class DBManagerImpl implements DBManager {
 			return DBType.HYPERSONIC;
 		}
 
+		if (dialect instanceof MariaDBDialect) {
+			return DBType.MARIADB;
+		}
+
 		if (dialect instanceof MySQLDialect) {
 			return DBType.MYSQL;
 		}
@@ -163,6 +169,11 @@ public class DBManagerImpl implements DBManager {
 	}
 
 	@Override
+	public Set<DBType> getDBTypes() {
+		return new LinkedHashSet<>(_dbFactories.keySet());
+	}
+
+	@Override
 	public void setDB(DB db) {
 		_db = db;
 
@@ -170,8 +181,9 @@ public class DBManagerImpl implements DBManager {
 			Class<?> clazz = _db.getClass();
 
 			_log.debug(
-				"Using DB implementation " + clazz.getName() + " for " +
-					db.getDBType());
+				StringBundler.concat(
+					"Using DB implementation ", clazz.getName(), " for ",
+					String.valueOf(db.getDBType())));
 		}
 	}
 

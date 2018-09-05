@@ -36,10 +36,20 @@ public class ScreensRatingsEntryServiceWrapper
 
 	@Override
 	public com.liferay.portal.kernel.json.JSONObject deleteRatingsEntry(
-		long classPK, java.lang.String className, int ratingsLength)
+		long classPK, String className, int ratingsLength)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _screensRatingsEntryService.deleteRatingsEntry(classPK,
 			className, ratingsLength);
+	}
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	@Override
+	public String getOSGiServiceIdentifier() {
+		return _screensRatingsEntryService.getOSGiServiceIdentifier();
 	}
 
 	@Override
@@ -52,7 +62,7 @@ public class ScreensRatingsEntryServiceWrapper
 
 	@Override
 	public com.liferay.portal.kernel.json.JSONObject getRatingsEntries(
-		long classPK, java.lang.String className, int ratingsLength)
+		long classPK, String className, int ratingsLength)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _screensRatingsEntryService.getRatingsEntries(classPK,
 			className, ratingsLength);
@@ -60,21 +70,10 @@ public class ScreensRatingsEntryServiceWrapper
 
 	@Override
 	public com.liferay.portal.kernel.json.JSONObject updateRatingsEntry(
-		long classPK, java.lang.String className, double score,
-		int ratingsLength)
+		long classPK, String className, double score, int ratingsLength)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _screensRatingsEntryService.updateRatingsEntry(classPK,
 			className, score, ratingsLength);
-	}
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	@Override
-	public java.lang.String getOSGiServiceIdentifier() {
-		return _screensRatingsEntryService.getOSGiServiceIdentifier();
 	}
 
 	@Override

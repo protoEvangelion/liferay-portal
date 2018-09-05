@@ -11,6 +11,17 @@
 		/>
 	</target>
 
+	<target name="create-token">
+		<create-token
+			emailAddress="${bundle.support.email.address}"
+			force="${bundle.support.force}"
+			password="${bundle.support.password}"
+			passwordFile="${bundle.support.password.file}"
+			tokenFile="${bundle.support.token.file}"
+			tokenUrl="${bundle.support.token.url}"
+		/>
+	</target>
+
 	<target name="deploy">
 		<deploy
 			file="${bundle.support.file}"

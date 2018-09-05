@@ -44,9 +44,9 @@ public class JavaModuleInternalImportsCheck extends BaseFileCheck {
 			return content;
 		}
 
-		String packagePath = JavaSourceUtil.getPackagePath(content);
+		String packageName = JavaSourceUtil.getPackageName(content);
 
-		if (!packagePath.startsWith("com.liferay")) {
+		if (!packageName.startsWith("com.liferay")) {
 			return content;
 		}
 
@@ -77,7 +77,7 @@ public class JavaModuleInternalImportsCheck extends BaseFileCheck {
 				addMessage(
 					fileName,
 					"Do not import internal class from another module",
-					getLineCount(content, matcher.start(1)));
+					getLineNumber(content, matcher.start(1)));
 			}
 		}
 	}

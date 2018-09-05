@@ -36,6 +36,7 @@ public class IMAPMessageCountListener implements MessageCountListener {
 		User user, Account account, String password) {
 
 		_account = account;
+
 		_imapAccessor = new IMAPAccessor(user, account, password);
 	}
 
@@ -100,7 +101,7 @@ public class IMAPMessageCountListener implements MessageCountListener {
 				_imapAccessor.closeFolder(jxFolder, false);
 			}
 			catch (MailException me) {
-				_log.error(me);
+				_log.error(me, me);
 			}
 		}
 	}

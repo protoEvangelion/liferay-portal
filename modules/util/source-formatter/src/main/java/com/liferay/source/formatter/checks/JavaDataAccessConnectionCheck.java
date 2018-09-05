@@ -23,15 +23,18 @@ import com.liferay.source.formatter.checks.util.JavaSourceUtil;
 public class JavaDataAccessConnectionCheck extends BaseFileCheck {
 
 	@Override
+	public boolean isPortalCheck() {
+		return true;
+	}
+
+	@Override
 	protected String doProcess(
 		String fileName, String absolutePath, String content) {
 
-		String packagePath = JavaSourceUtil.getPackagePath(content);
+		String packageName = JavaSourceUtil.getPackageName(content);
 
-		if (packagePath.startsWith("com.liferay.portal.kernel.upgrade") ||
-			packagePath.startsWith("com.liferay.portal.kernel.verify") ||
-			packagePath.startsWith("com.liferay.portal.upgrade") ||
-			packagePath.startsWith("com.liferay.portal.verify")) {
+		if (packageName.matches(".*\\.upgrade(\\.v[_0-9]+)?") ||
+			packageName.endsWith(".verify")) {
 
 			content = StringUtil.replace(
 				content, "DataAccess.getConnection",

@@ -42,55 +42,6 @@ public class SocialActivityInterpreterLocalServiceUtil {
 	 */
 
 	/**
-	* Creates a human readable activity feed entry for the activity using an
-	* available compatible activity interpreter.
-	*
-	* <p>
-	* This method finds the appropriate interpreter for the activity by going
-	* through the available interpreters and asking them if they can handle the
-	* asset type of the activity.
-	* </p>
-	*
-	* @param selector the context in which the activity interpreter is used
-	* @param activity the activity to be translated to human readable form
-	* @param serviceContext the service context to be applied
-	* @return the activity feed that is a human readable form of the activity
-	record or <code>null</code> if a compatible interpreter is not
-	found
-	*/
-	public static com.liferay.social.kernel.model.SocialActivityFeedEntry interpret(
-		java.lang.String selector,
-		com.liferay.social.kernel.model.SocialActivity activity,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
-		return getService().interpret(selector, activity, serviceContext);
-	}
-
-	public static com.liferay.social.kernel.model.SocialActivityFeedEntry interpret(
-		java.lang.String selector,
-		com.liferay.social.kernel.model.SocialActivitySet activitySet,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
-		return getService().interpret(selector, activitySet, serviceContext);
-	}
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	public static java.lang.String getOSGiServiceIdentifier() {
-		return getService().getOSGiServiceIdentifier();
-	}
-
-	public static java.util.List<com.liferay.social.kernel.model.SocialActivityInterpreter> getActivityInterpreters(
-		java.lang.String selector) {
-		return getService().getActivityInterpreters(selector);
-	}
-
-	public static java.util.Map<java.lang.String, java.util.List<com.liferay.social.kernel.model.SocialActivityInterpreter>> getActivityInterpreters() {
-		return getService().getActivityInterpreters();
-	}
-
-	/**
 	* Adds the activity interpreter to the list of available interpreters.
 	*
 	* @param activityInterpreter the activity interpreter
@@ -108,6 +59,55 @@ public class SocialActivityInterpreterLocalServiceUtil {
 	public static void deleteActivityInterpreter(
 		com.liferay.social.kernel.model.SocialActivityInterpreter activityInterpreter) {
 		getService().deleteActivityInterpreter(activityInterpreter);
+	}
+
+	public static java.util.Map<String, java.util.List<com.liferay.social.kernel.model.SocialActivityInterpreter>> getActivityInterpreters() {
+		return getService().getActivityInterpreters();
+	}
+
+	public static java.util.List<com.liferay.social.kernel.model.SocialActivityInterpreter> getActivityInterpreters(
+		String selector) {
+		return getService().getActivityInterpreters(selector);
+	}
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	public static String getOSGiServiceIdentifier() {
+		return getService().getOSGiServiceIdentifier();
+	}
+
+	/**
+	* Creates a human readable activity feed entry for the activity using an
+	* available compatible activity interpreter.
+	*
+	* <p>
+	* This method finds the appropriate interpreter for the activity by going
+	* through the available interpreters and asking them if they can handle the
+	* asset type of the activity.
+	* </p>
+	*
+	* @param selector the context in which the activity interpreter is used
+	* @param activity the activity to be translated to human readable form
+	* @param serviceContext the service context to be applied
+	* @return the activity feed that is a human readable form of the activity
+	record or <code>null</code> if a compatible interpreter is not
+	found
+	*/
+	public static com.liferay.social.kernel.model.SocialActivityFeedEntry interpret(
+		String selector,
+		com.liferay.social.kernel.model.SocialActivity activity,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		return getService().interpret(selector, activity, serviceContext);
+	}
+
+	public static com.liferay.social.kernel.model.SocialActivityFeedEntry interpret(
+		String selector,
+		com.liferay.social.kernel.model.SocialActivitySet activitySet,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		return getService().interpret(selector, activitySet, serviceContext);
 	}
 
 	public static void updateActivitySet(long activityId)

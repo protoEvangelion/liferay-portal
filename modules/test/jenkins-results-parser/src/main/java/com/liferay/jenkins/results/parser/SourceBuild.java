@@ -14,6 +14,11 @@
 
 package com.liferay.jenkins.results.parser;
 
+import com.liferay.jenkins.results.parser.failure.message.generator.FailureMessageGenerator;
+import com.liferay.jenkins.results.parser.failure.message.generator.GenericFailureMessageGenerator;
+import com.liferay.jenkins.results.parser.failure.message.generator.RebaseFailureMessageGenerator;
+import com.liferay.jenkins.results.parser.failure.message.generator.SourceFormatFailureMessageGenerator;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -32,6 +37,11 @@ public class SourceBuild extends BaseBuild {
 
 	public SourceBuild(String url, Build parentBuild) {
 		super(url, parentBuild);
+	}
+
+	@Override
+	public void addTimelineData(BaseBuild.TimelineData timelineData) {
+		timelineData.addTimelineData(this);
 	}
 
 	@Override

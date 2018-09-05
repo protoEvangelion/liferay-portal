@@ -14,14 +14,17 @@
 
 package com.liferay.source.formatter.checks;
 
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.io.unsync.UnsyncBufferedReader;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringReader;
-import com.liferay.portal.kernel.util.CharPool;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.tools.ToolsUtil;
 import com.liferay.source.formatter.checks.util.JavaSourceUtil;
+
+import java.io.IOException;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,7 +37,7 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 	@Override
 	protected String doProcess(
 			String fileName, String absolutePath, String content)
-		throws Exception {
+		throws IOException {
 
 		try (UnsyncBufferedReader unsyncBufferedReader =
 				new UnsyncBufferedReader(new UnsyncStringReader(content))) {
@@ -42,10 +45,10 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 			String line = null;
 			String previousLine = StringPool.BLANK;
 
-			int lineCount = 0;
+			int lineNumber = 0;
 
 			while ((line = unsyncBufferedReader.readLine()) != null) {
-				lineCount++;
+				lineNumber++;
 
 				if (line.startsWith("import ") || line.startsWith("package ") ||
 					line.matches("\\s*\\*.*")) {
@@ -68,7 +71,9 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 					previousLine);
 				String trimmedLine = StringUtil.trimLeading(line);
 
-				if (!trimmedLine.startsWith(StringPool.DOUBLE_SLASH) &&
+				int pos = line.indexOf(StringPool.DOUBLE_SLASH);
+
+				if (((pos == -1) || ToolsUtil.isInsideQuotes(line, pos)) &&
 					!trimmedLine.startsWith(StringPool.STAR)) {
 
 					String strippedQuotesLine = stripQuotes(trimmedLine);
@@ -91,8 +96,9 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 
 							content = StringUtil.replace(
 								content, "\n" + line + "\n",
-								"\n" + line.substring(0, x) + "\n" + indent +
-									line.substring(x) + "\n");
+								StringBundler.concat(
+									"\n", line.substring(0, x), "\n", indent,
+									line.substring(x), "\n"));
 
 							return content;
 						}
@@ -138,7 +144,7 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 
 							if (Validator.isNull(indent)) {
 								for (int i = 0; i < lineLeadingTabCount - 1;
-									 i++) {
+										i++) {
 
 									indent += StringPool.TAB;
 								}
@@ -146,9 +152,10 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 
 							content = StringUtil.replace(
 								content, "\n" + previousLine + "\n",
-								"\n" + previousLine.substring(0, x + 1) + "\n" +
-									indent + previousLine.substring(x + 2) +
-										"\n");
+								StringBundler.concat(
+									"\n", previousLine.substring(0, x + 1),
+									"\n", indent, previousLine.substring(x + 2),
+									"\n"));
 
 							return content;
 						}
@@ -157,7 +164,7 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 
 				String combinedLinesContent = _getCombinedLinesContent(
 					content, fileName, absolutePath, line, trimmedLine,
-					lineLength, lineCount, previousLine, lineLeadingTabCount,
+					lineLength, lineNumber, previousLine, lineLeadingTabCount,
 					previousLineLeadingTabCount);
 
 				if ((combinedLinesContent != null) &&
@@ -184,7 +191,28 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 
 		matcher = _combinedLinesPattern4.matcher(content);
 
-		return matcher.replaceAll("$1 $3");
+		content = matcher.replaceAll("$1 $3");
+
+		matcher = _combinedLinesPattern5.matcher(content);
+
+		while (matcher.find()) {
+			if (getLevel(matcher.group()) != 0) {
+				continue;
+			}
+
+			String replacement =
+				matcher.group(1) + StringPool.SPACE + matcher.group(4);
+
+			int lineLength = getLineLength(
+				replacement.substring(1, replacement.length() - 1));
+
+			if (lineLength <= getMaxLineLength()) {
+				return StringUtil.replace(
+					content, matcher.group(), replacement);
+			}
+		}
+
+		return content;
 	}
 
 	private String _getCombinedLinesContent(String content, Pattern pattern) {
@@ -239,11 +267,11 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 
 	private String _getCombinedLinesContent(
 		String content, String line, String trimmedLine, int lineLength,
-		int lineCount, String previousLine, String linePart,
+		int lineNumber, String previousLine, String linePart,
 		boolean addToPreviousLine, boolean extraSpace,
 		int numNextLinesRemoveLeadingTab) {
 
-		int previousLineStartPos = getLineStartPos(content, lineCount - 1);
+		int previousLineStartPos = getLineStartPos(content, lineNumber - 1);
 
 		if (linePart == null) {
 			String combinedLine = previousLine;
@@ -254,14 +282,14 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 
 			combinedLine += trimmedLine;
 
-			String nextLine = getLine(content, lineCount + 1);
+			String nextLine = getLine(content, lineNumber + 1);
 
 			if (nextLine == null) {
 				return null;
 			}
 
 			if (numNextLinesRemoveLeadingTab > 0) {
-				int nextLineStartPos = getLineStartPos(content, lineCount + 1);
+				int nextLineStartPos = getLineStartPos(content, lineNumber + 1);
 
 				for (int i = 0; i < numNextLinesRemoveLeadingTab; i++) {
 					content = StringUtil.replaceFirst(
@@ -315,6 +343,19 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 			}
 		}
 
+		if (numNextLinesRemoveLeadingTab > 0) {
+			int nextLineStartPos = getLineStartPos(content, lineNumber + 1);
+
+			for (int i = 0; i < numNextLinesRemoveLeadingTab; i++) {
+				content = StringUtil.replaceFirst(
+					content, StringPool.TAB, StringPool.BLANK,
+					nextLineStartPos);
+
+				nextLineStartPos =
+					content.indexOf(CharPool.NEW_LINE, nextLineStartPos) + 1;
+			}
+		}
+
 		firstLine = StringUtil.trimTrailing(firstLine);
 
 		return StringUtil.replaceFirst(
@@ -324,12 +365,12 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 
 	private String _getCombinedLinesContent(
 		String content, String fileName, String absolutePath, String line,
-		String trimmedLine, int lineLength, int lineCount, String previousLine,
+		String trimmedLine, int lineLength, int lineNumber, String previousLine,
 		int lineTabCount, int previousLineTabCount) {
 
 		if (Validator.isNull(line) || Validator.isNull(previousLine) ||
 			isExcludedPath(
-				_FIT_ON_SINGLE_LINE_EXCLUDES, absolutePath, lineCount)) {
+				_FIT_ON_SINGLE_LINE_EXCLUDES, absolutePath, lineNumber)) {
 
 			return null;
 		}
@@ -354,20 +395,20 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 			trimmedLine.startsWith(StringPool.OPEN_PARENTHESIS)) {
 
 			return _getCombinedLinesContent(
-				content, line, trimmedLine, lineLength, lineCount, previousLine,
-				StringPool.OPEN_PARENTHESIS, true, false, 0);
+				content, line, trimmedLine, lineLength, lineNumber,
+				previousLine, StringPool.OPEN_PARENTHESIS, true, false, 0);
 		}
 
 		if (trimmedPreviousLine.matches("((else )?if|for|try|while) \\(")) {
 			return _getCombinedLinesContent(
-				content, line, trimmedLine, lineLength, lineCount, previousLine,
-				null, false, false, 0);
+				content, line, trimmedLine, lineLength, lineNumber,
+				previousLine, null, false, false, 0);
 		}
 
 		if (previousLine.endsWith("= new")) {
 			return _getCombinedLinesContent(
-				content, line, trimmedLine, lineLength, lineCount, previousLine,
-				"new", false, true, 0);
+				content, line, trimmedLine, lineLength, lineNumber,
+				previousLine, "new", false, true, 0);
 		}
 
 		if (trimmedLine.startsWith("+ ") || trimmedLine.startsWith("- ") ||
@@ -378,25 +419,38 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 			String linePart = trimmedLine.substring(0, pos);
 
 			return _getCombinedLinesContent(
-				content, line, trimmedLine, lineLength, lineCount, previousLine,
-				linePart, true, true, 0);
+				content, line, trimmedLine, lineLength, lineNumber,
+				previousLine, linePart, true, true, 0);
 		}
 
 		if (previousLine.endsWith("<") && !previousLine.endsWith(" <")) {
 			return _getCombinedLinesContent(
-				content, line, trimmedLine, lineLength, lineCount, previousLine,
-				"<", false, false, 0);
+				content, line, trimmedLine, lineLength, lineNumber,
+				previousLine, "<", false, false, 0);
 		}
 
 		int previousLineLength = getLineLength(previousLine);
 
 		if ((trimmedLine.length() + previousLineLength) < getMaxLineLength()) {
+			if (trimmedLine.matches("\\w.*") &&
+				(Validator.isVariableName(trimmedPreviousLine) ||
+				 (trimmedPreviousLine.matches("\\w+\\[.*\\]") &&
+				  (getLevel(trimmedPreviousLine, "[", "]") == 0)) ||
+				 (trimmedPreviousLine.matches("\\w+<.*>") &&
+				  (getLevel(trimmedPreviousLine, "<", ">") == 0)))) {
+
+				return _getCombinedLinesContent(
+					content, line, trimmedLine, lineLength, lineNumber,
+					previousLine, null, false, true, 0);
+			}
+
 			if (trimmedPreviousLine.startsWith("for ") &&
-				previousLine.endsWith(StringPool.COLON) &&
+				(previousLine.endsWith(StringPool.COLON) ||
+				 previousLine.endsWith(StringPool.SEMICOLON)) &&
 				line.endsWith(StringPool.OPEN_CURLY_BRACE)) {
 
 				return _getCombinedLinesContent(
-					content, line, trimmedLine, lineLength, lineCount,
+					content, line, trimmedLine, lineLength, lineNumber,
 					previousLine, null, false, true, 0);
 			}
 
@@ -406,11 +460,24 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 				!trimmedLine.startsWith("extends") &&
 				!trimmedLine.startsWith("implements")) {
 
-				String beforePrevousLine = getLine(content, lineCount - 2);
+				String beforePrevousLine = getLine(content, lineNumber - 2);
 
 				if (!beforePrevousLine.endsWith(".")) {
 					return _getCombinedLinesContent(
-						content, line, trimmedLine, lineLength, lineCount,
+						content, line, trimmedLine, lineLength, lineNumber,
+						previousLine, null, false, true, 0);
+				}
+			}
+
+			if (trimmedPreviousLine.startsWith("<") &&
+				!trimmedLine.startsWith("<")) {
+
+				int previousLevel = getLevel(previousLine, "<", ">");
+				int level = getLevel(line, "<", ">");
+
+				if ((previousLevel > 0) && ((previousLevel + level) == 0)) {
+					return _getCombinedLinesContent(
+						content, line, trimmedLine, lineLength, lineNumber,
 						previousLine, null, false, true, 0);
 				}
 			}
@@ -425,7 +492,7 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 				(lineTabCount == (previousLineTabCount + 1))) {
 
 				return _getCombinedLinesContent(
-					content, line, trimmedLine, lineLength, lineCount,
+					content, line, trimmedLine, lineLength, lineNumber,
 					previousLine, null, false, true, 0);
 			}
 
@@ -435,7 +502,7 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 				line.endsWith(StringPool.OPEN_CURLY_BRACE)) {
 
 				return _getCombinedLinesContent(
-					content, line, trimmedLine, lineLength, lineCount,
+					content, line, trimmedLine, lineLength, lineNumber,
 					previousLine, null, false, true, 0);
 			}
 
@@ -445,7 +512,7 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 				(lineTabCount == (previousLineTabCount + 1))) {
 
 				return _getCombinedLinesContent(
-					content, line, trimmedLine, lineLength, lineCount,
+					content, line, trimmedLine, lineLength, lineNumber,
 					previousLine, null, false, true, 0);
 			}
 
@@ -455,9 +522,10 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 				if (line.endsWith(StringPool.OPEN_CURLY_BRACE)) {
 					addMessage(
 						fileName,
-						"'" + trimmedLine + "' should be added to previous " +
-							"line",
-						lineCount);
+						StringBundler.concat(
+							"'", trimmedLine, "' should be added to previous ",
+							"line"),
+						lineNumber);
 
 					return null;
 				}
@@ -467,7 +535,7 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 					line.endsWith(StringPool.OPEN_PARENTHESIS)) {
 
 					for (int i = 0;; i++) {
-						String nextLine = getLine(content, lineCount + i + 1);
+						String nextLine = getLine(content, lineNumber + i + 1);
 
 						if (Validator.isNull(nextLine) ||
 							nextLine.endsWith(") {")) {
@@ -481,9 +549,10 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 
 							addMessage(
 								fileName,
-								"'" + trimmedLine + "' should be added to " +
-									"previous line",
-								lineCount);
+								StringBundler.concat(
+									"'", trimmedLine, "' should be added to ",
+									"previous line"),
+								lineNumber);
 
 							return null;
 						}
@@ -495,7 +564,7 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 						if (nextLine.endsWith(StringPool.SEMICOLON)) {
 							return _getCombinedLinesContent(
 								content, line, trimmedLine, lineLength,
-								lineCount, previousLine, null, false, true,
+								lineNumber, previousLine, null, false, true,
 								i + 1);
 						}
 					}
@@ -504,23 +573,57 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 
 			if (trimmedPreviousLine.equals("return")) {
 				for (int i = 0;; i++) {
-					String nextLine = getLine(content, lineCount + i + 1);
+					String nextLine = getLine(content, lineNumber + i + 1);
 
 					if (nextLine.endsWith(StringPool.SEMICOLON)) {
 						return _getCombinedLinesContent(
-							content, line, trimmedLine, lineLength, lineCount,
+							content, line, trimmedLine, lineLength, lineNumber,
 							previousLine, null, false, true, i + 1);
 					}
 				}
 			}
+
+			if (line.endsWith(") {") && trimmedPreviousLine.matches("\\w+ :") &&
+				(getLevel(line) == -1)) {
+
+				return _getCombinedLinesContent(
+					content, line, trimmedLine, lineLength, lineNumber,
+					previousLine, null, false, true, 0);
+			}
 		}
 
 		if ((trimmedLine.length() + previousLineLength) <= getMaxLineLength()) {
+			if (trimmedLine.startsWith("<")) {
+				int level = getLevel(line, "<", ">");
+
+				if (level == 0) {
+					String nextLine = StringUtil.trim(
+						getLine(content, lineNumber + 1));
+
+					if (!nextLine.startsWith("void")) {
+						return _getCombinedLinesContent(
+							content, line, trimmedLine, lineLength, lineNumber,
+							previousLine, null, false, false, 0);
+					}
+				}
+
+				if (trimmedPreviousLine.startsWith("<")) {
+					int previousLevel = getLevel(previousLine, "<", ">");
+
+					if ((previousLevel > 0) && ((previousLevel + level) == 0)) {
+						return _getCombinedLinesContent(
+							content, line, trimmedLine, lineLength, lineNumber,
+							previousLine, null, false, false, 0);
+					}
+				}
+			}
+
 			if (previousLine.endsWith(StringPool.OPEN_PARENTHESIS) &&
-				line.endsWith(") {") && (getLevel(line) < 0)) {
+				!previousLine.matches("\t+\\)\\.[^\\)\\(]+\\(") &&
+				line.matches(".*\\)( \\{)?") && (getLevel(line) < 0)) {
 
 				return _getCombinedLinesContent(
-					content, line, trimmedLine, lineLength, lineCount,
+					content, line, trimmedLine, lineLength, lineNumber,
 					previousLine, null, false, false, 0);
 			}
 
@@ -528,10 +631,25 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 				 !line.endsWith(StringPool.OPEN_PARENTHESIS)) ||
 				((previousLine.endsWith(StringPool.OPEN_BRACKET) ||
 				  previousLine.endsWith(StringPool.OPEN_PARENTHESIS)) &&
+				 !trimmedPreviousLine.startsWith(").") &&
 				 line.endsWith(StringPool.SEMICOLON))) {
 
 				return _getCombinedLinesContent(
-					content, line, trimmedLine, lineLength, lineCount,
+					content, line, trimmedLine, lineLength, lineNumber,
+					previousLine, null, false, false, 0);
+			}
+
+			if (previousLine.endsWith(StringPool.OPEN_PARENTHESIS) &&
+				trimmedLine.equals(");")) {
+
+				return _getCombinedLinesContent(
+					content, line, trimmedLine, lineLength, lineNumber,
+					previousLine, null, false, false, 0);
+			}
+
+			if (previousLine.endsWith("::")) {
+				return _getCombinedLinesContent(
+					content, line, trimmedLine, lineLength, lineNumber,
 					previousLine, null, false, false, 0);
 			}
 		}
@@ -610,8 +728,95 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 						}
 
 						return _getCombinedLinesContent(
-							content, line, trimmedLine, lineLength, lineCount,
+							content, line, trimmedLine, lineLength, lineNumber,
 							previousLine, linePart, true, true, 0);
+					}
+				}
+			}
+		}
+
+		if (trimmedPreviousLine.matches("for \\(.*;")) {
+			int x = -1;
+
+			while (true) {
+				x = trimmedLine.indexOf("; ", x + 1);
+
+				if ((x == -1) ||
+					(previousLineLength + 2 + x) > getMaxLineLength()) {
+
+					break;
+				}
+
+				if (ToolsUtil.isInsideQuotes(trimmedLine, x)) {
+					continue;
+				}
+
+				return _getCombinedLinesContent(
+					content, line, trimmedLine, lineLength, lineNumber,
+					previousLine, trimmedLine.substring(0, x + 2), true, true,
+					0);
+			}
+		}
+
+		if (trimmedPreviousLine.matches("for \\(.*(?<!\\) \\{)$")) {
+			int x = trimmedLine.indexOf(" :");
+
+			if ((x != -1) &&
+				((previousLineLength + x + 3) <= getMaxLineLength())) {
+
+				String s = trimmedLine.substring(0, x);
+
+				if (Validator.isVariableName(s)) {
+					if ((x + 2) == trimmedLine.length()) {
+						s += " :";
+					}
+					else {
+						s += " : ";
+					}
+
+					for (int i = 0;; i++) {
+						String nextLine = getLine(content, lineNumber + i);
+
+						if (nextLine.endsWith(") {")) {
+							return _getCombinedLinesContent(
+								content, line, trimmedLine, lineLength,
+								lineNumber, previousLine, s, true, true, i);
+						}
+					}
+				}
+			}
+		}
+
+		if (trimmedPreviousLine.matches(
+				"(private|protected|public) [\\w<>\\[\\] ]+")) {
+
+			int x = trimmedLine.indexOf(StringPool.OPEN_PARENTHESIS);
+
+			if ((x != -1) &&
+				((previousLineLength + x + 2) <= getMaxLineLength())) {
+
+				if ((x + 1) < trimmedLine.length()) {
+					char nextChar = trimmedLine.charAt(x + 1);
+
+					if (nextChar != CharPool.CLOSE_PARENTHESIS) {
+						return _getCombinedLinesContent(
+							content, line, trimmedLine, lineLength, lineNumber,
+							previousLine, trimmedLine.substring(0, x + 1), true,
+							true, 0);
+					}
+				}
+				else {
+					for (int i = 0;; i++) {
+						String nextLine = getLine(content, lineNumber + i + 1);
+
+						if (nextLine.endsWith(StringPool.OPEN_CURLY_BRACE) ||
+							nextLine.endsWith(StringPool.SEMICOLON)) {
+
+							return _getCombinedLinesContent(
+								content, line, trimmedLine, lineLength,
+								lineNumber, previousLine, null, false, true,
+								i + 1);
+						}
 					}
 				}
 			}
@@ -642,22 +847,23 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 				}
 
 				if (trimmedLine.equals(linePart)) {
-					addMessage(fileName, "Incorrect line break", lineCount);
+					addMessage(fileName, "Incorrect line break", lineNumber);
 
 					return null;
 				}
 
 				return _getCombinedLinesContent(
-					content, line, trimmedLine, lineLength, lineCount,
+					content, line, trimmedLine, lineLength, lineNumber,
 					previousLine, linePart + StringPool.SPACE, true, true, 0);
 			}
 		}
 
 		if (previousLine.endsWith(StringPool.COMMA) &&
 			(previousLineTabCount == lineTabCount) &&
-			!trimmedPreviousLine.equals("},")) {
+			!line.matches(".*[\\^\\|\\&]") &&
+			!trimmedPreviousLine.matches("[\\)\\}],")) {
 
-			String nextLine = getLine(content, lineCount + 1);
+			String nextLine = getLine(content, lineNumber + 1);
 
 			int nextLineTabCount = getLeadingTabCount(nextLine);
 
@@ -665,7 +871,7 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 				int x = -1;
 
 				while (true) {
-					x = trimmedLine.indexOf(CharPool.COMMA, x + 1);
+					x = trimmedLine.indexOf(StringPool.COMMA_AND_SPACE, x + 1);
 
 					if (x == -1) {
 						break;
@@ -695,15 +901,14 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 							if (trimmedLine.equals(linePart)) {
 								return _getCombinedLinesContent(
 									content, line, trimmedLine, lineLength,
-									lineCount, previousLine, null, false, true,
+									lineNumber, previousLine, null, false, true,
 									0);
 							}
-							else {
-								return _getCombinedLinesContent(
-									content, line, trimmedLine, lineLength,
-									lineCount, previousLine,
-									linePart + StringPool.SPACE, true, true, 0);
-							}
+
+							return _getCombinedLinesContent(
+								content, line, trimmedLine, lineLength,
+								lineNumber, previousLine,
+								linePart + StringPool.SPACE, true, true, 0);
 						}
 
 						String partAfterComma = trimmedLine.substring(x + 1);
@@ -718,19 +923,20 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 					}
 				}
 				else if ((trimmedLine.length() + previousLineLength) <
-							getMaxLineLength()) {
+							 getMaxLineLength()) {
 
-					if (!trimmedLine.startsWith("new ") ||
-						!line.endsWith(StringPool.OPEN_CURLY_BRACE)) {
+					if ((getLevel(line, "{", "}") == 0) &&
+						(!trimmedLine.startsWith("new ") ||
+						 !line.endsWith(StringPool.OPEN_CURLY_BRACE))) {
 
 						return _getCombinedLinesContent(
-							content, line, trimmedLine, lineLength, lineCount,
+							content, line, trimmedLine, lineLength, lineNumber,
 							previousLine, null, false, true, 0);
 					}
 
 					if (getLevel(line) != 0) {
 						return _getCombinedLinesContent(
-							content, line, trimmedLine, lineLength, lineCount,
+							content, line, trimmedLine, lineLength, lineNumber,
 							previousLine, null, false, true, 0);
 					}
 				}
@@ -749,7 +955,7 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 				String linePart = trimmedLine.substring(0, x + 3);
 
 				return _getCombinedLinesContent(
-					content, line, trimmedLine, lineLength, lineCount,
+					content, line, trimmedLine, lineLength, lineNumber,
 					previousLine, linePart, true, true, 0);
 			}
 			else if (trimmedLine.endsWith(" =") &&
@@ -757,12 +963,63 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 						 getMaxLineLength())) {
 
 				for (int i = 0;; i++) {
-					String nextLine = getLine(content, lineCount + i + 1);
+					String nextLine = getLine(content, lineNumber + i + 1);
 
 					if (nextLine.endsWith(StringPool.SEMICOLON)) {
 						return _getCombinedLinesContent(
-							content, line, trimmedLine, lineLength, lineCount,
+							content, line, trimmedLine, lineLength, lineNumber,
 							previousLine, null, false, true, i + 1);
+					}
+				}
+			}
+		}
+
+		if (trimmedPreviousLine.startsWith("<")) {
+			int previousLevel = getLevel(previousLine, "<", ">");
+
+			if (previousLevel > 0) {
+				int x = -1;
+
+				while (true) {
+					x = trimmedLine.indexOf("> ", x + 1);
+
+					if (x == -1) {
+						break;
+					}
+
+					if (ToolsUtil.isInsideQuotes(trimmedLine, x)) {
+						continue;
+					}
+
+					String linePart = StringUtil.trim(
+						trimmedLine.substring(x + 1));
+
+					if (linePart.equals("{")) {
+						break;
+					}
+
+					boolean extraSpace = false;
+					int newLineLength = 0;
+
+					if (trimmedLine.startsWith("<")) {
+						newLineLength = previousLineLength + x + 1;
+					}
+					else {
+						extraSpace = true;
+						newLineLength = previousLineLength + x + 2;
+					}
+
+					if (newLineLength > getMaxLineLength()) {
+						break;
+					}
+
+					linePart = trimmedLine.substring(0, x + 1);
+
+					if ((previousLevel + getLevel(linePart, "<", ">")) == 0) {
+						return _getCombinedLinesContent(
+							content, line, trimmedLine, lineLength, lineNumber,
+							previousLine, linePart + StringPool.SPACE, true,
+							extraSpace, 0);
 					}
 				}
 			}
@@ -796,7 +1053,7 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 
 				if ((previousLineLength + y) <= getMaxLineLength()) {
 					return _getCombinedLinesContent(
-						content, line, trimmedLine, lineLength, lineCount,
+						content, line, trimmedLine, lineLength, lineNumber,
 						previousLine, trimmedLine.substring(0, y), true, true,
 						0);
 				}
@@ -819,7 +1076,7 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 						!filePart.contains(StringPool.QUOTE)) {
 
 						return _getCombinedLinesContent(
-							content, line, trimmedLine, lineLength, lineCount,
+							content, line, trimmedLine, lineLength, lineNumber,
 							previousLine, filePart, false, false, 0);
 					}
 				}
@@ -836,22 +1093,8 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 			  line.endsWith(") {")))) {
 
 			return _getCombinedLinesContent(
-				content, line, trimmedLine, lineLength, lineCount, previousLine,
-				null, false, false, 0);
-		}
-
-		if (((line.endsWith(StringPool.OPEN_CURLY_BRACE) &&
-			  !trimmedLine.startsWith("new ")) ||
-			 line.endsWith(StringPool.CLOSE_PARENTHESIS)) &&
-			(trimmedPreviousLine.startsWith("else ") ||
-			 trimmedPreviousLine.startsWith("if ") ||
-			 trimmedPreviousLine.startsWith("private ") ||
-			 trimmedPreviousLine.startsWith("protected ") ||
-			 trimmedPreviousLine.startsWith("public "))) {
-
-			return _getCombinedLinesContent(
-				content, line, trimmedLine, lineLength, lineCount, previousLine,
-				null, false, false, 0);
+				content, line, trimmedLine, lineLength, lineNumber,
+				previousLine, null, false, false, 0);
 		}
 
 		return null;
@@ -868,5 +1111,7 @@ public class JavaCombineLinesCheck extends BaseFileCheck {
 		"(\n\t*(private|protected|public) void)\n\t+(\\w+\\(\\)( \\{)?\n)");
 	private final Pattern _combinedLinesPattern4 = Pattern.compile(
 		"(\n\t*(extends|implements))\n\t+([\\w.]+ \\{\n)");
+	private final Pattern _combinedLinesPattern5 = Pattern.compile(
+		"(\n\t*(private|protected|public)( .*[^\\{;\n])?)\n\t*(.+ [\\{;]\n)");
 
 }

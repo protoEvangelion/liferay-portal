@@ -14,18 +14,18 @@
 
 package com.liferay.portal.security.auth;
 
-import com.liferay.portal.kernel.concurrent.ConcurrentHashSet;
 import com.liferay.portal.kernel.model.Portlet;
-import com.liferay.portal.kernel.model.PortletConstants;
 import com.liferay.portal.kernel.portlet.LiferayPortletURL;
+import com.liferay.portal.kernel.portlet.PortletIdCodec;
 import com.liferay.portal.kernel.security.auth.BaseAuthTokenWhitelist;
-import com.liferay.portal.kernel.security.pacl.DoPrivileged;
+import com.liferay.portal.kernel.util.DigesterUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.util.Encryptor;
 
+import java.util.Collections;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletRequest;
  * @author Raymond Augé
  * @author Tomas Polesovsky
  */
-@DoPrivileged
 public class AuthTokenWhitelistImpl extends BaseAuthTokenWhitelist {
 
 	public AuthTokenWhitelistImpl() {
@@ -56,7 +55,7 @@ public class AuthTokenWhitelistImpl extends BaseAuthTokenWhitelist {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Wilberforce (7.0.x)
 	 */
 	@Deprecated
 	@Override
@@ -65,7 +64,7 @@ public class AuthTokenWhitelistImpl extends BaseAuthTokenWhitelist {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Wilberforce (7.0.x)
 	 */
 	@Deprecated
 	@Override
@@ -74,7 +73,7 @@ public class AuthTokenWhitelistImpl extends BaseAuthTokenWhitelist {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Wilberforce (7.0.x)
 	 */
 	@Deprecated
 	@Override
@@ -111,7 +110,7 @@ public class AuthTokenWhitelistImpl extends BaseAuthTokenWhitelist {
 	public boolean isPortletURLCSRFWhitelisted(
 		LiferayPortletURL liferayPortletURL) {
 
-		String rootPortletId = PortletConstants.getRootPortletId(
+		String rootPortletId = PortletIdCodec.decodePortletName(
 			liferayPortletURL.getPortletId());
 
 		return _portletCSRFWhitelist.contains(rootPortletId);
@@ -136,12 +135,14 @@ public class AuthTokenWhitelistImpl extends BaseAuthTokenWhitelist {
 		}
 
 		return sharedSecret.equals(
-			Encryptor.digest(PropsValues.AUTH_TOKEN_SHARED_SECRET));
+			DigesterUtil.digest(PropsValues.AUTH_TOKEN_SHARED_SECRET));
 	}
 
-	private final Set<String> _originCSRFWhitelist = new ConcurrentHashSet<>();
-	private final Set<String> _portletCSRFWhitelist = new ConcurrentHashSet<>();
+	private final Set<String> _originCSRFWhitelist = Collections.newSetFromMap(
+		new ConcurrentHashMap<>());
+	private final Set<String> _portletCSRFWhitelist = Collections.newSetFromMap(
+		new ConcurrentHashMap<>());
 	private final Set<String> _portletInvocationWhitelist =
-		new ConcurrentHashSet<>();
+		Collections.newSetFromMap(new ConcurrentHashMap<>());
 
 }

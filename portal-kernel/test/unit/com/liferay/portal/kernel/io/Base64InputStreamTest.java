@@ -21,8 +21,10 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * @author Tina Tian
+ * @author     Tina Tian
+ * @deprecated As of Judson (7.1.x), with no direct replacement
  */
+@Deprecated
 public class Base64InputStreamTest {
 
 	@Test
@@ -133,9 +135,8 @@ public class Base64InputStreamTest {
 
 	@Test
 	public void testRead_3args() throws Exception {
-		byte[] bytes = {
-			'a', 'b', 'c', 'd', 'a', 'b', 'c', 'd', 'e', 'f', 'g', '='
-		};
+		byte[] bytes =
+			{'a', 'b', 'c', 'd', 'a', 'b', 'c', 'd', 'e', 'f', 'g', '='};
 
 		try (Base64InputStream base64InputStream = new Base64InputStream(
 				new ByteArrayInputStream(bytes))) {

@@ -32,14 +32,51 @@ public class StagingServiceWrapper implements StagingService,
 		_stagingService = stagingService;
 	}
 
+	@Override
+	public void cleanUpStagingRequest(long stagingRequestId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_stagingService.cleanUpStagingRequest(stagingRequestId);
+	}
+
+	@Override
+	public long createStagingRequest(long groupId, String checksum)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _stagingService.createStagingRequest(groupId, checksum);
+	}
+
 	/**
-	* @deprecated As of 7.0.0, with no direct replacement
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	@Override
+	public String getOSGiServiceIdentifier() {
+		return _stagingService.getOSGiServiceIdentifier();
+	}
+
+	@Override
+	public boolean hasRemoteLayout(String uuid, long groupId,
+		boolean privateLayout)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _stagingService.hasRemoteLayout(uuid, groupId, privateLayout);
+	}
+
+	@Override
+	public void propagateExportImportLifecycleEvent(int code, int processFlag,
+		String processId, java.util.List<java.io.Serializable> arguments)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_stagingService.propagateExportImportLifecycleEvent(code, processFlag,
+			processId, arguments);
+	}
+
+	/**
+	* @deprecated As of Wilberforce (7.0.x), with no direct replacement
 	*/
 	@Deprecated
 	@Override
 	public com.liferay.exportimport.kernel.lar.MissingReferences publishStagingRequest(
 		long stagingRequestId, boolean privateLayout,
-		java.util.Map<java.lang.String, java.lang.String[]> parameterMap)
+		java.util.Map<String, String[]> parameterMap)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _stagingService.publishStagingRequest(stagingRequestId,
 			privateLayout, parameterMap);
@@ -54,47 +91,25 @@ public class StagingServiceWrapper implements StagingService,
 			exportImportConfiguration);
 	}
 
+	@Override
+	public void updateStagingRequest(long stagingRequestId, String fileName,
+		byte[] bytes)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_stagingService.updateStagingRequest(stagingRequestId, fileName, bytes);
+	}
+
 	/**
-	* @deprecated As of 7.0.0, replaced by {@link #publishStagingRequest(long,
-	boolean, Map)}
+	* @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	#publishStagingRequest(long, boolean, Map)}
 	*/
 	@Deprecated
 	@Override
 	public com.liferay.exportimport.kernel.lar.MissingReferences validateStagingRequest(
 		long stagingRequestId, boolean privateLayout,
-		java.util.Map<java.lang.String, java.lang.String[]> parameterMap)
+		java.util.Map<String, String[]> parameterMap)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _stagingService.validateStagingRequest(stagingRequestId,
 			privateLayout, parameterMap);
-	}
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	@Override
-	public java.lang.String getOSGiServiceIdentifier() {
-		return _stagingService.getOSGiServiceIdentifier();
-	}
-
-	@Override
-	public long createStagingRequest(long groupId, java.lang.String checksum)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _stagingService.createStagingRequest(groupId, checksum);
-	}
-
-	@Override
-	public void cleanUpStagingRequest(long stagingRequestId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_stagingService.cleanUpStagingRequest(stagingRequestId);
-	}
-
-	@Override
-	public void updateStagingRequest(long stagingRequestId,
-		java.lang.String fileName, byte[] bytes)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_stagingService.updateStagingRequest(stagingRequestId, fileName, bytes);
 	}
 
 	@Override

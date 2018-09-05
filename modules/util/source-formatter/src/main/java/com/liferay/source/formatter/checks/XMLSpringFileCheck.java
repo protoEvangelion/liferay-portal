@@ -14,8 +14,8 @@
 
 package com.liferay.source.formatter.checks;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.NaturalOrderStringComparator;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.tools.ImportPackage;
 import com.liferay.source.formatter.checks.comparator.ElementComparator;
@@ -25,6 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.Element;
 
 /**
@@ -33,9 +34,14 @@ import org.dom4j.Element;
 public class XMLSpringFileCheck extends BaseFileCheck {
 
 	@Override
+	public boolean isPortalCheck() {
+		return true;
+	}
+
+	@Override
 	protected String doProcess(
 			String fileName, String absolutePath, String content)
-		throws Exception {
+		throws DocumentException {
 
 		if (fileName.endsWith("-spring.xml")) {
 			_checkSpringXML(fileName, content);
@@ -45,7 +51,7 @@ public class XMLSpringFileCheck extends BaseFileCheck {
 	}
 
 	private void _checkSpringXML(String fileName, String content)
-		throws Exception {
+		throws DocumentException {
 
 		Document document = SourceUtil.readXML(content);
 

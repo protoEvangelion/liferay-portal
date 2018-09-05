@@ -16,12 +16,12 @@ package com.liferay.portal.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.Country;
 import com.liferay.portal.kernel.model.MVCCModel;
 import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -110,35 +110,35 @@ public class CountryCacheModel implements CacheModel<Country>, Externalizable,
 		countryImpl.setCountryId(countryId);
 
 		if (name == null) {
-			countryImpl.setName(StringPool.BLANK);
+			countryImpl.setName("");
 		}
 		else {
 			countryImpl.setName(name);
 		}
 
 		if (a2 == null) {
-			countryImpl.setA2(StringPool.BLANK);
+			countryImpl.setA2("");
 		}
 		else {
 			countryImpl.setA2(a2);
 		}
 
 		if (a3 == null) {
-			countryImpl.setA3(StringPool.BLANK);
+			countryImpl.setA3("");
 		}
 		else {
 			countryImpl.setA3(a3);
 		}
 
 		if (number == null) {
-			countryImpl.setNumber(StringPool.BLANK);
+			countryImpl.setNumber("");
 		}
 		else {
 			countryImpl.setNumber(number);
 		}
 
 		if (idd == null) {
-			countryImpl.setIdd(StringPool.BLANK);
+			countryImpl.setIdd("");
 		}
 		else {
 			countryImpl.setIdd(idd);
@@ -176,35 +176,35 @@ public class CountryCacheModel implements CacheModel<Country>, Externalizable,
 		objectOutput.writeLong(countryId);
 
 		if (name == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(name);
 		}
 
 		if (a2 == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(a2);
 		}
 
 		if (a3 == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(a3);
 		}
 
 		if (number == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(number);
 		}
 
 		if (idd == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(idd);

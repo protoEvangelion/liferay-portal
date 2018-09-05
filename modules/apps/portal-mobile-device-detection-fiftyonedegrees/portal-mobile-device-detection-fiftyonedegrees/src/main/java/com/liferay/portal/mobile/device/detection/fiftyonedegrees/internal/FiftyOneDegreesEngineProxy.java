@@ -23,15 +23,12 @@ import com.liferay.portal.mobile.device.detection.fiftyonedegrees.configuration.
 import com.liferay.portal.mobile.device.detection.fiftyonedegrees.data.DataFileProvider;
 
 import fiftyone.mobile.detection.Dataset;
-import fiftyone.mobile.detection.DatasetBuilder;
 import fiftyone.mobile.detection.Match;
 import fiftyone.mobile.detection.Provider;
+import fiftyone.mobile.detection.factories.StreamFactory;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 import java.util.Map;
 
@@ -44,7 +41,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 /**
  * @author Brian Greenwald
@@ -52,7 +48,7 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
  */
 @Component(
 	configurationPid = "com.liferay.portal.mobile.device.detection.fiftyonedegrees.configuration.FiftyOneDegreesConfiguration",
-	immediate = true, service = FiftyOneDegreesEngineProxy.class
+	service = FiftyOneDegreesEngineProxy.class
 )
 public class FiftyOneDegreesEngineProxy {
 
@@ -87,26 +83,10 @@ public class FiftyOneDegreesEngineProxy {
 		try (InputStream inputStream =
 				_dataFileProvider.getDataFileInputStream()) {
 
-			File tempFile = File.createTempFile(
-				"51degrees", String.valueOf(System.currentTimeMillis()));
-
-			try (OutputStream outputStream = new FileOutputStream(tempFile)) {
-				IOUtils.copy(inputStream, outputStream);
-
-				outputStream.flush();
-			}
-
-			DatasetBuilder.BuildFromFile buildFromFile = DatasetBuilder.file();
-
-			buildFromFile.configureCachesFromCacheSet(
-				DatasetBuilder.CacheTemplate.Default);
-
-			buildFromFile.setTempFile();
-
-			Dataset dataset = buildFromFile.build(tempFile.getAbsolutePath());
+			_dataset = StreamFactory.create(IOUtils.toByteArray(inputStream));
 
 			_provider = new Provider(
-				dataset, _fiftyOneDegreesConfiguration.cacheSize());
+				_dataset, _fiftyOneDegreesConfiguration.cacheSize());
 		}
 		catch (IOException ioe) {
 			if (_log.isWarnEnabled()) {
@@ -118,17 +98,22 @@ public class FiftyOneDegreesEngineProxy {
 	}
 
 	@Deactivate
-	protected void deactivate() {
+	protected void deactivate() throws IOException {
 		_fiftyOneDegreesConfiguration = null;
 		_provider = null;
+
+		if (_dataset != null) {
+			_dataset.close();
+		}
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		FiftyOneDegreesEngineProxy.class);
 
-	@Reference(policyOption = ReferencePolicyOption.GREEDY)
+	@Reference
 	private DataFileProvider _dataFileProvider;
 
+	private Dataset _dataset;
 	private volatile FiftyOneDegreesConfiguration _fiftyOneDegreesConfiguration;
 	private Provider _provider;
 

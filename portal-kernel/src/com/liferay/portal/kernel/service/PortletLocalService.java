@@ -43,6 +43,7 @@ import java.io.Serializable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import javax.servlet.ServletContext;
 
@@ -68,29 +69,6 @@ public interface PortletLocalService extends BaseLocalService,
 	 *
 	 * Never modify or reference this interface directly. Always use {@link PortletLocalServiceUtil} to access the portlet local service. Add custom service methods to {@link com.liferay.portal.service.impl.PortletLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	@Skip
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public boolean hasPortlet(long companyId, java.lang.String portletId);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public ActionableDynamicQuery getActionableDynamicQuery();
-
-	public DynamicQuery dynamicQuery();
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
-
-	/**
-	* @throws PortalException
-	*/
-	@Override
-	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
-		throws PortalException;
-
-	@Override
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException;
 
 	/**
 	* Adds the portlet to the database. Also notifies the appropriate model listeners.
@@ -102,7 +80,30 @@ public interface PortletLocalService extends BaseLocalService,
 	public Portlet addPortlet(Portlet portlet);
 
 	@Skip
-	public Portlet clonePortlet(java.lang.String portletId);
+	public void addPortletCategory(long companyId, String categoryName);
+
+	public void checkPortlet(Portlet portlet) throws PortalException;
+
+	public void checkPortlets(long companyId) throws PortalException;
+
+	@Skip
+	public void clearCache();
+
+	/**
+	* @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	#clearPortletsMap)}
+	*/
+	@Clusterable
+	@Deprecated
+	@Transactional(enabled = false)
+	public void clearCompanyPortletsPool();
+
+	@Clusterable
+	@Transactional(enabled = false)
+	public void clearPortletsMap();
+
+	@Skip
+	public Portlet clonePortlet(String portletId);
 
 	/**
 	* Creates a new portlet with the primary key. Does not add the portlet to the database.
@@ -110,16 +111,15 @@ public interface PortletLocalService extends BaseLocalService,
 	* @param id the primary key for the new portlet
 	* @return the new portlet
 	*/
+	@Transactional(enabled = false)
 	public Portlet createPortlet(long id);
 
 	/**
-	* Deletes the portlet from the database. Also notifies the appropriate model listeners.
-	*
-	* @param portlet the portlet
-	* @return the portlet that was removed
+	* @throws PortalException
 	*/
-	@Indexable(type = IndexableType.DELETE)
-	public Portlet deletePortlet(Portlet portlet);
+	@Override
+	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
+		throws PortalException;
 
 	/**
 	* Deletes the portlet with the primary key from the database. Also notifies the appropriate model listeners.
@@ -131,85 +131,40 @@ public interface PortletLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.DELETE)
 	public Portlet deletePortlet(long id) throws PortalException;
 
-	public Portlet deployRemotePortlet(Portlet portlet,
-		java.lang.String categoryName) throws PortalException;
-
-	public Portlet deployRemotePortlet(Portlet portlet,
-		java.lang.String[] categoryNames) throws PortalException;
-
-	public Portlet deployRemotePortlet(Portlet portlet,
-		java.lang.String[] categoryNames, boolean eagerDestroy)
+	public void deletePortlet(long companyId, String portletId, long plid)
 		throws PortalException;
 
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Portlet fetchPortlet(long id);
-
-	@Skip
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Portlet fetchPortletById(long companyId, java.lang.String portletId);
-
 	/**
-	* Returns the portlet with the primary key.
-	*
-	* @param id the primary key of the portlet
-	* @return the portlet
-	* @throws PortalException if a portlet with the primary key could not be found
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Portlet getPortlet(long id) throws PortalException;
-
-	@Skip
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Portlet getPortletById(java.lang.String portletId);
-
-	@Skip
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Portlet getPortletById(long companyId, java.lang.String portletId);
-
-	@Skip
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Portlet getPortletByStrutsPath(long companyId,
-		java.lang.String strutsPath);
-
-	/**
-	* Updates the portlet in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	* Deletes the portlet from the database. Also notifies the appropriate model listeners.
 	*
 	* @param portlet the portlet
-	* @return the portlet that was updated
+	* @return the portlet that was removed
 	*/
-	@Indexable(type = IndexableType.REINDEX)
-	public Portlet updatePortlet(Portlet portlet);
+	@Indexable(type = IndexableType.DELETE)
+	public Portlet deletePortlet(Portlet portlet);
 
-	public Portlet updatePortlet(long companyId, java.lang.String portletId,
-		java.lang.String roles, boolean active);
+	public void deletePortlets(long companyId, String[] portletIds, long plid)
+		throws PortalException;
 
 	@Skip
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public PortletApp getPortletApp(java.lang.String servletContextName);
+	public void deployPortlet(Portlet portlet) throws Exception;
+
+	public Portlet deployRemotePortlet(Portlet portlet, String categoryName)
+		throws PortalException;
+
+	public Portlet deployRemotePortlet(Portlet portlet, String[] categoryNames)
+		throws PortalException;
+
+	public Portlet deployRemotePortlet(Portlet portlet, String[] categoryNames,
+		boolean eagerDestroy) throws PortalException;
 
 	@Skip
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public PortletCategory getEARDisplay(java.lang.String xml);
+	public void destroyPortlet(Portlet portlet);
 
 	@Skip
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public PortletCategory getWARDisplay(java.lang.String servletContextName,
-		java.lang.String xml);
+	public void destroyRemotePortlet(Portlet portlet);
 
-	/**
-	* Returns the number of portlets.
-	*
-	* @return the number of portlets
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getPortletsCount();
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	public java.lang.String getOSGiServiceIdentifier();
+	public DynamicQuery dynamicQuery();
 
 	/**
 	* Performs a dynamic query on the database and returns the matching rows.
@@ -250,9 +205,41 @@ public interface PortletLocalService extends BaseLocalService,
 	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
 		int end, OrderByComparator<T> orderByComparator);
 
+	/**
+	* Returns the number of rows matching the dynamic query.
+	*
+	* @param dynamicQuery the dynamic query
+	* @return the number of rows matching the dynamic query
+	*/
+	public long dynamicQueryCount(DynamicQuery dynamicQuery);
+
+	/**
+	* Returns the number of rows matching the dynamic query.
+	*
+	* @param dynamicQuery the dynamic query
+	* @param projection the projection to apply to the query
+	* @return the number of rows matching the dynamic query
+	*/
+	public long dynamicQueryCount(DynamicQuery dynamicQuery,
+		Projection projection);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Portlet fetchPortlet(long id);
+
+	@Skip
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Portlet fetchPortletById(long companyId, String portletId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public ActionableDynamicQuery getActionableDynamicQuery();
+
 	@Skip
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<CustomAttributesDisplay> getCustomAttributesDisplays();
+
+	@Skip
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public PortletCategory getEARDisplay(String xml);
 
 	@Skip
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
@@ -261,6 +248,47 @@ public interface PortletLocalService extends BaseLocalService,
 	@Skip
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<FriendlyURLMapper> getFriendlyURLMappers();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	public String getOSGiServiceIdentifier();
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
+		throws PortalException;
+
+	/**
+	* Returns the portlet with the primary key.
+	*
+	* @param id the primary key of the portlet
+	* @return the portlet
+	* @throws PortalException if a portlet with the primary key could not be found
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Portlet getPortlet(long id) throws PortalException;
+
+	@Skip
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public PortletApp getPortletApp(String servletContextName);
+
+	@Skip
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Portlet getPortletById(long companyId, String portletId);
+
+	@Skip
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Portlet getPortletById(String portletId);
+
+	@Skip
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Portlet getPortletByStrutsPath(long companyId, String strutsPath);
 
 	@Skip
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
@@ -289,85 +317,65 @@ public interface PortletLocalService extends BaseLocalService,
 	public List<Portlet> getPortlets(long companyId, boolean showSystem,
 		boolean showPortal);
 
+	/**
+	* Returns the number of portlets.
+	*
+	* @return the number of portlets
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getPortletsCount();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getPortletsCount(long companyId);
+
 	@Skip
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Portlet> getScopablePortlets();
 
 	@Skip
-	public List<Portlet> initWAR(java.lang.String servletContextName,
-		ServletContext servletContext, java.lang.String[] xmls,
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public PortletCategory getWARDisplay(String servletContextName, String xml);
+
+	@Skip
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public boolean hasPortlet(long companyId, String portletId);
+
+	@Skip
+	public void initEAR(ServletContext servletContext, String[] xmls,
+		PluginPackage pluginPackage);
+
+	@Skip
+	public List<Portlet> initWAR(String servletContextName,
+		ServletContext servletContext, String[] xmls,
 		PluginPackage pluginPackage);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Map<java.lang.String, Portlet> loadGetPortletsMap(long companyId);
+	public Map<String, Portlet> loadGetPortletsMap(long companyId);
 
 	/**
-	* @deprecated As of 7.0.0, replaced by {@link #loadGetPortletsMap(long))}
+	* @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	#loadGetPortletsMap(long))}
 	*/
-	@java.lang.Deprecated
+	@Deprecated
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Map<java.lang.String, Portlet> loadGetPortletsPool(long companyId);
-
-	/**
-	* Returns the number of rows matching the dynamic query.
-	*
-	* @param dynamicQuery the dynamic query
-	* @return the number of rows matching the dynamic query
-	*/
-	public long dynamicQueryCount(DynamicQuery dynamicQuery);
-
-	/**
-	* Returns the number of rows matching the dynamic query.
-	*
-	* @param dynamicQuery the dynamic query
-	* @param projection the projection to apply to the query
-	* @return the number of rows matching the dynamic query
-	*/
-	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection);
-
-	@Skip
-	public void addPortletCategory(long companyId, java.lang.String categoryName);
-
-	public void checkPortlet(Portlet portlet) throws PortalException;
-
-	public void checkPortlets(long companyId) throws PortalException;
-
-	@Skip
-	public void clearCache();
-
-	/**
-	* @deprecated As of 7.0.0, replaced by {@link #clearPortletsMap)}
-	*/
-	@Clusterable
-	@java.lang.Deprecated
-	@Transactional(enabled = false)
-	public void clearCompanyPortletsPool();
-
-	@Clusterable
-	@Transactional(enabled = false)
-	public void clearPortletsMap();
-
-	public void deletePortlet(long companyId, java.lang.String portletId,
-		long plid) throws PortalException;
-
-	public void deletePortlets(long companyId, java.lang.String[] portletIds,
-		long plid) throws PortalException;
-
-	@Skip
-	public void deployPortlet(Portlet portlet) throws java.lang.Exception;
-
-	@Skip
-	public void destroyPortlet(Portlet portlet);
-
-	@Skip
-	public void destroyRemotePortlet(Portlet portlet);
-
-	@Skip
-	public void initEAR(ServletContext servletContext, java.lang.String[] xmls,
-		PluginPackage pluginPackage);
+	public Map<String, Portlet> loadGetPortletsPool(long companyId);
 
 	@Clusterable
 	@Transactional(enabled = false)
 	public void removeCompanyPortletsPool(long companyId);
+
+	public Portlet updatePortlet(long companyId, String portletId,
+		String roles, boolean active);
+
+	/**
+	* Updates the portlet in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param portlet the portlet
+	* @return the portlet that was updated
+	*/
+	@Indexable(type = IndexableType.REINDEX)
+	public Portlet updatePortlet(Portlet portlet);
+
+	@Skip
+	public void visitPortlets(long companyId, Consumer<Portlet> consumer);
 }

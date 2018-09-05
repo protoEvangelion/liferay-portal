@@ -23,8 +23,8 @@ boolean requireCaptcha = GetterUtil.getBoolean(portletPreferences.getValue("requ
 String successURL = portletPreferences.getValue("successURL", StringPool.BLANK);
 
 boolean sendAsEmail = GetterUtil.getBoolean(portletPreferences.getValue("sendAsEmail", StringPool.BLANK));
-String emailFromName = webFormGroupServiceConfiguration.emailFromName();
-String emailFromAddress = webFormGroupServiceConfiguration.emailFromAddress();
+String emailFromName = GetterUtil.getString(portletPreferences.getValue("emailFromName", webFormServiceConfiguration.emailFromName()));
+String emailFromAddress = GetterUtil.getString(portletPreferences.getValue("emailFromAddress", webFormServiceConfiguration.emailFromAddress()));
 String emailAddress = portletPreferences.getValue("emailAddress", StringPool.BLANK);
 String subject = portletPreferences.getValue("subject", StringPool.BLANK);
 
@@ -53,17 +53,38 @@ if (WebFormUtil.getTableRowsCount(company.getCompanyId(), databaseTableName) > 0
 			<liferay-ui:error exception="<%= ColumnNameException.class %>" message="please-enter-valid-field-names" />
 			<liferay-ui:error exception="<%= DuplicateColumnNameException.class %>" message="please-enter-unique-field-names" />
 
-			<liferay-ui:panel-container extended="<%= true %>" id="webFormConfiguration" markupView="lexicon" persistState="<%= true %>">
-				<liferay-ui:panel collapsible="<%= true %>" extended="<%= true %>" id="webFormGeneral" markupView="lexicon" persistState="<%= true %>" title="form-information">
+			<liferay-ui:panel-container
+				extended="<%= true %>"
+				id="webFormConfiguration"
+				markupView="lexicon"
+				persistState="<%= true %>"
+			>
+				<liferay-ui:panel
+					collapsible="<%= true %>"
+					extended="<%= true %>"
+					id="webFormGeneral"
+					markupView="lexicon"
+					persistState="<%= true %>"
+					title="form-information"
+				>
 					<aui:fieldset>
 						<liferay-ui:error key="successURLInvalid" message="please-enter-a-valid-url" />
 
 						<aui:field-wrapper cssClass="lfr-input-text-container" label="title">
-							<liferay-ui:input-localized cssClass="lfr-input-text" name="title" xml="<%= titleXml %>" />
+							<liferay-ui:input-localized
+								cssClass="lfr-input-text"
+								name="title"
+								xml="<%= titleXml %>"
+							/>
 						</aui:field-wrapper>
 
 						<aui:field-wrapper cssClass="lfr-textarea-container" label="description">
-							<liferay-ui:input-localized cssClass="lfr-input-text" name="description" type="textarea" xml="<%= descriptionXml %>" />
+							<liferay-ui:input-localized
+								cssClass="lfr-input-text"
+								name="description"
+								type="textarea"
+								xml="<%= descriptionXml %>"
+							/>
 						</aui:field-wrapper>
 
 						<aui:input name="preferences--requireCaptcha--" type="checkbox" value="<%= requireCaptcha %>" />
@@ -72,7 +93,14 @@ if (WebFormUtil.getTableRowsCount(company.getCompanyId(), databaseTableName) > 0
 					</aui:fieldset>
 				</liferay-ui:panel>
 
-				<liferay-ui:panel collapsible="<%= true %>" extended="<%= true %>" id="webFormData" markupView="lexicon" persistState="<%= true %>" title="handling-of-form-data">
+				<liferay-ui:panel
+					collapsible="<%= true %>"
+					extended="<%= true %>"
+					id="webFormData"
+					markupView="lexicon"
+					persistState="<%= true %>"
+					title="handling-of-form-data"
+				>
 					<aui:fieldset cssClass="handle-data" label="email">
 						<liferay-ui:error key="emailAddressInvalid" message="please-enter-a-valid-email-address" />
 						<liferay-ui:error key="emailAddressRequired" message="please-enter-an-email-address" />
@@ -99,11 +127,18 @@ if (WebFormUtil.getTableRowsCount(company.getCompanyId(), databaseTableName) > 0
 					<aui:fieldset cssClass="handle-data" label="file">
 						<aui:input name="preferences--saveToFile--" type="checkbox" value="<%= saveToFile %>" />
 
-						<liferay-ui:message arguments="<%= HtmlUtil.escape(WebFormUtil.getFileName(themeDisplay, portletResource, webFormGroupServiceConfiguration.dataRootDir())) %>" key="form-data-will-be-saved-to-x" />
+						<liferay-ui:message arguments="<%= HtmlUtil.escape(WebFormUtil.getFileName(themeDisplay, portletResource, webFormServiceConfiguration.dataRootDir())) %>" key="form-data-will-be-saved-to-x" />
 					</aui:fieldset>
 				</liferay-ui:panel>
 
-				<liferay-ui:panel collapsible="<%= true %>" extended="<%= true %>" id="webFormFields" markupView="lexicon" persistState="<%= true %>" title="form-fields">
+				<liferay-ui:panel
+					collapsible="<%= true %>"
+					extended="<%= true %>"
+					id="webFormFields"
+					markupView="lexicon"
+					persistState="<%= true %>"
+					title="form-fields"
+				>
 					<aui:fieldset cssClass="rows-container webFields">
 						<c:if test="<%= fieldsEditingDisabled %>">
 							<div class="alert">
@@ -190,7 +225,7 @@ if (WebFormUtil.getTableRowsCount(company.getCompanyId(), databaseTableName) > 0
 	</div>
 
 	<aui:button-row>
-		<aui:button cssClass="btn-lg" type="submit" />
+		<aui:button type="submit" />
 	</aui:button-row>
 </aui:form>
 
@@ -230,9 +265,6 @@ if (WebFormUtil.getTableRowsCount(company.getCompanyId(), databaseTableName) > 0
 			labelName.toggle(!paragraph);
 			optionalControl.toggle(!paragraph);
 			paragraphDiv.toggle(paragraph);
-
-			optionalControl.all('input[type="checkbox"]').attr('checked', paragraph);
-			optionalControl.all('input[type="hidden"]').attr('value', paragraph);
 		};
 
 		var webFields = A.one('.webFields');
@@ -241,7 +273,7 @@ if (WebFormUtil.getTableRowsCount(company.getCompanyId(), databaseTableName) > 0
 
 		webFields.delegate(['change', 'click', 'keydown'], toggleOptions, 'select');
 
-		<c:if test="<%= webFormGroupServiceConfiguration.validationScriptEnable() %>">
+		<c:if test="<%= webFormServiceConfiguration.validationScriptEnable() %>">
 			var toggleValidationOptions = function(event) {
 				this.next().toggle();
 			};

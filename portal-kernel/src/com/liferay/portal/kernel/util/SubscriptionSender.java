@@ -22,6 +22,8 @@ import com.liferay.mail.kernel.template.MailTemplate;
 import com.liferay.mail.kernel.template.MailTemplateContext;
 import com.liferay.mail.kernel.template.MailTemplateContextBuilder;
 import com.liferay.mail.kernel.template.MailTemplateFactoryUtil;
+import com.liferay.petra.lang.ClassLoaderPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -171,8 +173,10 @@ public class SubscriptionSender implements Serializable {
 
 				if (_log.isDebugEnabled()) {
 					_log.debug(
-						"Add " + toAddress + " to the list of users who have " +
-							"received an email");
+						StringBundler.concat(
+							"Add ", toAddress,
+							" to the list of users who have received an ",
+							"email"));
 				}
 
 				_sentEmailAddresses.add(toAddress);
@@ -251,7 +255,8 @@ public class SubscriptionSender implements Serializable {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #getCurrentUserId()}
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	 *             #getCurrentUserId()}
 	 */
 	@Deprecated
 	public long getUserId() {
@@ -492,7 +497,8 @@ public class SubscriptionSender implements Serializable {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #setCurrentUserId(long)}
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	 *             #setCurrentUserId(long)}
 	 */
 	@Deprecated
 	public void setUserId(long userId) {
@@ -665,8 +671,10 @@ public class SubscriptionSender implements Serializable {
 		if (user == null) {
 			if (_log.isInfoEnabled()) {
 				_log.info(
-					"User with email address " + emailAddress +
-						" does not exist for company " + companyId);
+					StringBundler.concat(
+						"User with email address ", emailAddress,
+						" does not exist for company ",
+						String.valueOf(companyId)));
 			}
 
 			if (bulk) {
@@ -683,7 +691,7 @@ public class SubscriptionSender implements Serializable {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
 	 *             #notifyPersistedSubscriber(Subscription)}
 	 */
 	@Deprecated
@@ -738,7 +746,7 @@ public class SubscriptionSender implements Serializable {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
 	 */
 	@Deprecated
 	protected String replaceContent(String content, Locale locale)
@@ -748,7 +756,7 @@ public class SubscriptionSender implements Serializable {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
 	 */
 	@Deprecated
 	protected String replaceContent(
@@ -951,7 +959,8 @@ public class SubscriptionSender implements Serializable {
 		mailTemplateContextBuilder.put("[$FROM_ADDRESS$]", from.getAddress());
 		mailTemplateContextBuilder.put(
 			"[$FROM_NAME$]",
-			GetterUtil.getString(from.getPersonal(), from.getAddress()));
+			HtmlUtil.escape(
+				GetterUtil.getString(from.getPersonal(), from.getAddress())));
 		mailTemplateContextBuilder.put(
 			"[$TO_ADDRESS$]", HtmlUtil.escape(to.getAddress()));
 		mailTemplateContextBuilder.put(

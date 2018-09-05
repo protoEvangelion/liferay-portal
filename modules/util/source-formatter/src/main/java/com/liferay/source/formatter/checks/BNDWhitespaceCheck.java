@@ -14,9 +14,11 @@
 
 package com.liferay.source.formatter.checks;
 
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.source.formatter.checks.util.BNDSourceUtil;
+
+import java.io.IOException;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -30,13 +32,16 @@ public class BNDWhitespaceCheck extends WhitespaceCheck {
 	@Override
 	protected String doProcess(
 			String fileName, String absolutePath, String content)
-		throws Exception {
+		throws IOException {
 
 		int pos = fileName.lastIndexOf(StringPool.SLASH);
 
 		String shortFileName = fileName.substring(pos + 1);
 
 		content = _formatWhitespace(shortFileName, content);
+
+		content = StringUtil.replace(
+			content, new String[] {"\n\n", "\t "}, new String[] {"\n", "\t"});
 
 		return super.doProcess(fileName, absolutePath, content);
 	}

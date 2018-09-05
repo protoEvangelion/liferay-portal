@@ -40,32 +40,6 @@ public class SocialActivityCounterLocalServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.portlet.social.service.impl.SocialActivityCounterLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
-		return getService().getActionableDynamicQuery();
-	}
-
-	public static com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
-		return getService().dynamicQuery();
-	}
-
-	public static com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
-		return getService().getIndexableActionableDynamicQuery();
-	}
-
-	/**
-	* @throws PortalException
-	*/
-	public static com.liferay.portal.kernel.model.PersistedModel deletePersistedModel(
-		com.liferay.portal.kernel.model.PersistedModel persistedModel)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().deletePersistedModel(persistedModel);
-	}
-
-	public static com.liferay.portal.kernel.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getPersistedModel(primaryKeyObj);
-	}
 
 	/**
 	* Adds an activity counter specifying a previous activity and period
@@ -98,13 +72,39 @@ public class SocialActivityCounterLocalServiceUtil {
 	* @return the added activity counter
 	*/
 	public static com.liferay.social.kernel.model.SocialActivityCounter addActivityCounter(
-		long groupId, long classNameId, long classPK, java.lang.String name,
+		long groupId, long classNameId, long classPK, String name,
 		int ownerType, int totalValue, long previousActivityCounterId,
 		int periodLength)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
 				   .addActivityCounter(groupId, classNameId, classPK, name,
 			ownerType, totalValue, previousActivityCounterId, periodLength);
+	}
+
+	/**
+	* Adds or increments activity counters related to an activity.
+	*
+	* <p>
+	* This method is called asynchronously from the social activity service
+	* when the user performs an activity defined in
+	* <code>liferay-social.xml</code>.
+	* </p>
+	*
+	* <p>
+	* This method first calls the activity processor class, if there is one
+	* defined for the activity, checks for limits and increments all the
+	* counters that belong to the activity. Afterwards, it processes the
+	* activity with respect to achievement classes, if any. Lastly it
+	* increments the built-in <code>user.activities</code> and
+	* <code>asset.activities</code> counters.
+	* </p>
+	*
+	* @param activity the social activity
+	*/
+	public static void addActivityCounters(
+		com.liferay.social.kernel.model.SocialActivity activity)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		getService().addActivityCounters(activity);
 	}
 
 	/**
@@ -130,14 +130,53 @@ public class SocialActivityCounterLocalServiceUtil {
 	}
 
 	/**
-	* Deletes the social activity counter from the database. Also notifies the appropriate model listeners.
+	* Deletes all activity counters, limits, and settings related to the asset.
 	*
-	* @param socialActivityCounter the social activity counter
-	* @return the social activity counter that was removed
+	* <p>
+	* This method subtracts the asset's popularity from the owner's
+	* contribution points. It also creates a new contribution period if the
+	* latest one does not belong to the current period.
+	* </p>
+	*
+	* @param assetEntry the asset entry
 	*/
-	public static com.liferay.social.kernel.model.SocialActivityCounter deleteSocialActivityCounter(
-		com.liferay.social.kernel.model.SocialActivityCounter socialActivityCounter) {
-		return getService().deleteSocialActivityCounter(socialActivityCounter);
+	public static void deleteActivityCounters(
+		com.liferay.asset.kernel.model.AssetEntry assetEntry)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		getService().deleteActivityCounters(assetEntry);
+	}
+
+	/**
+	* Deletes all activity counters, limits, and settings related to the entity
+	* identified by the class name ID and class primary key.
+	*
+	* @param classNameId the primary key of the entity's class
+	* @param classPK the primary key of the entity
+	*/
+	public static void deleteActivityCounters(long classNameId, long classPK)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		getService().deleteActivityCounters(classNameId, classPK);
+	}
+
+	/**
+	* Deletes all activity counters for the entity identified by the class name
+	* and class primary key.
+	*
+	* @param className the entity's class name
+	* @param classPK the primary key of the entity
+	*/
+	public static void deleteActivityCounters(String className, long classPK)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		getService().deleteActivityCounters(className, classPK);
+	}
+
+	/**
+	* @throws PortalException
+	*/
+	public static com.liferay.portal.kernel.model.PersistedModel deletePersistedModel(
+		com.liferay.portal.kernel.model.PersistedModel persistedModel)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().deletePersistedModel(persistedModel);
 	}
 
 	/**
@@ -154,121 +193,52 @@ public class SocialActivityCounterLocalServiceUtil {
 	}
 
 	/**
-	* Returns the activity counter with the given name, owner, and end period
-	* that belong to the given entity.
-	*
-	* @param groupId the primary key of the group
-	* @param classNameId the primary key of the entity's class
-	* @param classPK the primary key of the entity
-	* @param name the counter name
-	* @param ownerType the owner type
-	* @param endPeriod the end period, <code>-1</code> for the latest one
-	* @return the matching activity counter
-	*/
-	public static com.liferay.social.kernel.model.SocialActivityCounter fetchActivityCounterByEndPeriod(
-		long groupId, long classNameId, long classPK, java.lang.String name,
-		int ownerType, int endPeriod) {
-		return getService()
-				   .fetchActivityCounterByEndPeriod(groupId, classNameId,
-			classPK, name, ownerType, endPeriod);
-	}
-
-	/**
-	* Returns the activity counter with the given name, owner, and start period
-	* that belong to the given entity.
-	*
-	* @param groupId the primary key of the group
-	* @param classNameId the primary key of the entity's class
-	* @param classPK the primary key of the entity
-	* @param name the counter name
-	* @param ownerType the owner type
-	* @param startPeriod the start period
-	* @return the matching activity counter
-	*/
-	public static com.liferay.social.kernel.model.SocialActivityCounter fetchActivityCounterByStartPeriod(
-		long groupId, long classNameId, long classPK, java.lang.String name,
-		int ownerType, int startPeriod) {
-		return getService()
-				   .fetchActivityCounterByStartPeriod(groupId, classNameId,
-			classPK, name, ownerType, startPeriod);
-	}
-
-	/**
-	* Returns the latest activity counter with the given name and owner that
-	* belong to the given entity.
-	*
-	* @param groupId the primary key of the group
-	* @param classNameId the primary key of the entity's class
-	* @param classPK the primary key of the entity
-	* @param name the counter name
-	* @param ownerType the owner type
-	* @return the matching activity counter
-	*/
-	public static com.liferay.social.kernel.model.SocialActivityCounter fetchLatestActivityCounter(
-		long groupId, long classNameId, long classPK, java.lang.String name,
-		int ownerType) {
-		return getService()
-				   .fetchLatestActivityCounter(groupId, classNameId, classPK,
-			name, ownerType);
-	}
-
-	public static com.liferay.social.kernel.model.SocialActivityCounter fetchSocialActivityCounter(
-		long activityCounterId) {
-		return getService().fetchSocialActivityCounter(activityCounterId);
-	}
-
-	/**
-	* Returns the social activity counter with the primary key.
-	*
-	* @param activityCounterId the primary key of the social activity counter
-	* @return the social activity counter
-	* @throws PortalException if a social activity counter with the primary key could not be found
-	*/
-	public static com.liferay.social.kernel.model.SocialActivityCounter getSocialActivityCounter(
-		long activityCounterId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getSocialActivityCounter(activityCounterId);
-	}
-
-	/**
-	* Updates the social activity counter in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	* Deletes the social activity counter from the database. Also notifies the appropriate model listeners.
 	*
 	* @param socialActivityCounter the social activity counter
-	* @return the social activity counter that was updated
+	* @return the social activity counter that was removed
 	*/
-	public static com.liferay.social.kernel.model.SocialActivityCounter updateSocialActivityCounter(
+	public static com.liferay.social.kernel.model.SocialActivityCounter deleteSocialActivityCounter(
 		com.liferay.social.kernel.model.SocialActivityCounter socialActivityCounter) {
-		return getService().updateSocialActivityCounter(socialActivityCounter);
+		return getService().deleteSocialActivityCounter(socialActivityCounter);
 	}
 
 	/**
-	* Returns the number of social activity counters.
+	* Disables all the counters of an asset identified by the class name ID and
+	* class primary key.
 	*
-	* @return the number of social activity counters
+	* <p>
+	* This method is used by the recycle bin to disable all counters of assets
+	* put into the recycle bin. It adjusts the owner's contribution score.
+	* </p>
+	*
+	* @param classNameId the primary key of the asset's class
+	* @param classPK the primary key of the asset
 	*/
-	public static int getSocialActivityCountersCount() {
-		return getService().getSocialActivityCountersCount();
+	public static void disableActivityCounters(long classNameId, long classPK)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		getService().disableActivityCounters(classNameId, classPK);
 	}
 
 	/**
-	* Returns the number of users having a rank based on the given counters.
+	* Disables all the counters of an asset identified by the class name and
+	* class primary key.
 	*
-	* @param groupId the primary key of the group
-	* @param rankingNames the ranking counter names
-	* @return the number of matching users
+	* <p>
+	* This method is used by the recycle bin to disable all counters of assets
+	* put into the recycle bin. It adjusts the owner's contribution score.
+	* </p>
+	*
+	* @param className the asset's class name
+	* @param classPK the primary key of the asset
 	*/
-	public static int getUserActivityCountersCount(long groupId,
-		java.lang.String[] rankingNames) {
-		return getService().getUserActivityCountersCount(groupId, rankingNames);
+	public static void disableActivityCounters(String className, long classPK)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		getService().disableActivityCounters(className, classPK);
 	}
 
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	public static java.lang.String getOSGiServiceIdentifier() {
-		return getService().getOSGiServiceIdentifier();
+	public static com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
+		return getService().dynamicQuery();
 	}
 
 	/**
@@ -322,6 +292,135 @@ public class SocialActivityCounterLocalServiceUtil {
 	}
 
 	/**
+	* Returns the number of rows matching the dynamic query.
+	*
+	* @param dynamicQuery the dynamic query
+	* @return the number of rows matching the dynamic query
+	*/
+	public static long dynamicQueryCount(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+		return getService().dynamicQueryCount(dynamicQuery);
+	}
+
+	/**
+	* Returns the number of rows matching the dynamic query.
+	*
+	* @param dynamicQuery the dynamic query
+	* @param projection the projection to apply to the query
+	* @return the number of rows matching the dynamic query
+	*/
+	public static long dynamicQueryCount(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
+		com.liferay.portal.kernel.dao.orm.Projection projection) {
+		return getService().dynamicQueryCount(dynamicQuery, projection);
+	}
+
+	/**
+	* Enables all activity counters of an asset identified by the class name ID
+	* and class primary key.
+	*
+	* <p>
+	* This method is used by the recycle bin to enable all counters of assets
+	* restored from the recycle bin. It adjusts the owner's contribution score.
+	* </p>
+	*
+	* @param classNameId the primary key of the asset's class
+	* @param classPK the primary key of the asset
+	*/
+	public static void enableActivityCounters(long classNameId, long classPK)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		getService().enableActivityCounters(classNameId, classPK);
+	}
+
+	/**
+	* Enables all the counters of an asset identified by the class name and
+	* class primary key.
+	*
+	* <p>
+	* This method is used by the recycle bin to enable all counters of assets
+	* restored from the recycle bin. It adjusts the owner's contribution score.
+	* </p>
+	*
+	* @param className the asset's class name
+	* @param classPK the primary key of the asset
+	*/
+	public static void enableActivityCounters(String className, long classPK)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		getService().enableActivityCounters(className, classPK);
+	}
+
+	/**
+	* Returns the activity counter with the given name, owner, and end period
+	* that belong to the given entity.
+	*
+	* @param groupId the primary key of the group
+	* @param classNameId the primary key of the entity's class
+	* @param classPK the primary key of the entity
+	* @param name the counter name
+	* @param ownerType the owner type
+	* @param endPeriod the end period, <code>-1</code> for the latest one
+	* @return the matching activity counter
+	*/
+	public static com.liferay.social.kernel.model.SocialActivityCounter fetchActivityCounterByEndPeriod(
+		long groupId, long classNameId, long classPK, String name,
+		int ownerType, int endPeriod) {
+		return getService()
+				   .fetchActivityCounterByEndPeriod(groupId, classNameId,
+			classPK, name, ownerType, endPeriod);
+	}
+
+	/**
+	* Returns the activity counter with the given name, owner, and start period
+	* that belong to the given entity.
+	*
+	* @param groupId the primary key of the group
+	* @param classNameId the primary key of the entity's class
+	* @param classPK the primary key of the entity
+	* @param name the counter name
+	* @param ownerType the owner type
+	* @param startPeriod the start period
+	* @return the matching activity counter
+	*/
+	public static com.liferay.social.kernel.model.SocialActivityCounter fetchActivityCounterByStartPeriod(
+		long groupId, long classNameId, long classPK, String name,
+		int ownerType, int startPeriod) {
+		return getService()
+				   .fetchActivityCounterByStartPeriod(groupId, classNameId,
+			classPK, name, ownerType, startPeriod);
+	}
+
+	/**
+	* Returns the latest activity counter with the given name and owner that
+	* belong to the given entity.
+	*
+	* @param groupId the primary key of the group
+	* @param classNameId the primary key of the entity's class
+	* @param classPK the primary key of the entity
+	* @param name the counter name
+	* @param ownerType the owner type
+	* @return the matching activity counter
+	*/
+	public static com.liferay.social.kernel.model.SocialActivityCounter fetchLatestActivityCounter(
+		long groupId, long classNameId, long classPK, String name, int ownerType) {
+		return getService()
+				   .fetchLatestActivityCounter(groupId, classNameId, classPK,
+			name, ownerType);
+	}
+
+	public static com.liferay.social.kernel.model.SocialActivityCounter fetchSocialActivityCounter(
+		long activityCounterId) {
+		return getService().fetchSocialActivityCounter(activityCounterId);
+	}
+
+	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
+		return getService().getActionableDynamicQuery();
+	}
+
+	public static com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
+		return getService().getIndexableActionableDynamicQuery();
+	}
+
+	/**
 	* Returns all the activity counters with the given name and period offsets.
 	*
 	* <p>
@@ -336,7 +435,7 @@ public class SocialActivityCounterLocalServiceUtil {
 	* @return the matching activity counters
 	*/
 	public static java.util.List<com.liferay.social.kernel.model.SocialActivityCounter> getOffsetActivityCounters(
-		long groupId, java.lang.String name, int startOffset, int endOffset) {
+		long groupId, String name, int startOffset, int endOffset) {
 		return getService()
 				   .getOffsetActivityCounters(groupId, name, startOffset,
 			endOffset);
@@ -360,10 +459,19 @@ public class SocialActivityCounterLocalServiceUtil {
 	* @return the distribution of matching activity counters
 	*/
 	public static java.util.List<com.liferay.social.kernel.model.SocialActivityCounter> getOffsetDistributionActivityCounters(
-		long groupId, java.lang.String name, int startOffset, int endOffset) {
+		long groupId, String name, int startOffset, int endOffset) {
 		return getService()
 				   .getOffsetDistributionActivityCounters(groupId, name,
 			startOffset, endOffset);
+	}
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	public static String getOSGiServiceIdentifier() {
+		return getService().getOSGiServiceIdentifier();
 	}
 
 	/**
@@ -382,7 +490,7 @@ public class SocialActivityCounterLocalServiceUtil {
 	* @return the matching activity counters
 	*/
 	public static java.util.List<com.liferay.social.kernel.model.SocialActivityCounter> getPeriodActivityCounters(
-		long groupId, java.lang.String name, int startPeriod, int endPeriod) {
+		long groupId, String name, int startPeriod, int endPeriod) {
 		return getService()
 				   .getPeriodActivityCounters(groupId, name, startPeriod,
 			endPeriod);
@@ -406,10 +514,29 @@ public class SocialActivityCounterLocalServiceUtil {
 	* @return the distribution of matching activity counters
 	*/
 	public static java.util.List<com.liferay.social.kernel.model.SocialActivityCounter> getPeriodDistributionActivityCounters(
-		long groupId, java.lang.String name, int startPeriod, int endPeriod) {
+		long groupId, String name, int startPeriod, int endPeriod) {
 		return getService()
 				   .getPeriodDistributionActivityCounters(groupId, name,
 			startPeriod, endPeriod);
+	}
+
+	public static com.liferay.portal.kernel.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getPersistedModel(primaryKeyObj);
+	}
+
+	/**
+	* Returns the social activity counter with the primary key.
+	*
+	* @param activityCounterId the primary key of the social activity counter
+	* @return the social activity counter
+	* @throws PortalException if a social activity counter with the primary key could not be found
+	*/
+	public static com.liferay.social.kernel.model.SocialActivityCounter getSocialActivityCounter(
+		long activityCounterId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getSocialActivityCounter(activityCounterId);
 	}
 
 	/**
@@ -426,6 +553,15 @@ public class SocialActivityCounterLocalServiceUtil {
 	public static java.util.List<com.liferay.social.kernel.model.SocialActivityCounter> getSocialActivityCounters(
 		int start, int end) {
 		return getService().getSocialActivityCounters(start, end);
+	}
+
+	/**
+	* Returns the number of social activity counters.
+	*
+	* @return the number of social activity counters
+	*/
+	public static int getSocialActivityCountersCount() {
+		return getService().getSocialActivityCountersCount();
 	}
 
 	/**
@@ -456,173 +592,23 @@ public class SocialActivityCounterLocalServiceUtil {
 	* @return the range of matching tuples
 	*/
 	public static java.util.List<com.liferay.portal.kernel.util.Tuple> getUserActivityCounters(
-		long groupId, java.lang.String[] rankingNames,
-		java.lang.String[] selectedNames, int start, int end) {
+		long groupId, String[] rankingNames, String[] selectedNames, int start,
+		int end) {
 		return getService()
 				   .getUserActivityCounters(groupId, rankingNames,
 			selectedNames, start, end);
 	}
 
 	/**
-	* Returns the number of rows matching the dynamic query.
+	* Returns the number of users having a rank based on the given counters.
 	*
-	* @param dynamicQuery the dynamic query
-	* @return the number of rows matching the dynamic query
+	* @param groupId the primary key of the group
+	* @param rankingNames the ranking counter names
+	* @return the number of matching users
 	*/
-	public static long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
-		return getService().dynamicQueryCount(dynamicQuery);
-	}
-
-	/**
-	* Returns the number of rows matching the dynamic query.
-	*
-	* @param dynamicQuery the dynamic query
-	* @param projection the projection to apply to the query
-	* @return the number of rows matching the dynamic query
-	*/
-	public static long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
-		com.liferay.portal.kernel.dao.orm.Projection projection) {
-		return getService().dynamicQueryCount(dynamicQuery, projection);
-	}
-
-	/**
-	* Adds or increments activity counters related to an activity.
-	*
-	* <p>
-	* This method is called asynchronously from the social activity service
-	* when the user performs an activity defined in
-	* <code>liferay-social.xml</code>.
-	* </p>
-	*
-	* <p>
-	* This method first calls the activity processor class, if there is one
-	* defined for the activity, checks for limits and increments all the
-	* counters that belong to the activity. Afterwards, it processes the
-	* activity with respect to achievement classes, if any. Lastly it
-	* increments the built-in <code>user.activities</code> and
-	* <code>asset.activities</code> counters.
-	* </p>
-	*
-	* @param activity the social activity
-	*/
-	public static void addActivityCounters(
-		com.liferay.social.kernel.model.SocialActivity activity)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().addActivityCounters(activity);
-	}
-
-	/**
-	* Deletes all activity counters, limits, and settings related to the asset.
-	*
-	* <p>
-	* This method subtracts the asset's popularity from the owner's
-	* contribution points. It also creates a new contribution period if the
-	* latest one does not belong to the current period.
-	* </p>
-	*
-	* @param assetEntry the asset entry
-	*/
-	public static void deleteActivityCounters(
-		com.liferay.asset.kernel.model.AssetEntry assetEntry)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().deleteActivityCounters(assetEntry);
-	}
-
-	/**
-	* Deletes all activity counters for the entity identified by the class name
-	* and class primary key.
-	*
-	* @param className the entity's class name
-	* @param classPK the primary key of the entity
-	*/
-	public static void deleteActivityCounters(java.lang.String className,
-		long classPK)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().deleteActivityCounters(className, classPK);
-	}
-
-	/**
-	* Deletes all activity counters, limits, and settings related to the entity
-	* identified by the class name ID and class primary key.
-	*
-	* @param classNameId the primary key of the entity's class
-	* @param classPK the primary key of the entity
-	*/
-	public static void deleteActivityCounters(long classNameId, long classPK)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().deleteActivityCounters(classNameId, classPK);
-	}
-
-	/**
-	* Disables all the counters of an asset identified by the class name and
-	* class primary key.
-	*
-	* <p>
-	* This method is used by the recycle bin to disable all counters of assets
-	* put into the recycle bin. It adjusts the owner's contribution score.
-	* </p>
-	*
-	* @param className the asset's class name
-	* @param classPK the primary key of the asset
-	*/
-	public static void disableActivityCounters(java.lang.String className,
-		long classPK)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().disableActivityCounters(className, classPK);
-	}
-
-	/**
-	* Disables all the counters of an asset identified by the class name ID and
-	* class primary key.
-	*
-	* <p>
-	* This method is used by the recycle bin to disable all counters of assets
-	* put into the recycle bin. It adjusts the owner's contribution score.
-	* </p>
-	*
-	* @param classNameId the primary key of the asset's class
-	* @param classPK the primary key of the asset
-	*/
-	public static void disableActivityCounters(long classNameId, long classPK)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().disableActivityCounters(classNameId, classPK);
-	}
-
-	/**
-	* Enables all the counters of an asset identified by the class name and
-	* class primary key.
-	*
-	* <p>
-	* This method is used by the recycle bin to enable all counters of assets
-	* restored from the recycle bin. It adjusts the owner's contribution score.
-	* </p>
-	*
-	* @param className the asset's class name
-	* @param classPK the primary key of the asset
-	*/
-	public static void enableActivityCounters(java.lang.String className,
-		long classPK)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().enableActivityCounters(className, classPK);
-	}
-
-	/**
-	* Enables all activity counters of an asset identified by the class name ID
-	* and class primary key.
-	*
-	* <p>
-	* This method is used by the recycle bin to enable all counters of assets
-	* restored from the recycle bin. It adjusts the owner's contribution score.
-	* </p>
-	*
-	* @param classNameId the primary key of the asset's class
-	* @param classPK the primary key of the asset
-	*/
-	public static void enableActivityCounters(long classNameId, long classPK)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().enableActivityCounters(classNameId, classPK);
+	public static int getUserActivityCountersCount(long groupId,
+		String[] rankingNames) {
+		return getService().getUserActivityCountersCount(groupId, rankingNames);
 	}
 
 	/**
@@ -639,6 +625,17 @@ public class SocialActivityCounterLocalServiceUtil {
 	public static void incrementUserAchievementCounter(long userId, long groupId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		getService().incrementUserAchievementCounter(userId, groupId);
+	}
+
+	/**
+	* Updates the social activity counter in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param socialActivityCounter the social activity counter
+	* @return the social activity counter that was updated
+	*/
+	public static com.liferay.social.kernel.model.SocialActivityCounter updateSocialActivityCounter(
+		com.liferay.social.kernel.model.SocialActivityCounter socialActivityCounter) {
+		return getService().updateSocialActivityCounter(socialActivityCounter);
 	}
 
 	public static SocialActivityCounterLocalService getService() {

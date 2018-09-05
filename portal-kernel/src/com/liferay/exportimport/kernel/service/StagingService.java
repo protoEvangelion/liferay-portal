@@ -25,8 +25,12 @@ import com.liferay.portal.kernel.jsonwebservice.JSONWebService;
 import com.liferay.portal.kernel.security.access.control.AccessControlled;
 import com.liferay.portal.kernel.service.BaseService;
 import com.liferay.portal.kernel.transaction.Isolation;
+import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 
+import java.io.Serializable;
+
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,28 +55,10 @@ public interface StagingService extends BaseService {
 	 *
 	 * Never modify or reference this interface directly. Always use {@link StagingServiceUtil} to access the staging remote service. Add custom service methods to {@link com.liferay.portlet.exportimport.service.impl.StagingServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-
-	/**
-	* @deprecated As of 7.0.0, with no direct replacement
-	*/
-	@java.lang.Deprecated
-	public MissingReferences publishStagingRequest(long stagingRequestId,
-		boolean privateLayout,
-		Map<java.lang.String, java.lang.String[]> parameterMap)
+	public void cleanUpStagingRequest(long stagingRequestId)
 		throws PortalException;
 
-	public MissingReferences publishStagingRequest(long stagingRequestId,
-		ExportImportConfiguration exportImportConfiguration)
-		throws PortalException;
-
-	/**
-	* @deprecated As of 7.0.0, replaced by {@link #publishStagingRequest(long,
-	boolean, Map)}
-	*/
-	@java.lang.Deprecated
-	public MissingReferences validateStagingRequest(long stagingRequestId,
-		boolean privateLayout,
-		Map<java.lang.String, java.lang.String[]> parameterMap)
+	public long createStagingRequest(long groupId, String checksum)
 		throws PortalException;
 
 	/**
@@ -80,14 +66,37 @@ public interface StagingService extends BaseService {
 	*
 	* @return the OSGi service identifier
 	*/
-	public java.lang.String getOSGiServiceIdentifier();
+	public String getOSGiServiceIdentifier();
 
-	public long createStagingRequest(long groupId, java.lang.String checksum)
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public boolean hasRemoteLayout(String uuid, long groupId,
+		boolean privateLayout) throws PortalException;
+
+	public void propagateExportImportLifecycleEvent(int code, int processFlag,
+		String processId, List<Serializable> arguments)
 		throws PortalException;
 
-	public void cleanUpStagingRequest(long stagingRequestId)
+	/**
+	* @deprecated As of Wilberforce (7.0.x), with no direct replacement
+	*/
+	@Deprecated
+	public MissingReferences publishStagingRequest(long stagingRequestId,
+		boolean privateLayout, Map<String, String[]> parameterMap)
 		throws PortalException;
 
-	public void updateStagingRequest(long stagingRequestId,
-		java.lang.String fileName, byte[] bytes) throws PortalException;
+	public MissingReferences publishStagingRequest(long stagingRequestId,
+		ExportImportConfiguration exportImportConfiguration)
+		throws PortalException;
+
+	public void updateStagingRequest(long stagingRequestId, String fileName,
+		byte[] bytes) throws PortalException;
+
+	/**
+	* @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	#publishStagingRequest(long, boolean, Map)}
+	*/
+	@Deprecated
+	public MissingReferences validateStagingRequest(long stagingRequestId,
+		boolean privateLayout, Map<String, String[]> parameterMap)
+		throws PortalException;
 }

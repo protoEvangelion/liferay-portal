@@ -14,16 +14,19 @@
 
 package com.liferay.portal.lpkg.deployer.test;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.lpkg.StaticLPKGResolver;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.URLCodec;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.lpkg.deployer.LPKGDeployer;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+
+import java.lang.reflect.Method;
 
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -118,6 +121,16 @@ public class LPKGDeployerTest {
 
 		LPKGDeployer lpkgDeployer = serviceTracker.getService();
 
+		Bundle lpkgDeployerBundle = FrameworkUtil.getBundle(
+			lpkgDeployer.getClass());
+
+		Class<?> clazz = lpkgDeployerBundle.loadClass(
+			"com.liferay.portal.lpkg.deployer.internal." +
+				"LPKGInnerBundleLocationUtil");
+
+		Method method = clazz.getDeclaredMethod(
+			"generateInnerBundleLocation", Bundle.class, String.class);
+
 		serviceTracker.close();
 
 		Map<Bundle, List<Bundle>> deployedLPKGBundles =
@@ -155,34 +168,37 @@ public class LPKGDeployerTest {
 				String name = zipEntry.getName();
 
 				if (name.endsWith(".jar")) {
-					if (symbolicName.equals(
-							StaticLPKGResolver.
-								getStaticLPKGBundleSymbolicName())) {
+					if (_staticLPKGBundleSymbolicNames.contains(symbolicName)) {
+						String location =
+							"file:/" + name + "?protocol=lpkg&static=true";
 
-						Bundle bundle = bundleContext.getBundle(
-							"reference:" + StringPool.SLASH + name);
+						Bundle bundle = bundleContext.getBundle(location);
 
 						Assert.assertNotNull(
-							"No matching static bundle for reference:/" + name,
+							"No matching static bundle for " + location,
 							bundle);
 					}
 					else {
-						Bundle bundle = bundleContext.getBundle(
-							StringPool.SLASH + name);
+						String location = (String)method.invoke(
+							null, lpkgBundle, name);
+
+						Bundle bundle = bundleContext.getBundle(location);
 
 						Assert.assertNotNull(
-							"No matching app bundle for /" + name, bundle);
+							"No matching app bundle for " + location, bundle);
 
 						actualAppBundles.add(bundle);
 					}
 				}
 
 				if (name.endsWith(".war")) {
-					Bundle bundle = bundleContext.getBundle(
-						StringPool.SLASH + name);
+					String location = (String)method.invoke(
+						null, lpkgBundle, name);
+
+					Bundle bundle = bundleContext.getBundle(location);
 
 					Assert.assertNotNull(
-						"No matching app bundle for /" + name, bundle);
+						"No matching app bundle for " + location, bundle);
 
 					actualAppBundles.add(bundle);
 
@@ -194,6 +210,8 @@ public class LPKGDeployerTest {
 					if (index >= 0) {
 						contextName = contextName.substring(0, index);
 					}
+
+					String portalProfileNames = null;
 
 					Path tempFilePath = Files.createTempFile(null, null);
 
@@ -223,6 +241,9 @@ public class LPKGDeployerTest {
 								if (configuredServletContextName != null) {
 									contextName = configuredServletContextName;
 								}
+
+								portalProfileNames = properties.getProperty(
+									"liferay-portal-profile-names");
 							}
 						}
 					}
@@ -230,9 +251,9 @@ public class LPKGDeployerTest {
 						Files.delete(tempFilePath);
 					}
 
-					StringBundler sb = new StringBundler(10);
+					StringBundler sb = new StringBundler(13);
 
-					sb.append("webbundle:lpkg://");
+					sb.append("webbundle:/");
 					sb.append(URLCodec.encodeURL(lpkgBundle.getSymbolicName()));
 					sb.append(StringPool.DASH);
 					sb.append(lpkgBundle.getVersion());
@@ -242,8 +263,14 @@ public class LPKGDeployerTest {
 					sb.append(bundle.getVersion());
 					sb.append("&Web-ContextPath=/");
 					sb.append(contextName);
+					sb.append("&protocol=lpkg");
 
-					String location = sb.toString();
+					if (Validator.isNotNull(portalProfileNames)) {
+						sb.append("&liferay-portal-profile-names=");
+						sb.append(portalProfileNames);
+					}
+
+					location = sb.toString();
 
 					Assert.assertNotNull(
 						"Missing WAR bundle for wrapper bundle " + bundle +
@@ -263,5 +290,8 @@ public class LPKGDeployerTest {
 			}
 		}
 	}
+
+	private static final List<String> _staticLPKGBundleSymbolicNames =
+		StaticLPKGResolver.getStaticLPKGBundleSymbolicNames();
 
 }

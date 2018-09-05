@@ -14,6 +14,7 @@
 
 package com.liferay.portal.servlet;
 
+import com.liferay.petra.string.CharPool;
 import com.liferay.portal.kernel.exception.NoSuchGroupException;
 import com.liferay.portal.kernel.exception.NoSuchLayoutException;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -24,8 +25,8 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.model.LayoutFriendlyURL;
-import com.liferay.portal.kernel.model.LayoutFriendlyURLComposite;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.portlet.LayoutFriendlyURLSeparatorComposite;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutFriendlyURLLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
@@ -36,7 +37,6 @@ import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.servlet.PortalMessages;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.struts.LastPath;
-import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
@@ -67,10 +67,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * @author Brian Wing Shun Chan
- * @author Jorge Ferrer
- * @author Shuyang Zhou
- * @deprecated As of 7.0.0, with no direct replacement
+ * @author     Brian Wing Shun Chan
+ * @author     Jorge Ferrer
+ * @author     Shuyang Zhou
+ * @author     Marco Leo
+ * @deprecated As of Judson (7.1.x), with no direct replacement
  */
 @Deprecated
 public class FriendlyURLServlet extends HttpServlet {
@@ -124,7 +125,7 @@ public class FriendlyURLServlet extends HttpServlet {
 		}
 		catch (PortalException pe) {
 			if (_log.isWarnEnabled()) {
-				_log.warn(pe);
+				_log.warn(pe, pe);
 			}
 
 			if (pe instanceof NoSuchGroupException ||
@@ -167,7 +168,7 @@ public class FriendlyURLServlet extends HttpServlet {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Judson (7.1.x), replaced by {@link
 	 *             com.liferay.taglib.util.FriendlyURLUtil.getFriendlyURL(
 	 *             HttpServletRequest, javax.servlet.jsp.PageContext)}
 	 */
@@ -190,11 +191,10 @@ public class FriendlyURLServlet extends HttpServlet {
 		if (lifecycle.equals("1")) {
 			return new LastPath(_friendlyURLPathPrefix, pathInfo);
 		}
-		else {
-			return new LastPath(
-				_friendlyURLPathPrefix, pathInfo,
-				HttpUtil.parameterMapToString(request.getParameterMap()));
-		}
+
+		return new LastPath(
+			_friendlyURLPathPrefix, pathInfo,
+			HttpUtil.parameterMapToString(request.getParameterMap()));
 	}
 
 	protected String getPathInfo(HttpServletRequest request) {
@@ -312,32 +312,36 @@ public class FriendlyURLServlet extends HttpServlet {
 		Map<String, String[]> params = request.getParameterMap();
 
 		try {
-			LayoutFriendlyURLComposite layoutFriendlyURLComposite =
-				PortalUtil.getLayoutFriendlyURLComposite(
-					group.getGroupId(), _private, friendlyURL, params,
-					requestContext);
+			LayoutFriendlyURLSeparatorComposite
+				layoutFriendlyURLSeparatorComposite =
+					PortalUtil.getLayoutFriendlyURLSeparatorComposite(
+						group.getGroupId(), _private, friendlyURL, params,
+						requestContext);
 
-			Layout layout = layoutFriendlyURLComposite.getLayout();
+			Layout layout = layoutFriendlyURLSeparatorComposite.getLayout();
 
 			request.setAttribute(WebKeys.LAYOUT, layout);
 
 			Locale locale = PortalUtil.getLocale(request);
 
-			String layoutFriendlyURLCompositeFriendlyURL =
-				layoutFriendlyURLComposite.getFriendlyURL();
+			String layoutFriendlyURLSeparatorCompositeFriendlyURL =
+				layoutFriendlyURLSeparatorComposite.getFriendlyURL();
 
-			if (Validator.isNull(layoutFriendlyURLCompositeFriendlyURL)) {
-				layoutFriendlyURLCompositeFriendlyURL = layout.getFriendlyURL(
-					locale);
+			if (Validator.isNull(
+					layoutFriendlyURLSeparatorCompositeFriendlyURL)) {
+
+				layoutFriendlyURLSeparatorCompositeFriendlyURL =
+					layout.getFriendlyURL(locale);
 			}
 
-			pos = layoutFriendlyURLCompositeFriendlyURL.indexOf(
-				Portal.FRIENDLY_URL_SEPARATOR);
+			pos = layoutFriendlyURLSeparatorCompositeFriendlyURL.indexOf(
+				layoutFriendlyURLSeparatorComposite.getURLSeparator());
 
 			if (pos != 0) {
 				if (pos != -1) {
-					layoutFriendlyURLCompositeFriendlyURL =
-						layoutFriendlyURLCompositeFriendlyURL.substring(0, pos);
+					layoutFriendlyURLSeparatorCompositeFriendlyURL =
+						layoutFriendlyURLSeparatorCompositeFriendlyURL.
+							substring(0, pos);
 				}
 
 				String i18nLanguageId = (String)request.getAttribute(
@@ -347,11 +351,12 @@ public class FriendlyURLServlet extends HttpServlet {
 					 !LanguageUtil.isAvailableLocale(
 						 group.getGroupId(), i18nLanguageId)) ||
 					!StringUtil.equalsIgnoreCase(
-						layoutFriendlyURLCompositeFriendlyURL,
+						layoutFriendlyURLSeparatorCompositeFriendlyURL,
 						layout.getFriendlyURL(locale))) {
 
 					Locale originalLocale = setAlternativeLayoutFriendlyURL(
-						request, layout, layoutFriendlyURLCompositeFriendlyURL);
+						request, layout,
+						layoutFriendlyURLSeparatorCompositeFriendlyURL);
 
 					String redirect = PortalUtil.getLocalizedFriendlyURL(
 						request, layout, locale, originalLocale);
@@ -392,7 +397,7 @@ public class FriendlyURLServlet extends HttpServlet {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
 	 */
 	@Deprecated
 	protected Object[] getRedirect(
@@ -469,9 +474,8 @@ public class FriendlyURLServlet extends HttpServlet {
 
 				return true;
 			}
-			else {
-				return false;
-			}
+
+			return false;
 		}
 
 		public String getPath() {

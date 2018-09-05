@@ -19,8 +19,11 @@ import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
 /**
- * @author Brian Wing Shun Chan
+ * @author     Brian Wing Shun Chan
+ * @deprecated As of Judson (7.1.x), replaced by {@link
+ *             com.liferay.document.library.file.rank.util.comparator.FileRankCreateDateComparator}
  */
+@Deprecated
 public class FileRankCreateDateComparator
 	extends OrderByComparator<DLFileRank> {
 
@@ -46,9 +49,8 @@ public class FileRankCreateDateComparator
 		if (_ascending) {
 			return value;
 		}
-		else {
-			return -value;
-		}
+
+		return -value;
 	}
 
 	@Override
@@ -56,9 +58,8 @@ public class FileRankCreateDateComparator
 		if (_ascending) {
 			return ORDER_BY_ASC;
 		}
-		else {
-			return ORDER_BY_DESC;
-		}
+
+		return ORDER_BY_DESC;
 	}
 
 	@Override

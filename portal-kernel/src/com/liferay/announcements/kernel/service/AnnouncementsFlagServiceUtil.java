@@ -40,6 +40,16 @@ public class AnnouncementsFlagServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.portlet.announcements.service.impl.AnnouncementsFlagServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
+	public static void addFlag(long entryId, int value)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		getService().addFlag(entryId, value);
+	}
+
+	public static void deleteFlag(long flagId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		getService().deleteFlag(flagId);
+	}
+
 	public static com.liferay.announcements.kernel.model.AnnouncementsFlag getFlag(
 		long entryId, int value)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -51,18 +61,8 @@ public class AnnouncementsFlagServiceUtil {
 	*
 	* @return the OSGi service identifier
 	*/
-	public static java.lang.String getOSGiServiceIdentifier() {
+	public static String getOSGiServiceIdentifier() {
 		return getService().getOSGiServiceIdentifier();
-	}
-
-	public static void addFlag(long entryId, int value)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().addFlag(entryId, value);
-	}
-
-	public static void deleteFlag(long flagId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().deleteFlag(flagId);
 	}
 
 	public static AnnouncementsFlagService getService() {

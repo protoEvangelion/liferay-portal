@@ -14,9 +14,11 @@
 
 package com.liferay.portal.repository.portletrepository;
 
-import com.liferay.portal.kernel.bean.BeanReference;
+import com.liferay.petra.reflect.ReflectionUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.repository.DocumentRepository;
 import com.liferay.portal.kernel.repository.RepositoryFactory;
+import com.liferay.portal.kernel.repository.UndeployedExternalRepositoryException;
 import com.liferay.portal.kernel.repository.capabilities.PortalCapabilityLocator;
 import com.liferay.portal.kernel.repository.capabilities.ProcessorCapability;
 import com.liferay.portal.kernel.repository.capabilities.RelatedModelCapability;
@@ -25,6 +27,7 @@ import com.liferay.portal.kernel.repository.capabilities.WorkflowCapability;
 import com.liferay.portal.kernel.repository.registry.BaseRepositoryDefiner;
 import com.liferay.portal.kernel.repository.registry.CapabilityRegistry;
 import com.liferay.portal.kernel.repository.registry.RepositoryFactoryRegistry;
+import com.liferay.portal.kernel.util.ServiceProxyFactory;
 
 /**
  * @author Adolfo Pérez
@@ -45,25 +48,36 @@ public class PortletRepositoryDefiner extends BaseRepositoryDefiner {
 	public void registerCapabilities(
 		CapabilityRegistry<DocumentRepository> capabilityRegistry) {
 
+		if (_portalCapabilityLocator == null) {
+			ReflectionUtil.throwException(
+				new UndeployedExternalRepositoryException(
+					StringBundler.concat(
+						"Repository definer ",
+						PortletRepositoryDefiner.class.getName(),
+						" is not yet fully initialized")));
+		}
+
 		DocumentRepository documentRepository = capabilityRegistry.getTarget();
 
 		capabilityRegistry.addExportedCapability(
 			RelatedModelCapability.class,
-			portalCapabilityLocator.getRelatedModelCapability(
+			_portalCapabilityLocator.getRelatedModelCapability(
 				documentRepository));
 
 		capabilityRegistry.addExportedCapability(
 			TrashCapability.class,
-			portalCapabilityLocator.getTrashCapability(documentRepository));
+			_portalCapabilityLocator.getTrashCapability(documentRepository));
 
 		capabilityRegistry.addExportedCapability(
 			WorkflowCapability.class,
-			portalCapabilityLocator.getWorkflowCapability(
+			_portalCapabilityLocator.getWorkflowCapability(
 				documentRepository, WorkflowCapability.OperationMode.MINIMAL));
 
 		capabilityRegistry.addSupportedCapability(
 			ProcessorCapability.class,
-			portalCapabilityLocator.getProcessorCapability(documentRepository));
+			_portalCapabilityLocator.getProcessorCapability(
+				documentRepository,
+				ProcessorCapability.ResourceGenerationStrategy.REUSE));
 	}
 
 	@Override
@@ -77,8 +91,16 @@ public class PortletRepositoryDefiner extends BaseRepositoryDefiner {
 		_repositoryFactory = repositoryFactory;
 	}
 
-	@BeanReference(type = PortalCapabilityLocator.class)
+	/**
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
+	 */
+	@Deprecated
 	protected PortalCapabilityLocator portalCapabilityLocator;
+
+	private static volatile PortalCapabilityLocator _portalCapabilityLocator =
+		ServiceProxyFactory.newServiceTrackedInstance(
+			PortalCapabilityLocator.class, PortletRepositoryDefiner.class,
+			"_portalCapabilityLocator", false, true);
 
 	private RepositoryFactory _repositoryFactory;
 

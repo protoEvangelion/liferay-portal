@@ -19,6 +19,8 @@ import com.liferay.portal.tools.ImportsFormatter;
 import com.liferay.portal.tools.JavaImportsFormatter;
 import com.liferay.source.formatter.checks.util.JavaSourceUtil;
 
+import java.io.IOException;
+
 /**
  * @author Hugo Huijser
  */
@@ -27,14 +29,14 @@ public class JavaImportsCheck extends BaseFileCheck {
 	@Override
 	protected String doProcess(
 			String fileName, String absolutePath, String content)
-		throws Exception {
+		throws IOException {
 
 		ImportsFormatter importsFormatter = new JavaImportsFormatter();
 
 		String className = JavaSourceUtil.getClassName(fileName);
-		String packagePath = JavaSourceUtil.getPackagePath(content);
+		String packageName = JavaSourceUtil.getPackageName(content);
 
-		content = importsFormatter.format(content, packagePath, className);
+		content = importsFormatter.format(content, packageName, className);
 
 		return StringUtil.replace(content, ";\n/**", ";\n\n/**");
 	}

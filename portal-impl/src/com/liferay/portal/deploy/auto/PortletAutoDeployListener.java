@@ -79,7 +79,9 @@ public class PortletAutoDeployListener extends BaseAutoDeployListener {
 			new PluginAutoDeployListenerHelper(file);
 
 		if (pluginAutoDeployListenerHelper.isMatchingFile(
-				"WEB-INF/" + Portal.PORTLET_XML_FILE_NAME_STANDARD)) {
+				"WEB-INF/" + Portal.PORTLET_XML_FILE_NAME_STANDARD) ||
+			pluginAutoDeployListenerHelper.isMatchingFile(
+				"WEB-INF/beans.xml")) {
 
 			_portletDeployer = true;
 
@@ -92,13 +94,15 @@ public class PortletAutoDeployListener extends BaseAutoDeployListener {
 			return true;
 		}
 
+		String fileName = file.getName();
+
 		if (!pluginAutoDeployListenerHelper.isExtPlugin() &&
 			!pluginAutoDeployListenerHelper.isHookPlugin() &&
 			!pluginAutoDeployListenerHelper.isMatchingFile(
 				"WEB-INF/liferay-layout-templates.xml") &&
 			!pluginAutoDeployListenerHelper.isThemePlugin() &&
 			!pluginAutoDeployListenerHelper.isWebPlugin() &&
-			file.getName().endsWith(".war")) {
+			fileName.endsWith(".war")) {
 
 			_waiDeployer = true;
 

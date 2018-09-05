@@ -14,6 +14,9 @@
 
 package com.liferay.portal.security.auth.session;
 
+import com.liferay.petra.encryptor.Encryptor;
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.events.EventsProcessorUtil;
 import com.liferay.portal.kernel.cluster.ClusterExecutorUtil;
 import com.liferay.portal.kernel.cluster.ClusterNode;
@@ -32,24 +35,20 @@ import com.liferay.portal.kernel.security.auth.AuthException;
 import com.liferay.portal.kernel.security.auth.AuthenticatedUserUUIDStoreUtil;
 import com.liferay.portal.kernel.security.auth.Authenticator;
 import com.liferay.portal.kernel.security.auth.session.AuthenticatedSessionManager;
-import com.liferay.portal.kernel.security.pacl.DoPrivileged;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.servlet.HttpHeaders;
-import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.CookieKeys;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.liveusers.LiveUsers;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.util.Encryptor;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -65,7 +64,6 @@ import javax.servlet.http.HttpSession;
 /**
  * @author Tomas Polesovsky
  */
-@DoPrivileged
 public class AuthenticatedSessionManagerImpl
 	implements AuthenticatedSessionManager {
 
@@ -90,7 +88,9 @@ public class AuthenticatedSessionManagerImpl
 
 		String queryString = request.getQueryString();
 
-		if (queryString.contains("password=")) {
+		if (Validator.isNotNull(queryString) &&
+			queryString.contains("password=")) {
+
 			String passwordParameterName = "password=";
 
 			String portletId = PortalUtil.getPortletId(request);
@@ -284,7 +284,7 @@ public class AuthenticatedSessionManagerImpl
 
 			userUUIDCookie.setPath(StringPool.SLASH);
 
-			session.setAttribute(WebKeys.USER_UUID, userUUID);
+			session.setAttribute(CookieKeys.USER_UUID, userUUID);
 
 			if (rememberMe) {
 				userUUIDCookie.setMaxAge(loginMaxAge);

@@ -19,6 +19,8 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.admin.kernel.util.PortalMyAccountApplicationType;
 import com.liferay.exportimport.kernel.staging.StagingUtil;
 import com.liferay.mobile.device.rules.kernel.MDRRuleGroupInstance;
+import com.liferay.petra.reflect.ReflectionUtil;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -47,13 +49,16 @@ import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutFriendlyURLLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.service.PortletPreferencesLocalServiceUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.Mergeable;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PortletKeys;
-import com.liferay.portal.kernel.util.ReflectionUtil;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.TimeZoneThreadLocal;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -63,6 +68,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.TimeZone;
 
@@ -90,8 +96,7 @@ import javax.servlet.http.HttpServletResponse;
  * <code>
  * themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
  * </code>
- * </pre>
- * </p>
+ * </pre></p>
  *
  * @author Brian Wing Shun Chan
  */
@@ -106,6 +111,20 @@ public class ThemeDisplay
 		}
 
 		_portletDisplay.setThemeDisplay(this);
+	}
+
+	public void clearLayoutFriendlyURL(Layout layout) {
+		if (_layoutFriendlyURLs == null) {
+			return;
+		}
+
+		if (layout instanceof VirtualLayout) {
+			VirtualLayout virtualLayout = (VirtualLayout)layout;
+
+			layout = virtualLayout.getSourceLayout();
+		}
+
+		_layoutFriendlyURLs.remove(layout.getPlid());
 	}
 
 	@Override
@@ -369,7 +388,7 @@ public class ThemeDisplay
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
 	 */
 	@Deprecated
 	public String getFacebookCanvasPageURL() {
@@ -513,8 +532,7 @@ public class ThemeDisplay
 	 * returns "2" for RESOURCE phase
 	 * returns "3" for EVENT phase
 	 * </code>
-	 * </pre>
-	 * </p>
+	 * </pre></p>
 	 *
 	 * @return the numeric portlet lifecycle indicator
 	 */
@@ -826,9 +844,8 @@ public class ThemeDisplay
 		else if (_scopeGroup.isLayout()) {
 			return LayoutLocalServiceUtil.getLayout(_scopeGroup.getClassPK());
 		}
-		else {
-			return null;
-		}
+
+		return null;
 	}
 
 	/**
@@ -997,7 +1014,7 @@ public class ThemeDisplay
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Wilberforce (7.0.x), with no direct replacement
 	 */
 	@Deprecated
 	public String getURLAddContent() {
@@ -1017,7 +1034,7 @@ public class ThemeDisplay
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Wilberforce (7.0.x), with no direct replacement
 	 */
 	@Deprecated
 	public String getURLLayoutTemplates() {
@@ -1043,7 +1060,7 @@ public class ThemeDisplay
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Wilberforce (7.0.x), with no direct replacement
 	 */
 	@Deprecated
 	@JSON(include = false)
@@ -1117,7 +1134,7 @@ public class ThemeDisplay
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
 	 */
 	@Deprecated
 	public boolean isFacebook() {
@@ -1126,6 +1143,18 @@ public class ThemeDisplay
 
 	public boolean isFreeformLayout() {
 		return _freeformLayout;
+	}
+
+	public boolean isHubAction() {
+		return _hubAction;
+	}
+
+	public boolean isHubPartialAction() {
+		return _hubPartialAction;
+	}
+
+	public boolean isHubResource() {
+		return _hubResource;
 	}
 
 	public boolean isI18n() {
@@ -1185,12 +1214,24 @@ public class ThemeDisplay
 		return _lifecycleResource;
 	}
 
+	public boolean isPortletEmbedded(
+		long groupId, Layout layout, String portletId) {
+
+		return _portletEmbeddedMap.computeIfAbsent(
+			new EmbeddedPortletCacheKey(groupId, layout.getPlid(), portletId),
+			key -> layout.isPortletEmbedded(portletId, groupId));
+	}
+
+	public boolean isPortletEmbedded(String portletId) {
+		return isPortletEmbedded(_layout.getGroupId(), _layout, portletId);
+	}
+
 	public boolean isSecure() {
 		return _secure;
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Wilberforce (7.0.x), with no direct replacement
 	 */
 	@Deprecated
 	public boolean isShowAddContentIcon() {
@@ -1198,7 +1239,7 @@ public class ThemeDisplay
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Wilberforce (7.0.x), with no direct replacement
 	 */
 	@Deprecated
 	public boolean isShowAddContentIconPermission() {
@@ -1362,7 +1403,7 @@ public class ThemeDisplay
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
 	 */
 	@Deprecated
 	public void setFacebookCanvasPageURL(String facebookCanvasPageURL) {
@@ -1371,6 +1412,18 @@ public class ThemeDisplay
 
 	public void setFreeformLayout(boolean freeformLayout) {
 		_freeformLayout = freeformLayout;
+	}
+
+	public void setHubAction(boolean hubAction) {
+		_hubAction = hubAction;
+	}
+
+	public void setHubPartialAction(boolean hubPartialAction) {
+		_hubPartialAction = hubPartialAction;
+	}
+
+	public void setHubResource(boolean resource) {
+		_hubResource = resource;
 	}
 
 	public void setI18nLanguageId(String i18nLanguageId) {
@@ -1405,6 +1458,8 @@ public class ThemeDisplay
 
 	public void setLanguageId(String languageId) {
 		_languageId = languageId;
+
+		_layoutFriendlyURLs = null;
 	}
 
 	public void setLayout(Layout layout) {
@@ -1451,6 +1506,8 @@ public class ThemeDisplay
 		_locale = locale;
 
 		LocaleThreadLocal.setThemeDisplayLocale(locale);
+
+		_layoutFriendlyURLs = null;
 	}
 
 	public void setLookAndFeel(Theme theme, ColorScheme colorScheme) {
@@ -1675,14 +1732,14 @@ public class ThemeDisplay
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Wilberforce (7.0.x), with no direct replacement
 	 */
 	@Deprecated
 	public void setShowAddContentIcon(boolean showAddContentIcon) {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Wilberforce (7.0.x), with no direct replacement
 	 */
 	@Deprecated
 	public void setShowAddContentIconPermission(
@@ -1811,7 +1868,7 @@ public class ThemeDisplay
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Wilberforce (7.0.x), with no direct replacement
 	 */
 	@Deprecated
 	public void setURLAddContent(String urlAddContent) {
@@ -1834,7 +1891,7 @@ public class ThemeDisplay
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Wilberforce (7.0.x), with no direct replacement
 	 */
 	@Deprecated
 	public void setURLMyAccount(PortletURL urlMyAccount) {
@@ -1842,7 +1899,7 @@ public class ThemeDisplay
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Wilberforce (7.0.x), with no direct replacement
 	 */
 	@Deprecated
 	public void setURLPageSettings(PortletURL urlPageSettings) {
@@ -1866,7 +1923,7 @@ public class ThemeDisplay
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Wilberforce (7.0.x), with no direct replacement
 	 */
 	@Deprecated
 	public void setURLUpdateManager(PortletURL urlUpdateManager) {
@@ -1901,13 +1958,21 @@ public class ThemeDisplay
 
 	private String _getFriendlyURL(Layout layout) {
 		if (_layoutFriendlyURLs == null) {
-			if (_layouts == null) {
+			if (ListUtil.isEmpty(_layouts)) {
 				_layoutFriendlyURLs = new HashMap<>();
 			}
 			else {
-				_layoutFriendlyURLs =
-					LayoutFriendlyURLLocalServiceUtil.getLayoutFriendlyURLs(
-						_siteGroup, _layouts, _languageId);
+				int layoutManagePagesInitialChildren =
+					_getLayoutManagePagesInitialChildren();
+
+				if (layoutManagePagesInitialChildren != 0) {
+					_layoutFriendlyURLs =
+						LayoutFriendlyURLLocalServiceUtil.getLayoutFriendlyURLs(
+							_siteGroup,
+							_getFriendlyURLLayouts(
+								layoutManagePagesInitialChildren),
+							_i18nLanguageId);
+				}
 			}
 		}
 
@@ -1922,7 +1987,30 @@ public class ThemeDisplay
 		return layoutFriendlyURL;
 	}
 
+	private List<Layout> _getFriendlyURLLayouts(
+		int layoutManagePagesInitialChildren) {
+
+		if ((layoutManagePagesInitialChildren < 0) ||
+			(_layouts.size() <= layoutManagePagesInitialChildren)) {
+
+			return _layouts;
+		}
+
+		return _layouts.subList(0, layoutManagePagesInitialChildren);
+	}
+
+	private int _getLayoutManagePagesInitialChildren() {
+		if (_layoutManagePagesInitialChildren == Integer.MIN_VALUE) {
+			_layoutManagePagesInitialChildren = GetterUtil.getInteger(
+				PropsUtil.get(PropsKeys.LAYOUT_MANAGE_PAGES_INITIAL_CHILDREN));
+		}
+
+		return _layoutManagePagesInitialChildren;
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(ThemeDisplay.class);
+
+	private static int _layoutManagePagesInitialChildren = Integer.MIN_VALUE;
 
 	private Account _account;
 	private boolean _addSessionIdToURL;
@@ -1946,12 +2034,15 @@ public class ThemeDisplay
 	private String _doAsUserLanguageId = StringPool.BLANK;
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
 	 */
 	@Deprecated
 	private String _facebookCanvasPageURL;
 
 	private boolean _freeformLayout;
+	private boolean _hubAction;
+	private boolean _hubPartialAction;
+	private boolean _hubResource;
 	private boolean _i18n;
 	private String _i18nLanguageId;
 	private String _i18nPath;
@@ -1994,6 +2085,8 @@ public class ThemeDisplay
 	private String _portalDomain = StringPool.BLANK;
 	private String _portalURL = StringPool.BLANK;
 	private PortletDisplay _portletDisplay = new PortletDisplay();
+	private Map<EmbeddedPortletCacheKey, Boolean> _portletEmbeddedMap =
+		new HashMap<>();
 	private String _ppid = StringPool.BLANK;
 	private String _realCompanyLogo = StringPool.BLANK;
 	private int _realCompanyLogoHeight;
@@ -2051,5 +2144,46 @@ public class ThemeDisplay
 	private transient PortletURL _urlUpdateManager;
 	private User _user;
 	private boolean _widget;
+
+	private static class EmbeddedPortletCacheKey {
+
+		@Override
+		public boolean equals(Object object) {
+			EmbeddedPortletCacheKey embeddedPortletCacheKey =
+				(EmbeddedPortletCacheKey)object;
+
+			if ((_groupId == embeddedPortletCacheKey._groupId) &&
+				(_plid == embeddedPortletCacheKey._plid) &&
+				Objects.equals(
+					_portletId, embeddedPortletCacheKey._portletId)) {
+
+				return true;
+			}
+
+			return false;
+		}
+
+		@Override
+		public int hashCode() {
+			int hashCode = HashUtil.hash(0, _groupId);
+
+			hashCode = HashUtil.hash(hashCode, _plid);
+
+			return HashUtil.hash(hashCode, _portletId);
+		}
+
+		private EmbeddedPortletCacheKey(
+			long groupId, long plid, String portletId) {
+
+			_groupId = groupId;
+			_plid = plid;
+			_portletId = portletId;
+		}
+
+		private final long _groupId;
+		private final long _plid;
+		private final String _portletId;
+
+	}
 
 }

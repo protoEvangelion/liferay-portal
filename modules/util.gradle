@@ -1,8 +1,7 @@
-import com.liferay.gradle.plugins.change.log.builder.BuildChangeLogTask
+import com.liferay.gradle.plugins.defaults.tasks.CopyIvyDependenciesTask
+import com.liferay.gradle.plugins.source.formatter.FormatSourceTask
 import com.liferay.gradle.plugins.util.PortalTools
-import com.liferay.gradle.util.FileUtil
 import com.liferay.gradle.util.StringUtil
-import com.liferay.gradle.util.copy.RenameDependencyClosure
 
 import java.util.regex.Matcher
 
@@ -10,9 +9,12 @@ buildscript {
 	apply from: file("build-buildscript.gradle"), to: buildscript
 }
 
-task buildFixPackChangeLog(type: BuildChangeLogTask)
-task cleanReleng
-task cleanVersionOverride
+apply plugin: "com.liferay.source.formatter"
+apply plugin: "com.liferay.source.formatter.defaults"
+
+task formatSourceCurrentBranch(type: FormatSourceTask)
+task formatSourceLatestAuthor(type: FormatSourceTask)
+task formatSourceLocalChanges(type: FormatSourceTask)
 task printDependencyPath
 task setUpLibs
 task setUpPortalTools
@@ -27,63 +29,19 @@ Map<File, Properties> libDependenciesMap = libDependenciesFileTree.collectEntrie
 	[it.parentFile, properties]
 }
 
-buildFixPackChangeLog {
-	changeLogHeader = {
-		File releaseInfoFile = file("../portal-kernel/src/com/liferay/portal/kernel/util/ReleaseInfo.java")
-
-		Matcher matcher = (releaseInfoFile.text =~ /private static final String _VERSION = "(.+)";/)
-
-		return matcher[0][1]
-	}
-
-	changeLogFile = "../.releng/fix-pack.changelog"
-	dirs = ["../portal-impl", "../portal-kernel", "../portal-web", "../util-bridges", "../util-java", "../util-slf4j", "../util-taglib"]
-
-	if (project.hasProperty("rangeStart")) {
-		rangeStart = project.rangeStart
-	}
-
-	ticketIdPrefixes "LRQA"
+formatSourceCurrentBranch {
+	description = "Runs Liferay Source Formatter to format the project files that are added or modified in the current Git branch."
+	formatCurrentBranch = true
 }
 
-cleanReleng {
-	doLast {
-		File relengRootDir = file(".releng")
-
-		FileTree relengFileTree = fileTree(dir: relengRootDir, include: "**/artifact.properties")
-
-		relengFileTree.each {
-			File relengFile ->
-
-			File relengDir = relengFile.parentFile
-
-			File moduleDir = file(FileUtil.relativize(relengDir, relengRootDir))
-
-			if (!moduleDir.exists()) {
-				delete relengDir
-
-				logger.lifecycle "Removed {}", relativePath(relengDir)
-			}
-		}
-	}
+formatSourceLatestAuthor {
+	description = "Runs Liferay Source Formatter to format the project files that are added or modified in the latest Git commits of the same author."
+	formatCurrentBranch = true
 }
 
-cleanVersionOverride {
-	doLast {
-		String gitRepoPath = project.properties["gitRepoPath"]
-
-		if (!gitRepoPath) {
-			throw new GradleException("Please set the property \"-PgitRepoPath\".")
-		}
-
-		File gitRepoDir = file(gitRepoPath)
-
-		FileTree bndBndFileTree = fileTree(dir: gitRepoDir, include : "**/bnd.bnd")
-
-		delete bndBndFileTree.collect {
-			new File(gitRepoDir.parentFile, ".version-override-${it.parentFile.name}.properties")
-		}
-	}
+formatSourceLocalChanges {
+	description = "Runs Liferay Source Formatter to format the unstaged project files."
+	formatLocalChanges = true
 }
 
 printDependencyPath {
@@ -103,15 +61,23 @@ printDependencyPath {
 repositories {
 	mavenLocal()
 
+	File tmpMavenRepositoryDir = file("../.m2-tmp")
+
+	if (tmpMavenRepositoryDir.exists()) {
+		maven {
+			url tmpMavenRepositoryDir
+		}
+	}
+
 	maven {
-		url System.properties["repository.url"] ?: "https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public"
+		url System.properties["repository.url"] ?: "https://repository-cdn.liferay.com/nexus/content/groups/public"
 	}
 }
 
 wrapper {
 	File wrapperDir = projectDir.parentFile
 
-	distributionUrl = "../../tools/gradle-${gradle.gradleVersion}.LIFERAY-PATCHED-1-bin.zip"
+	distributionUrl = "../../tools/gradle-${gradle.gradleVersion}.LIFERAY-PATCHED-3-bin.zip"
 	dependsOn wrapperSubrepo
 
 	doLast {
@@ -163,6 +129,12 @@ wrapperSubrepo {
 	scriptFile = new File(wrapperDir, "gradlew")
 }
 
+tasks.withType(FormatSourceTask) {
+	baseDirName = "../"
+	group = "formatting"
+	showStatusUpdates = true
+}
+
 _createSetUpLibTasks(libDependenciesMap)
 _createSetUpPortalToolTasks()
 
@@ -212,43 +184,36 @@ private void _createSetUpPortalToolTasks() {
 
 		String portalToolSuffix = _getPortalToolSuffix(portalToolDir.name)
 
-		Configuration portalToolConfiguration = configurations.create("portalTools" + portalToolSuffix)
+		CopyIvyDependenciesTask copyIvyDependenciesTask = tasks.create(name: "setUp" + portalToolSuffix, type: CopyIvyDependenciesTask) {
+			configuration.exclude group: "com.liferay.portal"
 
-		portalToolConfiguration.exclude group: "com.liferay.portal"
+			dependencyTransformClosure = {
+				Map<String, Object> dependencyNotation ->
 
-		def ivyModuleNode = xmlSlurper.parse(ivyXmlFile)
+				String version = PortalTools.getVersion(project, dependencyNotation["name"])
 
-		def dependencyNodes = ivyModuleNode.dependencies.children()
+				if (version) {
+					dependencyNotation["version"] = version
+				}
 
-		dependencyNodes.each {
-			String dependencyConf = it.@conf
-
-			if (dependencyConf) {
-				return
+				dependencyNotation
 			}
 
-			String dependencyGroup = it.@org
-			String dependencyName = it.@name
-			String dependencyVersion = PortalTools.getVersion(project, dependencyName)
-
-			if (!dependencyVersion) {
-				dependencyVersion = it.@rev
+			if (ivyXmlFile.parentFile.name != "sdk") {
+				doFirst {
+					delete destinationDir
+				}
 			}
 
-			dependencies.add portalToolConfiguration.name, "${dependencyGroup}:${dependencyName}:${dependencyVersion}"
-		}
-
-		Task portalToolTask = tasks.create(name: "setUp" + portalToolSuffix, type: Copy) {
-			doLast {
-				ant.checksum file: ivyXmlFile
-			}
-
-			from portalToolConfiguration
+			inputFile = ivyXmlFile
 			into new File(portalToolDir, "lib")
-			rename new RenameDependencyClosure(project, portalToolConfiguration.name)
+
+			outputs.upToDateWhen {
+				false
+			}
 		}
 
-		setUpPortalTools.dependsOn portalToolTask
+		setUpPortalTools.dependsOn copyIvyDependenciesTask
 	}
 }
 

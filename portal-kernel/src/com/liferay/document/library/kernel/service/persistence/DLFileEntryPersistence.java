@@ -47,7 +47,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param uuid the uuid
 	* @return the matching document library file entries
 	*/
-	public java.util.List<DLFileEntry> findByUuid(java.lang.String uuid);
+	public java.util.List<DLFileEntry> findByUuid(String uuid);
 
 	/**
 	* Returns a range of all the document library file entries where uuid = &#63;.
@@ -61,8 +61,8 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param end the upper bound of the range of document library file entries (not inclusive)
 	* @return the range of matching document library file entries
 	*/
-	public java.util.List<DLFileEntry> findByUuid(java.lang.String uuid,
-		int start, int end);
+	public java.util.List<DLFileEntry> findByUuid(String uuid, int start,
+		int end);
 
 	/**
 	* Returns an ordered range of all the document library file entries where uuid = &#63;.
@@ -77,8 +77,8 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching document library file entries
 	*/
-	public java.util.List<DLFileEntry> findByUuid(java.lang.String uuid,
-		int start, int end,
+	public java.util.List<DLFileEntry> findByUuid(String uuid, int start,
+		int end,
 		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator);
 
 	/**
@@ -95,8 +95,8 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the ordered range of matching document library file entries
 	*/
-	public java.util.List<DLFileEntry> findByUuid(java.lang.String uuid,
-		int start, int end,
+	public java.util.List<DLFileEntry> findByUuid(String uuid, int start,
+		int end,
 		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator,
 		boolean retrieveFromCache);
 
@@ -108,7 +108,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @return the first matching document library file entry
 	* @throws NoSuchFileEntryException if a matching document library file entry could not be found
 	*/
-	public DLFileEntry findByUuid_First(java.lang.String uuid,
+	public DLFileEntry findByUuid_First(String uuid,
 		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException;
 
@@ -119,7 +119,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching document library file entry, or <code>null</code> if a matching document library file entry could not be found
 	*/
-	public DLFileEntry fetchByUuid_First(java.lang.String uuid,
+	public DLFileEntry fetchByUuid_First(String uuid,
 		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator);
 
 	/**
@@ -130,7 +130,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @return the last matching document library file entry
 	* @throws NoSuchFileEntryException if a matching document library file entry could not be found
 	*/
-	public DLFileEntry findByUuid_Last(java.lang.String uuid,
+	public DLFileEntry findByUuid_Last(String uuid,
 		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException;
 
@@ -141,7 +141,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching document library file entry, or <code>null</code> if a matching document library file entry could not be found
 	*/
-	public DLFileEntry fetchByUuid_Last(java.lang.String uuid,
+	public DLFileEntry fetchByUuid_Last(String uuid,
 		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator);
 
 	/**
@@ -153,8 +153,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @return the previous, current, and next document library file entry
 	* @throws NoSuchFileEntryException if a document library file entry with the primary key could not be found
 	*/
-	public DLFileEntry[] findByUuid_PrevAndNext(long fileEntryId,
-		java.lang.String uuid,
+	public DLFileEntry[] findByUuid_PrevAndNext(long fileEntryId, String uuid,
 		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException;
 
@@ -163,7 +162,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	*
 	* @param uuid the uuid
 	*/
-	public void removeByUuid(java.lang.String uuid);
+	public void removeByUuid(String uuid);
 
 	/**
 	* Returns the number of document library file entries where uuid = &#63;.
@@ -171,7 +170,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param uuid the uuid
 	* @return the number of matching document library file entries
 	*/
-	public int countByUuid(java.lang.String uuid);
+	public int countByUuid(String uuid);
 
 	/**
 	* Returns the document library file entry where uuid = &#63; and groupId = &#63; or throws a {@link NoSuchFileEntryException} if it could not be found.
@@ -181,7 +180,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @return the matching document library file entry
 	* @throws NoSuchFileEntryException if a matching document library file entry could not be found
 	*/
-	public DLFileEntry findByUUID_G(java.lang.String uuid, long groupId)
+	public DLFileEntry findByUUID_G(String uuid, long groupId)
 		throws NoSuchFileEntryException;
 
 	/**
@@ -191,7 +190,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param groupId the group ID
 	* @return the matching document library file entry, or <code>null</code> if a matching document library file entry could not be found
 	*/
-	public DLFileEntry fetchByUUID_G(java.lang.String uuid, long groupId);
+	public DLFileEntry fetchByUUID_G(String uuid, long groupId);
 
 	/**
 	* Returns the document library file entry where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
@@ -201,7 +200,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the matching document library file entry, or <code>null</code> if a matching document library file entry could not be found
 	*/
-	public DLFileEntry fetchByUUID_G(java.lang.String uuid, long groupId,
+	public DLFileEntry fetchByUUID_G(String uuid, long groupId,
 		boolean retrieveFromCache);
 
 	/**
@@ -211,7 +210,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param groupId the group ID
 	* @return the document library file entry that was removed
 	*/
-	public DLFileEntry removeByUUID_G(java.lang.String uuid, long groupId)
+	public DLFileEntry removeByUUID_G(String uuid, long groupId)
 		throws NoSuchFileEntryException;
 
 	/**
@@ -221,7 +220,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param groupId the group ID
 	* @return the number of matching document library file entries
 	*/
-	public int countByUUID_G(java.lang.String uuid, long groupId);
+	public int countByUUID_G(String uuid, long groupId);
 
 	/**
 	* Returns all the document library file entries where uuid = &#63; and companyId = &#63;.
@@ -230,8 +229,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param companyId the company ID
 	* @return the matching document library file entries
 	*/
-	public java.util.List<DLFileEntry> findByUuid_C(java.lang.String uuid,
-		long companyId);
+	public java.util.List<DLFileEntry> findByUuid_C(String uuid, long companyId);
 
 	/**
 	* Returns a range of all the document library file entries where uuid = &#63; and companyId = &#63;.
@@ -246,7 +244,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param end the upper bound of the range of document library file entries (not inclusive)
 	* @return the range of matching document library file entries
 	*/
-	public java.util.List<DLFileEntry> findByUuid_C(java.lang.String uuid,
+	public java.util.List<DLFileEntry> findByUuid_C(String uuid,
 		long companyId, int start, int end);
 
 	/**
@@ -263,7 +261,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching document library file entries
 	*/
-	public java.util.List<DLFileEntry> findByUuid_C(java.lang.String uuid,
+	public java.util.List<DLFileEntry> findByUuid_C(String uuid,
 		long companyId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator);
 
@@ -282,7 +280,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the ordered range of matching document library file entries
 	*/
-	public java.util.List<DLFileEntry> findByUuid_C(java.lang.String uuid,
+	public java.util.List<DLFileEntry> findByUuid_C(String uuid,
 		long companyId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator,
 		boolean retrieveFromCache);
@@ -296,8 +294,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @return the first matching document library file entry
 	* @throws NoSuchFileEntryException if a matching document library file entry could not be found
 	*/
-	public DLFileEntry findByUuid_C_First(java.lang.String uuid,
-		long companyId,
+	public DLFileEntry findByUuid_C_First(String uuid, long companyId,
 		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException;
 
@@ -309,8 +306,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching document library file entry, or <code>null</code> if a matching document library file entry could not be found
 	*/
-	public DLFileEntry fetchByUuid_C_First(java.lang.String uuid,
-		long companyId,
+	public DLFileEntry fetchByUuid_C_First(String uuid, long companyId,
 		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator);
 
 	/**
@@ -322,7 +318,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @return the last matching document library file entry
 	* @throws NoSuchFileEntryException if a matching document library file entry could not be found
 	*/
-	public DLFileEntry findByUuid_C_Last(java.lang.String uuid, long companyId,
+	public DLFileEntry findByUuid_C_Last(String uuid, long companyId,
 		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException;
 
@@ -334,8 +330,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching document library file entry, or <code>null</code> if a matching document library file entry could not be found
 	*/
-	public DLFileEntry fetchByUuid_C_Last(java.lang.String uuid,
-		long companyId,
+	public DLFileEntry fetchByUuid_C_Last(String uuid, long companyId,
 		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator);
 
 	/**
@@ -349,7 +344,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @throws NoSuchFileEntryException if a document library file entry with the primary key could not be found
 	*/
 	public DLFileEntry[] findByUuid_C_PrevAndNext(long fileEntryId,
-		java.lang.String uuid, long companyId,
+		String uuid, long companyId,
 		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException;
 
@@ -359,7 +354,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param uuid the uuid
 	* @param companyId the company ID
 	*/
-	public void removeByUuid_C(java.lang.String uuid, long companyId);
+	public void removeByUuid_C(String uuid, long companyId);
 
 	/**
 	* Returns the number of document library file entries where uuid = &#63; and companyId = &#63;.
@@ -368,7 +363,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param companyId the company ID
 	* @return the number of matching document library file entries
 	*/
-	public int countByUuid_C(java.lang.String uuid, long companyId);
+	public int countByUuid_C(String uuid, long companyId);
 
 	/**
 	* Returns all the document library file entries where groupId = &#63;.
@@ -834,7 +829,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param mimeType the mime type
 	* @return the matching document library file entries
 	*/
-	public java.util.List<DLFileEntry> findByMimeType(java.lang.String mimeType);
+	public java.util.List<DLFileEntry> findByMimeType(String mimeType);
 
 	/**
 	* Returns a range of all the document library file entries where mimeType = &#63;.
@@ -848,8 +843,8 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param end the upper bound of the range of document library file entries (not inclusive)
 	* @return the range of matching document library file entries
 	*/
-	public java.util.List<DLFileEntry> findByMimeType(
-		java.lang.String mimeType, int start, int end);
+	public java.util.List<DLFileEntry> findByMimeType(String mimeType,
+		int start, int end);
 
 	/**
 	* Returns an ordered range of all the document library file entries where mimeType = &#63;.
@@ -864,8 +859,8 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching document library file entries
 	*/
-	public java.util.List<DLFileEntry> findByMimeType(
-		java.lang.String mimeType, int start, int end,
+	public java.util.List<DLFileEntry> findByMimeType(String mimeType,
+		int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator);
 
 	/**
@@ -882,8 +877,8 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the ordered range of matching document library file entries
 	*/
-	public java.util.List<DLFileEntry> findByMimeType(
-		java.lang.String mimeType, int start, int end,
+	public java.util.List<DLFileEntry> findByMimeType(String mimeType,
+		int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator,
 		boolean retrieveFromCache);
 
@@ -895,7 +890,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @return the first matching document library file entry
 	* @throws NoSuchFileEntryException if a matching document library file entry could not be found
 	*/
-	public DLFileEntry findByMimeType_First(java.lang.String mimeType,
+	public DLFileEntry findByMimeType_First(String mimeType,
 		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException;
 
@@ -906,7 +901,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching document library file entry, or <code>null</code> if a matching document library file entry could not be found
 	*/
-	public DLFileEntry fetchByMimeType_First(java.lang.String mimeType,
+	public DLFileEntry fetchByMimeType_First(String mimeType,
 		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator);
 
 	/**
@@ -917,7 +912,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @return the last matching document library file entry
 	* @throws NoSuchFileEntryException if a matching document library file entry could not be found
 	*/
-	public DLFileEntry findByMimeType_Last(java.lang.String mimeType,
+	public DLFileEntry findByMimeType_Last(String mimeType,
 		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException;
 
@@ -928,7 +923,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching document library file entry, or <code>null</code> if a matching document library file entry could not be found
 	*/
-	public DLFileEntry fetchByMimeType_Last(java.lang.String mimeType,
+	public DLFileEntry fetchByMimeType_Last(String mimeType,
 		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator);
 
 	/**
@@ -941,7 +936,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @throws NoSuchFileEntryException if a document library file entry with the primary key could not be found
 	*/
 	public DLFileEntry[] findByMimeType_PrevAndNext(long fileEntryId,
-		java.lang.String mimeType,
+		String mimeType,
 		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException;
 
@@ -950,7 +945,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	*
 	* @param mimeType the mime type
 	*/
-	public void removeByMimeType(java.lang.String mimeType);
+	public void removeByMimeType(String mimeType);
 
 	/**
 	* Returns the number of document library file entries where mimeType = &#63;.
@@ -958,7 +953,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param mimeType the mime type
 	* @return the number of matching document library file entries
 	*/
-	public int countByMimeType(java.lang.String mimeType);
+	public int countByMimeType(String mimeType);
 
 	/**
 	* Returns all the document library file entries where fileEntryTypeId = &#63;.
@@ -1092,6 +1087,534 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @return the number of matching document library file entries
 	*/
 	public int countByFileEntryTypeId(long fileEntryTypeId);
+
+	/**
+	* Returns all the document library file entries where smallImageId = &#63;.
+	*
+	* @param smallImageId the small image ID
+	* @return the matching document library file entries
+	*/
+	public java.util.List<DLFileEntry> findBySmallImageId(long smallImageId);
+
+	/**
+	* Returns a range of all the document library file entries where smallImageId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link DLFileEntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param smallImageId the small image ID
+	* @param start the lower bound of the range of document library file entries
+	* @param end the upper bound of the range of document library file entries (not inclusive)
+	* @return the range of matching document library file entries
+	*/
+	public java.util.List<DLFileEntry> findBySmallImageId(long smallImageId,
+		int start, int end);
+
+	/**
+	* Returns an ordered range of all the document library file entries where smallImageId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link DLFileEntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param smallImageId the small image ID
+	* @param start the lower bound of the range of document library file entries
+	* @param end the upper bound of the range of document library file entries (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching document library file entries
+	*/
+	public java.util.List<DLFileEntry> findBySmallImageId(long smallImageId,
+		int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator);
+
+	/**
+	* Returns an ordered range of all the document library file entries where smallImageId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link DLFileEntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param smallImageId the small image ID
+	* @param start the lower bound of the range of document library file entries
+	* @param end the upper bound of the range of document library file entries (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching document library file entries
+	*/
+	public java.util.List<DLFileEntry> findBySmallImageId(long smallImageId,
+		int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator,
+		boolean retrieveFromCache);
+
+	/**
+	* Returns the first document library file entry in the ordered set where smallImageId = &#63;.
+	*
+	* @param smallImageId the small image ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching document library file entry
+	* @throws NoSuchFileEntryException if a matching document library file entry could not be found
+	*/
+	public DLFileEntry findBySmallImageId_First(long smallImageId,
+		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator)
+		throws NoSuchFileEntryException;
+
+	/**
+	* Returns the first document library file entry in the ordered set where smallImageId = &#63;.
+	*
+	* @param smallImageId the small image ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching document library file entry, or <code>null</code> if a matching document library file entry could not be found
+	*/
+	public DLFileEntry fetchBySmallImageId_First(long smallImageId,
+		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator);
+
+	/**
+	* Returns the last document library file entry in the ordered set where smallImageId = &#63;.
+	*
+	* @param smallImageId the small image ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching document library file entry
+	* @throws NoSuchFileEntryException if a matching document library file entry could not be found
+	*/
+	public DLFileEntry findBySmallImageId_Last(long smallImageId,
+		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator)
+		throws NoSuchFileEntryException;
+
+	/**
+	* Returns the last document library file entry in the ordered set where smallImageId = &#63;.
+	*
+	* @param smallImageId the small image ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching document library file entry, or <code>null</code> if a matching document library file entry could not be found
+	*/
+	public DLFileEntry fetchBySmallImageId_Last(long smallImageId,
+		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator);
+
+	/**
+	* Returns the document library file entries before and after the current document library file entry in the ordered set where smallImageId = &#63;.
+	*
+	* @param fileEntryId the primary key of the current document library file entry
+	* @param smallImageId the small image ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next document library file entry
+	* @throws NoSuchFileEntryException if a document library file entry with the primary key could not be found
+	*/
+	public DLFileEntry[] findBySmallImageId_PrevAndNext(long fileEntryId,
+		long smallImageId,
+		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator)
+		throws NoSuchFileEntryException;
+
+	/**
+	* Removes all the document library file entries where smallImageId = &#63; from the database.
+	*
+	* @param smallImageId the small image ID
+	*/
+	public void removeBySmallImageId(long smallImageId);
+
+	/**
+	* Returns the number of document library file entries where smallImageId = &#63;.
+	*
+	* @param smallImageId the small image ID
+	* @return the number of matching document library file entries
+	*/
+	public int countBySmallImageId(long smallImageId);
+
+	/**
+	* Returns all the document library file entries where largeImageId = &#63;.
+	*
+	* @param largeImageId the large image ID
+	* @return the matching document library file entries
+	*/
+	public java.util.List<DLFileEntry> findByLargeImageId(long largeImageId);
+
+	/**
+	* Returns a range of all the document library file entries where largeImageId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link DLFileEntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param largeImageId the large image ID
+	* @param start the lower bound of the range of document library file entries
+	* @param end the upper bound of the range of document library file entries (not inclusive)
+	* @return the range of matching document library file entries
+	*/
+	public java.util.List<DLFileEntry> findByLargeImageId(long largeImageId,
+		int start, int end);
+
+	/**
+	* Returns an ordered range of all the document library file entries where largeImageId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link DLFileEntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param largeImageId the large image ID
+	* @param start the lower bound of the range of document library file entries
+	* @param end the upper bound of the range of document library file entries (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching document library file entries
+	*/
+	public java.util.List<DLFileEntry> findByLargeImageId(long largeImageId,
+		int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator);
+
+	/**
+	* Returns an ordered range of all the document library file entries where largeImageId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link DLFileEntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param largeImageId the large image ID
+	* @param start the lower bound of the range of document library file entries
+	* @param end the upper bound of the range of document library file entries (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching document library file entries
+	*/
+	public java.util.List<DLFileEntry> findByLargeImageId(long largeImageId,
+		int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator,
+		boolean retrieveFromCache);
+
+	/**
+	* Returns the first document library file entry in the ordered set where largeImageId = &#63;.
+	*
+	* @param largeImageId the large image ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching document library file entry
+	* @throws NoSuchFileEntryException if a matching document library file entry could not be found
+	*/
+	public DLFileEntry findByLargeImageId_First(long largeImageId,
+		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator)
+		throws NoSuchFileEntryException;
+
+	/**
+	* Returns the first document library file entry in the ordered set where largeImageId = &#63;.
+	*
+	* @param largeImageId the large image ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching document library file entry, or <code>null</code> if a matching document library file entry could not be found
+	*/
+	public DLFileEntry fetchByLargeImageId_First(long largeImageId,
+		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator);
+
+	/**
+	* Returns the last document library file entry in the ordered set where largeImageId = &#63;.
+	*
+	* @param largeImageId the large image ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching document library file entry
+	* @throws NoSuchFileEntryException if a matching document library file entry could not be found
+	*/
+	public DLFileEntry findByLargeImageId_Last(long largeImageId,
+		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator)
+		throws NoSuchFileEntryException;
+
+	/**
+	* Returns the last document library file entry in the ordered set where largeImageId = &#63;.
+	*
+	* @param largeImageId the large image ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching document library file entry, or <code>null</code> if a matching document library file entry could not be found
+	*/
+	public DLFileEntry fetchByLargeImageId_Last(long largeImageId,
+		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator);
+
+	/**
+	* Returns the document library file entries before and after the current document library file entry in the ordered set where largeImageId = &#63;.
+	*
+	* @param fileEntryId the primary key of the current document library file entry
+	* @param largeImageId the large image ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next document library file entry
+	* @throws NoSuchFileEntryException if a document library file entry with the primary key could not be found
+	*/
+	public DLFileEntry[] findByLargeImageId_PrevAndNext(long fileEntryId,
+		long largeImageId,
+		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator)
+		throws NoSuchFileEntryException;
+
+	/**
+	* Removes all the document library file entries where largeImageId = &#63; from the database.
+	*
+	* @param largeImageId the large image ID
+	*/
+	public void removeByLargeImageId(long largeImageId);
+
+	/**
+	* Returns the number of document library file entries where largeImageId = &#63;.
+	*
+	* @param largeImageId the large image ID
+	* @return the number of matching document library file entries
+	*/
+	public int countByLargeImageId(long largeImageId);
+
+	/**
+	* Returns all the document library file entries where custom1ImageId = &#63;.
+	*
+	* @param custom1ImageId the custom1 image ID
+	* @return the matching document library file entries
+	*/
+	public java.util.List<DLFileEntry> findByCustom1ImageId(long custom1ImageId);
+
+	/**
+	* Returns a range of all the document library file entries where custom1ImageId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link DLFileEntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param custom1ImageId the custom1 image ID
+	* @param start the lower bound of the range of document library file entries
+	* @param end the upper bound of the range of document library file entries (not inclusive)
+	* @return the range of matching document library file entries
+	*/
+	public java.util.List<DLFileEntry> findByCustom1ImageId(
+		long custom1ImageId, int start, int end);
+
+	/**
+	* Returns an ordered range of all the document library file entries where custom1ImageId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link DLFileEntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param custom1ImageId the custom1 image ID
+	* @param start the lower bound of the range of document library file entries
+	* @param end the upper bound of the range of document library file entries (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching document library file entries
+	*/
+	public java.util.List<DLFileEntry> findByCustom1ImageId(
+		long custom1ImageId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator);
+
+	/**
+	* Returns an ordered range of all the document library file entries where custom1ImageId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link DLFileEntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param custom1ImageId the custom1 image ID
+	* @param start the lower bound of the range of document library file entries
+	* @param end the upper bound of the range of document library file entries (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching document library file entries
+	*/
+	public java.util.List<DLFileEntry> findByCustom1ImageId(
+		long custom1ImageId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator,
+		boolean retrieveFromCache);
+
+	/**
+	* Returns the first document library file entry in the ordered set where custom1ImageId = &#63;.
+	*
+	* @param custom1ImageId the custom1 image ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching document library file entry
+	* @throws NoSuchFileEntryException if a matching document library file entry could not be found
+	*/
+	public DLFileEntry findByCustom1ImageId_First(long custom1ImageId,
+		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator)
+		throws NoSuchFileEntryException;
+
+	/**
+	* Returns the first document library file entry in the ordered set where custom1ImageId = &#63;.
+	*
+	* @param custom1ImageId the custom1 image ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching document library file entry, or <code>null</code> if a matching document library file entry could not be found
+	*/
+	public DLFileEntry fetchByCustom1ImageId_First(long custom1ImageId,
+		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator);
+
+	/**
+	* Returns the last document library file entry in the ordered set where custom1ImageId = &#63;.
+	*
+	* @param custom1ImageId the custom1 image ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching document library file entry
+	* @throws NoSuchFileEntryException if a matching document library file entry could not be found
+	*/
+	public DLFileEntry findByCustom1ImageId_Last(long custom1ImageId,
+		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator)
+		throws NoSuchFileEntryException;
+
+	/**
+	* Returns the last document library file entry in the ordered set where custom1ImageId = &#63;.
+	*
+	* @param custom1ImageId the custom1 image ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching document library file entry, or <code>null</code> if a matching document library file entry could not be found
+	*/
+	public DLFileEntry fetchByCustom1ImageId_Last(long custom1ImageId,
+		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator);
+
+	/**
+	* Returns the document library file entries before and after the current document library file entry in the ordered set where custom1ImageId = &#63;.
+	*
+	* @param fileEntryId the primary key of the current document library file entry
+	* @param custom1ImageId the custom1 image ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next document library file entry
+	* @throws NoSuchFileEntryException if a document library file entry with the primary key could not be found
+	*/
+	public DLFileEntry[] findByCustom1ImageId_PrevAndNext(long fileEntryId,
+		long custom1ImageId,
+		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator)
+		throws NoSuchFileEntryException;
+
+	/**
+	* Removes all the document library file entries where custom1ImageId = &#63; from the database.
+	*
+	* @param custom1ImageId the custom1 image ID
+	*/
+	public void removeByCustom1ImageId(long custom1ImageId);
+
+	/**
+	* Returns the number of document library file entries where custom1ImageId = &#63;.
+	*
+	* @param custom1ImageId the custom1 image ID
+	* @return the number of matching document library file entries
+	*/
+	public int countByCustom1ImageId(long custom1ImageId);
+
+	/**
+	* Returns all the document library file entries where custom2ImageId = &#63;.
+	*
+	* @param custom2ImageId the custom2 image ID
+	* @return the matching document library file entries
+	*/
+	public java.util.List<DLFileEntry> findByCustom2ImageId(long custom2ImageId);
+
+	/**
+	* Returns a range of all the document library file entries where custom2ImageId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link DLFileEntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param custom2ImageId the custom2 image ID
+	* @param start the lower bound of the range of document library file entries
+	* @param end the upper bound of the range of document library file entries (not inclusive)
+	* @return the range of matching document library file entries
+	*/
+	public java.util.List<DLFileEntry> findByCustom2ImageId(
+		long custom2ImageId, int start, int end);
+
+	/**
+	* Returns an ordered range of all the document library file entries where custom2ImageId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link DLFileEntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param custom2ImageId the custom2 image ID
+	* @param start the lower bound of the range of document library file entries
+	* @param end the upper bound of the range of document library file entries (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching document library file entries
+	*/
+	public java.util.List<DLFileEntry> findByCustom2ImageId(
+		long custom2ImageId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator);
+
+	/**
+	* Returns an ordered range of all the document library file entries where custom2ImageId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link DLFileEntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param custom2ImageId the custom2 image ID
+	* @param start the lower bound of the range of document library file entries
+	* @param end the upper bound of the range of document library file entries (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching document library file entries
+	*/
+	public java.util.List<DLFileEntry> findByCustom2ImageId(
+		long custom2ImageId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator,
+		boolean retrieveFromCache);
+
+	/**
+	* Returns the first document library file entry in the ordered set where custom2ImageId = &#63;.
+	*
+	* @param custom2ImageId the custom2 image ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching document library file entry
+	* @throws NoSuchFileEntryException if a matching document library file entry could not be found
+	*/
+	public DLFileEntry findByCustom2ImageId_First(long custom2ImageId,
+		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator)
+		throws NoSuchFileEntryException;
+
+	/**
+	* Returns the first document library file entry in the ordered set where custom2ImageId = &#63;.
+	*
+	* @param custom2ImageId the custom2 image ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching document library file entry, or <code>null</code> if a matching document library file entry could not be found
+	*/
+	public DLFileEntry fetchByCustom2ImageId_First(long custom2ImageId,
+		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator);
+
+	/**
+	* Returns the last document library file entry in the ordered set where custom2ImageId = &#63;.
+	*
+	* @param custom2ImageId the custom2 image ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching document library file entry
+	* @throws NoSuchFileEntryException if a matching document library file entry could not be found
+	*/
+	public DLFileEntry findByCustom2ImageId_Last(long custom2ImageId,
+		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator)
+		throws NoSuchFileEntryException;
+
+	/**
+	* Returns the last document library file entry in the ordered set where custom2ImageId = &#63;.
+	*
+	* @param custom2ImageId the custom2 image ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching document library file entry, or <code>null</code> if a matching document library file entry could not be found
+	*/
+	public DLFileEntry fetchByCustom2ImageId_Last(long custom2ImageId,
+		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator);
+
+	/**
+	* Returns the document library file entries before and after the current document library file entry in the ordered set where custom2ImageId = &#63;.
+	*
+	* @param fileEntryId the primary key of the current document library file entry
+	* @param custom2ImageId the custom2 image ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next document library file entry
+	* @throws NoSuchFileEntryException if a document library file entry with the primary key could not be found
+	*/
+	public DLFileEntry[] findByCustom2ImageId_PrevAndNext(long fileEntryId,
+		long custom2ImageId,
+		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator)
+		throws NoSuchFileEntryException;
+
+	/**
+	* Removes all the document library file entries where custom2ImageId = &#63; from the database.
+	*
+	* @param custom2ImageId the custom2 image ID
+	*/
+	public void removeByCustom2ImageId(long custom2ImageId);
+
+	/**
+	* Returns the number of document library file entries where custom2ImageId = &#63;.
+	*
+	* @param custom2ImageId the custom2 image ID
+	* @return the number of matching document library file entries
+	*/
+	public int countByCustom2ImageId(long custom2ImageId);
 
 	/**
 	* Returns all the document library file entries where groupId = &#63; and userId = &#63;.
@@ -1794,8 +2317,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param name the name
 	* @return the matching document library file entries
 	*/
-	public java.util.List<DLFileEntry> findByF_N(long folderId,
-		java.lang.String name);
+	public java.util.List<DLFileEntry> findByF_N(long folderId, String name);
 
 	/**
 	* Returns a range of all the document library file entries where folderId = &#63; and name = &#63;.
@@ -1810,8 +2332,8 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param end the upper bound of the range of document library file entries (not inclusive)
 	* @return the range of matching document library file entries
 	*/
-	public java.util.List<DLFileEntry> findByF_N(long folderId,
-		java.lang.String name, int start, int end);
+	public java.util.List<DLFileEntry> findByF_N(long folderId, String name,
+		int start, int end);
 
 	/**
 	* Returns an ordered range of all the document library file entries where folderId = &#63; and name = &#63;.
@@ -1827,8 +2349,8 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching document library file entries
 	*/
-	public java.util.List<DLFileEntry> findByF_N(long folderId,
-		java.lang.String name, int start, int end,
+	public java.util.List<DLFileEntry> findByF_N(long folderId, String name,
+		int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator);
 
 	/**
@@ -1846,8 +2368,8 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the ordered range of matching document library file entries
 	*/
-	public java.util.List<DLFileEntry> findByF_N(long folderId,
-		java.lang.String name, int start, int end,
+	public java.util.List<DLFileEntry> findByF_N(long folderId, String name,
+		int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator,
 		boolean retrieveFromCache);
 
@@ -1860,7 +2382,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @return the first matching document library file entry
 	* @throws NoSuchFileEntryException if a matching document library file entry could not be found
 	*/
-	public DLFileEntry findByF_N_First(long folderId, java.lang.String name,
+	public DLFileEntry findByF_N_First(long folderId, String name,
 		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException;
 
@@ -1872,7 +2394,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching document library file entry, or <code>null</code> if a matching document library file entry could not be found
 	*/
-	public DLFileEntry fetchByF_N_First(long folderId, java.lang.String name,
+	public DLFileEntry fetchByF_N_First(long folderId, String name,
 		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator);
 
 	/**
@@ -1884,7 +2406,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @return the last matching document library file entry
 	* @throws NoSuchFileEntryException if a matching document library file entry could not be found
 	*/
-	public DLFileEntry findByF_N_Last(long folderId, java.lang.String name,
+	public DLFileEntry findByF_N_Last(long folderId, String name,
 		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException;
 
@@ -1896,7 +2418,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching document library file entry, or <code>null</code> if a matching document library file entry could not be found
 	*/
-	public DLFileEntry fetchByF_N_Last(long folderId, java.lang.String name,
+	public DLFileEntry fetchByF_N_Last(long folderId, String name,
 		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator);
 
 	/**
@@ -1910,7 +2432,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @throws NoSuchFileEntryException if a document library file entry with the primary key could not be found
 	*/
 	public DLFileEntry[] findByF_N_PrevAndNext(long fileEntryId, long folderId,
-		java.lang.String name,
+		String name,
 		com.liferay.portal.kernel.util.OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException;
 
@@ -1920,7 +2442,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param folderId the folder ID
 	* @param name the name
 	*/
-	public void removeByF_N(long folderId, java.lang.String name);
+	public void removeByF_N(long folderId, String name);
 
 	/**
 	* Returns the number of document library file entries where folderId = &#63; and name = &#63;.
@@ -1929,7 +2451,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param name the name
 	* @return the number of matching document library file entries
 	*/
-	public int countByF_N(long folderId, java.lang.String name);
+	public int countByF_N(long folderId, String name);
 
 	/**
 	* Returns all the document library file entries where groupId = &#63; and userId = &#63; and folderId = &#63;.
@@ -2311,8 +2833,8 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @return the matching document library file entry
 	* @throws NoSuchFileEntryException if a matching document library file entry could not be found
 	*/
-	public DLFileEntry findByG_F_N(long groupId, long folderId,
-		java.lang.String name) throws NoSuchFileEntryException;
+	public DLFileEntry findByG_F_N(long groupId, long folderId, String name)
+		throws NoSuchFileEntryException;
 
 	/**
 	* Returns the document library file entry where groupId = &#63; and folderId = &#63; and name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
@@ -2322,8 +2844,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param name the name
 	* @return the matching document library file entry, or <code>null</code> if a matching document library file entry could not be found
 	*/
-	public DLFileEntry fetchByG_F_N(long groupId, long folderId,
-		java.lang.String name);
+	public DLFileEntry fetchByG_F_N(long groupId, long folderId, String name);
 
 	/**
 	* Returns the document library file entry where groupId = &#63; and folderId = &#63; and name = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
@@ -2334,8 +2855,8 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the matching document library file entry, or <code>null</code> if a matching document library file entry could not be found
 	*/
-	public DLFileEntry fetchByG_F_N(long groupId, long folderId,
-		java.lang.String name, boolean retrieveFromCache);
+	public DLFileEntry fetchByG_F_N(long groupId, long folderId, String name,
+		boolean retrieveFromCache);
 
 	/**
 	* Removes the document library file entry where groupId = &#63; and folderId = &#63; and name = &#63; from the database.
@@ -2345,8 +2866,8 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param name the name
 	* @return the document library file entry that was removed
 	*/
-	public DLFileEntry removeByG_F_N(long groupId, long folderId,
-		java.lang.String name) throws NoSuchFileEntryException;
+	public DLFileEntry removeByG_F_N(long groupId, long folderId, String name)
+		throws NoSuchFileEntryException;
 
 	/**
 	* Returns the number of document library file entries where groupId = &#63; and folderId = &#63; and name = &#63;.
@@ -2356,7 +2877,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param name the name
 	* @return the number of matching document library file entries
 	*/
-	public int countByG_F_N(long groupId, long folderId, java.lang.String name);
+	public int countByG_F_N(long groupId, long folderId, String name);
 
 	/**
 	* Returns the document library file entry where groupId = &#63; and folderId = &#63; and fileName = &#63; or throws a {@link NoSuchFileEntryException} if it could not be found.
@@ -2367,8 +2888,8 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @return the matching document library file entry
 	* @throws NoSuchFileEntryException if a matching document library file entry could not be found
 	*/
-	public DLFileEntry findByG_F_FN(long groupId, long folderId,
-		java.lang.String fileName) throws NoSuchFileEntryException;
+	public DLFileEntry findByG_F_FN(long groupId, long folderId, String fileName)
+		throws NoSuchFileEntryException;
 
 	/**
 	* Returns the document library file entry where groupId = &#63; and folderId = &#63; and fileName = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
@@ -2379,7 +2900,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @return the matching document library file entry, or <code>null</code> if a matching document library file entry could not be found
 	*/
 	public DLFileEntry fetchByG_F_FN(long groupId, long folderId,
-		java.lang.String fileName);
+		String fileName);
 
 	/**
 	* Returns the document library file entry where groupId = &#63; and folderId = &#63; and fileName = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
@@ -2391,7 +2912,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @return the matching document library file entry, or <code>null</code> if a matching document library file entry could not be found
 	*/
 	public DLFileEntry fetchByG_F_FN(long groupId, long folderId,
-		java.lang.String fileName, boolean retrieveFromCache);
+		String fileName, boolean retrieveFromCache);
 
 	/**
 	* Removes the document library file entry where groupId = &#63; and folderId = &#63; and fileName = &#63; from the database.
@@ -2402,7 +2923,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @return the document library file entry that was removed
 	*/
 	public DLFileEntry removeByG_F_FN(long groupId, long folderId,
-		java.lang.String fileName) throws NoSuchFileEntryException;
+		String fileName) throws NoSuchFileEntryException;
 
 	/**
 	* Returns the number of document library file entries where groupId = &#63; and folderId = &#63; and fileName = &#63;.
@@ -2412,8 +2933,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param fileName the file name
 	* @return the number of matching document library file entries
 	*/
-	public int countByG_F_FN(long groupId, long folderId,
-		java.lang.String fileName);
+	public int countByG_F_FN(long groupId, long folderId, String fileName);
 
 	/**
 	* Returns the document library file entry where groupId = &#63; and folderId = &#63; and title = &#63; or throws a {@link NoSuchFileEntryException} if it could not be found.
@@ -2424,8 +2944,8 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @return the matching document library file entry
 	* @throws NoSuchFileEntryException if a matching document library file entry could not be found
 	*/
-	public DLFileEntry findByG_F_T(long groupId, long folderId,
-		java.lang.String title) throws NoSuchFileEntryException;
+	public DLFileEntry findByG_F_T(long groupId, long folderId, String title)
+		throws NoSuchFileEntryException;
 
 	/**
 	* Returns the document library file entry where groupId = &#63; and folderId = &#63; and title = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
@@ -2435,8 +2955,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param title the title
 	* @return the matching document library file entry, or <code>null</code> if a matching document library file entry could not be found
 	*/
-	public DLFileEntry fetchByG_F_T(long groupId, long folderId,
-		java.lang.String title);
+	public DLFileEntry fetchByG_F_T(long groupId, long folderId, String title);
 
 	/**
 	* Returns the document library file entry where groupId = &#63; and folderId = &#63; and title = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
@@ -2447,8 +2966,8 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the matching document library file entry, or <code>null</code> if a matching document library file entry could not be found
 	*/
-	public DLFileEntry fetchByG_F_T(long groupId, long folderId,
-		java.lang.String title, boolean retrieveFromCache);
+	public DLFileEntry fetchByG_F_T(long groupId, long folderId, String title,
+		boolean retrieveFromCache);
 
 	/**
 	* Removes the document library file entry where groupId = &#63; and folderId = &#63; and title = &#63; from the database.
@@ -2458,8 +2977,8 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param title the title
 	* @return the document library file entry that was removed
 	*/
-	public DLFileEntry removeByG_F_T(long groupId, long folderId,
-		java.lang.String title) throws NoSuchFileEntryException;
+	public DLFileEntry removeByG_F_T(long groupId, long folderId, String title)
+		throws NoSuchFileEntryException;
 
 	/**
 	* Returns the number of document library file entries where groupId = &#63; and folderId = &#63; and title = &#63;.
@@ -2469,7 +2988,7 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	* @param title the title
 	* @return the number of matching document library file entries
 	*/
-	public int countByG_F_T(long groupId, long folderId, java.lang.String title);
+	public int countByG_F_T(long groupId, long folderId, String title);
 
 	/**
 	* Returns all the document library file entries where groupId = &#63; and folderId = &#63; and fileEntryTypeId = &#63;.
@@ -3140,5 +3659,5 @@ public interface DLFileEntryPersistence extends BasePersistence<DLFileEntry> {
 	public int countAll();
 
 	@Override
-	public java.util.Set<java.lang.String> getBadColumnNames();
+	public java.util.Set<String> getBadColumnNames();
 }

@@ -41,6 +41,7 @@ public class WebDAVRequestImpl implements WebDAVRequest {
 		_request = request;
 		_response = response;
 		_userAgent = userAgent;
+
 		_lockUuid = WebDAVUtil.getLockUuid(request);
 
 		String pathInfo = HttpUtil.fixPath(_request.getPathInfo(), false, true);
@@ -131,9 +132,8 @@ public class WebDAVRequestImpl implements WebDAVRequest {
 		if (isMac() && name.startsWith(_APPLE_DOUBLE_PREFIX)) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	@Override

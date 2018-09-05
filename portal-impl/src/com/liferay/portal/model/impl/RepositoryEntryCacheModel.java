@@ -16,12 +16,12 @@ package com.liferay.portal.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.MVCCModel;
 import com.liferay.portal.kernel.model.RepositoryEntry;
 import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -119,7 +119,7 @@ public class RepositoryEntryCacheModel implements CacheModel<RepositoryEntry>,
 		repositoryEntryImpl.setMvccVersion(mvccVersion);
 
 		if (uuid == null) {
-			repositoryEntryImpl.setUuid(StringPool.BLANK);
+			repositoryEntryImpl.setUuid("");
 		}
 		else {
 			repositoryEntryImpl.setUuid(uuid);
@@ -131,7 +131,7 @@ public class RepositoryEntryCacheModel implements CacheModel<RepositoryEntry>,
 		repositoryEntryImpl.setUserId(userId);
 
 		if (userName == null) {
-			repositoryEntryImpl.setUserName(StringPool.BLANK);
+			repositoryEntryImpl.setUserName("");
 		}
 		else {
 			repositoryEntryImpl.setUserName(userName);
@@ -154,7 +154,7 @@ public class RepositoryEntryCacheModel implements CacheModel<RepositoryEntry>,
 		repositoryEntryImpl.setRepositoryId(repositoryId);
 
 		if (mappedId == null) {
-			repositoryEntryImpl.setMappedId(StringPool.BLANK);
+			repositoryEntryImpl.setMappedId("");
 		}
 		else {
 			repositoryEntryImpl.setMappedId(mappedId);
@@ -203,7 +203,7 @@ public class RepositoryEntryCacheModel implements CacheModel<RepositoryEntry>,
 		objectOutput.writeLong(mvccVersion);
 
 		if (uuid == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(uuid);
@@ -218,7 +218,7 @@ public class RepositoryEntryCacheModel implements CacheModel<RepositoryEntry>,
 		objectOutput.writeLong(userId);
 
 		if (userName == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(userName);
@@ -230,7 +230,7 @@ public class RepositoryEntryCacheModel implements CacheModel<RepositoryEntry>,
 		objectOutput.writeLong(repositoryId);
 
 		if (mappedId == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(mappedId);

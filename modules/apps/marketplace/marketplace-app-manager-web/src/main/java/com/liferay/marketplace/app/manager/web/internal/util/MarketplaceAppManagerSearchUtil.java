@@ -16,8 +16,8 @@ package com.liferay.marketplace.app.manager.web.internal.util;
 
 import com.liferay.marketplace.app.manager.web.internal.constants.BundleConstants;
 import com.liferay.marketplace.app.manager.web.internal.constants.BundleStateConstants;
-import com.liferay.portal.kernel.util.CharPool;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import java.util.ArrayList;
@@ -59,24 +59,6 @@ public class MarketplaceAppManagerSearchUtil {
 			}
 		}
 
-		// Module group display
-
-		List<ModuleGroupDisplay> moduleGroupDisplays = new ArrayList<>();
-
-		for (AppDisplay appDisplay : appDisplays) {
-			if (appDisplay.hasModuleGroups()) {
-				moduleGroupDisplays.addAll(appDisplay.getModuleGroupDisplays());
-			}
-		}
-
-		for (ModuleGroupDisplay moduleGroupDisplay : moduleGroupDisplays) {
-			if (hasModuleGroupDisplayKeywordsMatch(
-					moduleGroupDisplay, keywordsRegex)) {
-
-				results.add(moduleGroupDisplay);
-			}
-		}
-
 		return results;
 	}
 
@@ -92,9 +74,8 @@ public class MarketplaceAppManagerSearchUtil {
 		if (matcher.find()) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	protected static String getKeywordsRegex(String keywords) {
@@ -107,14 +88,13 @@ public class MarketplaceAppManagerSearchUtil {
 	protected static boolean hasAppDisplayKeywordsMatch(
 		AppDisplay appDisplay, String keywordsRegex) {
 
-		if (containsMatches(keywordsRegex, appDisplay.getTitle()) ||
+		if (containsMatches(keywordsRegex, appDisplay.getDisplayTitle()) ||
 			containsMatches(keywordsRegex, appDisplay.getDescription())) {
 
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	protected static boolean hasBundleKeywordsMatch(
@@ -124,7 +104,8 @@ public class MarketplaceAppManagerSearchUtil {
 			return true;
 		}
 
-		Dictionary<String, String> headers = bundle.getHeaders();
+		Dictionary<String, String> headers = bundle.getHeaders(
+			StringPool.BLANK);
 
 		String bundleDescription = headers.get(
 			BundleConstants.BUNDLE_DESCRIPTION);
@@ -140,20 +121,6 @@ public class MarketplaceAppManagerSearchUtil {
 		}
 
 		return false;
-	}
-
-	protected static boolean hasModuleGroupDisplayKeywordsMatch(
-		ModuleGroupDisplay moduleGroupDisplay, String keywordsRegex) {
-
-		if (containsMatches(keywordsRegex, moduleGroupDisplay.getTitle()) ||
-			containsMatches(
-				keywordsRegex, moduleGroupDisplay.getDescription())) {
-
-			return true;
-		}
-		else {
-			return false;
-		}
 	}
 
 }

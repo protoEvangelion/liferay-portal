@@ -14,10 +14,10 @@
 
 package com.liferay.taglib.ui;
 
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
-import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.taglib.util.IncludeTag;
 
@@ -91,7 +91,8 @@ public class PageIteratorTag extends IncludeTag {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #setPortletURL(PortletURL)}
+	 * @deprecated As of Judson (7.1.x), replaced by {@link
+	 *             #setPortletURL(PortletURL)}
 	 */
 	@Deprecated
 	public void setUrl(String url) {
@@ -110,6 +111,8 @@ public class PageIteratorTag extends IncludeTag {
 
 	@Override
 	protected void cleanUp() {
+		super.cleanUp();
+
 		_cur = 0;
 		_curParam = null;
 		_delta = SearchContainer.DEFAULT_DELTA;
@@ -140,9 +143,8 @@ public class PageIteratorTag extends IncludeTag {
 
 			return "/html/taglib/ui/page_iterator/end.jsp";
 		}
-		else {
-			return null;
-		}
+
+		return null;
 	}
 
 	@Override

@@ -14,12 +14,12 @@
 
 package com.liferay.marketplace.app.manager.web.internal.util;
 
+import com.liferay.marketplace.constants.MarketplaceStorePortletKeys;
 import com.liferay.marketplace.model.App;
-import com.liferay.marketplace.store.web.constants.MarketplaceStorePortletKeys;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import javax.portlet.MimeResponse;
@@ -54,12 +54,7 @@ public class MarketplaceAppDisplay extends BaseAppDisplay {
 	public String getDisplayURL(MimeResponse mimeResponse) {
 		PortletURL portletURL = mimeResponse.createRenderURL();
 
-		if (hasModuleGroups()) {
-			portletURL.setParameter("mvcPath", "/view_module_groups.jsp");
-		}
-		else {
-			portletURL.setParameter("mvcPath", "/view_modules.jsp");
-		}
+		portletURL.setParameter("mvcPath", "/view_modules.jsp");
 
 		portletURL.setParameter("app", String.valueOf(_app.getAppId()));
 

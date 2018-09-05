@@ -798,7 +798,7 @@ public class ArrayUtilTest {
 
 	@Test
 	public void testReverseBooleanArray() throws Exception {
-		boolean[] array = new boolean[] {true, true, false};
+		boolean[] array = {true, true, false};
 
 		ArrayUtil.reverse(array);
 
@@ -809,7 +809,7 @@ public class ArrayUtilTest {
 
 	@Test
 	public void testReverseCharArray() throws Exception {
-		char[] array = new char[] {'a', 'b', 'c'};
+		char[] array = {'a', 'b', 'c'};
 
 		ArrayUtil.reverse(array);
 
@@ -818,7 +818,7 @@ public class ArrayUtilTest {
 
 	@Test
 	public void testReverseDoubleArray() throws Exception {
-		double[] array = new double[] {111.0, 222.0, 333.0};
+		double[] array = {111.0, 222.0, 333.0};
 
 		ArrayUtil.reverse(array);
 
@@ -827,7 +827,7 @@ public class ArrayUtilTest {
 
 	@Test
 	public void testReverseIntArray() throws Exception {
-		int[] array = new int[] {111, 222, 333};
+		int[] array = {111, 222, 333};
 
 		ArrayUtil.reverse(array);
 
@@ -836,7 +836,7 @@ public class ArrayUtilTest {
 
 	@Test
 	public void testReverseLongArray() throws Exception {
-		long[] array = new long[] {111, 222, 333};
+		long[] array = {111, 222, 333};
 
 		ArrayUtil.reverse(array);
 
@@ -845,7 +845,7 @@ public class ArrayUtilTest {
 
 	@Test
 	public void testReverseShortArray() throws Exception {
-		short[] array = new short[] {111, 222, 333};
+		short[] array = {111, 222, 333};
 
 		ArrayUtil.reverse(array);
 
@@ -854,11 +854,57 @@ public class ArrayUtilTest {
 
 	@Test
 	public void testReverseStringArray() throws Exception {
-		String[] array = new String[] {"aaa", "bbb", "ccc"};
+		String[] array = {"aaa", "bbb", "ccc"};
 
 		ArrayUtil.reverse(array);
 
 		Assert.assertArrayEquals(new String[] {"ccc", "bbb", "aaa"}, array);
+	}
+
+	@Test
+	public void testSplitEmptyArray() {
+		int[] array = new int[0];
+
+		int[][] arraySplit = (int[][])ArrayUtil.split(array, 2);
+
+		Assert.assertEquals(Arrays.toString(arraySplit), 0, arraySplit.length);
+	}
+
+	@Test
+	public void testSplitEqualToSplitSize() {
+		int[] array = {1, 2};
+
+		int[][] arraySplit = (int[][])ArrayUtil.split(array, 2);
+
+		Assert.assertEquals(Arrays.toString(arraySplit), 1, arraySplit.length);
+
+		Assert.assertSame(array, arraySplit[0]);
+	}
+
+	@Test
+	public void testSplitGreaterThanSplitSize() {
+		int[] array = {1, 2};
+
+		int[][] expected = {{1}, {2}};
+
+		int[][] arraySplit = (int[][])ArrayUtil.split(array, 1);
+
+		Assert.assertEquals(Arrays.toString(arraySplit), 2, arraySplit.length);
+
+		for (int i = 0; i < arraySplit.length; i++) {
+			Assert.assertArrayEquals(expected[i], arraySplit[i]);
+		}
+	}
+
+	@Test
+	public void testSplitLessThanSplitSize() {
+		int[] array = {0, 1, 2, 3};
+
+		int[][] arraySplit = (int[][])ArrayUtil.split(array, 5);
+
+		Assert.assertEquals(Arrays.toString(arraySplit), 1, arraySplit.length);
+
+		Assert.assertSame(array, arraySplit[0]);
 	}
 
 	@Test

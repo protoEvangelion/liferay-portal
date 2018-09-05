@@ -16,19 +16,16 @@ package com.liferay.source.formatter.checkstyle.checks;
 
 import com.liferay.source.formatter.checkstyle.util.DetailASTUtil;
 
-import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
-import com.puppycrawl.tools.checkstyle.utils.ScopeUtils;
+import com.puppycrawl.tools.checkstyle.utils.ScopeUtil;
 
 import java.util.List;
 
 /**
  * @author Hugo Huijser
  */
-public class LocalPatternCheck extends AbstractCheck {
-
-	public static final String MSG_LOCAL_PATTERN = "pattern.local";
+public class LocalPatternCheck extends BaseCheck {
 
 	@Override
 	public int[] getDefaultTokens() {
@@ -36,8 +33,8 @@ public class LocalPatternCheck extends AbstractCheck {
 	}
 
 	@Override
-	public void visitToken(DetailAST detailAST) {
-		if (!ScopeUtils.isLocalVariableDef(detailAST)) {
+	protected void doVisitToken(DetailAST detailAST) {
+		if (!ScopeUtil.isLocalVariableDef(detailAST)) {
 			return;
 		}
 
@@ -67,7 +64,9 @@ public class LocalPatternCheck extends AbstractCheck {
 
 		DetailAST nameAST = detailAST.findFirstToken(TokenTypes.IDENT);
 
-		log(detailAST.getLineNo(), MSG_LOCAL_PATTERN, nameAST.getText());
+		log(detailAST.getLineNo(), _MSG_LOCAL_PATTERN, nameAST.getText());
 	}
+
+	private static final String _MSG_LOCAL_PATTERN = "pattern.local";
 
 }

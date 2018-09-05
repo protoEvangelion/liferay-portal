@@ -72,10 +72,12 @@ public class RoleSearch extends SearchContainer<Role> {
 			DEFAULT_DELTA, iteratorURL, headerNames, EMPTY_RESULTS_MESSAGE);
 
 		RoleDisplayTerms displayTerms = (RoleDisplayTerms)getDisplayTerms();
-		RoleSearchTerms searchTerms = (RoleSearchTerms)getSearchTerms();
 
 		if (ParamUtil.getInteger(portletRequest, "type") == 0) {
 			displayTerms.setType(RoleConstants.TYPE_REGULAR);
+
+			RoleSearchTerms searchTerms = (RoleSearchTerms)getSearchTerms();
+
 			searchTerms.setType(RoleConstants.TYPE_REGULAR);
 		}
 
@@ -123,7 +125,7 @@ public class RoleSearch extends SearchContainer<Role> {
 			setOrderByComparator(orderByComparator);
 		}
 		catch (Exception e) {
-			_log.error(e);
+			_log.error("Unable to initialize role search", e);
 		}
 	}
 

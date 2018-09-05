@@ -16,10 +16,10 @@ package com.liferay.portlet.ratings.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import com.liferay.ratings.kernel.model.RatingsEntry;
 
@@ -98,7 +98,7 @@ public class RatingsEntryCacheModel implements CacheModel<RatingsEntry>,
 		RatingsEntryImpl ratingsEntryImpl = new RatingsEntryImpl();
 
 		if (uuid == null) {
-			ratingsEntryImpl.setUuid(StringPool.BLANK);
+			ratingsEntryImpl.setUuid("");
 		}
 		else {
 			ratingsEntryImpl.setUuid(uuid);
@@ -109,7 +109,7 @@ public class RatingsEntryCacheModel implements CacheModel<RatingsEntry>,
 		ratingsEntryImpl.setUserId(userId);
 
 		if (userName == null) {
-			ratingsEntryImpl.setUserName(StringPool.BLANK);
+			ratingsEntryImpl.setUserName("");
 		}
 		else {
 			ratingsEntryImpl.setUserName(userName);
@@ -162,7 +162,7 @@ public class RatingsEntryCacheModel implements CacheModel<RatingsEntry>,
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
 		if (uuid == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(uuid);
@@ -175,7 +175,7 @@ public class RatingsEntryCacheModel implements CacheModel<RatingsEntry>,
 		objectOutput.writeLong(userId);
 
 		if (userName == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(userName);

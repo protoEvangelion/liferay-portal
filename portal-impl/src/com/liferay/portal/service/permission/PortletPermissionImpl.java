@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.model.PortletConstants;
 import com.liferay.portal.kernel.model.impl.VirtualLayout;
 import com.liferay.portal.kernel.portlet.ControlPanelEntry;
+import com.liferay.portal.kernel.portlet.PortletIdCodec;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
@@ -557,7 +558,7 @@ public class PortletPermissionImpl implements PortletPermission {
 		String portletId, String actionId) {
 
 		try {
-			portletId = PortletConstants.getRootPortletId(portletId);
+			portletId = PortletIdCodec.decodePortletName(portletId);
 
 			List<String> layoutManagerActions =
 				ResourceActionsUtil.getPortletResourceLayoutManagerActions(
@@ -599,7 +600,10 @@ public class PortletPermissionImpl implements PortletPermission {
 			return false;
 		}
 
-		if (portlet.isPreferencesUniquePerLayout()) {
+		if (portlet.isPreferencesUniquePerLayout() &&
+			(layout.isTypeEmbedded() || layout.isTypePanel() ||
+			 layout.isTypePortlet())) {
+
 			return LayoutPermissionUtil.contains(
 				permissionChecker, layout, ActionKeys.CONFIGURE_PORTLETS);
 		}
@@ -610,9 +614,9 @@ public class PortletPermissionImpl implements PortletPermission {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
-	 *             #hasConfigurePermission(
-	 *             PermissionChecker, Layout, Portlet, String)}
+	 * @deprecated As of Judson (7.1.x), replaced by {@link
+	 *             #hasConfigurePermission(PermissionChecker, Layout, Portlet,
+	 *             String)}
 	 */
 	@Deprecated
 	protected boolean hasConfigurePermission(
@@ -656,9 +660,9 @@ public class PortletPermissionImpl implements PortletPermission {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
-	 *             #hasCustomizePermission(
-	 *             PermissionChecker, Layout, Portlet, String)}
+	 * @deprecated As of Judson (7.1.x), replaced by {@link
+	 *             #hasCustomizePermission(PermissionChecker, Layout, Portlet,
+	 *             String)}
 	 */
 	@Deprecated
 	protected boolean hasCustomizePermission(
@@ -733,7 +737,7 @@ public class PortletPermissionImpl implements PortletPermission {
 			return false;
 		}
 
-		String rootPortletId = PortletConstants.getRootPortletId(portletId);
+		String rootPortletId = PortletIdCodec.decodePortletName(portletId);
 
 		if (checkStagingPermission) {
 			Boolean hasPermission = StagingPermissionUtil.hasPermission(

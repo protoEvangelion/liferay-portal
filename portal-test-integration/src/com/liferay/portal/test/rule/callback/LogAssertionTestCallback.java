@@ -14,13 +14,13 @@
 
 package com.liferay.portal.test.rule.callback;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.io.unsync.UnsyncPrintWriter;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
 import com.liferay.portal.kernel.test.rule.callback.TestCallback;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.test.log.CaptureAppender;
 import com.liferay.portal.test.log.Log4JLoggerTestUtil;
 import com.liferay.portal.test.rule.ExpectedDBType;
@@ -32,10 +32,8 @@ import com.liferay.portal.test.rule.LogAssertionAppender;
 import com.liferay.portal.test.rule.LogAssertionHandler;
 import com.liferay.portal.test.rule.LogAssertionUncaughtExceptionHandler;
 
-import java.lang.Thread.UncaughtExceptionHandler;
-
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -182,8 +180,8 @@ public class LogAssertionTestCallback
 			}
 		}
 		else {
-			expectedLogsList.addAll(
-				Arrays.asList(expectedMultipleLogs.expectedMultipleLogs()));
+			Collections.addAll(
+				expectedLogsList, expectedMultipleLogs.expectedMultipleLogs());
 		}
 
 		endAssert(expectedLogsList, captureAppenders);
@@ -213,8 +211,8 @@ public class LogAssertionTestCallback
 			}
 		}
 		else {
-			expectedLogsList.addAll(
-				Arrays.asList(expectedMultipleLogs.expectedMultipleLogs()));
+			Collections.addAll(
+				expectedLogsList, expectedMultipleLogs.expectedMultipleLogs());
 		}
 
 		return startAssert(expectedLogsList);
@@ -293,6 +291,7 @@ public class LogAssertionTestCallback
 	private static final Map<Thread, Error> _concurrentFailures =
 		new ConcurrentHashMap<>();
 	private static volatile Thread _thread;
-	private static volatile UncaughtExceptionHandler _uncaughtExceptionHandler;
+	private static volatile Thread.UncaughtExceptionHandler
+		_uncaughtExceptionHandler;
 
 }

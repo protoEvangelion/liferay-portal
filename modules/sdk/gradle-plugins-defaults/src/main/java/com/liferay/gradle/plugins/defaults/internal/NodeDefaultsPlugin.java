@@ -15,18 +15,23 @@
 package com.liferay.gradle.plugins.defaults.internal;
 
 import com.liferay.gradle.plugins.BaseDefaultsPlugin;
+import com.liferay.gradle.plugins.defaults.internal.util.GradlePluginsDefaultsUtil;
 import com.liferay.gradle.plugins.defaults.internal.util.GradleUtil;
+import com.liferay.gradle.plugins.node.NodeExtension;
 import com.liferay.gradle.plugins.node.NodePlugin;
-import com.liferay.gradle.plugins.node.tasks.NpmShrinkwrapTask;
+import com.liferay.gradle.plugins.node.tasks.ExecuteNpmTask;
+import com.liferay.gradle.plugins.node.tasks.NpmInstallTask;
 import com.liferay.gradle.plugins.node.tasks.PublishNodeModuleTask;
+import com.liferay.gradle.plugins.util.PortalTools;
+import com.liferay.gradle.util.Validator;
 
-import java.util.Collections;
+import java.io.File;
+
+import java.util.concurrent.Callable;
 
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.plugins.BasePlugin;
-import org.gradle.api.tasks.Delete;
 import org.gradle.api.tasks.TaskContainer;
 
 /**
@@ -38,8 +43,12 @@ public class NodeDefaultsPlugin extends BaseDefaultsPlugin<NodePlugin> {
 
 	@Override
 	protected void configureDefaults(Project project, NodePlugin nodePlugin) {
-		_configureTaskClean(project);
-		_configureTaskNpmShrinkwrap(project);
+		String portalVersion = PortalTools.getPortalVersion(project);
+
+		_configureNode(project, portalVersion);
+		_configureTaskNpmInstall(project, portalVersion);
+
+		_configureTaskNpmRunBuild(project);
 		_configureTasksPublishNodeModule(project);
 	}
 
@@ -51,24 +60,88 @@ public class NodeDefaultsPlugin extends BaseDefaultsPlugin<NodePlugin> {
 	private NodeDefaultsPlugin() {
 	}
 
-	private void _configureTaskClean(Project project) {
-		boolean cleanNodeModules = Boolean.getBoolean("clean.node.modules");
+	private void _configureNode(Project project, String portalVersion) {
+		if (PortalTools.PORTAL_VERSION_7_0_X.equals(portalVersion)) {
+			NodeExtension nodeExtension = GradleUtil.getExtension(
+				project, NodeExtension.class);
 
-		if (cleanNodeModules) {
-			Delete delete = (Delete)GradleUtil.getTask(
-				project, BasePlugin.CLEAN_TASK_NAME);
-
-			delete.delete("node_modules");
+			nodeExtension.setGlobal(false);
+			nodeExtension.setNodeVersion("6.6.0");
 		}
 	}
 
-	private void _configureTaskNpmShrinkwrap(Project project) {
-		NpmShrinkwrapTask npmShrinkwrapTask =
-			(NpmShrinkwrapTask)GradleUtil.getTask(
-				project, NodePlugin.NPM_SHRINKWRAP_TASK_NAME);
+	private void _configureTaskNpmInstall(
+		Project project, String portalVersion) {
 
-		npmShrinkwrapTask.excludeDependencies(
-			_NPM_SHRINKWRAP_EXCLUDED_DEPENDENCIES);
+		NpmInstallTask npmInstallTask = (NpmInstallTask)GradleUtil.getTask(
+			project, NodePlugin.NPM_INSTALL_TASK_NAME);
+
+		npmInstallTask.setNodeModulesDigestFile(
+			new File(npmInstallTask.getNodeModulesDir(), ".digest"));
+
+		if (Validator.isNull(portalVersion)) {
+			npmInstallTask.setUseNpmCI(Boolean.TRUE);
+		}
+	}
+
+	private void _configureTaskNpmRunBuild(Project project) {
+		TaskContainer taskContainer = project.getTasks();
+
+		ExecuteNpmTask executeNpmTask =
+			(ExecuteNpmTask)taskContainer.findByName(
+				NodePlugin.NPM_RUN_BUILD_TASK_NAME);
+
+		if (executeNpmTask != null) {
+			executeNpmTask.environment("LIFERAY_NPM_BUNDLER_NO_TRACKING", "1");
+		}
+	}
+
+	private void _configureTaskPublishNodeModule(
+		PublishNodeModuleTask publishNodeModuleTask) {
+
+		final Project project = publishNodeModuleTask.getProject();
+
+		publishNodeModuleTask.doFirst(
+			MavenDefaultsPlugin.failReleaseOnWrongBranchAction);
+
+		if (GradlePluginsDefaultsUtil.isPrivateProject(project)) {
+			publishNodeModuleTask.setEnabled(false);
+		}
+
+		publishNodeModuleTask.setModuleAuthor(
+			"Nathan Cavanaugh <nathan.cavanaugh@liferay.com> " +
+				"(https://github.com/natecavanaugh)");
+		publishNodeModuleTask.setModuleBugsUrl("https://issues.liferay.com/");
+		publishNodeModuleTask.setModuleLicense("LGPL");
+		publishNodeModuleTask.setModuleMain("package.json");
+		publishNodeModuleTask.setModuleRepository("liferay/liferay-portal");
+
+		publishNodeModuleTask.setModuleVersion(
+			new Callable<String>() {
+
+				@Override
+				public String call() throws Exception {
+					String version = String.valueOf(project.getVersion());
+
+					if (version.endsWith(
+							GradlePluginsDefaultsUtil.
+								SNAPSHOT_VERSION_SUFFIX)) {
+
+						version = version.substring(
+							0,
+							version.length() -
+								GradlePluginsDefaultsUtil.
+									SNAPSHOT_VERSION_SUFFIX.length());
+
+						version += "-alpha." + System.currentTimeMillis();
+					}
+
+					return version;
+				}
+
+			});
+
+		publishNodeModuleTask.setOverriddenPackageJsonKeys("version");
 	}
 
 	private void _configureTasksPublishNodeModule(Project project) {
@@ -82,15 +155,10 @@ public class NodeDefaultsPlugin extends BaseDefaultsPlugin<NodePlugin> {
 				public void execute(
 					PublishNodeModuleTask publishNodeModuleTask) {
 
-					publishNodeModuleTask.doFirst(
-						MavenDefaultsPlugin.failReleaseOnWrongBranchAction);
+					_configureTaskPublishNodeModule(publishNodeModuleTask);
 				}
 
 			});
 	}
-
-	private static final Iterable<String>
-		_NPM_SHRINKWRAP_EXCLUDED_DEPENDENCIES = Collections.singleton(
-			"fsevents");
 
 }

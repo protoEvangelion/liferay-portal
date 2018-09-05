@@ -31,8 +31,11 @@ import com.liferay.portal.kernel.service.persistence.BasePersistence;
  * @author Brian Wing Shun Chan
  * @see com.liferay.portlet.asset.service.persistence.impl.AssetTagStatsPersistenceImpl
  * @see AssetTagStatsUtil
+ * @deprecated As of Judson (7.1.x), replaced by {@link
+com.liferay.asset.tag.stats.model.impl.AssetTagStatsImpl}
  * @generated
  */
+@Deprecated
 @ProviderType
 public interface AssetTagStatsPersistence extends BasePersistence<AssetTagStats> {
 	/*

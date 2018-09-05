@@ -64,25 +64,6 @@ public interface SocialActivityCounterLocalService extends BaseLocalService,
 	 *
 	 * Never modify or reference this interface directly. Always use {@link SocialActivityCounterLocalServiceUtil} to access the social activity counter local service. Add custom service methods to {@link com.liferay.portlet.social.service.impl.SocialActivityCounterLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public ActionableDynamicQuery getActionableDynamicQuery();
-
-	public DynamicQuery dynamicQuery();
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
-
-	/**
-	* @throws PortalException
-	*/
-	@Override
-	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
-		throws PortalException;
-
-	@Override
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException;
 
 	/**
 	* Adds an activity counter specifying a previous activity and period
@@ -116,8 +97,31 @@ public interface SocialActivityCounterLocalService extends BaseLocalService,
 	*/
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public SocialActivityCounter addActivityCounter(long groupId,
-		long classNameId, long classPK, java.lang.String name, int ownerType,
+		long classNameId, long classPK, String name, int ownerType,
 		int totalValue, long previousActivityCounterId, int periodLength)
+		throws PortalException;
+
+	/**
+	* Adds or increments activity counters related to an activity.
+	*
+	* <p>
+	* This method is called asynchronously from the social activity service
+	* when the user performs an activity defined in
+	* <code>liferay-social.xml</code>.
+	* </p>
+	*
+	* <p>
+	* This method first calls the activity processor class, if there is one
+	* defined for the activity, checks for limits and increments all the
+	* counters that belong to the activity. Afterwards, it processes the
+	* activity with respect to achievement classes, if any. Lastly it
+	* increments the built-in <code>user.activities</code> and
+	* <code>asset.activities</code> counters.
+	* </p>
+	*
+	* @param activity the social activity
+	*/
+	public void addActivityCounters(SocialActivity activity)
 		throws PortalException;
 
 	/**
@@ -136,18 +140,50 @@ public interface SocialActivityCounterLocalService extends BaseLocalService,
 	* @param activityCounterId the primary key for the new social activity counter
 	* @return the new social activity counter
 	*/
+	@Transactional(enabled = false)
 	public SocialActivityCounter createSocialActivityCounter(
 		long activityCounterId);
 
 	/**
-	* Deletes the social activity counter from the database. Also notifies the appropriate model listeners.
+	* Deletes all activity counters, limits, and settings related to the asset.
 	*
-	* @param socialActivityCounter the social activity counter
-	* @return the social activity counter that was removed
+	* <p>
+	* This method subtracts the asset's popularity from the owner's
+	* contribution points. It also creates a new contribution period if the
+	* latest one does not belong to the current period.
+	* </p>
+	*
+	* @param assetEntry the asset entry
 	*/
-	@Indexable(type = IndexableType.DELETE)
-	public SocialActivityCounter deleteSocialActivityCounter(
-		SocialActivityCounter socialActivityCounter);
+	public void deleteActivityCounters(AssetEntry assetEntry)
+		throws PortalException;
+
+	/**
+	* Deletes all activity counters, limits, and settings related to the entity
+	* identified by the class name ID and class primary key.
+	*
+	* @param classNameId the primary key of the entity's class
+	* @param classPK the primary key of the entity
+	*/
+	public void deleteActivityCounters(long classNameId, long classPK)
+		throws PortalException;
+
+	/**
+	* Deletes all activity counters for the entity identified by the class name
+	* and class primary key.
+	*
+	* @param className the entity's class name
+	* @param classPK the primary key of the entity
+	*/
+	public void deleteActivityCounters(String className, long classPK)
+		throws PortalException;
+
+	/**
+	* @throws PortalException
+	*/
+	@Override
+	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
+		throws PortalException;
 
 	/**
 	* Deletes the social activity counter with the primary key from the database. Also notifies the appropriate model listeners.
@@ -161,104 +197,46 @@ public interface SocialActivityCounterLocalService extends BaseLocalService,
 		long activityCounterId) throws PortalException;
 
 	/**
-	* Returns the activity counter with the given name, owner, and end period
-	* that belong to the given entity.
-	*
-	* @param groupId the primary key of the group
-	* @param classNameId the primary key of the entity's class
-	* @param classPK the primary key of the entity
-	* @param name the counter name
-	* @param ownerType the owner type
-	* @param endPeriod the end period, <code>-1</code> for the latest one
-	* @return the matching activity counter
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public SocialActivityCounter fetchActivityCounterByEndPeriod(long groupId,
-		long classNameId, long classPK, java.lang.String name, int ownerType,
-		int endPeriod);
-
-	/**
-	* Returns the activity counter with the given name, owner, and start period
-	* that belong to the given entity.
-	*
-	* @param groupId the primary key of the group
-	* @param classNameId the primary key of the entity's class
-	* @param classPK the primary key of the entity
-	* @param name the counter name
-	* @param ownerType the owner type
-	* @param startPeriod the start period
-	* @return the matching activity counter
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public SocialActivityCounter fetchActivityCounterByStartPeriod(
-		long groupId, long classNameId, long classPK, java.lang.String name,
-		int ownerType, int startPeriod);
-
-	/**
-	* Returns the latest activity counter with the given name and owner that
-	* belong to the given entity.
-	*
-	* @param groupId the primary key of the group
-	* @param classNameId the primary key of the entity's class
-	* @param classPK the primary key of the entity
-	* @param name the counter name
-	* @param ownerType the owner type
-	* @return the matching activity counter
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public SocialActivityCounter fetchLatestActivityCounter(long groupId,
-		long classNameId, long classPK, java.lang.String name, int ownerType);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public SocialActivityCounter fetchSocialActivityCounter(
-		long activityCounterId);
-
-	/**
-	* Returns the social activity counter with the primary key.
-	*
-	* @param activityCounterId the primary key of the social activity counter
-	* @return the social activity counter
-	* @throws PortalException if a social activity counter with the primary key could not be found
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public SocialActivityCounter getSocialActivityCounter(
-		long activityCounterId) throws PortalException;
-
-	/**
-	* Updates the social activity counter in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	* Deletes the social activity counter from the database. Also notifies the appropriate model listeners.
 	*
 	* @param socialActivityCounter the social activity counter
-	* @return the social activity counter that was updated
+	* @return the social activity counter that was removed
 	*/
-	@Indexable(type = IndexableType.REINDEX)
-	public SocialActivityCounter updateSocialActivityCounter(
+	@Indexable(type = IndexableType.DELETE)
+	public SocialActivityCounter deleteSocialActivityCounter(
 		SocialActivityCounter socialActivityCounter);
 
 	/**
-	* Returns the number of social activity counters.
+	* Disables all the counters of an asset identified by the class name ID and
+	* class primary key.
 	*
-	* @return the number of social activity counters
+	* <p>
+	* This method is used by the recycle bin to disable all counters of assets
+	* put into the recycle bin. It adjusts the owner's contribution score.
+	* </p>
+	*
+	* @param classNameId the primary key of the asset's class
+	* @param classPK the primary key of the asset
 	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getSocialActivityCountersCount();
+	public void disableActivityCounters(long classNameId, long classPK)
+		throws PortalException;
 
 	/**
-	* Returns the number of users having a rank based on the given counters.
+	* Disables all the counters of an asset identified by the class name and
+	* class primary key.
 	*
-	* @param groupId the primary key of the group
-	* @param rankingNames the ranking counter names
-	* @return the number of matching users
+	* <p>
+	* This method is used by the recycle bin to disable all counters of assets
+	* put into the recycle bin. It adjusts the owner's contribution score.
+	* </p>
+	*
+	* @param className the asset's class name
+	* @param classPK the primary key of the asset
 	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getUserActivityCountersCount(long groupId,
-		java.lang.String[] rankingNames);
+	public void disableActivityCounters(String className, long classPK)
+		throws PortalException;
 
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	public java.lang.String getOSGiServiceIdentifier();
+	public DynamicQuery dynamicQuery();
 
 	/**
 	* Performs a dynamic query on the database and returns the matching rows.
@@ -300,6 +278,113 @@ public interface SocialActivityCounterLocalService extends BaseLocalService,
 		int end, OrderByComparator<T> orderByComparator);
 
 	/**
+	* Returns the number of rows matching the dynamic query.
+	*
+	* @param dynamicQuery the dynamic query
+	* @return the number of rows matching the dynamic query
+	*/
+	public long dynamicQueryCount(DynamicQuery dynamicQuery);
+
+	/**
+	* Returns the number of rows matching the dynamic query.
+	*
+	* @param dynamicQuery the dynamic query
+	* @param projection the projection to apply to the query
+	* @return the number of rows matching the dynamic query
+	*/
+	public long dynamicQueryCount(DynamicQuery dynamicQuery,
+		Projection projection);
+
+	/**
+	* Enables all activity counters of an asset identified by the class name ID
+	* and class primary key.
+	*
+	* <p>
+	* This method is used by the recycle bin to enable all counters of assets
+	* restored from the recycle bin. It adjusts the owner's contribution score.
+	* </p>
+	*
+	* @param classNameId the primary key of the asset's class
+	* @param classPK the primary key of the asset
+	*/
+	public void enableActivityCounters(long classNameId, long classPK)
+		throws PortalException;
+
+	/**
+	* Enables all the counters of an asset identified by the class name and
+	* class primary key.
+	*
+	* <p>
+	* This method is used by the recycle bin to enable all counters of assets
+	* restored from the recycle bin. It adjusts the owner's contribution score.
+	* </p>
+	*
+	* @param className the asset's class name
+	* @param classPK the primary key of the asset
+	*/
+	public void enableActivityCounters(String className, long classPK)
+		throws PortalException;
+
+	/**
+	* Returns the activity counter with the given name, owner, and end period
+	* that belong to the given entity.
+	*
+	* @param groupId the primary key of the group
+	* @param classNameId the primary key of the entity's class
+	* @param classPK the primary key of the entity
+	* @param name the counter name
+	* @param ownerType the owner type
+	* @param endPeriod the end period, <code>-1</code> for the latest one
+	* @return the matching activity counter
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public SocialActivityCounter fetchActivityCounterByEndPeriod(long groupId,
+		long classNameId, long classPK, String name, int ownerType,
+		int endPeriod);
+
+	/**
+	* Returns the activity counter with the given name, owner, and start period
+	* that belong to the given entity.
+	*
+	* @param groupId the primary key of the group
+	* @param classNameId the primary key of the entity's class
+	* @param classPK the primary key of the entity
+	* @param name the counter name
+	* @param ownerType the owner type
+	* @param startPeriod the start period
+	* @return the matching activity counter
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public SocialActivityCounter fetchActivityCounterByStartPeriod(
+		long groupId, long classNameId, long classPK, String name,
+		int ownerType, int startPeriod);
+
+	/**
+	* Returns the latest activity counter with the given name and owner that
+	* belong to the given entity.
+	*
+	* @param groupId the primary key of the group
+	* @param classNameId the primary key of the entity's class
+	* @param classPK the primary key of the entity
+	* @param name the counter name
+	* @param ownerType the owner type
+	* @return the matching activity counter
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public SocialActivityCounter fetchLatestActivityCounter(long groupId,
+		long classNameId, long classPK, String name, int ownerType);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public SocialActivityCounter fetchSocialActivityCounter(
+		long activityCounterId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public ActionableDynamicQuery getActionableDynamicQuery();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
+
+	/**
 	* Returns all the activity counters with the given name and period offsets.
 	*
 	* <p>
@@ -315,7 +400,7 @@ public interface SocialActivityCounterLocalService extends BaseLocalService,
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<SocialActivityCounter> getOffsetActivityCounters(long groupId,
-		java.lang.String name, int startOffset, int endOffset);
+		String name, int startOffset, int endOffset);
 
 	/**
 	* Returns the distribution of the activity counters with the given name and
@@ -336,7 +421,14 @@ public interface SocialActivityCounterLocalService extends BaseLocalService,
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<SocialActivityCounter> getOffsetDistributionActivityCounters(
-		long groupId, java.lang.String name, int startOffset, int endOffset);
+		long groupId, String name, int startOffset, int endOffset);
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	public String getOSGiServiceIdentifier();
 
 	/**
 	* Returns all the activity counters with the given name and time period.
@@ -355,7 +447,7 @@ public interface SocialActivityCounterLocalService extends BaseLocalService,
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<SocialActivityCounter> getPeriodActivityCounters(long groupId,
-		java.lang.String name, int startPeriod, int endPeriod);
+		String name, int startPeriod, int endPeriod);
 
 	/**
 	* Returns the distribution of activity counters with the given name and
@@ -376,7 +468,23 @@ public interface SocialActivityCounterLocalService extends BaseLocalService,
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<SocialActivityCounter> getPeriodDistributionActivityCounters(
-		long groupId, java.lang.String name, int startPeriod, int endPeriod);
+		long groupId, String name, int startPeriod, int endPeriod);
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
+		throws PortalException;
+
+	/**
+	* Returns the social activity counter with the primary key.
+	*
+	* @param activityCounterId the primary key of the social activity counter
+	* @return the social activity counter
+	* @throws PortalException if a social activity counter with the primary key could not be found
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public SocialActivityCounter getSocialActivityCounter(
+		long activityCounterId) throws PortalException;
 
 	/**
 	* Returns a range of all the social activity counters.
@@ -392,6 +500,14 @@ public interface SocialActivityCounterLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<SocialActivityCounter> getSocialActivityCounters(int start,
 		int end);
+
+	/**
+	* Returns the number of social activity counters.
+	*
+	* @return the number of social activity counters
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getSocialActivityCountersCount();
 
 	/**
 	* Returns the range of tuples that contain users and a list of activity
@@ -422,143 +538,17 @@ public interface SocialActivityCounterLocalService extends BaseLocalService,
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Tuple> getUserActivityCounters(long groupId,
-		java.lang.String[] rankingNames, java.lang.String[] selectedNames,
-		int start, int end);
+		String[] rankingNames, String[] selectedNames, int start, int end);
 
 	/**
-	* Returns the number of rows matching the dynamic query.
+	* Returns the number of users having a rank based on the given counters.
 	*
-	* @param dynamicQuery the dynamic query
-	* @return the number of rows matching the dynamic query
+	* @param groupId the primary key of the group
+	* @param rankingNames the ranking counter names
+	* @return the number of matching users
 	*/
-	public long dynamicQueryCount(DynamicQuery dynamicQuery);
-
-	/**
-	* Returns the number of rows matching the dynamic query.
-	*
-	* @param dynamicQuery the dynamic query
-	* @param projection the projection to apply to the query
-	* @return the number of rows matching the dynamic query
-	*/
-	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection);
-
-	/**
-	* Adds or increments activity counters related to an activity.
-	*
-	* <p>
-	* This method is called asynchronously from the social activity service
-	* when the user performs an activity defined in
-	* <code>liferay-social.xml</code>.
-	* </p>
-	*
-	* <p>
-	* This method first calls the activity processor class, if there is one
-	* defined for the activity, checks for limits and increments all the
-	* counters that belong to the activity. Afterwards, it processes the
-	* activity with respect to achievement classes, if any. Lastly it
-	* increments the built-in <code>user.activities</code> and
-	* <code>asset.activities</code> counters.
-	* </p>
-	*
-	* @param activity the social activity
-	*/
-	public void addActivityCounters(SocialActivity activity)
-		throws PortalException;
-
-	/**
-	* Deletes all activity counters, limits, and settings related to the asset.
-	*
-	* <p>
-	* This method subtracts the asset's popularity from the owner's
-	* contribution points. It also creates a new contribution period if the
-	* latest one does not belong to the current period.
-	* </p>
-	*
-	* @param assetEntry the asset entry
-	*/
-	public void deleteActivityCounters(AssetEntry assetEntry)
-		throws PortalException;
-
-	/**
-	* Deletes all activity counters for the entity identified by the class name
-	* and class primary key.
-	*
-	* @param className the entity's class name
-	* @param classPK the primary key of the entity
-	*/
-	public void deleteActivityCounters(java.lang.String className, long classPK)
-		throws PortalException;
-
-	/**
-	* Deletes all activity counters, limits, and settings related to the entity
-	* identified by the class name ID and class primary key.
-	*
-	* @param classNameId the primary key of the entity's class
-	* @param classPK the primary key of the entity
-	*/
-	public void deleteActivityCounters(long classNameId, long classPK)
-		throws PortalException;
-
-	/**
-	* Disables all the counters of an asset identified by the class name and
-	* class primary key.
-	*
-	* <p>
-	* This method is used by the recycle bin to disable all counters of assets
-	* put into the recycle bin. It adjusts the owner's contribution score.
-	* </p>
-	*
-	* @param className the asset's class name
-	* @param classPK the primary key of the asset
-	*/
-	public void disableActivityCounters(java.lang.String className, long classPK)
-		throws PortalException;
-
-	/**
-	* Disables all the counters of an asset identified by the class name ID and
-	* class primary key.
-	*
-	* <p>
-	* This method is used by the recycle bin to disable all counters of assets
-	* put into the recycle bin. It adjusts the owner's contribution score.
-	* </p>
-	*
-	* @param classNameId the primary key of the asset's class
-	* @param classPK the primary key of the asset
-	*/
-	public void disableActivityCounters(long classNameId, long classPK)
-		throws PortalException;
-
-	/**
-	* Enables all the counters of an asset identified by the class name and
-	* class primary key.
-	*
-	* <p>
-	* This method is used by the recycle bin to enable all counters of assets
-	* restored from the recycle bin. It adjusts the owner's contribution score.
-	* </p>
-	*
-	* @param className the asset's class name
-	* @param classPK the primary key of the asset
-	*/
-	public void enableActivityCounters(java.lang.String className, long classPK)
-		throws PortalException;
-
-	/**
-	* Enables all activity counters of an asset identified by the class name ID
-	* and class primary key.
-	*
-	* <p>
-	* This method is used by the recycle bin to enable all counters of assets
-	* restored from the recycle bin. It adjusts the owner's contribution score.
-	* </p>
-	*
-	* @param classNameId the primary key of the asset's class
-	* @param classPK the primary key of the asset
-	*/
-	public void enableActivityCounters(long classNameId, long classPK)
-		throws PortalException;
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getUserActivityCountersCount(long groupId, String[] rankingNames);
 
 	/**
 	* Increments the <code>user.achievements</code> counter for a user.
@@ -573,4 +563,14 @@ public interface SocialActivityCounterLocalService extends BaseLocalService,
 	*/
 	public void incrementUserAchievementCounter(long userId, long groupId)
 		throws PortalException;
+
+	/**
+	* Updates the social activity counter in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param socialActivityCounter the social activity counter
+	* @return the social activity counter that was updated
+	*/
+	@Indexable(type = IndexableType.REINDEX)
+	public SocialActivityCounter updateSocialActivityCounter(
+		SocialActivityCounter socialActivityCounter);
 }

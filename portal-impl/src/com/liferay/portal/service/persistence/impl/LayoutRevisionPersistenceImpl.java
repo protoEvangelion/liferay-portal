@@ -16,6 +16,8 @@ package com.liferay.portal.service.persistence.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
@@ -37,13 +39,14 @@ import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.LayoutRevisionPersistence;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.model.impl.LayoutRevisionImpl;
 import com.liferay.portal.model.impl.LayoutRevisionModelImpl;
 
 import java.io.Serializable;
+
+import java.lang.reflect.InvocationHandler;
 
 import java.util.Collections;
 import java.util.Date;
@@ -314,7 +317,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 		msg.append("layoutSetBranchId=");
 		msg.append(layoutSetBranchId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchLayoutRevisionException(msg.toString());
 	}
@@ -366,7 +369,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 		msg.append("layoutSetBranchId=");
 		msg.append(layoutSetBranchId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchLayoutRevisionException(msg.toString());
 	}
@@ -823,7 +826,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 		msg.append("plid=");
 		msg.append(plid);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchLayoutRevisionException(msg.toString());
 	}
@@ -872,7 +875,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 		msg.append("plid=");
 		msg.append(plid);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchLayoutRevisionException(msg.toString());
 	}
@@ -1114,6 +1117,511 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 	}
 
 	private static final String _FINDER_COLUMN_PLID_PLID_2 = "layoutRevision.plid = ?";
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_STATUS = new FinderPath(LayoutRevisionModelImpl.ENTITY_CACHE_ENABLED,
+			LayoutRevisionModelImpl.FINDER_CACHE_ENABLED,
+			LayoutRevisionImpl.class, FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+			"findByStatus",
+			new String[] {
+				Integer.class.getName(),
+				
+			Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_STATUS =
+		new FinderPath(LayoutRevisionModelImpl.ENTITY_CACHE_ENABLED,
+			LayoutRevisionModelImpl.FINDER_CACHE_ENABLED,
+			LayoutRevisionImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByStatus",
+			new String[] { Integer.class.getName() },
+			LayoutRevisionModelImpl.STATUS_COLUMN_BITMASK |
+			LayoutRevisionModelImpl.MODIFIEDDATE_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_STATUS = new FinderPath(LayoutRevisionModelImpl.ENTITY_CACHE_ENABLED,
+			LayoutRevisionModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByStatus",
+			new String[] { Integer.class.getName() });
+
+	/**
+	 * Returns all the layout revisions where status = &#63;.
+	 *
+	 * @param status the status
+	 * @return the matching layout revisions
+	 */
+	@Override
+	public List<LayoutRevision> findByStatus(int status) {
+		return findByStatus(status, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the layout revisions where status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LayoutRevisionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param status the status
+	 * @param start the lower bound of the range of layout revisions
+	 * @param end the upper bound of the range of layout revisions (not inclusive)
+	 * @return the range of matching layout revisions
+	 */
+	@Override
+	public List<LayoutRevision> findByStatus(int status, int start, int end) {
+		return findByStatus(status, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the layout revisions where status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LayoutRevisionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param status the status
+	 * @param start the lower bound of the range of layout revisions
+	 * @param end the upper bound of the range of layout revisions (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching layout revisions
+	 */
+	@Override
+	public List<LayoutRevision> findByStatus(int status, int start, int end,
+		OrderByComparator<LayoutRevision> orderByComparator) {
+		return findByStatus(status, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the layout revisions where status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LayoutRevisionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param status the status
+	 * @param start the lower bound of the range of layout revisions
+	 * @param end the upper bound of the range of layout revisions (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching layout revisions
+	 */
+	@Override
+	public List<LayoutRevision> findByStatus(int status, int start, int end,
+		OrderByComparator<LayoutRevision> orderByComparator,
+		boolean retrieveFromCache) {
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+				(orderByComparator == null)) {
+			pagination = false;
+			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_STATUS;
+			finderArgs = new Object[] { status };
+		}
+		else {
+			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_STATUS;
+			finderArgs = new Object[] { status, start, end, orderByComparator };
+		}
+
+		List<LayoutRevision> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<LayoutRevision>)finderCache.getResult(finderPath,
+					finderArgs, this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (LayoutRevision layoutRevision : list) {
+					if ((status != layoutRevision.getStatus())) {
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(3 +
+						(orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(3);
+			}
+
+			query.append(_SQL_SELECT_LAYOUTREVISION_WHERE);
+
+			query.append(_FINDER_COLUMN_STATUS_STATUS_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator);
+			}
+			else
+			 if (pagination) {
+				query.append(LayoutRevisionModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(status);
+
+				if (!pagination) {
+					list = (List<LayoutRevision>)QueryUtil.list(q,
+							getDialect(), start, end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<LayoutRevision>)QueryUtil.list(q,
+							getDialect(), start, end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first layout revision in the ordered set where status = &#63;.
+	 *
+	 * @param status the status
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching layout revision
+	 * @throws NoSuchLayoutRevisionException if a matching layout revision could not be found
+	 */
+	@Override
+	public LayoutRevision findByStatus_First(int status,
+		OrderByComparator<LayoutRevision> orderByComparator)
+		throws NoSuchLayoutRevisionException {
+		LayoutRevision layoutRevision = fetchByStatus_First(status,
+				orderByComparator);
+
+		if (layoutRevision != null) {
+			return layoutRevision;
+		}
+
+		StringBundler msg = new StringBundler(4);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("status=");
+		msg.append(status);
+
+		msg.append("}");
+
+		throw new NoSuchLayoutRevisionException(msg.toString());
+	}
+
+	/**
+	 * Returns the first layout revision in the ordered set where status = &#63;.
+	 *
+	 * @param status the status
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching layout revision, or <code>null</code> if a matching layout revision could not be found
+	 */
+	@Override
+	public LayoutRevision fetchByStatus_First(int status,
+		OrderByComparator<LayoutRevision> orderByComparator) {
+		List<LayoutRevision> list = findByStatus(status, 0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last layout revision in the ordered set where status = &#63;.
+	 *
+	 * @param status the status
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching layout revision
+	 * @throws NoSuchLayoutRevisionException if a matching layout revision could not be found
+	 */
+	@Override
+	public LayoutRevision findByStatus_Last(int status,
+		OrderByComparator<LayoutRevision> orderByComparator)
+		throws NoSuchLayoutRevisionException {
+		LayoutRevision layoutRevision = fetchByStatus_Last(status,
+				orderByComparator);
+
+		if (layoutRevision != null) {
+			return layoutRevision;
+		}
+
+		StringBundler msg = new StringBundler(4);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("status=");
+		msg.append(status);
+
+		msg.append("}");
+
+		throw new NoSuchLayoutRevisionException(msg.toString());
+	}
+
+	/**
+	 * Returns the last layout revision in the ordered set where status = &#63;.
+	 *
+	 * @param status the status
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching layout revision, or <code>null</code> if a matching layout revision could not be found
+	 */
+	@Override
+	public LayoutRevision fetchByStatus_Last(int status,
+		OrderByComparator<LayoutRevision> orderByComparator) {
+		int count = countByStatus(status);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<LayoutRevision> list = findByStatus(status, count - 1, count,
+				orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the layout revisions before and after the current layout revision in the ordered set where status = &#63;.
+	 *
+	 * @param layoutRevisionId the primary key of the current layout revision
+	 * @param status the status
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next layout revision
+	 * @throws NoSuchLayoutRevisionException if a layout revision with the primary key could not be found
+	 */
+	@Override
+	public LayoutRevision[] findByStatus_PrevAndNext(long layoutRevisionId,
+		int status, OrderByComparator<LayoutRevision> orderByComparator)
+		throws NoSuchLayoutRevisionException {
+		LayoutRevision layoutRevision = findByPrimaryKey(layoutRevisionId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			LayoutRevision[] array = new LayoutRevisionImpl[3];
+
+			array[0] = getByStatus_PrevAndNext(session, layoutRevision, status,
+					orderByComparator, true);
+
+			array[1] = layoutRevision;
+
+			array[2] = getByStatus_PrevAndNext(session, layoutRevision, status,
+					orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected LayoutRevision getByStatus_PrevAndNext(Session session,
+		LayoutRevision layoutRevision, int status,
+		OrderByComparator<LayoutRevision> orderByComparator, boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(3);
+		}
+
+		query.append(_SQL_SELECT_LAYOUTREVISION_WHERE);
+
+		query.append(_FINDER_COLUMN_STATUS_STATUS_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(LayoutRevisionModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(status);
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(layoutRevision);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<LayoutRevision> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the layout revisions where status = &#63; from the database.
+	 *
+	 * @param status the status
+	 */
+	@Override
+	public void removeByStatus(int status) {
+		for (LayoutRevision layoutRevision : findByStatus(status,
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+			remove(layoutRevision);
+		}
+	}
+
+	/**
+	 * Returns the number of layout revisions where status = &#63;.
+	 *
+	 * @param status the status
+	 * @return the number of matching layout revisions
+	 */
+	@Override
+	public int countByStatus(int status) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_STATUS;
+
+		Object[] finderArgs = new Object[] { status };
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(2);
+
+			query.append(_SQL_COUNT_LAYOUTREVISION_WHERE);
+
+			query.append(_FINDER_COLUMN_STATUS_STATUS_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(status);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_STATUS_STATUS_2 = "layoutRevision.status = ?";
 	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_L_H = new FinderPath(LayoutRevisionModelImpl.ENTITY_CACHE_ENABLED,
 			LayoutRevisionModelImpl.FINDER_CACHE_ENABLED,
 			LayoutRevisionImpl.class, FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
@@ -1238,7 +1746,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 			if ((list != null) && !list.isEmpty()) {
 				for (LayoutRevision layoutRevision : list) {
 					if ((layoutSetBranchId != layoutRevision.getLayoutSetBranchId()) ||
-							(head != layoutRevision.getHead())) {
+							(head != layoutRevision.isHead())) {
 						list = null;
 
 						break;
@@ -1348,7 +1856,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 		msg.append(", head=");
 		msg.append(head);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchLayoutRevisionException(msg.toString());
 	}
@@ -1404,7 +1912,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 		msg.append(", head=");
 		msg.append(head);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchLayoutRevisionException(msg.toString());
 	}
@@ -1894,7 +2402,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 		msg.append(", plid=");
 		msg.append(plid);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchLayoutRevisionException(msg.toString());
 	}
@@ -1950,7 +2458,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 		msg.append(", plid=");
 		msg.append(plid);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchLayoutRevisionException(msg.toString());
 	}
@@ -2440,7 +2948,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 		msg.append(", status=");
 		msg.append(status);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchLayoutRevisionException(msg.toString());
 	}
@@ -2496,7 +3004,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 		msg.append(", status=");
 		msg.append(status);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchLayoutRevisionException(msg.toString());
 	}
@@ -2868,7 +3376,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 
 			if ((list != null) && !list.isEmpty()) {
 				for (LayoutRevision layoutRevision : list) {
-					if ((head != layoutRevision.getHead()) ||
+					if ((head != layoutRevision.isHead()) ||
 							(plid != layoutRevision.getPlid())) {
 						list = null;
 
@@ -2979,7 +3487,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 		msg.append(", plid=");
 		msg.append(plid);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchLayoutRevisionException(msg.toString());
 	}
@@ -3035,7 +3543,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 		msg.append(", plid=");
 		msg.append(plid);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchLayoutRevisionException(msg.toString());
 	}
@@ -3503,7 +4011,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 		msg.append(", status=");
 		msg.append(status);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchLayoutRevisionException(msg.toString());
 	}
@@ -3559,7 +4067,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 		msg.append(", status=");
 		msg.append(status);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchLayoutRevisionException(msg.toString());
 	}
@@ -4071,7 +4579,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 		msg.append(", plid=");
 		msg.append(plid);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchLayoutRevisionException(msg.toString());
 	}
@@ -4134,7 +4642,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 		msg.append(", plid=");
 		msg.append(plid);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchLayoutRevisionException(msg.toString());
 	}
@@ -4669,7 +5177,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 		msg.append(", plid=");
 		msg.append(plid);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchLayoutRevisionException(msg.toString());
 	}
@@ -4732,7 +5240,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 		msg.append(", plid=");
 		msg.append(plid);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchLayoutRevisionException(msg.toString());
 	}
@@ -5058,7 +5566,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 			msg.append(", plid=");
 			msg.append(plid);
 
-			msg.append(StringPool.CLOSE_CURLY_BRACE);
+			msg.append("}");
 
 			if (_log.isDebugEnabled()) {
 				_log.debug(msg.toString());
@@ -5109,7 +5617,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 			LayoutRevision layoutRevision = (LayoutRevision)result;
 
 			if ((layoutSetBranchId != layoutRevision.getLayoutSetBranchId()) ||
-					(head != layoutRevision.getHead()) ||
+					(head != layoutRevision.isHead()) ||
 					(plid != layoutRevision.getPlid())) {
 				result = null;
 			}
@@ -5166,13 +5674,6 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 					result = layoutRevision;
 
 					cacheResult(layoutRevision);
-
-					if ((layoutRevision.getLayoutSetBranchId() != layoutSetBranchId) ||
-							(layoutRevision.getHead() != head) ||
-							(layoutRevision.getPlid() != plid)) {
-						finderCache.putResult(FINDER_PATH_FETCH_BY_L_H_P,
-							finderArgs, layoutRevision);
-					}
 				}
 			}
 			catch (Exception e) {
@@ -5274,6 +5775,1201 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 	private static final String _FINDER_COLUMN_L_H_P_LAYOUTSETBRANCHID_2 = "layoutRevision.layoutSetBranchId = ? AND ";
 	private static final String _FINDER_COLUMN_L_H_P_HEAD_2 = "layoutRevision.head = ? AND ";
 	private static final String _FINDER_COLUMN_L_H_P_PLID_2 = "layoutRevision.plid = ?";
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_L_H_P_COLLECTION =
+		new FinderPath(LayoutRevisionModelImpl.ENTITY_CACHE_ENABLED,
+			LayoutRevisionModelImpl.FINDER_CACHE_ENABLED,
+			LayoutRevisionImpl.class, FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+			"findByL_H_P_Collection",
+			new String[] {
+				Long.class.getName(), Boolean.class.getName(),
+				Long.class.getName(),
+				
+			Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_L_H_P_COLLECTION =
+		new FinderPath(LayoutRevisionModelImpl.ENTITY_CACHE_ENABLED,
+			LayoutRevisionModelImpl.FINDER_CACHE_ENABLED,
+			LayoutRevisionImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"findByL_H_P_Collection",
+			new String[] {
+				Long.class.getName(), Boolean.class.getName(),
+				Long.class.getName()
+			},
+			LayoutRevisionModelImpl.LAYOUTSETBRANCHID_COLUMN_BITMASK |
+			LayoutRevisionModelImpl.HEAD_COLUMN_BITMASK |
+			LayoutRevisionModelImpl.PLID_COLUMN_BITMASK |
+			LayoutRevisionModelImpl.MODIFIEDDATE_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_L_H_P_COLLECTION = new FinderPath(LayoutRevisionModelImpl.ENTITY_CACHE_ENABLED,
+			LayoutRevisionModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByL_H_P_Collection",
+			new String[] {
+				Long.class.getName(), Boolean.class.getName(),
+				Long.class.getName()
+			});
+
+	/**
+	 * Returns all the layout revisions where layoutSetBranchId = &#63; and head = &#63; and plid = &#63;.
+	 *
+	 * @param layoutSetBranchId the layout set branch ID
+	 * @param head the head
+	 * @param plid the plid
+	 * @return the matching layout revisions
+	 */
+	@Override
+	public List<LayoutRevision> findByL_H_P_Collection(long layoutSetBranchId,
+		boolean head, long plid) {
+		return findByL_H_P_Collection(layoutSetBranchId, head, plid,
+			QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the layout revisions where layoutSetBranchId = &#63; and head = &#63; and plid = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LayoutRevisionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param layoutSetBranchId the layout set branch ID
+	 * @param head the head
+	 * @param plid the plid
+	 * @param start the lower bound of the range of layout revisions
+	 * @param end the upper bound of the range of layout revisions (not inclusive)
+	 * @return the range of matching layout revisions
+	 */
+	@Override
+	public List<LayoutRevision> findByL_H_P_Collection(long layoutSetBranchId,
+		boolean head, long plid, int start, int end) {
+		return findByL_H_P_Collection(layoutSetBranchId, head, plid, start,
+			end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63; and head = &#63; and plid = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LayoutRevisionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param layoutSetBranchId the layout set branch ID
+	 * @param head the head
+	 * @param plid the plid
+	 * @param start the lower bound of the range of layout revisions
+	 * @param end the upper bound of the range of layout revisions (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching layout revisions
+	 */
+	@Override
+	public List<LayoutRevision> findByL_H_P_Collection(long layoutSetBranchId,
+		boolean head, long plid, int start, int end,
+		OrderByComparator<LayoutRevision> orderByComparator) {
+		return findByL_H_P_Collection(layoutSetBranchId, head, plid, start,
+			end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63; and head = &#63; and plid = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LayoutRevisionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param layoutSetBranchId the layout set branch ID
+	 * @param head the head
+	 * @param plid the plid
+	 * @param start the lower bound of the range of layout revisions
+	 * @param end the upper bound of the range of layout revisions (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching layout revisions
+	 */
+	@Override
+	public List<LayoutRevision> findByL_H_P_Collection(long layoutSetBranchId,
+		boolean head, long plid, int start, int end,
+		OrderByComparator<LayoutRevision> orderByComparator,
+		boolean retrieveFromCache) {
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+				(orderByComparator == null)) {
+			pagination = false;
+			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_L_H_P_COLLECTION;
+			finderArgs = new Object[] { layoutSetBranchId, head, plid };
+		}
+		else {
+			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_L_H_P_COLLECTION;
+			finderArgs = new Object[] {
+					layoutSetBranchId, head, plid,
+					
+					start, end, orderByComparator
+				};
+		}
+
+		List<LayoutRevision> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<LayoutRevision>)finderCache.getResult(finderPath,
+					finderArgs, this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (LayoutRevision layoutRevision : list) {
+					if ((layoutSetBranchId != layoutRevision.getLayoutSetBranchId()) ||
+							(head != layoutRevision.isHead()) ||
+							(plid != layoutRevision.getPlid())) {
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(5 +
+						(orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(5);
+			}
+
+			query.append(_SQL_SELECT_LAYOUTREVISION_WHERE);
+
+			query.append(_FINDER_COLUMN_L_H_P_COLLECTION_LAYOUTSETBRANCHID_2);
+
+			query.append(_FINDER_COLUMN_L_H_P_COLLECTION_HEAD_2);
+
+			query.append(_FINDER_COLUMN_L_H_P_COLLECTION_PLID_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator);
+			}
+			else
+			 if (pagination) {
+				query.append(LayoutRevisionModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(layoutSetBranchId);
+
+				qPos.add(head);
+
+				qPos.add(plid);
+
+				if (!pagination) {
+					list = (List<LayoutRevision>)QueryUtil.list(q,
+							getDialect(), start, end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<LayoutRevision>)QueryUtil.list(q,
+							getDialect(), start, end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first layout revision in the ordered set where layoutSetBranchId = &#63; and head = &#63; and plid = &#63;.
+	 *
+	 * @param layoutSetBranchId the layout set branch ID
+	 * @param head the head
+	 * @param plid the plid
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching layout revision
+	 * @throws NoSuchLayoutRevisionException if a matching layout revision could not be found
+	 */
+	@Override
+	public LayoutRevision findByL_H_P_Collection_First(long layoutSetBranchId,
+		boolean head, long plid,
+		OrderByComparator<LayoutRevision> orderByComparator)
+		throws NoSuchLayoutRevisionException {
+		LayoutRevision layoutRevision = fetchByL_H_P_Collection_First(layoutSetBranchId,
+				head, plid, orderByComparator);
+
+		if (layoutRevision != null) {
+			return layoutRevision;
+		}
+
+		StringBundler msg = new StringBundler(8);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("layoutSetBranchId=");
+		msg.append(layoutSetBranchId);
+
+		msg.append(", head=");
+		msg.append(head);
+
+		msg.append(", plid=");
+		msg.append(plid);
+
+		msg.append("}");
+
+		throw new NoSuchLayoutRevisionException(msg.toString());
+	}
+
+	/**
+	 * Returns the first layout revision in the ordered set where layoutSetBranchId = &#63; and head = &#63; and plid = &#63;.
+	 *
+	 * @param layoutSetBranchId the layout set branch ID
+	 * @param head the head
+	 * @param plid the plid
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching layout revision, or <code>null</code> if a matching layout revision could not be found
+	 */
+	@Override
+	public LayoutRevision fetchByL_H_P_Collection_First(
+		long layoutSetBranchId, boolean head, long plid,
+		OrderByComparator<LayoutRevision> orderByComparator) {
+		List<LayoutRevision> list = findByL_H_P_Collection(layoutSetBranchId,
+				head, plid, 0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last layout revision in the ordered set where layoutSetBranchId = &#63; and head = &#63; and plid = &#63;.
+	 *
+	 * @param layoutSetBranchId the layout set branch ID
+	 * @param head the head
+	 * @param plid the plid
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching layout revision
+	 * @throws NoSuchLayoutRevisionException if a matching layout revision could not be found
+	 */
+	@Override
+	public LayoutRevision findByL_H_P_Collection_Last(long layoutSetBranchId,
+		boolean head, long plid,
+		OrderByComparator<LayoutRevision> orderByComparator)
+		throws NoSuchLayoutRevisionException {
+		LayoutRevision layoutRevision = fetchByL_H_P_Collection_Last(layoutSetBranchId,
+				head, plid, orderByComparator);
+
+		if (layoutRevision != null) {
+			return layoutRevision;
+		}
+
+		StringBundler msg = new StringBundler(8);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("layoutSetBranchId=");
+		msg.append(layoutSetBranchId);
+
+		msg.append(", head=");
+		msg.append(head);
+
+		msg.append(", plid=");
+		msg.append(plid);
+
+		msg.append("}");
+
+		throw new NoSuchLayoutRevisionException(msg.toString());
+	}
+
+	/**
+	 * Returns the last layout revision in the ordered set where layoutSetBranchId = &#63; and head = &#63; and plid = &#63;.
+	 *
+	 * @param layoutSetBranchId the layout set branch ID
+	 * @param head the head
+	 * @param plid the plid
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching layout revision, or <code>null</code> if a matching layout revision could not be found
+	 */
+	@Override
+	public LayoutRevision fetchByL_H_P_Collection_Last(long layoutSetBranchId,
+		boolean head, long plid,
+		OrderByComparator<LayoutRevision> orderByComparator) {
+		int count = countByL_H_P_Collection(layoutSetBranchId, head, plid);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<LayoutRevision> list = findByL_H_P_Collection(layoutSetBranchId,
+				head, plid, count - 1, count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the layout revisions before and after the current layout revision in the ordered set where layoutSetBranchId = &#63; and head = &#63; and plid = &#63;.
+	 *
+	 * @param layoutRevisionId the primary key of the current layout revision
+	 * @param layoutSetBranchId the layout set branch ID
+	 * @param head the head
+	 * @param plid the plid
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next layout revision
+	 * @throws NoSuchLayoutRevisionException if a layout revision with the primary key could not be found
+	 */
+	@Override
+	public LayoutRevision[] findByL_H_P_Collection_PrevAndNext(
+		long layoutRevisionId, long layoutSetBranchId, boolean head, long plid,
+		OrderByComparator<LayoutRevision> orderByComparator)
+		throws NoSuchLayoutRevisionException {
+		LayoutRevision layoutRevision = findByPrimaryKey(layoutRevisionId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			LayoutRevision[] array = new LayoutRevisionImpl[3];
+
+			array[0] = getByL_H_P_Collection_PrevAndNext(session,
+					layoutRevision, layoutSetBranchId, head, plid,
+					orderByComparator, true);
+
+			array[1] = layoutRevision;
+
+			array[2] = getByL_H_P_Collection_PrevAndNext(session,
+					layoutRevision, layoutSetBranchId, head, plid,
+					orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected LayoutRevision getByL_H_P_Collection_PrevAndNext(
+		Session session, LayoutRevision layoutRevision, long layoutSetBranchId,
+		boolean head, long plid,
+		OrderByComparator<LayoutRevision> orderByComparator, boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(6 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(5);
+		}
+
+		query.append(_SQL_SELECT_LAYOUTREVISION_WHERE);
+
+		query.append(_FINDER_COLUMN_L_H_P_COLLECTION_LAYOUTSETBRANCHID_2);
+
+		query.append(_FINDER_COLUMN_L_H_P_COLLECTION_HEAD_2);
+
+		query.append(_FINDER_COLUMN_L_H_P_COLLECTION_PLID_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(LayoutRevisionModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(layoutSetBranchId);
+
+		qPos.add(head);
+
+		qPos.add(plid);
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(layoutRevision);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<LayoutRevision> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the layout revisions where layoutSetBranchId = &#63; and head = &#63; and plid = &#63; from the database.
+	 *
+	 * @param layoutSetBranchId the layout set branch ID
+	 * @param head the head
+	 * @param plid the plid
+	 */
+	@Override
+	public void removeByL_H_P_Collection(long layoutSetBranchId, boolean head,
+		long plid) {
+		for (LayoutRevision layoutRevision : findByL_H_P_Collection(
+				layoutSetBranchId, head, plid, QueryUtil.ALL_POS,
+				QueryUtil.ALL_POS, null)) {
+			remove(layoutRevision);
+		}
+	}
+
+	/**
+	 * Returns the number of layout revisions where layoutSetBranchId = &#63; and head = &#63; and plid = &#63;.
+	 *
+	 * @param layoutSetBranchId the layout set branch ID
+	 * @param head the head
+	 * @param plid the plid
+	 * @return the number of matching layout revisions
+	 */
+	@Override
+	public int countByL_H_P_Collection(long layoutSetBranchId, boolean head,
+		long plid) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_L_H_P_COLLECTION;
+
+		Object[] finderArgs = new Object[] { layoutSetBranchId, head, plid };
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(4);
+
+			query.append(_SQL_COUNT_LAYOUTREVISION_WHERE);
+
+			query.append(_FINDER_COLUMN_L_H_P_COLLECTION_LAYOUTSETBRANCHID_2);
+
+			query.append(_FINDER_COLUMN_L_H_P_COLLECTION_HEAD_2);
+
+			query.append(_FINDER_COLUMN_L_H_P_COLLECTION_PLID_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(layoutSetBranchId);
+
+				qPos.add(head);
+
+				qPos.add(plid);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_L_H_P_COLLECTION_LAYOUTSETBRANCHID_2 =
+		"layoutRevision.layoutSetBranchId = ? AND ";
+	private static final String _FINDER_COLUMN_L_H_P_COLLECTION_HEAD_2 = "layoutRevision.head = ? AND ";
+	private static final String _FINDER_COLUMN_L_H_P_COLLECTION_PLID_2 = "layoutRevision.plid = ?";
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_L_H_S = new FinderPath(LayoutRevisionModelImpl.ENTITY_CACHE_ENABLED,
+			LayoutRevisionModelImpl.FINDER_CACHE_ENABLED,
+			LayoutRevisionImpl.class, FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+			"findByL_H_S",
+			new String[] {
+				Long.class.getName(), Boolean.class.getName(),
+				Integer.class.getName(),
+				
+			Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_L_H_S = new FinderPath(LayoutRevisionModelImpl.ENTITY_CACHE_ENABLED,
+			LayoutRevisionModelImpl.FINDER_CACHE_ENABLED,
+			LayoutRevisionImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByL_H_S",
+			new String[] {
+				Long.class.getName(), Boolean.class.getName(),
+				Integer.class.getName()
+			},
+			LayoutRevisionModelImpl.LAYOUTSETBRANCHID_COLUMN_BITMASK |
+			LayoutRevisionModelImpl.HEAD_COLUMN_BITMASK |
+			LayoutRevisionModelImpl.STATUS_COLUMN_BITMASK |
+			LayoutRevisionModelImpl.MODIFIEDDATE_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_L_H_S = new FinderPath(LayoutRevisionModelImpl.ENTITY_CACHE_ENABLED,
+			LayoutRevisionModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByL_H_S",
+			new String[] {
+				Long.class.getName(), Boolean.class.getName(),
+				Integer.class.getName()
+			});
+
+	/**
+	 * Returns all the layout revisions where layoutSetBranchId = &#63; and head = &#63; and status = &#63;.
+	 *
+	 * @param layoutSetBranchId the layout set branch ID
+	 * @param head the head
+	 * @param status the status
+	 * @return the matching layout revisions
+	 */
+	@Override
+	public List<LayoutRevision> findByL_H_S(long layoutSetBranchId,
+		boolean head, int status) {
+		return findByL_H_S(layoutSetBranchId, head, status, QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the layout revisions where layoutSetBranchId = &#63; and head = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LayoutRevisionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param layoutSetBranchId the layout set branch ID
+	 * @param head the head
+	 * @param status the status
+	 * @param start the lower bound of the range of layout revisions
+	 * @param end the upper bound of the range of layout revisions (not inclusive)
+	 * @return the range of matching layout revisions
+	 */
+	@Override
+	public List<LayoutRevision> findByL_H_S(long layoutSetBranchId,
+		boolean head, int status, int start, int end) {
+		return findByL_H_S(layoutSetBranchId, head, status, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63; and head = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LayoutRevisionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param layoutSetBranchId the layout set branch ID
+	 * @param head the head
+	 * @param status the status
+	 * @param start the lower bound of the range of layout revisions
+	 * @param end the upper bound of the range of layout revisions (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching layout revisions
+	 */
+	@Override
+	public List<LayoutRevision> findByL_H_S(long layoutSetBranchId,
+		boolean head, int status, int start, int end,
+		OrderByComparator<LayoutRevision> orderByComparator) {
+		return findByL_H_S(layoutSetBranchId, head, status, start, end,
+			orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the layout revisions where layoutSetBranchId = &#63; and head = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LayoutRevisionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param layoutSetBranchId the layout set branch ID
+	 * @param head the head
+	 * @param status the status
+	 * @param start the lower bound of the range of layout revisions
+	 * @param end the upper bound of the range of layout revisions (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching layout revisions
+	 */
+	@Override
+	public List<LayoutRevision> findByL_H_S(long layoutSetBranchId,
+		boolean head, int status, int start, int end,
+		OrderByComparator<LayoutRevision> orderByComparator,
+		boolean retrieveFromCache) {
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+				(orderByComparator == null)) {
+			pagination = false;
+			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_L_H_S;
+			finderArgs = new Object[] { layoutSetBranchId, head, status };
+		}
+		else {
+			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_L_H_S;
+			finderArgs = new Object[] {
+					layoutSetBranchId, head, status,
+					
+					start, end, orderByComparator
+				};
+		}
+
+		List<LayoutRevision> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<LayoutRevision>)finderCache.getResult(finderPath,
+					finderArgs, this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (LayoutRevision layoutRevision : list) {
+					if ((layoutSetBranchId != layoutRevision.getLayoutSetBranchId()) ||
+							(head != layoutRevision.isHead()) ||
+							(status != layoutRevision.getStatus())) {
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(5 +
+						(orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(5);
+			}
+
+			query.append(_SQL_SELECT_LAYOUTREVISION_WHERE);
+
+			query.append(_FINDER_COLUMN_L_H_S_LAYOUTSETBRANCHID_2);
+
+			query.append(_FINDER_COLUMN_L_H_S_HEAD_2);
+
+			query.append(_FINDER_COLUMN_L_H_S_STATUS_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator);
+			}
+			else
+			 if (pagination) {
+				query.append(LayoutRevisionModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(layoutSetBranchId);
+
+				qPos.add(head);
+
+				qPos.add(status);
+
+				if (!pagination) {
+					list = (List<LayoutRevision>)QueryUtil.list(q,
+							getDialect(), start, end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<LayoutRevision>)QueryUtil.list(q,
+							getDialect(), start, end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first layout revision in the ordered set where layoutSetBranchId = &#63; and head = &#63; and status = &#63;.
+	 *
+	 * @param layoutSetBranchId the layout set branch ID
+	 * @param head the head
+	 * @param status the status
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching layout revision
+	 * @throws NoSuchLayoutRevisionException if a matching layout revision could not be found
+	 */
+	@Override
+	public LayoutRevision findByL_H_S_First(long layoutSetBranchId,
+		boolean head, int status,
+		OrderByComparator<LayoutRevision> orderByComparator)
+		throws NoSuchLayoutRevisionException {
+		LayoutRevision layoutRevision = fetchByL_H_S_First(layoutSetBranchId,
+				head, status, orderByComparator);
+
+		if (layoutRevision != null) {
+			return layoutRevision;
+		}
+
+		StringBundler msg = new StringBundler(8);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("layoutSetBranchId=");
+		msg.append(layoutSetBranchId);
+
+		msg.append(", head=");
+		msg.append(head);
+
+		msg.append(", status=");
+		msg.append(status);
+
+		msg.append("}");
+
+		throw new NoSuchLayoutRevisionException(msg.toString());
+	}
+
+	/**
+	 * Returns the first layout revision in the ordered set where layoutSetBranchId = &#63; and head = &#63; and status = &#63;.
+	 *
+	 * @param layoutSetBranchId the layout set branch ID
+	 * @param head the head
+	 * @param status the status
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching layout revision, or <code>null</code> if a matching layout revision could not be found
+	 */
+	@Override
+	public LayoutRevision fetchByL_H_S_First(long layoutSetBranchId,
+		boolean head, int status,
+		OrderByComparator<LayoutRevision> orderByComparator) {
+		List<LayoutRevision> list = findByL_H_S(layoutSetBranchId, head,
+				status, 0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last layout revision in the ordered set where layoutSetBranchId = &#63; and head = &#63; and status = &#63;.
+	 *
+	 * @param layoutSetBranchId the layout set branch ID
+	 * @param head the head
+	 * @param status the status
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching layout revision
+	 * @throws NoSuchLayoutRevisionException if a matching layout revision could not be found
+	 */
+	@Override
+	public LayoutRevision findByL_H_S_Last(long layoutSetBranchId,
+		boolean head, int status,
+		OrderByComparator<LayoutRevision> orderByComparator)
+		throws NoSuchLayoutRevisionException {
+		LayoutRevision layoutRevision = fetchByL_H_S_Last(layoutSetBranchId,
+				head, status, orderByComparator);
+
+		if (layoutRevision != null) {
+			return layoutRevision;
+		}
+
+		StringBundler msg = new StringBundler(8);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("layoutSetBranchId=");
+		msg.append(layoutSetBranchId);
+
+		msg.append(", head=");
+		msg.append(head);
+
+		msg.append(", status=");
+		msg.append(status);
+
+		msg.append("}");
+
+		throw new NoSuchLayoutRevisionException(msg.toString());
+	}
+
+	/**
+	 * Returns the last layout revision in the ordered set where layoutSetBranchId = &#63; and head = &#63; and status = &#63;.
+	 *
+	 * @param layoutSetBranchId the layout set branch ID
+	 * @param head the head
+	 * @param status the status
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching layout revision, or <code>null</code> if a matching layout revision could not be found
+	 */
+	@Override
+	public LayoutRevision fetchByL_H_S_Last(long layoutSetBranchId,
+		boolean head, int status,
+		OrderByComparator<LayoutRevision> orderByComparator) {
+		int count = countByL_H_S(layoutSetBranchId, head, status);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<LayoutRevision> list = findByL_H_S(layoutSetBranchId, head,
+				status, count - 1, count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the layout revisions before and after the current layout revision in the ordered set where layoutSetBranchId = &#63; and head = &#63; and status = &#63;.
+	 *
+	 * @param layoutRevisionId the primary key of the current layout revision
+	 * @param layoutSetBranchId the layout set branch ID
+	 * @param head the head
+	 * @param status the status
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next layout revision
+	 * @throws NoSuchLayoutRevisionException if a layout revision with the primary key could not be found
+	 */
+	@Override
+	public LayoutRevision[] findByL_H_S_PrevAndNext(long layoutRevisionId,
+		long layoutSetBranchId, boolean head, int status,
+		OrderByComparator<LayoutRevision> orderByComparator)
+		throws NoSuchLayoutRevisionException {
+		LayoutRevision layoutRevision = findByPrimaryKey(layoutRevisionId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			LayoutRevision[] array = new LayoutRevisionImpl[3];
+
+			array[0] = getByL_H_S_PrevAndNext(session, layoutRevision,
+					layoutSetBranchId, head, status, orderByComparator, true);
+
+			array[1] = layoutRevision;
+
+			array[2] = getByL_H_S_PrevAndNext(session, layoutRevision,
+					layoutSetBranchId, head, status, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected LayoutRevision getByL_H_S_PrevAndNext(Session session,
+		LayoutRevision layoutRevision, long layoutSetBranchId, boolean head,
+		int status, OrderByComparator<LayoutRevision> orderByComparator,
+		boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(6 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(5);
+		}
+
+		query.append(_SQL_SELECT_LAYOUTREVISION_WHERE);
+
+		query.append(_FINDER_COLUMN_L_H_S_LAYOUTSETBRANCHID_2);
+
+		query.append(_FINDER_COLUMN_L_H_S_HEAD_2);
+
+		query.append(_FINDER_COLUMN_L_H_S_STATUS_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(LayoutRevisionModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(layoutSetBranchId);
+
+		qPos.add(head);
+
+		qPos.add(status);
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(layoutRevision);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<LayoutRevision> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the layout revisions where layoutSetBranchId = &#63; and head = &#63; and status = &#63; from the database.
+	 *
+	 * @param layoutSetBranchId the layout set branch ID
+	 * @param head the head
+	 * @param status the status
+	 */
+	@Override
+	public void removeByL_H_S(long layoutSetBranchId, boolean head, int status) {
+		for (LayoutRevision layoutRevision : findByL_H_S(layoutSetBranchId,
+				head, status, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+			remove(layoutRevision);
+		}
+	}
+
+	/**
+	 * Returns the number of layout revisions where layoutSetBranchId = &#63; and head = &#63; and status = &#63;.
+	 *
+	 * @param layoutSetBranchId the layout set branch ID
+	 * @param head the head
+	 * @param status the status
+	 * @return the number of matching layout revisions
+	 */
+	@Override
+	public int countByL_H_S(long layoutSetBranchId, boolean head, int status) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_L_H_S;
+
+		Object[] finderArgs = new Object[] { layoutSetBranchId, head, status };
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(4);
+
+			query.append(_SQL_COUNT_LAYOUTREVISION_WHERE);
+
+			query.append(_FINDER_COLUMN_L_H_S_LAYOUTSETBRANCHID_2);
+
+			query.append(_FINDER_COLUMN_L_H_S_HEAD_2);
+
+			query.append(_FINDER_COLUMN_L_H_S_STATUS_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(layoutSetBranchId);
+
+				qPos.add(head);
+
+				qPos.add(status);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_L_H_S_LAYOUTSETBRANCHID_2 = "layoutRevision.layoutSetBranchId = ? AND ";
+	private static final String _FINDER_COLUMN_L_H_S_HEAD_2 = "layoutRevision.head = ? AND ";
+	private static final String _FINDER_COLUMN_L_H_S_STATUS_2 = "layoutRevision.status = ?";
 	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_L_P_S = new FinderPath(LayoutRevisionModelImpl.ENTITY_CACHE_ENABLED,
 			LayoutRevisionModelImpl.FINDER_CACHE_ENABLED,
 			LayoutRevisionImpl.class, FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
@@ -5531,7 +7227,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 		msg.append(", status=");
 		msg.append(status);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchLayoutRevisionException(msg.toString());
 	}
@@ -5592,7 +7288,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 		msg.append(", status=");
 		msg.append(status);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchLayoutRevisionException(msg.toString());
 	}
@@ -5916,7 +7612,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 			msg.append(", plid=");
 			msg.append(plid);
 
-			msg.append(StringPool.CLOSE_CURLY_BRACE);
+			msg.append("}");
 
 			if (_log.isDebugEnabled()) {
 				_log.debug(msg.toString());
@@ -5973,7 +7669,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 
 			if ((layoutSetBranchId != layoutRevision.getLayoutSetBranchId()) ||
 					(layoutBranchId != layoutRevision.getLayoutBranchId()) ||
-					(head != layoutRevision.getHead()) ||
+					(head != layoutRevision.isHead()) ||
 					(plid != layoutRevision.getPlid())) {
 				result = null;
 			}
@@ -6034,14 +7730,6 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 					result = layoutRevision;
 
 					cacheResult(layoutRevision);
-
-					if ((layoutRevision.getLayoutSetBranchId() != layoutSetBranchId) ||
-							(layoutRevision.getLayoutBranchId() != layoutBranchId) ||
-							(layoutRevision.getHead() != head) ||
-							(layoutRevision.getPlid() != plid)) {
-						finderCache.putResult(FINDER_PATH_FETCH_BY_L_L_H_P,
-							finderArgs, layoutRevision);
-					}
 				}
 			}
 			catch (Exception e) {
@@ -6173,14 +7861,14 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 
 		finderCache.putResult(FINDER_PATH_FETCH_BY_L_H_P,
 			new Object[] {
-				layoutRevision.getLayoutSetBranchId(), layoutRevision.getHead(),
+				layoutRevision.getLayoutSetBranchId(), layoutRevision.isHead(),
 				layoutRevision.getPlid()
 			}, layoutRevision);
 
 		finderCache.putResult(FINDER_PATH_FETCH_BY_L_L_H_P,
 			new Object[] {
 				layoutRevision.getLayoutSetBranchId(),
-				layoutRevision.getLayoutBranchId(), layoutRevision.getHead(),
+				layoutRevision.getLayoutBranchId(), layoutRevision.isHead(),
 				layoutRevision.getPlid()
 			}, layoutRevision);
 
@@ -6258,7 +7946,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 		LayoutRevisionModelImpl layoutRevisionModelImpl) {
 		Object[] args = new Object[] {
 				layoutRevisionModelImpl.getLayoutSetBranchId(),
-				layoutRevisionModelImpl.getHead(),
+				layoutRevisionModelImpl.isHead(),
 				layoutRevisionModelImpl.getPlid()
 			};
 
@@ -6270,7 +7958,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 		args = new Object[] {
 				layoutRevisionModelImpl.getLayoutSetBranchId(),
 				layoutRevisionModelImpl.getLayoutBranchId(),
-				layoutRevisionModelImpl.getHead(),
+				layoutRevisionModelImpl.isHead(),
 				layoutRevisionModelImpl.getPlid()
 			};
 
@@ -6285,7 +7973,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 		if (clearCurrent) {
 			Object[] args = new Object[] {
 					layoutRevisionModelImpl.getLayoutSetBranchId(),
-					layoutRevisionModelImpl.getHead(),
+					layoutRevisionModelImpl.isHead(),
 					layoutRevisionModelImpl.getPlid()
 				};
 
@@ -6309,7 +7997,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 			Object[] args = new Object[] {
 					layoutRevisionModelImpl.getLayoutSetBranchId(),
 					layoutRevisionModelImpl.getLayoutBranchId(),
-					layoutRevisionModelImpl.getHead(),
+					layoutRevisionModelImpl.isHead(),
 					layoutRevisionModelImpl.getPlid()
 				};
 
@@ -6404,8 +8092,6 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 
 	@Override
 	protected LayoutRevision removeImpl(LayoutRevision layoutRevision) {
-		layoutRevision = toUnwrappedModel(layoutRevision);
-
 		Session session = null;
 
 		try {
@@ -6436,9 +8122,23 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 
 	@Override
 	public LayoutRevision updateImpl(LayoutRevision layoutRevision) {
-		layoutRevision = toUnwrappedModel(layoutRevision);
-
 		boolean isNew = layoutRevision.isNew();
+
+		if (!(layoutRevision instanceof LayoutRevisionModelImpl)) {
+			InvocationHandler invocationHandler = null;
+
+			if (ProxyUtil.isProxyClass(layoutRevision.getClass())) {
+				invocationHandler = ProxyUtil.getInvocationHandler(layoutRevision);
+
+				throw new IllegalArgumentException(
+					"Implement ModelWrapper in layoutRevision proxy " +
+					invocationHandler.getClass());
+			}
+
+			throw new IllegalArgumentException(
+				"Implement ModelWrapper in custom LayoutRevision implementation " +
+				layoutRevision.getClass());
+		}
 
 		LayoutRevisionModelImpl layoutRevisionModelImpl = (LayoutRevisionModelImpl)layoutRevision;
 
@@ -6508,9 +8208,15 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_PLID,
 				args);
 
+			args = new Object[] { layoutRevisionModelImpl.getStatus() };
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_STATUS, args);
+			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_STATUS,
+				args);
+
 			args = new Object[] {
 					layoutRevisionModelImpl.getLayoutSetBranchId(),
-					layoutRevisionModelImpl.getHead()
+					layoutRevisionModelImpl.isHead()
 				};
 
 			finderCache.removeResult(FINDER_PATH_COUNT_BY_L_H, args);
@@ -6536,7 +8242,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 				args);
 
 			args = new Object[] {
-					layoutRevisionModelImpl.getHead(),
+					layoutRevisionModelImpl.isHead(),
 					layoutRevisionModelImpl.getPlid()
 				};
 
@@ -6562,6 +8268,26 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 
 			finderCache.removeResult(FINDER_PATH_COUNT_BY_L_P_P, args);
 			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_L_P_P,
+				args);
+
+			args = new Object[] {
+					layoutRevisionModelImpl.getLayoutSetBranchId(),
+					layoutRevisionModelImpl.isHead(),
+					layoutRevisionModelImpl.getPlid()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_L_H_P_COLLECTION, args);
+			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_L_H_P_COLLECTION,
+				args);
+
+			args = new Object[] {
+					layoutRevisionModelImpl.getLayoutSetBranchId(),
+					layoutRevisionModelImpl.isHead(),
+					layoutRevisionModelImpl.getStatus()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_L_H_S, args);
+			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_L_H_S,
 				args);
 
 			args = new Object[] {
@@ -6619,6 +8345,23 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 			}
 
 			if ((layoutRevisionModelImpl.getColumnBitmask() &
+					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_STATUS.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						layoutRevisionModelImpl.getOriginalStatus()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_STATUS, args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_STATUS,
+					args);
+
+				args = new Object[] { layoutRevisionModelImpl.getStatus() };
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_STATUS, args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_STATUS,
+					args);
+			}
+
+			if ((layoutRevisionModelImpl.getColumnBitmask() &
 					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_L_H.getColumnBitmask()) != 0) {
 				Object[] args = new Object[] {
 						layoutRevisionModelImpl.getOriginalLayoutSetBranchId(),
@@ -6631,7 +8374,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 
 				args = new Object[] {
 						layoutRevisionModelImpl.getLayoutSetBranchId(),
-						layoutRevisionModelImpl.getHead()
+						layoutRevisionModelImpl.isHead()
 					};
 
 				finderCache.removeResult(FINDER_PATH_COUNT_BY_L_H, args);
@@ -6693,7 +8436,7 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 					args);
 
 				args = new Object[] {
-						layoutRevisionModelImpl.getHead(),
+						layoutRevisionModelImpl.isHead(),
 						layoutRevisionModelImpl.getPlid()
 					};
 
@@ -6749,6 +8492,54 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 			}
 
 			if ((layoutRevisionModelImpl.getColumnBitmask() &
+					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_L_H_P_COLLECTION.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						layoutRevisionModelImpl.getOriginalLayoutSetBranchId(),
+						layoutRevisionModelImpl.getOriginalHead(),
+						layoutRevisionModelImpl.getOriginalPlid()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_L_H_P_COLLECTION,
+					args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_L_H_P_COLLECTION,
+					args);
+
+				args = new Object[] {
+						layoutRevisionModelImpl.getLayoutSetBranchId(),
+						layoutRevisionModelImpl.isHead(),
+						layoutRevisionModelImpl.getPlid()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_L_H_P_COLLECTION,
+					args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_L_H_P_COLLECTION,
+					args);
+			}
+
+			if ((layoutRevisionModelImpl.getColumnBitmask() &
+					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_L_H_S.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						layoutRevisionModelImpl.getOriginalLayoutSetBranchId(),
+						layoutRevisionModelImpl.getOriginalHead(),
+						layoutRevisionModelImpl.getOriginalStatus()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_L_H_S, args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_L_H_S,
+					args);
+
+				args = new Object[] {
+						layoutRevisionModelImpl.getLayoutSetBranchId(),
+						layoutRevisionModelImpl.isHead(),
+						layoutRevisionModelImpl.getStatus()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_L_H_S, args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_L_H_S,
+					args);
+			}
+
+			if ((layoutRevisionModelImpl.getColumnBitmask() &
 					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_L_P_S.getColumnBitmask()) != 0) {
 				Object[] args = new Object[] {
 						layoutRevisionModelImpl.getOriginalLayoutSetBranchId(),
@@ -6782,49 +8573,6 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 		layoutRevision.resetOriginalValues();
 
 		return layoutRevision;
-	}
-
-	protected LayoutRevision toUnwrappedModel(LayoutRevision layoutRevision) {
-		if (layoutRevision instanceof LayoutRevisionImpl) {
-			return layoutRevision;
-		}
-
-		LayoutRevisionImpl layoutRevisionImpl = new LayoutRevisionImpl();
-
-		layoutRevisionImpl.setNew(layoutRevision.isNew());
-		layoutRevisionImpl.setPrimaryKey(layoutRevision.getPrimaryKey());
-
-		layoutRevisionImpl.setMvccVersion(layoutRevision.getMvccVersion());
-		layoutRevisionImpl.setLayoutRevisionId(layoutRevision.getLayoutRevisionId());
-		layoutRevisionImpl.setGroupId(layoutRevision.getGroupId());
-		layoutRevisionImpl.setCompanyId(layoutRevision.getCompanyId());
-		layoutRevisionImpl.setUserId(layoutRevision.getUserId());
-		layoutRevisionImpl.setUserName(layoutRevision.getUserName());
-		layoutRevisionImpl.setCreateDate(layoutRevision.getCreateDate());
-		layoutRevisionImpl.setModifiedDate(layoutRevision.getModifiedDate());
-		layoutRevisionImpl.setLayoutSetBranchId(layoutRevision.getLayoutSetBranchId());
-		layoutRevisionImpl.setLayoutBranchId(layoutRevision.getLayoutBranchId());
-		layoutRevisionImpl.setParentLayoutRevisionId(layoutRevision.getParentLayoutRevisionId());
-		layoutRevisionImpl.setHead(layoutRevision.isHead());
-		layoutRevisionImpl.setMajor(layoutRevision.isMajor());
-		layoutRevisionImpl.setPlid(layoutRevision.getPlid());
-		layoutRevisionImpl.setPrivateLayout(layoutRevision.isPrivateLayout());
-		layoutRevisionImpl.setName(layoutRevision.getName());
-		layoutRevisionImpl.setTitle(layoutRevision.getTitle());
-		layoutRevisionImpl.setDescription(layoutRevision.getDescription());
-		layoutRevisionImpl.setKeywords(layoutRevision.getKeywords());
-		layoutRevisionImpl.setRobots(layoutRevision.getRobots());
-		layoutRevisionImpl.setTypeSettings(layoutRevision.getTypeSettings());
-		layoutRevisionImpl.setIconImageId(layoutRevision.getIconImageId());
-		layoutRevisionImpl.setThemeId(layoutRevision.getThemeId());
-		layoutRevisionImpl.setColorSchemeId(layoutRevision.getColorSchemeId());
-		layoutRevisionImpl.setCss(layoutRevision.getCss());
-		layoutRevisionImpl.setStatus(layoutRevision.getStatus());
-		layoutRevisionImpl.setStatusByUserId(layoutRevision.getStatusByUserId());
-		layoutRevisionImpl.setStatusByUserName(layoutRevision.getStatusByUserName());
-		layoutRevisionImpl.setStatusDate(layoutRevision.getStatusDate());
-
-		return layoutRevisionImpl;
 	}
 
 	/**
@@ -6978,12 +8726,12 @@ public class LayoutRevisionPersistenceImpl extends BasePersistenceImpl<LayoutRev
 		for (Serializable primaryKey : uncachedPrimaryKeys) {
 			query.append((long)primaryKey);
 
-			query.append(StringPool.COMMA);
+			query.append(",");
 		}
 
 		query.setIndex(query.index() - 1);
 
-		query.append(StringPool.CLOSE_PARENTHESIS);
+		query.append(")");
 
 		String sql = query.toString();
 

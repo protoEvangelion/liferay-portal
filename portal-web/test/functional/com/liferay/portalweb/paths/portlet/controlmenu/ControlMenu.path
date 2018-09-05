@@ -30,17 +30,12 @@
 </tr>
 <tr>
 	<td>EDIT_COG</td>
-	<td>//*[@data-qa-id='controlMenu']//span/*[name()='svg'][contains(@class,'icon-cog')]</td>
+	<td>//*[@data-qa-id='controlMenu']//a[span/*[name()='svg'][contains(@class,'icon-cog')]]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>INFO</td>
 	<td>//*[@data-qa-id='controlMenu']//*[@data-qa-id='info']</td>
-	<td></td>
-</tr>
-<tr>
-	<td>HEADER_TITLE</td>
-	<td>//*[@data-qa-id='headerTitle']</td>
 	<td></td>
 </tr>
 <tr>

@@ -14,6 +14,9 @@
 
 package com.liferay.portal.kernel.util;
 
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
+
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -32,98 +35,91 @@ import java.util.regex.Pattern;
 public class Validator {
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Judson (7.1.x)
 	 */
 	@Deprecated
 	public static boolean equals(boolean boolean1, boolean boolean2) {
 		if (boolean1 == boolean2) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Judson (7.1.x)
 	 */
 	@Deprecated
 	public static boolean equals(byte byte1, byte byte2) {
 		if (byte1 == byte2) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Judson (7.1.x)
 	 */
 	@Deprecated
 	public static boolean equals(char char1, char char2) {
 		if (char1 == char2) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Judson (7.1.x)
 	 */
 	@Deprecated
 	public static boolean equals(double double1, double double2) {
 		if (Double.compare(double1, double2) == 0) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Judson (7.1.x)
 	 */
 	@Deprecated
 	public static boolean equals(float float1, float float2) {
 		if (Float.compare(float1, float2) == 0) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Judson (7.1.x)
 	 */
 	@Deprecated
 	public static boolean equals(int int1, int int2) {
 		if (int1 == int2) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Judson (7.1.x)
 	 */
 	@Deprecated
 	public static boolean equals(long long1, long long2) {
 		if (long1 == long2) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Judson (7.1.x)
 	 */
 	@Deprecated
 	public static boolean equals(Object obj1, Object obj2) {
@@ -133,22 +129,20 @@ public class Validator {
 		else if ((obj1 == null) || (obj2 == null)) {
 			return false;
 		}
-		else {
-			return obj1.equals(obj2);
-		}
+
+		return obj1.equals(obj2);
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Judson (7.1.x)
 	 */
 	@Deprecated
 	public static boolean equals(short short1, short short2) {
 		if (short1 == short2) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	/**
@@ -383,7 +377,9 @@ public class Validator {
 			return false;
 		}
 
-		for (char c : name.trim().toCharArray()) {
+		String trimmedName = name.trim();
+
+		for (char c : trimmedName.toCharArray()) {
 			if (!isChar(c) && !isDigit(c) && !Character.isWhitespace(c)) {
 				return false;
 			}
@@ -407,9 +403,8 @@ public class Validator {
 		if ((i >= 32) && (i <= 126)) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	public static boolean isBlank(String s) {
@@ -726,7 +721,7 @@ public class Validator {
 		if (month == 1) {
 			int febMax = 28;
 
-			if (((year % 4) == 0) && ((year % 100) != 0) ||
+			if ((((year % 4) == 0) && ((year % 100) != 0)) ||
 				((year % 400) == 0)) {
 
 				febMax = 29;
@@ -916,37 +911,33 @@ public class Validator {
 			return false;
 		}
 
-		number = StringUtil.reverse(number);
+		int sum = 0;
 
-		int total = 0;
+		int length = number.length();
 
-		for (int i = 0; i < number.length(); i++) {
-			int x = 0;
+		for (int i = 0; i < length; i++) {
+			int x = number.charAt(length - 1 - i) - CharPool.NUMBER_0;
 
-			if (((i + 1) % 2) == 0) {
-				x = GetterUtil.getInteger(number.substring(i, i + 1)) * 2;
+			if ((x > 9) || (x < 0)) {
+				return false;
+			}
 
-				if (x >= 10) {
-					String s = String.valueOf(x);
+			if ((i % 2) == 1) {
+				x *= 2;
 
-					x =
-						GetterUtil.getInteger(s.substring(0, 1)) +
-							GetterUtil.getInteger(s.substring(1, 2));
+				if (x > 9) {
+					x -= 9;
 				}
 			}
-			else {
-				x = GetterUtil.getInteger(number.substring(i, i + 1));
-			}
 
-			total = total + x;
+			sum += x;
 		}
 
-		if ((total % 10) == 0) {
+		if ((sum % 10) == 0) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	/**
@@ -962,7 +953,9 @@ public class Validator {
 			return false;
 		}
 
-		for (char c : name.trim().toCharArray()) {
+		String trimmedName = name.trim();
+
+		for (char c : trimmedName.toCharArray()) {
 			if (!isChar(c) && !Character.isWhitespace(c)) {
 				return false;
 			}
@@ -1023,9 +1016,8 @@ public class Validator {
 		if ((l == null) || (l.longValue() == 0)) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	/**
@@ -1047,9 +1039,8 @@ public class Validator {
 		else if (obj == null) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	/**
@@ -1243,9 +1234,8 @@ public class Validator {
 		if (matcher.matches()) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	/**
@@ -1262,15 +1252,14 @@ public class Validator {
 
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	/**
 	 * Returns <code>true</code> if the character is whitespace, meaning it is
 	 * either the <code>null</code> character '0' or whitespace according to
-	 * {@link java.lang.Character#isWhitespace(char)}.
+	 * {@link Character#isWhitespace(char)}.
 	 *
 	 * @param  c the character to check
 	 * @return <code>true</code> if the character is whitespace;
@@ -1282,9 +1271,8 @@ public class Validator {
 		if ((i == 0) || Character.isWhitespace(c)) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	/**
@@ -1303,9 +1291,8 @@ public class Validator {
 		else if (s.startsWith(_XML_BEGIN) || s.startsWith(_XML_EMPTY)) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	private static final String[] _BOOLEANS = {"false", "on", "off", "true"};
@@ -1322,12 +1309,12 @@ public class Validator {
 
 	private static final int _DIGIT_END = 57;
 
-	private static final char[] _EMAIL_ADDRESS_SPECIAL_CHAR = new char[] {
+	private static final char[] _EMAIL_ADDRESS_SPECIAL_CHAR = {
 		'.', '!', '#', '$', '%', '&', '\'', '*', '+', '-', '/', '=', '?', '^',
 		'_', '`', '{', '|', '}', '~'
 	};
 
-	private static final String[] _JAVA_KEYWORDS = new String[] {
+	private static final String[] _JAVA_KEYWORDS = {
 		"abstract", "assert", "boolean", "break", "byte", "case", "catch",
 		"char", "class", "const", "continue", "default", "do", "double", "else",
 		"enum", "extends", "false", "final", "finally", "float", "for", "goto",
@@ -1348,7 +1335,7 @@ public class Validator {
 
 	private static final Pattern _emailAddressPattern = Pattern.compile(
 		"[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@" +
-			"(?:[a-zA-Z0-9](?:-*[a-zA-Z0-9])?\\.*)+");
+			"(?:\\w(?:[\\w-]*\\w)?\\.)*\\w(?:[\\w-]*\\w)?");
 	private static final Pattern _ipv4AddressPattern;
 	private static final Pattern _ipv6AddressPattern;
 	private static final Pattern _variableNamePattern = Pattern.compile(

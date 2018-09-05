@@ -16,7 +16,6 @@ package com.liferay.source.formatter.checkstyle.checks;
 
 import com.liferay.source.formatter.checkstyle.util.DetailASTUtil;
 
-import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 
@@ -25,10 +24,7 @@ import java.util.List;
 /**
  * @author Hugo Huijser
  */
-public class FilterStringWhitespaceCheck extends AbstractCheck {
-
-	public static final String MSG_INCORRECT_WHITESPACE =
-		"whitespace.incorrect";
+public class FilterStringWhitespaceCheck extends BaseCheck {
 
 	@Override
 	public int[] getDefaultTokens() {
@@ -36,7 +32,7 @@ public class FilterStringWhitespaceCheck extends AbstractCheck {
 	}
 
 	@Override
-	public void visitToken(DetailAST detailAST) {
+	protected void doVisitToken(DetailAST detailAST) {
 		_checkMethod(detailAST, "ServiceTrackerFactory", "open");
 		_checkMethod(detailAST, "WaiterUtil", "waitForFilter");
 	}
@@ -68,7 +64,7 @@ public class FilterStringWhitespaceCheck extends AbstractCheck {
 			String literalStringValue = literalStringAST.getText();
 
 			if (literalStringValue.contains(" = ")) {
-				log(nameAST.getLineNo(), MSG_INCORRECT_WHITESPACE, name);
+				log(nameAST.getLineNo(), _MSG_INCORRECT_WHITESPACE, name);
 
 				return;
 			}
@@ -118,5 +114,8 @@ public class FilterStringWhitespaceCheck extends AbstractCheck {
 
 		return firstChildAST.getText();
 	}
+
+	private static final String _MSG_INCORRECT_WHITESPACE =
+		"whitespace.incorrect";
 
 }

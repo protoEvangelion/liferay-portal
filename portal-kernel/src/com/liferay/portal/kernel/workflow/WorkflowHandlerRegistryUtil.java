@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.transaction.TransactionCommitCallbackUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.registry.Registry;
 import com.liferay.registry.RegistryUtil;
 import com.liferay.registry.ServiceReference;
@@ -125,9 +126,10 @@ public class WorkflowHandlerRegistryUtil {
 		if (hasWorkflowInstanceInProgress) {
 			if (_log.isWarnEnabled()) {
 				_log.warn(
-					"Workflow already started for class " + className +
-						" with primary key " + classPK + " in group " +
-							groupId);
+					StringBundler.concat(
+						"Workflow already started for class ", className,
+						" with primary key ", String.valueOf(classPK),
+						" in group ", String.valueOf(groupId)));
 			}
 
 			return model;
@@ -180,9 +182,15 @@ public class WorkflowHandlerRegistryUtil {
 
 					@Override
 					public Void call() throws Exception {
-						workflowHandler.startWorkflowInstance(
-							companyId, groupId, userId, classPK, model,
-							tempWorkflowContext);
+						boolean hasWorkflowInstanceInProgress =
+							_instance._hasWorkflowInstanceInProgress(
+								companyId, groupId, className, classPK);
+
+						if (!hasWorkflowInstanceInProgress) {
+							workflowHandler.startWorkflowInstance(
+								companyId, groupId, userId, classPK, model,
+								tempWorkflowContext);
+						}
 
 						return null;
 					}

@@ -14,22 +14,22 @@
 
 package com.liferay.portal.tools.sample.sql.builder;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.freemarker.FreeMarkerUtil;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.db.DBType;
-import com.liferay.portal.kernel.io.CharPipe;
 import com.liferay.portal.kernel.io.OutputStreamWriter;
 import com.liferay.portal.kernel.io.unsync.UnsyncBufferedReader;
 import com.liferay.portal.kernel.io.unsync.UnsyncBufferedWriter;
-import com.liferay.portal.kernel.io.unsync.UnsyncTeeWriter;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.SortedProperties;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.tools.ToolDependencies;
+import com.liferay.portal.tools.sample.sql.builder.io.CharPipe;
+import com.liferay.portal.tools.sample.sql.builder.io.UnsyncTeeWriter;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -208,7 +208,7 @@ public class SampleSQLBuilder {
 	protected void compressSQL(Reader reader, File dir) throws Exception {
 		DB db = DBManagerUtil.getDB(_dbType, null);
 
-		if (_dbType == DBType.MYSQL) {
+		if ((_dbType == DBType.MARIADB) || (_dbType == DBType.MYSQL)) {
 			db = new SampleMySQLDB(db.getMajorVersion(), db.getMinorVersion());
 		}
 
@@ -340,30 +340,6 @@ public class SampleSQLBuilder {
 		thread.start();
 
 		return charPipe.getReader();
-	}
-
-	protected Properties getProperties(String[] args) throws Exception {
-		Reader reader = null;
-
-		try {
-			Properties properties = new SortedProperties();
-
-			reader = new FileReader(args[0]);
-
-			properties.load(reader);
-
-			return properties;
-		}
-		finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				}
-				catch (IOException ioe) {
-					ioe.printStackTrace();
-				}
-			}
-		}
 	}
 
 	protected void mergeSQL(File inputDir, File outputSQLFile)

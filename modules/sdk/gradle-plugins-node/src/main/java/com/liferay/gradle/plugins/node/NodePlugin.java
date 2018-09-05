@@ -22,6 +22,7 @@ import com.liferay.gradle.plugins.node.tasks.ExecuteNpmTask;
 import com.liferay.gradle.plugins.node.tasks.NpmInstallTask;
 import com.liferay.gradle.plugins.node.tasks.NpmShrinkwrapTask;
 import com.liferay.gradle.plugins.node.tasks.PublishNodeModuleTask;
+import com.liferay.gradle.util.StringUtil;
 
 import groovy.json.JsonSlurper;
 
@@ -36,9 +37,14 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.internal.plugins.osgi.OsgiHelper;
+import org.gradle.api.plugins.BasePlugin;
+import org.gradle.api.plugins.JavaPlugin;
+import org.gradle.api.plugins.PluginContainer;
 import org.gradle.api.specs.Spec;
 import org.gradle.api.tasks.Delete;
 import org.gradle.api.tasks.TaskContainer;
+import org.gradle.language.base.plugins.LifecycleBasePlugin;
+import org.gradle.util.VersionNumber;
 
 /**
  * @author Andrea Di Giorgi
@@ -52,6 +58,10 @@ public class NodePlugin implements Plugin<Project> {
 	public static final String EXTENSION_NAME = "node";
 
 	public static final String NPM_INSTALL_TASK_NAME = "npmInstall";
+
+	public static final String NPM_PACKAGE_LOCK_TASK_NAME = "npmPackageLock";
+
+	public static final String NPM_RUN_BUILD_TASK_NAME = "npmRunBuild";
 
 	public static final String NPM_SHRINKWRAP_TASK_NAME = "npmShrinkwrap";
 
@@ -68,12 +78,27 @@ public class NodePlugin implements Plugin<Project> {
 		NpmInstallTask npmInstallTask = _addTaskNpmInstall(
 			project, cleanNpmTask);
 
-		_addTaskNpmShrinkwrap(project, cleanNpmTask, npmInstallTask);
+		Map<String, Object> packageJsonMap = null;
 
-		_configureTasksDownloadNodeModule(project, npmInstallTask);
+		File packageJsonFile = npmInstallTask.getPackageJsonFile();
+
+		if (packageJsonFile.exists()) {
+			JsonSlurper jsonSlurper = new JsonSlurper();
+
+			packageJsonMap = (Map<String, Object>)jsonSlurper.parse(
+				packageJsonFile);
+		}
+
+		_addTaskNpmPackageLock(project, cleanNpmTask, npmInstallTask);
+		_addTaskNpmShrinkwrap(project, cleanNpmTask, npmInstallTask);
+		_addTasksNpmRun(npmInstallTask, packageJsonMap);
+
+		_configureTasksDownloadNodeModule(
+			project, npmInstallTask, packageJsonMap);
 
 		_configureTasksExecuteNode(
 			project, nodeExtension, GradleUtil.isRunningInsideDaemon());
+		_configureTasksExecuteNpm(project, nodeExtension);
 
 		_configureTasksPublishNodeModule(project);
 
@@ -84,7 +109,7 @@ public class NodePlugin implements Plugin<Project> {
 				public void execute(Project project) {
 					_configureTaskDownloadNodeGlobal(
 						downloadNodeTask, nodeExtension);
-					_configureTasksExecuteNpm(project, nodeExtension);
+					_configureTasksExecuteNpmArgs(project, nodeExtension);
 				}
 
 			});
@@ -94,7 +119,8 @@ public class NodePlugin implements Plugin<Project> {
 		Delete delete = GradleUtil.addTask(
 			project, CLEAN_NPM_TASK_NAME, Delete.class);
 
-		delete.delete("node_modules", "npm-shrinkwrap.json");
+		delete.delete(
+			"node_modules", "npm-shrinkwrap.json", "package-lock.json");
 		delete.setDescription("Deletes NPM files from this project.");
 
 		return delete;
@@ -119,16 +145,6 @@ public class NodePlugin implements Plugin<Project> {
 				@Override
 				public File call() throws Exception {
 					return nodeExtension.getNodeDir();
-				}
-
-			});
-
-		downloadNodeTask.setNodeExeUrl(
-			new Callable<String>() {
-
-				@Override
-				public String call() throws Exception {
-					return nodeExtension.getNodeExeUrl();
 				}
 
 			});
@@ -183,6 +199,68 @@ public class NodePlugin implements Plugin<Project> {
 		return npmInstallTask;
 	}
 
+	private Task _addTaskNpmPackageLock(
+		Project project, Delete cleanNpmTask, NpmInstallTask npmInstallTask) {
+
+		Task task = project.task(NPM_PACKAGE_LOCK_TASK_NAME);
+
+		task.dependsOn(cleanNpmTask, npmInstallTask);
+		task.setDescription(
+			"Deletes NPM files and installs Node packages from package.json.");
+
+		return task;
+	}
+
+	private ExecuteNpmTask _addTaskNpmRun(
+		String name, NpmInstallTask npmInstallTask) {
+
+		Project project = npmInstallTask.getProject();
+
+		String taskName = "npmRun" + StringUtil.capitalize(name);
+
+		final ExecuteNpmTask executeNpmTask = GradleUtil.addTask(
+			project, taskName, ExecuteNpmTask.class);
+
+		executeNpmTask.dependsOn(npmInstallTask);
+		executeNpmTask.setArgs("run-script", name);
+		executeNpmTask.setDescription("Runs the \"" + name + "\" NPM script.");
+		executeNpmTask.setGroup(BasePlugin.BUILD_GROUP);
+
+		if (taskName.equals(NPM_RUN_BUILD_TASK_NAME)) {
+			PluginContainer pluginContainer = project.getPlugins();
+
+			pluginContainer.withType(
+				JavaPlugin.class,
+				new Action<JavaPlugin>() {
+
+					@Override
+					public void execute(JavaPlugin javaPlugin) {
+						_configureTaskNpmRunBuildForJavaPlugin(executeNpmTask);
+					}
+
+				});
+		}
+		else if (taskName.equals(_NPM_RUN_TEST_TASK_NAME)) {
+			PluginContainer pluginContainer = project.getPlugins();
+
+			pluginContainer.withType(
+				LifecycleBasePlugin.class,
+				new Action<LifecycleBasePlugin>() {
+
+					@Override
+					public void execute(
+						LifecycleBasePlugin lifecycleBasePlugin) {
+
+						_configureTaskNpmRunTestForLifecycleBasePlugin(
+							executeNpmTask);
+					}
+
+				});
+		}
+
+		return executeNpmTask;
+	}
+
 	private NpmShrinkwrapTask _addTaskNpmShrinkwrap(
 		Project project, Delete cleanNpmTask, NpmInstallTask npmInstallTask) {
 
@@ -197,14 +275,35 @@ public class NodePlugin implements Plugin<Project> {
 		return npmShrinkwrapTask;
 	}
 
-	private void _configureTaskDownloadNodeGlobal(
-		DownloadNodeTask downloadNodeTask, NodeExtension nodeExtension) {
+	private void _addTasksNpmRun(
+		NpmInstallTask npmInstallTask, Map<String, Object> packageJsonMap) {
 
-		if (!nodeExtension.isDownload() || !nodeExtension.isGlobal()) {
+		if (packageJsonMap == null) {
 			return;
 		}
 
+		Map<String, String> scriptsJsonMap =
+			(Map<String, String>)packageJsonMap.get("scripts");
+
+		if (scriptsJsonMap == null) {
+			return;
+		}
+
+		for (String name : scriptsJsonMap.keySet()) {
+			_addTaskNpmRun(name, npmInstallTask);
+		}
+	}
+
+	private void _configureTaskDownloadNodeGlobal(
+		DownloadNodeTask downloadNodeTask, NodeExtension nodeExtension) {
+
 		Project project = downloadNodeTask.getProject();
+
+		if (!nodeExtension.isDownload() || !nodeExtension.isGlobal() ||
+			(project.getParent() == null)) {
+
+			return;
+		}
 
 		Project rootProject = project.getRootProject();
 
@@ -216,12 +315,10 @@ public class NodePlugin implements Plugin<Project> {
 			DownloadNodeTask.class);
 
 		File nodeDir = downloadNodeTask.getNodeDir();
-		String nodeExeUrl = downloadNodeTask.getNodeExeUrl();
 		String nodeUrl = downloadNodeTask.getNodeUrl();
 
 		for (DownloadNodeTask curRootDownloadNodeTask : rootDownloadNodeTasks) {
 			if (nodeDir.equals(curRootDownloadNodeTask.getNodeDir()) &&
-				nodeExeUrl.equals(curRootDownloadNodeTask.getNodeExeUrl()) &&
 				nodeUrl.equals(curRootDownloadNodeTask.getNodeUrl())) {
 
 				rootDownloadNodeTask = curRootDownloadNodeTask;
@@ -247,7 +344,8 @@ public class NodePlugin implements Plugin<Project> {
 
 	private void _configureTaskDownloadNodeModule(
 		DownloadNodeModuleTask downloadNodeModuleTask,
-		final NpmInstallTask npmInstallTask) {
+		final NpmInstallTask npmInstallTask,
+		final Map<String, Object> packageJsonMap) {
 
 		downloadNodeModuleTask.onlyIf(
 			new Spec<Task>() {
@@ -267,18 +365,11 @@ public class NodePlugin implements Plugin<Project> {
 						return true;
 					}
 
-					File packageJsonFile = npmInstallTask.getPackageJsonFile();
-
-					if (!packageJsonFile.exists()) {
+					if (packageJsonMap == null) {
 						return true;
 					}
 
 					String moduleName = downloadNodeModuleTask.getModuleName();
-
-					JsonSlurper jsonSlurper = new JsonSlurper();
-
-					Map<String, Object> packageJsonMap =
-						(Map<String, Object>)jsonSlurper.parse(packageJsonFile);
 
 					Map<String, Object> dependenciesJsonMap =
 						(Map<String, Object>)packageJsonMap.get("dependencies");
@@ -327,9 +418,76 @@ public class NodePlugin implements Plugin<Project> {
 	}
 
 	private void _configureTaskExecuteNpm(
+		final ExecuteNpmTask executeNpmTask,
+		final NodeExtension nodeExtension) {
+
+		final Callable<Boolean> useGlobalConcurrentCacheCallable =
+			new Callable<Boolean>() {
+
+				@Override
+				public Boolean call() throws Exception {
+					if ((_node8VersionNumber.compareTo(
+							VersionNumber.parse(
+								nodeExtension.getNodeVersion())) <= 0) ||
+						(_npm5VersionNumber.compareTo(
+							VersionNumber.parse(
+								nodeExtension.getNpmVersion())) <= 0)) {
+
+						return true;
+					}
+
+					return false;
+				}
+
+			};
+
+		executeNpmTask.setCacheConcurrent(useGlobalConcurrentCacheCallable);
+
+		executeNpmTask.setCacheDir(
+			new Callable<File>() {
+
+				@Override
+				public File call() throws Exception {
+					if (useGlobalConcurrentCacheCallable.call()) {
+						return null;
+					}
+
+					File nodeDir = executeNpmTask.getNodeDir();
+
+					if (nodeDir == null) {
+						return null;
+					}
+
+					return new File(nodeDir, ".cache");
+				}
+
+			});
+	}
+
+	private void _configureTaskExecuteNpmArgs(
 		ExecuteNpmTask executeNpmTask, NodeExtension nodeExtension) {
 
 		executeNpmTask.args(nodeExtension.getNpmArgs());
+	}
+
+	private void _configureTaskNpmRunBuildForJavaPlugin(
+		ExecuteNpmTask executeNpmTask) {
+
+		executeNpmTask.mustRunAfter(JavaPlugin.PROCESS_RESOURCES_TASK_NAME);
+
+		Task classesTask = GradleUtil.getTask(
+			executeNpmTask.getProject(), JavaPlugin.CLASSES_TASK_NAME);
+
+		classesTask.dependsOn(executeNpmTask);
+	}
+
+	private void _configureTaskNpmRunTestForLifecycleBasePlugin(
+		ExecuteNpmTask executeNpmTask) {
+
+		Task checkTask = GradleUtil.getTask(
+			executeNpmTask.getProject(), LifecycleBasePlugin.CHECK_TASK_NAME);
+
+		checkTask.dependsOn(executeNpmTask);
 	}
 
 	private void _configureTaskPublishNodeModule(
@@ -380,7 +538,8 @@ public class NodePlugin implements Plugin<Project> {
 	}
 
 	private void _configureTasksDownloadNodeModule(
-		Project project, final NpmInstallTask npmInstallTask) {
+		Project project, final NpmInstallTask npmInstallTask,
+		final Map<String, Object> packageJsonMap) {
 
 		TaskContainer taskContainer = project.getTasks();
 
@@ -393,7 +552,7 @@ public class NodePlugin implements Plugin<Project> {
 					DownloadNodeModuleTask downloadNodeModuleTask) {
 
 					_configureTaskDownloadNodeModule(
-						downloadNodeModuleTask, npmInstallTask);
+						downloadNodeModuleTask, npmInstallTask, packageJsonMap);
 				}
 
 			});
@@ -435,6 +594,23 @@ public class NodePlugin implements Plugin<Project> {
 			});
 	}
 
+	private void _configureTasksExecuteNpmArgs(
+		Project project, final NodeExtension nodeExtension) {
+
+		TaskContainer taskContainer = project.getTasks();
+
+		taskContainer.withType(
+			ExecuteNpmTask.class,
+			new Action<ExecuteNpmTask>() {
+
+				@Override
+				public void execute(ExecuteNpmTask executeNpmTask) {
+					_configureTaskExecuteNpmArgs(executeNpmTask, nodeExtension);
+				}
+
+			});
+	}
+
 	private void _configureTasksPublishNodeModule(Project project) {
 		TaskContainer taskContainer = project.getTasks();
 
@@ -452,6 +628,12 @@ public class NodePlugin implements Plugin<Project> {
 			});
 	}
 
+	private static final String _NPM_RUN_TEST_TASK_NAME = "npmRunTest";
+
+	private static final VersionNumber _node8VersionNumber =
+		VersionNumber.version(8);
+	private static final VersionNumber _npm5VersionNumber =
+		VersionNumber.version(5);
 	private static final OsgiHelper _osgiHelper = new OsgiHelper();
 
 }

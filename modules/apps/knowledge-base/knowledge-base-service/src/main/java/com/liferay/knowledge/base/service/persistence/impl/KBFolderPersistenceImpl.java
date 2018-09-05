@@ -22,6 +22,8 @@ import com.liferay.knowledge.base.model.impl.KBFolderImpl;
 import com.liferay.knowledge.base.model.impl.KBFolderModelImpl;
 import com.liferay.knowledge.base.service.persistence.KBFolderPersistence;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
@@ -39,10 +41,8 @@ import com.liferay.portal.kernel.service.persistence.CompanyProvider;
 import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.ReflectionUtil;
+import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
@@ -51,6 +51,7 @@ import com.liferay.portal.spring.extender.service.ServiceReference;
 import java.io.Serializable;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
 
 import java.util.Collections;
 import java.util.Date;
@@ -229,7 +230,7 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 			if (uuid == null) {
 				query.append(_FINDER_COLUMN_UUID_UUID_1);
 			}
-			else if (uuid.equals(StringPool.BLANK)) {
+			else if (uuid.equals("")) {
 				query.append(_FINDER_COLUMN_UUID_UUID_3);
 			}
 			else {
@@ -317,7 +318,7 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 		msg.append("uuid=");
 		msg.append(uuid);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchFolderException(msg.toString());
 	}
@@ -366,7 +367,7 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 		msg.append("uuid=");
 		msg.append(uuid);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchFolderException(msg.toString());
 	}
@@ -458,7 +459,7 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 		if (uuid == null) {
 			query.append(_FINDER_COLUMN_UUID_UUID_1);
 		}
-		else if (uuid.equals(StringPool.BLANK)) {
+		else if (uuid.equals("")) {
 			query.append(_FINDER_COLUMN_UUID_UUID_3);
 		}
 		else {
@@ -594,7 +595,7 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 			if (uuid == null) {
 				query.append(_FINDER_COLUMN_UUID_UUID_1);
 			}
-			else if (uuid.equals(StringPool.BLANK)) {
+			else if (uuid.equals("")) {
 				query.append(_FINDER_COLUMN_UUID_UUID_3);
 			}
 			else {
@@ -673,7 +674,7 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 			msg.append(", groupId=");
 			msg.append(groupId);
 
-			msg.append(StringPool.CLOSE_CURLY_BRACE);
+			msg.append("}");
 
 			if (_log.isDebugEnabled()) {
 				_log.debug(msg.toString());
@@ -736,7 +737,7 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 			if (uuid == null) {
 				query.append(_FINDER_COLUMN_UUID_G_UUID_1);
 			}
-			else if (uuid.equals(StringPool.BLANK)) {
+			else if (uuid.equals("")) {
 				query.append(_FINDER_COLUMN_UUID_G_UUID_3);
 			}
 			else {
@@ -776,13 +777,6 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 					result = kbFolder;
 
 					cacheResult(kbFolder);
-
-					if ((kbFolder.getUuid() == null) ||
-							!kbFolder.getUuid().equals(uuid) ||
-							(kbFolder.getGroupId() != groupId)) {
-						finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G,
-							finderArgs, kbFolder);
-					}
 				}
 			}
 			catch (Exception e) {
@@ -843,7 +837,7 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 			if (uuid == null) {
 				query.append(_FINDER_COLUMN_UUID_G_UUID_1);
 			}
-			else if (uuid.equals(StringPool.BLANK)) {
+			else if (uuid.equals("")) {
 				query.append(_FINDER_COLUMN_UUID_G_UUID_3);
 			}
 			else {
@@ -1039,7 +1033,7 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 			if (uuid == null) {
 				query.append(_FINDER_COLUMN_UUID_C_UUID_1);
 			}
-			else if (uuid.equals(StringPool.BLANK)) {
+			else if (uuid.equals("")) {
 				query.append(_FINDER_COLUMN_UUID_C_UUID_3);
 			}
 			else {
@@ -1136,7 +1130,7 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 		msg.append(", companyId=");
 		msg.append(companyId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchFolderException(msg.toString());
 	}
@@ -1192,7 +1186,7 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 		msg.append(", companyId=");
 		msg.append(companyId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchFolderException(msg.toString());
 	}
@@ -1286,7 +1280,7 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 		if (uuid == null) {
 			query.append(_FINDER_COLUMN_UUID_C_UUID_1);
 		}
-		else if (uuid.equals(StringPool.BLANK)) {
+		else if (uuid.equals("")) {
 			query.append(_FINDER_COLUMN_UUID_C_UUID_3);
 		}
 		else {
@@ -1428,7 +1422,7 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 			if (uuid == null) {
 				query.append(_FINDER_COLUMN_UUID_C_UUID_1);
 			}
-			else if (uuid.equals(StringPool.BLANK)) {
+			else if (uuid.equals("")) {
 				query.append(_FINDER_COLUMN_UUID_C_UUID_3);
 			}
 			else {
@@ -1707,7 +1701,7 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 		msg.append(", parentKBFolderId=");
 		msg.append(parentKBFolderId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchFolderException(msg.toString());
 	}
@@ -1763,7 +1757,7 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 		msg.append(", parentKBFolderId=");
 		msg.append(parentKBFolderId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchFolderException(msg.toString());
 	}
@@ -2441,7 +2435,7 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 			msg.append(", name=");
 			msg.append(name);
 
-			msg.append(StringPool.CLOSE_CURLY_BRACE);
+			msg.append("}");
 
 			if (_log.isDebugEnabled()) {
 				_log.debug(msg.toString());
@@ -2512,7 +2506,7 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 			if (name == null) {
 				query.append(_FINDER_COLUMN_G_P_N_NAME_1);
 			}
-			else if (name.equals(StringPool.BLANK)) {
+			else if (name.equals("")) {
 				query.append(_FINDER_COLUMN_G_P_N_NAME_3);
 			}
 			else {
@@ -2563,14 +2557,6 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 					result = kbFolder;
 
 					cacheResult(kbFolder);
-
-					if ((kbFolder.getGroupId() != groupId) ||
-							(kbFolder.getParentKBFolderId() != parentKBFolderId) ||
-							(kbFolder.getName() == null) ||
-							!kbFolder.getName().equals(name)) {
-						finderCache.putResult(FINDER_PATH_FETCH_BY_G_P_N,
-							finderArgs, kbFolder);
-					}
 				}
 			}
 			catch (Exception e) {
@@ -2637,7 +2623,7 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 			if (name == null) {
 				query.append(_FINDER_COLUMN_G_P_N_NAME_1);
 			}
-			else if (name.equals(StringPool.BLANK)) {
+			else if (name.equals("")) {
 				query.append(_FINDER_COLUMN_G_P_N_NAME_3);
 			}
 			else {
@@ -2733,7 +2719,7 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 			msg.append(", urlTitle=");
 			msg.append(urlTitle);
 
-			msg.append(StringPool.CLOSE_CURLY_BRACE);
+			msg.append("}");
 
 			if (_log.isDebugEnabled()) {
 				_log.debug(msg.toString());
@@ -2804,7 +2790,7 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 			if (urlTitle == null) {
 				query.append(_FINDER_COLUMN_G_P_UT_URLTITLE_1);
 			}
-			else if (urlTitle.equals(StringPool.BLANK)) {
+			else if (urlTitle.equals("")) {
 				query.append(_FINDER_COLUMN_G_P_UT_URLTITLE_3);
 			}
 			else {
@@ -2855,14 +2841,6 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 					result = kbFolder;
 
 					cacheResult(kbFolder);
-
-					if ((kbFolder.getGroupId() != groupId) ||
-							(kbFolder.getParentKBFolderId() != parentKBFolderId) ||
-							(kbFolder.getUrlTitle() == null) ||
-							!kbFolder.getUrlTitle().equals(urlTitle)) {
-						finderCache.putResult(FINDER_PATH_FETCH_BY_G_P_UT,
-							finderArgs, kbFolder);
-					}
 				}
 			}
 			catch (Exception e) {
@@ -2930,7 +2908,7 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 			if (urlTitle == null) {
 				query.append(_FINDER_COLUMN_G_P_UT_URLTITLE_1);
 			}
-			else if (urlTitle.equals(StringPool.BLANK)) {
+			else if (urlTitle.equals("")) {
 				query.append(_FINDER_COLUMN_G_P_UT_URLTITLE_3);
 			}
 			else {
@@ -2985,8 +2963,10 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 		setModelClass(KBFolder.class);
 
 		try {
-			Field field = ReflectionUtil.getDeclaredField(BasePersistenceImpl.class,
+			Field field = BasePersistenceImpl.class.getDeclaredField(
 					"_dbColumnNames");
+
+			field.setAccessible(true);
 
 			Map<String, String> dbColumnNames = new HashMap<String, String>();
 
@@ -3272,8 +3252,6 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 
 	@Override
 	protected KBFolder removeImpl(KBFolder kbFolder) {
-		kbFolder = toUnwrappedModel(kbFolder);
-
 		Session session = null;
 
 		try {
@@ -3304,9 +3282,23 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 
 	@Override
 	public KBFolder updateImpl(KBFolder kbFolder) {
-		kbFolder = toUnwrappedModel(kbFolder);
-
 		boolean isNew = kbFolder.isNew();
+
+		if (!(kbFolder instanceof KBFolderModelImpl)) {
+			InvocationHandler invocationHandler = null;
+
+			if (ProxyUtil.isProxyClass(kbFolder.getClass())) {
+				invocationHandler = ProxyUtil.getInvocationHandler(kbFolder);
+
+				throw new IllegalArgumentException(
+					"Implement ModelWrapper in kbFolder proxy " +
+					invocationHandler.getClass());
+			}
+
+			throw new IllegalArgumentException(
+				"Implement ModelWrapper in custom KBFolder implementation " +
+				kbFolder.getClass());
+		}
 
 		KBFolderModelImpl kbFolderModelImpl = (KBFolderModelImpl)kbFolder;
 
@@ -3465,33 +3457,6 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 		return kbFolder;
 	}
 
-	protected KBFolder toUnwrappedModel(KBFolder kbFolder) {
-		if (kbFolder instanceof KBFolderImpl) {
-			return kbFolder;
-		}
-
-		KBFolderImpl kbFolderImpl = new KBFolderImpl();
-
-		kbFolderImpl.setNew(kbFolder.isNew());
-		kbFolderImpl.setPrimaryKey(kbFolder.getPrimaryKey());
-
-		kbFolderImpl.setUuid(kbFolder.getUuid());
-		kbFolderImpl.setKbFolderId(kbFolder.getKbFolderId());
-		kbFolderImpl.setGroupId(kbFolder.getGroupId());
-		kbFolderImpl.setCompanyId(kbFolder.getCompanyId());
-		kbFolderImpl.setUserId(kbFolder.getUserId());
-		kbFolderImpl.setUserName(kbFolder.getUserName());
-		kbFolderImpl.setCreateDate(kbFolder.getCreateDate());
-		kbFolderImpl.setModifiedDate(kbFolder.getModifiedDate());
-		kbFolderImpl.setParentKBFolderId(kbFolder.getParentKBFolderId());
-		kbFolderImpl.setName(kbFolder.getName());
-		kbFolderImpl.setUrlTitle(kbFolder.getUrlTitle());
-		kbFolderImpl.setDescription(kbFolder.getDescription());
-		kbFolderImpl.setLastPublishDate(kbFolder.getLastPublishDate());
-
-		return kbFolderImpl;
-	}
-
 	/**
 	 * Returns the kb folder with the primary key or throws a {@link com.liferay.portal.kernel.exception.NoSuchModelException} if it could not be found.
 	 *
@@ -3642,12 +3607,12 @@ public class KBFolderPersistenceImpl extends BasePersistenceImpl<KBFolder>
 		for (Serializable primaryKey : uncachedPrimaryKeys) {
 			query.append((long)primaryKey);
 
-			query.append(StringPool.COMMA);
+			query.append(",");
 		}
 
 		query.setIndex(query.index() - 1);
 
-		query.append(StringPool.CLOSE_PARENTHESIS);
+		query.append(")");
 
 		String sql = query.toString();
 

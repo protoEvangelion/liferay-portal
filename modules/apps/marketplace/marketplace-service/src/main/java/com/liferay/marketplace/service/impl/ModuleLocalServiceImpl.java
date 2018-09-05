@@ -14,8 +14,6 @@
 
 package com.liferay.marketplace.service.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.marketplace.exception.ModuleNamespaceException;
 import com.liferay.marketplace.model.App;
 import com.liferay.marketplace.model.Module;
@@ -29,12 +27,11 @@ import java.util.List;
  * @author Ryan Park
  * @author Joan Kim
  */
-@ProviderType
 public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 
 	/**
-	 * @deprecated As of 1.1.0, replaced by {@link #addModule(long, String,
-	 *             String, String)}
+	 * @deprecated As of Judson (7.1.x), replaced by {@link #addModule(long,
+	 *             String, String, String)}
 	 */
 	@Deprecated
 	@Override

@@ -29,8 +29,10 @@ import com.liferay.portal.kernel.service.ResourceTypePermissionLocalServiceUtil;
  * @author Brian Wing Shun Chan
  * @see ResourceTypePermissionImpl
  * @see ResourceTypePermission
+ * @deprecated As of Judson (7.1.x), with no direct replacement
  * @generated
  */
+@Deprecated
 @ProviderType
 public abstract class ResourceTypePermissionBaseImpl
 	extends ResourceTypePermissionModelImpl implements ResourceTypePermission {

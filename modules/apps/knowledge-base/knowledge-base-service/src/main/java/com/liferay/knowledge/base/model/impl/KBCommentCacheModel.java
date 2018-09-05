@@ -18,10 +18,10 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.knowledge.base.model.KBComment;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -106,7 +106,7 @@ public class KBCommentCacheModel implements CacheModel<KBComment>,
 		KBCommentImpl kbCommentImpl = new KBCommentImpl();
 
 		if (uuid == null) {
-			kbCommentImpl.setUuid(StringPool.BLANK);
+			kbCommentImpl.setUuid("");
 		}
 		else {
 			kbCommentImpl.setUuid(uuid);
@@ -118,7 +118,7 @@ public class KBCommentCacheModel implements CacheModel<KBComment>,
 		kbCommentImpl.setUserId(userId);
 
 		if (userName == null) {
-			kbCommentImpl.setUserName(StringPool.BLANK);
+			kbCommentImpl.setUserName("");
 		}
 		else {
 			kbCommentImpl.setUserName(userName);
@@ -142,7 +142,7 @@ public class KBCommentCacheModel implements CacheModel<KBComment>,
 		kbCommentImpl.setClassPK(classPK);
 
 		if (content == null) {
-			kbCommentImpl.setContent(StringPool.BLANK);
+			kbCommentImpl.setContent("");
 		}
 		else {
 			kbCommentImpl.setContent(content);
@@ -194,7 +194,7 @@ public class KBCommentCacheModel implements CacheModel<KBComment>,
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
 		if (uuid == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(uuid);
@@ -209,7 +209,7 @@ public class KBCommentCacheModel implements CacheModel<KBComment>,
 		objectOutput.writeLong(userId);
 
 		if (userName == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(userName);
@@ -223,7 +223,7 @@ public class KBCommentCacheModel implements CacheModel<KBComment>,
 		objectOutput.writeLong(classPK);
 
 		if (content == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(content);

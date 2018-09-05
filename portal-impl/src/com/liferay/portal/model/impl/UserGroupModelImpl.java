@@ -21,10 +21,13 @@ import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 
 import com.liferay.exportimport.kernel.lar.StagedModelType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.UserGroup;
 import com.liferay.portal.kernel.model.UserGroupModel;
@@ -35,8 +38,6 @@ import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Serializable;
 
@@ -74,6 +75,7 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 	public static final Object[][] TABLE_COLUMNS = {
 			{ "mvccVersion", Types.BIGINT },
 			{ "uuid_", Types.VARCHAR },
+			{ "externalReferenceCode", Types.VARCHAR },
 			{ "userGroupId", Types.BIGINT },
 			{ "companyId", Types.BIGINT },
 			{ "userId", Types.BIGINT },
@@ -90,6 +92,7 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 	static {
 		TABLE_COLUMNS_MAP.put("mvccVersion", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("uuid_", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("externalReferenceCode", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("userGroupId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("companyId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("userId", Types.BIGINT);
@@ -102,7 +105,7 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 		TABLE_COLUMNS_MAP.put("addedByLDAPImport", Types.BOOLEAN);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table UserGroup (mvccVersion LONG default 0 not null,uuid_ VARCHAR(75) null,userGroupId LONG not null primary key,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,parentUserGroupId LONG,name VARCHAR(75) null,description STRING null,addedByLDAPImport BOOLEAN)";
+	public static final String TABLE_SQL_CREATE = "create table UserGroup (mvccVersion LONG default 0 not null,uuid_ VARCHAR(75) null,externalReferenceCode VARCHAR(75) null,userGroupId LONG not null primary key,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,parentUserGroupId LONG,name VARCHAR(75) null,description STRING null,addedByLDAPImport BOOLEAN)";
 	public static final String TABLE_SQL_DROP = "drop table UserGroup";
 	public static final String ORDER_BY_JPQL = " ORDER BY userGroup.name ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY UserGroup.name ASC";
@@ -119,9 +122,11 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 				"value.object.column.bitmask.enabled.com.liferay.portal.kernel.model.UserGroup"),
 			true);
 	public static final long COMPANYID_COLUMN_BITMASK = 1L;
-	public static final long NAME_COLUMN_BITMASK = 2L;
-	public static final long PARENTUSERGROUPID_COLUMN_BITMASK = 4L;
-	public static final long UUID_COLUMN_BITMASK = 8L;
+	public static final long EXTERNALREFERENCECODE_COLUMN_BITMASK = 2L;
+	public static final long NAME_COLUMN_BITMASK = 4L;
+	public static final long PARENTUSERGROUPID_COLUMN_BITMASK = 8L;
+	public static final long USERGROUPID_COLUMN_BITMASK = 16L;
+	public static final long UUID_COLUMN_BITMASK = 32L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -138,6 +143,7 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 
 		model.setMvccVersion(soapModel.getMvccVersion());
 		model.setUuid(soapModel.getUuid());
+		model.setExternalReferenceCode(soapModel.getExternalReferenceCode());
 		model.setUserGroupId(soapModel.getUserGroupId());
 		model.setCompanyId(soapModel.getCompanyId());
 		model.setUserId(soapModel.getUserId());
@@ -147,7 +153,7 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 		model.setParentUserGroupId(soapModel.getParentUserGroupId());
 		model.setName(soapModel.getName());
 		model.setDescription(soapModel.getDescription());
-		model.setAddedByLDAPImport(soapModel.getAddedByLDAPImport());
+		model.setAddedByLDAPImport(soapModel.isAddedByLDAPImport());
 
 		return model;
 	}
@@ -241,6 +247,7 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 
 		attributes.put("mvccVersion", getMvccVersion());
 		attributes.put("uuid", getUuid());
+		attributes.put("externalReferenceCode", getExternalReferenceCode());
 		attributes.put("userGroupId", getUserGroupId());
 		attributes.put("companyId", getCompanyId());
 		attributes.put("userId", getUserId());
@@ -250,7 +257,7 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 		attributes.put("parentUserGroupId", getParentUserGroupId());
 		attributes.put("name", getName());
 		attributes.put("description", getDescription());
-		attributes.put("addedByLDAPImport", getAddedByLDAPImport());
+		attributes.put("addedByLDAPImport", isAddedByLDAPImport());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -270,6 +277,13 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 
 		if (uuid != null) {
 			setUuid(uuid);
+		}
+
+		String externalReferenceCode = (String)attributes.get(
+				"externalReferenceCode");
+
+		if (externalReferenceCode != null) {
+			setExternalReferenceCode(externalReferenceCode);
 		}
 
 		Long userGroupId = (Long)attributes.get("userGroupId");
@@ -348,7 +362,7 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 	@Override
 	public String getUuid() {
 		if (_uuid == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _uuid;
@@ -370,13 +384,51 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 
 	@JSON
 	@Override
+	public String getExternalReferenceCode() {
+		if (_externalReferenceCode == null) {
+			return "";
+		}
+		else {
+			return _externalReferenceCode;
+		}
+	}
+
+	@Override
+	public void setExternalReferenceCode(String externalReferenceCode) {
+		_columnBitmask |= EXTERNALREFERENCECODE_COLUMN_BITMASK;
+
+		if (_originalExternalReferenceCode == null) {
+			_originalExternalReferenceCode = _externalReferenceCode;
+		}
+
+		_externalReferenceCode = externalReferenceCode;
+	}
+
+	public String getOriginalExternalReferenceCode() {
+		return GetterUtil.getString(_originalExternalReferenceCode);
+	}
+
+	@JSON
+	@Override
 	public long getUserGroupId() {
 		return _userGroupId;
 	}
 
 	@Override
 	public void setUserGroupId(long userGroupId) {
+		_columnBitmask |= USERGROUPID_COLUMN_BITMASK;
+
+		if (!_setOriginalUserGroupId) {
+			_setOriginalUserGroupId = true;
+
+			_originalUserGroupId = _userGroupId;
+		}
+
 		_userGroupId = userGroupId;
+	}
+
+	public long getOriginalUserGroupId() {
+		return _originalUserGroupId;
 	}
 
 	@JSON
@@ -421,7 +473,7 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 			return user.getUuid();
 		}
 		catch (PortalException pe) {
-			return StringPool.BLANK;
+			return "";
 		}
 	}
 
@@ -433,7 +485,7 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 	@Override
 	public String getUserName() {
 		if (_userName == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _userName;
@@ -500,7 +552,7 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 	@Override
 	public String getName() {
 		if (_name == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _name;
@@ -526,7 +578,7 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 	@Override
 	public String getDescription() {
 		if (_description == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _description;
@@ -594,6 +646,7 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 
 		userGroupImpl.setMvccVersion(getMvccVersion());
 		userGroupImpl.setUuid(getUuid());
+		userGroupImpl.setExternalReferenceCode(getExternalReferenceCode());
 		userGroupImpl.setUserGroupId(getUserGroupId());
 		userGroupImpl.setCompanyId(getCompanyId());
 		userGroupImpl.setUserId(getUserId());
@@ -603,7 +656,7 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 		userGroupImpl.setParentUserGroupId(getParentUserGroupId());
 		userGroupImpl.setName(getName());
 		userGroupImpl.setDescription(getDescription());
-		userGroupImpl.setAddedByLDAPImport(getAddedByLDAPImport());
+		userGroupImpl.setAddedByLDAPImport(isAddedByLDAPImport());
 
 		userGroupImpl.resetOriginalValues();
 
@@ -666,6 +719,12 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 
 		userGroupModelImpl._originalUuid = userGroupModelImpl._uuid;
 
+		userGroupModelImpl._originalExternalReferenceCode = userGroupModelImpl._externalReferenceCode;
+
+		userGroupModelImpl._originalUserGroupId = userGroupModelImpl._userGroupId;
+
+		userGroupModelImpl._setOriginalUserGroupId = false;
+
 		userGroupModelImpl._originalCompanyId = userGroupModelImpl._companyId;
 
 		userGroupModelImpl._setOriginalCompanyId = false;
@@ -693,6 +752,15 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 
 		if ((uuid != null) && (uuid.length() == 0)) {
 			userGroupCacheModel.uuid = null;
+		}
+
+		userGroupCacheModel.externalReferenceCode = getExternalReferenceCode();
+
+		String externalReferenceCode = userGroupCacheModel.externalReferenceCode;
+
+		if ((externalReferenceCode != null) &&
+				(externalReferenceCode.length() == 0)) {
+			userGroupCacheModel.externalReferenceCode = null;
 		}
 
 		userGroupCacheModel.userGroupId = getUserGroupId();
@@ -745,19 +813,21 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 			userGroupCacheModel.description = null;
 		}
 
-		userGroupCacheModel.addedByLDAPImport = getAddedByLDAPImport();
+		userGroupCacheModel.addedByLDAPImport = isAddedByLDAPImport();
 
 		return userGroupCacheModel;
 	}
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(25);
+		StringBundler sb = new StringBundler(27);
 
 		sb.append("{mvccVersion=");
 		sb.append(getMvccVersion());
 		sb.append(", uuid=");
 		sb.append(getUuid());
+		sb.append(", externalReferenceCode=");
+		sb.append(getExternalReferenceCode());
 		sb.append(", userGroupId=");
 		sb.append(getUserGroupId());
 		sb.append(", companyId=");
@@ -777,7 +847,7 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 		sb.append(", description=");
 		sb.append(getDescription());
 		sb.append(", addedByLDAPImport=");
-		sb.append(getAddedByLDAPImport());
+		sb.append(isAddedByLDAPImport());
 		sb.append("}");
 
 		return sb.toString();
@@ -785,7 +855,7 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(40);
+		StringBundler sb = new StringBundler(43);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.portal.kernel.model.UserGroup");
@@ -798,6 +868,10 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 		sb.append(
 			"<column><column-name>uuid</column-name><column-value><![CDATA[");
 		sb.append(getUuid());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>externalReferenceCode</column-name><column-value><![CDATA[");
+		sb.append(getExternalReferenceCode());
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>userGroupId</column-name><column-value><![CDATA[");
@@ -837,7 +911,7 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>addedByLDAPImport</column-name><column-value><![CDATA[");
-		sb.append(getAddedByLDAPImport());
+		sb.append(isAddedByLDAPImport());
 		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
@@ -847,12 +921,16 @@ public class UserGroupModelImpl extends BaseModelImpl<UserGroup>
 
 	private static final ClassLoader _classLoader = UserGroup.class.getClassLoader();
 	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
-			UserGroup.class
+			UserGroup.class, ModelWrapper.class
 		};
 	private long _mvccVersion;
 	private String _uuid;
 	private String _originalUuid;
+	private String _externalReferenceCode;
+	private String _originalExternalReferenceCode;
 	private long _userGroupId;
+	private long _originalUserGroupId;
+	private boolean _setOriginalUserGroupId;
 	private long _companyId;
 	private long _originalCompanyId;
 	private boolean _setOriginalCompanyId;

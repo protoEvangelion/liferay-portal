@@ -40,22 +40,23 @@ public class PluginSettingServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.portal.service.impl.PluginSettingServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static com.liferay.portal.kernel.model.PluginSetting updatePluginSetting(
-		long companyId, java.lang.String pluginId, java.lang.String pluginType,
-		java.lang.String roles, boolean active)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService()
-				   .updatePluginSetting(companyId, pluginId, pluginType, roles,
-			active);
-	}
 
 	/**
 	* Returns the OSGi service identifier.
 	*
 	* @return the OSGi service identifier
 	*/
-	public static java.lang.String getOSGiServiceIdentifier() {
+	public static String getOSGiServiceIdentifier() {
 		return getService().getOSGiServiceIdentifier();
+	}
+
+	public static com.liferay.portal.kernel.model.PluginSetting updatePluginSetting(
+		long companyId, String pluginId, String pluginType, String roles,
+		boolean active)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .updatePluginSetting(companyId, pluginId, pluginType, roles,
+			active);
 	}
 
 	public static PluginSettingService getService() {

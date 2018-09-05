@@ -59,7 +59,7 @@ public class CounterLocalServiceUtil {
 	* @return the new counter
 	*/
 	public static com.liferay.counter.kernel.model.Counter createCounter(
-		java.lang.String name) {
+		String name) {
 		return getService().createCounter(name);
 	}
 
@@ -82,42 +82,8 @@ public class CounterLocalServiceUtil {
 	* @throws PortalException if a counter with the primary key could not be found
 	*/
 	public static com.liferay.counter.kernel.model.Counter deleteCounter(
-		java.lang.String name)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		String name) throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().deleteCounter(name);
-	}
-
-	public static com.liferay.counter.kernel.model.Counter fetchCounter(
-		java.lang.String name) {
-		return getService().fetchCounter(name);
-	}
-
-	/**
-	* Returns the counter with the primary key.
-	*
-	* @param name the primary key of the counter
-	* @return the counter
-	* @throws PortalException if a counter with the primary key could not be found
-	*/
-	public static com.liferay.counter.kernel.model.Counter getCounter(
-		java.lang.String name)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getCounter(name);
-	}
-
-	/**
-	* Updates the counter in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param counter the counter
-	* @return the counter that was updated
-	*/
-	public static com.liferay.counter.kernel.model.Counter updateCounter(
-		com.liferay.counter.kernel.model.Counter counter) {
-		return getService().updateCounter(counter);
-	}
-
-	public static com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
-		return getService().dynamicQuery();
 	}
 
 	/**
@@ -129,28 +95,8 @@ public class CounterLocalServiceUtil {
 		return getService().deletePersistedModel(persistedModel);
 	}
 
-	public static com.liferay.portal.kernel.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getPersistedModel(primaryKeyObj);
-	}
-
-	/**
-	* Returns the number of counters.
-	*
-	* @return the number of counters
-	*/
-	public static int getCountersCount() {
-		return getService().getCountersCount();
-	}
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	public static java.lang.String getOSGiServiceIdentifier() {
-		return getService().getOSGiServiceIdentifier();
+	public static com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
+		return getService().dynamicQuery();
 	}
 
 	/**
@@ -204,26 +150,6 @@ public class CounterLocalServiceUtil {
 	}
 
 	/**
-	* Returns a range of all the counters.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.counter.model.impl.CounterModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param start the lower bound of the range of counters
-	* @param end the upper bound of the range of counters (not inclusive)
-	* @return the range of counters
-	*/
-	public static java.util.List<com.liferay.counter.kernel.model.Counter> getCounters(
-		int start, int end) {
-		return getService().getCounters(start, end);
-	}
-
-	public static java.util.List<java.lang.String> getNames() {
-		return getService().getNames();
-	}
-
-	/**
 	* Returns the number of rows matching the dynamic query.
 	*
 	* @param dynamicQuery the dynamic query
@@ -247,28 +173,100 @@ public class CounterLocalServiceUtil {
 		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
+	public static com.liferay.counter.kernel.model.Counter fetchCounter(
+		String name) {
+		return getService().fetchCounter(name);
+	}
+
+	/**
+	* Returns the counter with the primary key.
+	*
+	* @param name the primary key of the counter
+	* @return the counter
+	* @throws PortalException if a counter with the primary key could not be found
+	*/
+	public static com.liferay.counter.kernel.model.Counter getCounter(
+		String name) throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getCounter(name);
+	}
+
+	/**
+	* Returns a range of all the counters.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.counter.model.impl.CounterModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param start the lower bound of the range of counters
+	* @param end the upper bound of the range of counters (not inclusive)
+	* @return the range of counters
+	*/
+	public static java.util.List<com.liferay.counter.kernel.model.Counter> getCounters(
+		int start, int end) {
+		return getService().getCounters(start, end);
+	}
+
+	/**
+	* Returns the number of counters.
+	*
+	* @return the number of counters
+	*/
+	public static int getCountersCount() {
+		return getService().getCountersCount();
+	}
+
+	public static java.util.List<String> getNames() {
+		return getService().getNames();
+	}
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	public static String getOSGiServiceIdentifier() {
+		return getService().getOSGiServiceIdentifier();
+	}
+
+	public static com.liferay.portal.kernel.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getPersistedModel(primaryKeyObj);
+	}
+
 	public static long increment() {
 		return getService().increment();
 	}
 
-	public static long increment(java.lang.String name) {
+	public static long increment(String name) {
 		return getService().increment(name);
 	}
 
-	public static long increment(java.lang.String name, int size) {
+	public static long increment(String name, int size) {
 		return getService().increment(name, size);
 	}
 
-	public static void rename(java.lang.String oldName, java.lang.String newName) {
+	public static void rename(String oldName, String newName) {
 		getService().rename(oldName, newName);
 	}
 
-	public static void reset(java.lang.String name) {
+	public static void reset(String name) {
 		getService().reset(name);
 	}
 
-	public static void reset(java.lang.String name, long size) {
+	public static void reset(String name, long size) {
 		getService().reset(name, size);
+	}
+
+	/**
+	* Updates the counter in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param counter the counter
+	* @return the counter that was updated
+	*/
+	public static com.liferay.counter.kernel.model.Counter updateCounter(
+		com.liferay.counter.kernel.model.Counter counter) {
+		return getService().updateCounter(counter);
 	}
 
 	public static CounterLocalService getService() {

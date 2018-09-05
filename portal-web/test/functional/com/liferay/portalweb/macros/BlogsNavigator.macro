@@ -1,22 +1,47 @@
 <definition>
-	<command name="gotoAbstractField">
-		<execute macro="Panel#expandPanel">
-			<var name="panelHeading" value="Configuration" />
-		</execute>
-	</command>
-
 	<command name="gotoAddEntry">
 		<if>
 			<condition function="IsElementPresent" locator1="Blogs#ADD_BLOGS_ENTRY" />
 			<then>
-				<execute function="AssertClick" locator1="Blogs#ADD_BLOGS_ENTRY" value1="Add Blog Entry" />
+				<execute function="Click" locator1="Blogs#ADD_BLOGS_ENTRY" />
 			</then>
 			<else>
-				<execute function="Click" locator1="Button#PLUS" />
+				<var name="key_text" value="New Entry" />
+
+				<execute function="AssertClick" locator1="Button#ANY" value1="New Entry" />
 			</else>
 		</if>
 
 		<execute function="AssertVisible" locator1="BlogsEntry#ENTRY_COVER_IMAGE_SELECT_FILE" />
+	</command>
+
+	<command name="gotoBlogsEntriesPermissionsCP">
+		<execute macro="LexiconEntry#gotoHeaderMenuItem">
+			<var name="menuItem" value="Entries Permissions" />
+		</execute>
+
+		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
+	</command>
+
+	<command name="gotoBlogsEntryPermissionsCP">
+		<execute macro="LexiconEntry#gotoEntryMenuItem">
+			<var name="menuItem" value="Permissions" />
+			<var name="rowEntry" value="${entryTitle}" />
+		</execute>
+
+		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
+	</command>
+
+	<command name="gotoBlogsEntryPermissionsPG">
+		<execute macro="Portlet#mouseOverPortletTitle">
+			<var name="portletTitleName" value="Blogs" />
+		</execute>
+
+		<execute macro="LexiconEntry#gotoEllipsisMenuItem">
+			<var name="menuItem" value="Permissions" />
+		</execute>
+
+		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 	</command>
 
 	<command name="gotoBrowseImage">
@@ -32,20 +57,9 @@
 	</command>
 
 	<command name="gotoConfigurationSetupPG">
-		<if>
-			<equals arg1="${soPage}" arg2="true" />
-			<then>
-				<execute macro="SOPortlet#gotoPortletOptions">
-					<var name="portletName" value="Blogs" />
-					<var name="portletOption" value="Configuration" />
-				</execute>
-			</then>
-			<else>
-				<execute macro="Portlet#gotoPortletOptions">
-					<var name="portletOption" value="Configuration" />
-				</execute>
-			</else>
-		</if>
+		<execute macro="Portlet#gotoPortletOptions">
+			<var name="portletOption" value="Configuration" />
+		</execute>
 
 		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 	</command>
@@ -56,7 +70,7 @@
 
 	<command name="gotoDraftCP">
 		<execute macro="Portlet#changeDisplayStyle">
-			<var name="displayStyle" value="Descriptive" />
+			<var name="displayStyle" value="descriptive" />
 		</execute>
 
 		<var name="key_entryTitle" value="${entryTitle}" />
@@ -75,8 +89,8 @@
 	</command>
 
 	<command name="gotoEditCP">
-		<execute macro="Portlet#changeDisplayStyle">
-			<var name="displayStyle" value="Descriptive" />
+		<execute macro="LexiconEntry#changeDisplayStyle">
+			<var name="displayStyle" value="list" />
 		</execute>
 
 		<var name="key_entryTitle" value="${entryTitle}" />
@@ -85,10 +99,14 @@
 
 		<execute function="Click" locator1="Blogs#DESCRIPTIVE_VIEW_ENTRY_OPTIONS_DROPDOWN" />
 
-		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Edit" />
+		</execute>
 
 		<execute function="AssertElementPresent" locator1="Icon#BACK" />
-		<execute function="AssertVisible" locator1="AlloyEditor#TITLE_FIELD" />
+		<execute function="AssertVisible" locator1="AlloyEditor#EDITOR">
+			<var name="key_editor" value="title" />
+		</execute>
 	</command>
 
 	<command name="gotoEditPG">
@@ -102,6 +120,10 @@
 				<execute function="Click" locator1="Button#EDIT_PENCIL" />
 			</then>
 			<else>
+				<execute macro="Portlet#mouseOverPortletTitle">
+					<var name="portletTitleName" value="Blogs" />
+				</execute>
+
 				<execute macro="PortletEntry#clickEditFromEllipsis" />
 			</else>
 		</if>
@@ -110,8 +132,8 @@
 	</command>
 
 	<command name="gotoEntryCP">
-		<execute macro="Portlet#changeDisplayStyle">
-			<var name="displayStyle" value="Descriptive" />
+		<execute macro="LexiconEntry#changeDisplayStyle">
+			<var name="displayStyle" value="list" />
 		</execute>
 
 		<var name="key_entryTitle" value="${entryTitle}" />
@@ -162,9 +184,13 @@
 		<execute function="AssertTextEquals" locator1="BlogsEntry#TITLE" value1="${entryTitle}" />
 	</command>
 
+	<command name="gotoSelectFile">
+		<execute function="AssertClick" locator1="BlogsEntry#ENTRY_COVER_IMAGE_SELECT_FILE" value1="Select File" />
+	</command>
+
 	<command name="moveToRecycleBinCP">
-		<execute macro="Portlet#changeDisplayStyle">
-			<var name="displayStyle" value="Descriptive" />
+		<execute macro="LexiconEntry#changeDisplayStyle">
+			<var name="displayStyle" value="list" />
 		</execute>
 
 		<var name="key_entryTitle" value="${entryTitle}" />
@@ -184,7 +210,9 @@
 		<execute function="AssertTextEquals" locator1="Blogs#ENTRY_TABLE_TITLE" value1="${entryTitle}" />
 		<execute function="AssertTextEquals" locator1="Blogs#ENTRY_TABLE_STATUS" value1="Draft" />
 
-		<execute function="Click" locator1="Blogs#ENTRY_TABLE_ACTIONS" />
+		<execute macro="LexiconEntry#openEntryMenu">
+			<var name="rowEntry" value="${entryTitle}" />
+		</execute>
 
 		<execute macro="PortletEntry#clickMoveToRecycleBin" />
 

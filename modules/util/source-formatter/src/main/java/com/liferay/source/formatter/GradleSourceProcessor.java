@@ -14,6 +14,8 @@
 
 package com.liferay.source.formatter;
 
+import java.io.IOException;
+
 import java.util.List;
 
 /**
@@ -23,7 +25,7 @@ import java.util.List;
 public class GradleSourceProcessor extends BaseSourceProcessor {
 
 	@Override
-	protected List<String> doGetFileNames() throws Exception {
+	protected List<String> doGetFileNames() throws IOException {
 		return getFileNames(new String[0], getIncludes());
 	}
 
@@ -32,6 +34,6 @@ public class GradleSourceProcessor extends BaseSourceProcessor {
 		return _INCLUDES;
 	}
 
-	private static final String[] _INCLUDES = new String[] {"**/build.gradle"};
+	private static final String[] _INCLUDES = {"**/*.gradle"};
 
 }

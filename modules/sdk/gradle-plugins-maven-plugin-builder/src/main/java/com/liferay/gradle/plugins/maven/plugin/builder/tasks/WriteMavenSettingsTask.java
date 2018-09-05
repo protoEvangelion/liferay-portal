@@ -16,6 +16,7 @@ package com.liferay.gradle.plugins.maven.plugin.builder.tasks;
 
 import com.liferay.gradle.plugins.maven.plugin.builder.internal.util.GradleUtil;
 import com.liferay.gradle.plugins.maven.plugin.builder.internal.util.XMLUtil;
+import com.liferay.gradle.util.FileUtil;
 import com.liferay.gradle.util.Validator;
 
 import java.io.File;
@@ -127,7 +128,7 @@ public class WriteMavenSettingsTask extends DefaultTask {
 		if (localRepositoryDir != null) {
 			XMLUtil.appendElement(
 				document, settingsElement, "localRepository",
-				localRepositoryDir.getAbsolutePath());
+				FileUtil.getAbsolutePath(localRepositoryDir));
 		}
 
 		String repositoryUrl = getRepositoryUrl();
@@ -162,18 +163,18 @@ public class WriteMavenSettingsTask extends DefaultTask {
 			XMLUtil.appendElement(
 				document, proxyElement, "port", proxyPort.toString());
 
-			_appendNonNullElement(
+			_appendNonnullElement(
 				document, proxyElement, "username", getProxyUser());
-			_appendNonNullElement(
+			_appendNonnullElement(
 				document, proxyElement, "password", getProxyPassword());
-			_appendNonNullElement(
+			_appendNonnullElement(
 				document, proxyElement, "nonProxyHosts", getNonProxyHosts());
 		}
 
 		XMLUtil.write(document, getOutputFile());
 	}
 
-	private static void _appendNonNullElement(
+	private static void _appendNonnullElement(
 		Document document, Element parentElement, String name, String text) {
 
 		if (Validator.isNull(text)) {

@@ -18,10 +18,10 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.asset.kernel.model.AssetLink;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -100,7 +100,7 @@ public class AssetLinkCacheModel implements CacheModel<AssetLink>,
 		assetLinkImpl.setUserId(userId);
 
 		if (userName == null) {
-			assetLinkImpl.setUserName(StringPool.BLANK);
+			assetLinkImpl.setUserName("");
 		}
 		else {
 			assetLinkImpl.setUserName(userName);
@@ -152,7 +152,7 @@ public class AssetLinkCacheModel implements CacheModel<AssetLink>,
 		objectOutput.writeLong(userId);
 
 		if (userName == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(userName);

@@ -23,8 +23,11 @@ import com.liferay.portal.kernel.service.ServiceWrapper;
  *
  * @author Brian Wing Shun Chan
  * @see TrashVersionLocalService
+ * @deprecated As of Judson (7.1.x), replaced by {@link
+com.liferay.trash.service.impl.TrashVersionLocalServiceImpl}
  * @generated
  */
+@Deprecated
 @ProviderType
 public class TrashVersionLocalServiceWrapper implements TrashVersionLocalService,
 	ServiceWrapper<TrashVersionLocalService> {
@@ -143,7 +146,7 @@ public class TrashVersionLocalServiceWrapper implements TrashVersionLocalService
 	}
 
 	/**
-	* @deprecated As of 7.0.0, replaced by {@link #fetchVersion(String, long)}
+	* @deprecated As of Judson (7.1.x), replaced by {@link #fetchVersion(String, long)}
 	*/
 	@Deprecated
 	@Override

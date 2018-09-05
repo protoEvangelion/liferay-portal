@@ -14,6 +14,7 @@
 
 package com.liferay.portal.servlet.filters.i18n;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -27,7 +28,6 @@ import com.liferay.portal.kernel.util.CookieKeys;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -79,9 +79,8 @@ public class I18nFilter extends BasePortalFilter {
 
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	protected String getDefaultLanguageId(HttpServletRequest request) {
@@ -103,9 +102,7 @@ public class I18nFilter extends BasePortalFilter {
 		if (Validator.isNotNull(pathInfo)) {
 			String[] pathInfoElements = pathInfo.split("/");
 
-			if (Validator.isNotNull(pathInfoElements) &&
-				(pathInfoElements.length > 1)) {
-
+			if ((pathInfoElements != null) && (pathInfoElements.length > 1)) {
 				friendlyURL = StringPool.SLASH + pathInfoElements[1];
 			}
 		}
@@ -192,7 +189,7 @@ public class I18nFilter extends BasePortalFilter {
 		LayoutSet layoutSet = (LayoutSet)request.getAttribute(
 			WebKeys.VIRTUAL_HOST_LAYOUT_SET);
 
-		if ((layoutSet != null) &&
+		if ((layoutSet != null) && !layoutSet.isPrivateLayout() &&
 			requestURI.startsWith(
 				PropsValues.LAYOUT_FRIENDLY_URL_PUBLIC_SERVLET_MAPPING)) {
 
@@ -213,7 +210,7 @@ public class I18nFilter extends BasePortalFilter {
 		}
 
 		if (Validator.isNotNull(queryString)) {
-			redirect += StringPool.QUESTION + request.getQueryString();
+			redirect += StringPool.QUESTION + queryString;
 		}
 
 		return redirect;
@@ -228,7 +225,7 @@ public class I18nFilter extends BasePortalFilter {
 
 		String requestedLanguageId = null;
 
-		if (Validator.isNotNull(locale)) {
+		if (locale != null) {
 			requestedLanguageId = LocaleUtil.toLanguageId(locale);
 		}
 
@@ -271,9 +268,8 @@ public class I18nFilter extends BasePortalFilter {
 		if (request.getAttribute(SKIP_FILTER) != null) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	protected boolean isForwardedByI18nServlet(HttpServletRequest request) {
@@ -282,18 +278,16 @@ public class I18nFilter extends BasePortalFilter {
 
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	protected boolean isWidget(HttpServletRequest request) {
 		if (request.getAttribute(WebKeys.WIDGET) != null) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	protected String prependI18nLanguageId(
@@ -331,10 +325,9 @@ public class I18nFilter extends BasePortalFilter {
 
 				return requestedLanguageId;
 			}
-			else {
-				return prependIfRequestedLocaleDiffersFromDefaultLocale(
-					defaultLanguageId, requestedLanguageId);
-			}
+
+			return prependIfRequestedLocaleDiffersFromDefaultLocale(
+				defaultLanguageId, requestedLanguageId);
 		}
 
 		return null;

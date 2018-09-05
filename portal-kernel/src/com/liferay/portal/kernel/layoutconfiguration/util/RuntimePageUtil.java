@@ -15,7 +15,6 @@
 package com.liferay.portal.kernel.layoutconfiguration.util;
 
 import com.liferay.portal.kernel.layoutconfiguration.util.xml.RuntimeLogic;
-import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 import com.liferay.portal.kernel.template.TemplateResource;
 import com.liferay.portal.kernel.util.StringBundler;
 
@@ -39,8 +38,6 @@ public class RuntimePageUtil {
 	}
 
 	public static RuntimePage getRuntimePage() {
-		PortalRuntimePermission.checkGetBeanProperty(RuntimePageUtil.class);
-
 		return _runtimePage;
 	}
 
@@ -51,6 +48,15 @@ public class RuntimePageUtil {
 
 		getRuntimePage().processCustomizationSettings(
 			request, response, templateResource);
+	}
+
+	public static void processCustomizationSettings(
+			HttpServletRequest request, HttpServletResponse response,
+			TemplateResource templateResource, String langType)
+		throws Exception {
+
+		getRuntimePage().processCustomizationSettings(
+			request, response, templateResource, langType);
 	}
 
 	public static void processTemplate(
@@ -64,10 +70,29 @@ public class RuntimePageUtil {
 
 	public static void processTemplate(
 			HttpServletRequest request, HttpServletResponse response,
+			String portletId, TemplateResource templateResource,
+			String langType)
+		throws Exception {
+
+		getRuntimePage().processTemplate(
+			request, response, portletId, templateResource, langType);
+	}
+
+	public static void processTemplate(
+			HttpServletRequest request, HttpServletResponse response,
 			TemplateResource templateResource)
 		throws Exception {
 
 		getRuntimePage().processTemplate(request, response, templateResource);
+	}
+
+	public static void processTemplate(
+			HttpServletRequest request, HttpServletResponse response,
+			TemplateResource templateResource, String langType)
+		throws Exception {
+
+		getRuntimePage().processTemplate(
+			request, response, templateResource, langType);
 	}
 
 	public static String processXML(
@@ -87,8 +112,6 @@ public class RuntimePageUtil {
 	}
 
 	public void setRuntimePage(RuntimePage runtimePage) {
-		PortalRuntimePermission.checkSetBeanProperty(getClass());
-
 		_runtimePage = runtimePage;
 	}
 

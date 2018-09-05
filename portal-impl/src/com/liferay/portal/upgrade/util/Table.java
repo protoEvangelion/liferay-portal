@@ -14,6 +14,7 @@
 
 package com.liferay.portal.upgrade.util;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.dao.jdbc.postgresql.PostgreSQLJDBCUtil;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
@@ -31,7 +32,6 @@ import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.kernel.util.Validator;
@@ -39,6 +39,7 @@ import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.Reader;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -80,8 +81,9 @@ public class Table {
 
 		if (value == null) {
 			throw new UpgradeException(
-				"Nulls should never be inserted into the database. Attempted " +
-					"to append column to " + sb.toString() + ".");
+				StringBundler.concat(
+					"Nulls should never be inserted into the database. ",
+					"Attempted to append column to ", sb.toString(), "."));
 		}
 		else if (value instanceof byte[]) {
 			sb.append(Base64.encode((byte[])value));
@@ -136,7 +138,7 @@ public class Table {
 	}
 
 	public void generateTempFile() throws Exception {
-		Connection con = DataAccess.getUpgradeOptimizedConnection();
+		Connection con = DataAccess.getConnection();
 
 		try {
 			generateTempFile(con);
@@ -164,7 +166,8 @@ public class Table {
 
 		if (_log.isInfoEnabled()) {
 			_log.info(
-				"Starting backup of " + _tableName + " to " + tempFileName);
+				StringBundler.concat(
+					"Starting backup of ", _tableName, " to ", tempFileName));
 		}
 
 		UnsyncBufferedWriter unsyncBufferedWriter = new UnsyncBufferedWriter(
@@ -190,16 +193,18 @@ public class Table {
 				catch (StagnantRowException sre) {
 					if (_log.isWarnEnabled()) {
 						_log.warn(
-							"Skipping stagnant data in " + _tableName + ": " +
-								sre.getMessage());
+							StringBundler.concat(
+								"Skipping stagnant data in ", _tableName, ": ",
+								sre.getMessage()));
 					}
 				}
 			}
 
 			if (_log.isInfoEnabled()) {
 				_log.info(
-					"Finished backup of " + _tableName + " to " + tempFileName +
-						" in " + stopWatch.getTime() + " ms");
+					StringBundler.concat(
+						"Finished backup of ", _tableName, " to ", tempFileName,
+						" in ", String.valueOf(stopWatch.getTime()), " ms"));
 			}
 		}
 		catch (Exception e) {
@@ -299,11 +304,10 @@ public class Table {
 
 			int y = createSQL.indexOf(" ", x);
 
-			return createSQL.substring(x, y).trim();
+			return StringUtil.trim(createSQL.substring(x, y));
 		}
-		else {
-			return _tableName;
-		}
+
+		return _tableName;
 	}
 
 	public int[] getOrder() {
@@ -335,9 +339,8 @@ public class Table {
 
 			return "select * from " + _tableName;
 		}
-		else {
-			return _selectSQL;
-		}
+
+		return _selectSQL;
 	}
 
 	public String getTableName() {
@@ -399,22 +402,26 @@ public class Table {
 					value = StringPool.BLANK;
 				}
 				else {
-					UnsyncBufferedReader unsyncBufferedReader =
-						new UnsyncBufferedReader(clob.getCharacterStream());
+					try (Reader reader = clob.getCharacterStream();
+						UnsyncBufferedReader unsyncBufferedReader =
+							new UnsyncBufferedReader(reader)) {
 
-					StringBundler sb = new StringBundler();
+						StringBundler sb = new StringBundler();
 
-					String line = null;
+						String line = null;
 
-					while ((line = unsyncBufferedReader.readLine()) != null) {
-						if (sb.length() != 0) {
-							sb.append(_SAFE_TABLE_NEWLINE_CHARACTER);
+						while ((line =
+									unsyncBufferedReader.readLine()) != null) {
+
+							if (sb.length() != 0) {
+								sb.append(_SAFE_TABLE_NEWLINE_CHARACTER);
+							}
+
+							sb.append(line);
 						}
 
-						sb.append(line);
+						value = sb.toString();
 					}
-
-					value = sb.toString();
 				}
 			}
 			catch (Exception e) {
@@ -469,7 +476,7 @@ public class Table {
 	}
 
 	public void populateTable() throws Exception {
-		Connection con = DataAccess.getUpgradeOptimizedConnection();
+		Connection con = DataAccess.getConnection();
 
 		try {
 			populateTable(con);
@@ -498,8 +505,9 @@ public class Table {
 
 				if (values.length != columns.length) {
 					throw new UpgradeException(
-						"Column lengths differ between temp file and schema. " +
-							"Attempted to insert row " + line + ".");
+						StringBundler.concat(
+							"Column lengths differ between temp file and ",
+							"schema. Attempted to insert row ", line, "."));
 				}
 
 				int[] order = getOrder();
@@ -588,8 +596,9 @@ public class Table {
 			else {
 				DateFormat df = DateUtil.getISOFormat();
 
-				ps.setTimestamp(
-					paramIndex, new Timestamp(df.parse(value).getTime()));
+				Date date = df.parse(value);
+
+				ps.setTimestamp(paramIndex, new Timestamp(date.getTime()));
 			}
 		}
 		else if (t == Types.TINYINT) {
@@ -655,7 +664,7 @@ public class Table {
 		String sql = sb.toString();
 
 		try {
-			con = DataAccess.getUpgradeOptimizedConnection();
+			con = DataAccess.getConnection();
 
 			ps = con.prepareStatement(sql);
 

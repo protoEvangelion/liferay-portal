@@ -41,63 +41,14 @@ public class RepositoryServiceUtil {
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.portal.service.impl.RepositoryServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
 	public static com.liferay.portal.kernel.model.Repository addRepository(
-		long groupId, long classNameId, long parentFolderId,
-		java.lang.String name, java.lang.String description,
-		java.lang.String portletId,
+		long groupId, long classNameId, long parentFolderId, String name,
+		String description, String portletId,
 		com.liferay.portal.kernel.util.UnicodeProperties typeSettingsProperties,
 		ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
 				   .addRepository(groupId, classNameId, parentFolderId, name,
 			description, portletId, typeSettingsProperties, serviceContext);
-	}
-
-	public static com.liferay.portal.kernel.model.Repository getRepository(
-		long repositoryId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getRepository(repositoryId);
-	}
-
-	public static com.liferay.portal.kernel.util.UnicodeProperties getTypeSettingsProperties(
-		long repositoryId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getTypeSettingsProperties(repositoryId);
-	}
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	public static java.lang.String getOSGiServiceIdentifier() {
-		return getService().getOSGiServiceIdentifier();
-	}
-
-	/**
-	* @deprecated As of 7.0.0, with no direct replacement
-	*/
-	@Deprecated
-	public static java.lang.String[] getSupportedConfigurations(
-		long classNameId) {
-		return getService().getSupportedConfigurations(classNameId);
-	}
-
-	/**
-	* @deprecated As of 7.0.0, with no direct replacement
-	*/
-	@Deprecated
-	public static java.lang.String[] getSupportedParameters(
-		java.lang.String className, java.lang.String configuration) {
-		return getService().getSupportedParameters(className, configuration);
-	}
-
-	/**
-	* @deprecated As of 7.0.0, with no direct replacement
-	*/
-	@Deprecated
-	public static java.lang.String[] getSupportedParameters(long classNameId,
-		java.lang.String configuration) {
-		return getService().getSupportedParameters(classNameId, configuration);
 	}
 
 	public static void checkRepository(long repositoryId)
@@ -110,8 +61,55 @@ public class RepositoryServiceUtil {
 		getService().deleteRepository(repositoryId);
 	}
 
-	public static void updateRepository(long repositoryId,
-		java.lang.String name, java.lang.String description)
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	public static String getOSGiServiceIdentifier() {
+		return getService().getOSGiServiceIdentifier();
+	}
+
+	public static com.liferay.portal.kernel.model.Repository getRepository(
+		long repositoryId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getRepository(repositoryId);
+	}
+
+	/**
+	* @deprecated As of Wilberforce (7.0.x), with no direct replacement
+	*/
+	@Deprecated
+	public static String[] getSupportedConfigurations(long classNameId) {
+		return getService().getSupportedConfigurations(classNameId);
+	}
+
+	/**
+	* @deprecated As of Wilberforce (7.0.x), with no direct replacement
+	*/
+	@Deprecated
+	public static String[] getSupportedParameters(long classNameId,
+		String configuration) {
+		return getService().getSupportedParameters(classNameId, configuration);
+	}
+
+	/**
+	* @deprecated As of Wilberforce (7.0.x), with no direct replacement
+	*/
+	@Deprecated
+	public static String[] getSupportedParameters(String className,
+		String configuration) {
+		return getService().getSupportedParameters(className, configuration);
+	}
+
+	public static com.liferay.portal.kernel.util.UnicodeProperties getTypeSettingsProperties(
+		long repositoryId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getTypeSettingsProperties(repositoryId);
+	}
+
+	public static void updateRepository(long repositoryId, String name,
+		String description)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		getService().updateRepository(repositoryId, name, description);
 	}

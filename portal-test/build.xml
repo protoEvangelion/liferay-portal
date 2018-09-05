@@ -13,10 +13,14 @@
 	<path id="portal.test.classpath">
 		<pathelement location="${project.dir}/portal-kernel/classes" />
 		<path refid="lib.classpath" />
+		<path refid="lib.pre.classpath" />
 		<pathelement location="${project.dir}/modules/core/registry-api/classes" />
 	</path>
 
 	<target depends="build-common-java.deploy" name="deploy">
-		<move file="${deploy.dir}/${jar.file}.jar" tofile="${deploy.dir}/${manifest.bundle.symbolic.name}.jar" />
+		<move
+			file="${deploy.dir}/${jar.file}.jar"
+			tofile="${deploy.dir}/${manifest.bundle.symbolic.name}.jar"
+		/>
 	</target>
 </project>

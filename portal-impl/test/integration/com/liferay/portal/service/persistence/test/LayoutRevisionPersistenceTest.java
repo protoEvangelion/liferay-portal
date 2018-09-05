@@ -200,14 +200,14 @@ public class LayoutRevisionPersistenceTest {
 			newLayoutRevision.getLayoutBranchId());
 		Assert.assertEquals(existingLayoutRevision.getParentLayoutRevisionId(),
 			newLayoutRevision.getParentLayoutRevisionId());
-		Assert.assertEquals(existingLayoutRevision.getHead(),
-			newLayoutRevision.getHead());
-		Assert.assertEquals(existingLayoutRevision.getMajor(),
-			newLayoutRevision.getMajor());
+		Assert.assertEquals(existingLayoutRevision.isHead(),
+			newLayoutRevision.isHead());
+		Assert.assertEquals(existingLayoutRevision.isMajor(),
+			newLayoutRevision.isMajor());
 		Assert.assertEquals(existingLayoutRevision.getPlid(),
 			newLayoutRevision.getPlid());
-		Assert.assertEquals(existingLayoutRevision.getPrivateLayout(),
-			newLayoutRevision.getPrivateLayout());
+		Assert.assertEquals(existingLayoutRevision.isPrivateLayout(),
+			newLayoutRevision.isPrivateLayout());
 		Assert.assertEquals(existingLayoutRevision.getName(),
 			newLayoutRevision.getName());
 		Assert.assertEquals(existingLayoutRevision.getTitle(),
@@ -251,6 +251,13 @@ public class LayoutRevisionPersistenceTest {
 		_persistence.countByPlid(RandomTestUtil.nextLong());
 
 		_persistence.countByPlid(0L);
+	}
+
+	@Test
+	public void testCountByStatus() throws Exception {
+		_persistence.countByStatus(RandomTestUtil.nextInt());
+
+		_persistence.countByStatus(0);
 	}
 
 	@Test
@@ -315,6 +322,23 @@ public class LayoutRevisionPersistenceTest {
 			RandomTestUtil.randomBoolean(), RandomTestUtil.nextLong());
 
 		_persistence.countByL_H_P(0L, RandomTestUtil.randomBoolean(), 0L);
+	}
+
+	@Test
+	public void testCountByL_H_P_Collection() throws Exception {
+		_persistence.countByL_H_P_Collection(RandomTestUtil.nextLong(),
+			RandomTestUtil.randomBoolean(), RandomTestUtil.nextLong());
+
+		_persistence.countByL_H_P_Collection(0L,
+			RandomTestUtil.randomBoolean(), 0L);
+	}
+
+	@Test
+	public void testCountByL_H_S() throws Exception {
+		_persistence.countByL_H_S(RandomTestUtil.nextLong(),
+			RandomTestUtil.randomBoolean(), RandomTestUtil.nextInt());
+
+		_persistence.countByL_H_S(0L, RandomTestUtil.randomBoolean(), 0);
 	}
 
 	@Test

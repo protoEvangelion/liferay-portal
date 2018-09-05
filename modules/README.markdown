@@ -16,6 +16,19 @@ sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
 ```
 
+### Enable Java Compiler Warnings
+
+In order to enable Java [compiler warnings](http://docs.oracle.com/javase/8/docs/technotes/tools/windows/javac.html#BHCJCABJ)
+when building an OSGi module with Gradle, please set the `-D[task name].lint`
+system property (where `[task name]` is the name of the [`JavaCompile`](https://docs.gradle.org/current/dsl/org.gradle.api.tasks.compile.JavaCompile.html)
+task to configure) to a comma-separated list of warnings. For example:
+
+```bash
+./gradlew compileJava -DcompileJava.lint=deprecation,unchecked
+./gradlew compileTestJava -DcompileJava.lint=deprecation,unchecked
+./gradlew compileTestIntegrationJava -DcompileJava.lint=deprecation,unchecked
+```
+
 ### Deploy Directory
 
 The module's deploy directory is the `deploy.destinationDir` property (the
@@ -25,15 +38,21 @@ by default.
 
 The logic that chooses the default deploy directory is as follows:
 
-1. If the project directory contains a `.lfrbuild-app-server-lib` marker file,
-the module is deployed to `${app.server.portal.dir}/WEB-INF/lib`.
-2. If the project directory contains a `.lfrbuild-tool` marker file, the module
-is deployed to `${liferay.home}/tools/${module.dir.name}`.
-3. If the project directory contains a `.lfrbuild-static` marker file, the
-module is deployed to `${liferay home}/osgi/static`.
-4. If the module symbolic name starts with `com.liferay.portal.`, the module is
-deployed to `${liferay home}/osgi/portal`.
-5. Otherwise, the module is deployed to `${liferay home}/osgi/modules`.
+- For OSGi modules:
+	1. If the project directory contains a `.lfrbuild-app-server-lib` marker
+	file, the module is deployed to `${app.server.portal.dir}/WEB-INF/lib`.
+	2. If the project directory contains a `.lfrbuild-tool` marker file, the
+	module is deployed to `${liferay.home}/tools/${module.dir.name}`.
+	3. If the project directory contains a `.lfrbuild-static` marker file, the
+	module is deployed to `${liferay home}/osgi/static`.
+	4. If the module symbolic name starts with `com.liferay.portal.`, the module
+	is deployed to `${liferay home}/osgi/portal`.
+	5. Otherwise, the module is deployed to `${liferay home}/osgi/modules`.
+- For themes:
+	1. If the `required-for-startup` property in the
+  `src/WEB-INF/liferay-plugin-package.properties` file is `true`, the theme is
+	deployed to `${liferay home}/osgi/war`.
+	2. Otherwise, the theme is deployed to `${liferay home}/deploy`.
 
 If possible, you should always use these marker files to specify the deploy
 directory of your modules. If none of these cases apply to you, then add
@@ -58,8 +77,15 @@ module with `ant all` and the other marker files choose the deploy directory.
 
 File Name | Description
 --------- | -----------
-`.lfrbuild-portal-pre` | Builds the module, during the `ant compile` execution, in the `tmp/lib-pre` directory before building `portal-kernel`, `portal-impl`, etc.
+`.lfrbuild-deploy-wsdd` | Deploys the WSDD fragment JAR file when deploying the OSGi module.
+`.lfrbuild-lowest-major-version` | Declares the lowest major version of the released artifact to use in the semantic versioning check.
+`.lfrbuild-portal-deprecated` | Marks the module as deprecated and skip deployment during the `ant all` execution. `-test` modules never have this file.
+`.lfrbuild-portal-pre` | Builds the module during the `ant compile` execution in the `tmp/lib-pre` directory before building `portal-kernel`, `portal-impl`, etc.
+`.lfrbuild-portal-private` | Deploys the module during the `ant all` execution in a private branch. `-test` modules never have this file.
+`.lfrbuild-portal-public` | Deploys the module during the `ant all` execution in a public branch. `-test` modules never have this file.
 `.lfrbuild-portal` | Deploys the module during the `ant all` execution. `-test` modules never have this file.
+`.lfrbuild-slim-private` | Deploys the module during the `ant all` execution if building a Liferay Slim Runtime in a private branch.
+`.lfrbuild-slim-public` | Deploys the module during the `ant all` execution if building a Liferay Slim Runtime in a public branch.
 `.lfrbuild-slim` | Deploys the module during the `ant all` execution if building a Liferay Slim Runtime.
 
 ### Continuous Integration
@@ -84,12 +110,20 @@ File Name | Description
 `.lfrbuild-faro-connector` | Deploys the module to the Faro client portal directory.
 `.lfrbuild-faro-site` | Deploys the module to the Faro site portal directory.
 
+### LCS
+
+File Name | Description
+--------- | -----------
+`.lfrbuild-spark-job` | Configures the module as an Apache Spark job.
+`.lfrbuild-spring-boot` | Configures the module as a Spring Boot application.
+
 ### Release
 
 File Name | Description
 --------- | -----------
-`.lfrbuild-releng-ignore` | Ignores checking the module for staleness, so the module is never publishable. A *stale* module has code that is different from the latest published release.
-`.lfrrelease-src` | Includes the app's source code in the DXP release, when added to the root of an app.
+`.lfrbuild-release-src` | Includes the app's source code in the DXP release, when added to the root of an app.
+`.lfrbuild-releng-ignore` | Ignores checking the module for stale artifacts. An artifact is *stale* when the module has code that is different from the latest published release. This module can never be published. If a `.lfrbuild-releng-ignore` file is added to a parent directory, the whole subtree is ignored.
+`.lfrbuild-releng-skip-update-file-versions` | Prevents the `updateFileVersions` task from converting project dependencies into module dependencies. If a `.lfrbuild-releng-skip-update-file-versions` file is added to a parent directory, the whole subtree is skipped.
 
 ### Themes
 
@@ -115,17 +149,17 @@ closure arguments.
 	* Always sort dependencies alphabetically.
 	* Separate dependencies of different configurations with an empty line.
 * Ordering inside Gradle files:
-	1. Class imports, sorted and separated in groups (same logic used in
-	Java).
-	2. `apply plugin` logic, sorted alphabetically.
-	3. `ext { ... }` block.
-	4. Task creation: `task taskName(type: TaskType)` or simply `task taskName`
+	1. Class imports, sorted and separated in groups (same logic used in Java).
+	2. `buildscript { ... }` block.
+	3. `apply plugin` logic, sorted alphabetically.
+	4. `ext { ... }` block.
+	5. Initialization logic.
+	6. Task creation: `task taskName(type: TaskType)` or simply `task taskName`
 	for default tasks. Don't declare the task dependencies here.
-	5. Project property assignments (e.g., `sourceCompatibility`).
-	6. Variables used globally by the whole script, like a URL or a relative
+	7. Project property assignments (e.g., `sourceCompatibility`).
+	8. Variables used globally by the whole script, like a URL or a relative
 	path.
-	7. Blocks `{ ... }` to configure tasks, extension objects, etc. These must be
-	sorted alphabetically.
+	9. Blocks `{ ... }` to configure tasks, extension objects, etc.
 * Inside a block `{ ... }`:
 	* If variables are needed, declare them inside the block at the beginning.
 	* If setting a property, use the `=` assignment, even if Gradle doesn't
@@ -141,7 +175,7 @@ closure arguments.
 ### `gradle.properties`
 
 The following settings are available to you in the `gradle.properties` file of a
-Liferay subrepository (e.g., [com-liferay-journal](https://github.com/liferay/com-liferay-journal/blob/master/gradle.properties)).
+Liferay subrepository (e.g., [com-liferay-apio-architect](https://github.com/liferay/com-liferay-apio-architect)).
 
 Property Name | Mandatory | Description
 ------------- | --------- | -----------

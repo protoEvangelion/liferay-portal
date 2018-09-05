@@ -41,26 +41,17 @@ public class PhoneServiceUtil {
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.portal.service.impl.PhoneServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
 	public static com.liferay.portal.kernel.model.Phone addPhone(
-		java.lang.String className, long classPK, java.lang.String number,
-		java.lang.String extension, long typeId, boolean primary,
-		ServiceContext serviceContext)
+		String className, long classPK, String number, String extension,
+		long typeId, boolean primary, ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
 				   .addPhone(className, classPK, number, extension, typeId,
 			primary, serviceContext);
 	}
 
-	public static com.liferay.portal.kernel.model.Phone getPhone(long phoneId)
+	public static void deletePhone(long phoneId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getPhone(phoneId);
-	}
-
-	public static com.liferay.portal.kernel.model.Phone updatePhone(
-		long phoneId, java.lang.String number, java.lang.String extension,
-		long typeId, boolean primary)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService()
-				   .updatePhone(phoneId, number, extension, typeId, primary);
+		getService().deletePhone(phoneId);
 	}
 
 	/**
@@ -68,19 +59,27 @@ public class PhoneServiceUtil {
 	*
 	* @return the OSGi service identifier
 	*/
-	public static java.lang.String getOSGiServiceIdentifier() {
+	public static String getOSGiServiceIdentifier() {
 		return getService().getOSGiServiceIdentifier();
 	}
 
+	public static com.liferay.portal.kernel.model.Phone getPhone(long phoneId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getPhone(phoneId);
+	}
+
 	public static java.util.List<com.liferay.portal.kernel.model.Phone> getPhones(
-		java.lang.String className, long classPK)
+		String className, long classPK)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().getPhones(className, classPK);
 	}
 
-	public static void deletePhone(long phoneId)
+	public static com.liferay.portal.kernel.model.Phone updatePhone(
+		long phoneId, String number, String extension, long typeId,
+		boolean primary)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().deletePhone(phoneId);
+		return getService()
+				   .updatePhone(phoneId, number, extension, typeId, primary);
 	}
 
 	public static PhoneService getService() {

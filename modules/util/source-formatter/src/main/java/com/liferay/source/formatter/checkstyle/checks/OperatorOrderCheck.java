@@ -16,17 +16,13 @@ package com.liferay.source.formatter.checkstyle.checks;
 
 import com.liferay.portal.kernel.util.ArrayUtil;
 
-import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 
 /**
  * @author Hugo Huijser
  */
-public class OperatorOrderCheck extends AbstractCheck {
-
-	public static final String MSG_LITERAL_OR_NUM_LEFT_ARGUMENT =
-		"left.argument.literal.or.num";
+public class OperatorOrderCheck extends BaseCheck {
 
 	@Override
 	public int[] getDefaultTokens() {
@@ -37,19 +33,23 @@ public class OperatorOrderCheck extends AbstractCheck {
 	}
 
 	@Override
-	public void visitToken(DetailAST detailAST) {
-		DetailAST firstChild = detailAST.getFirstChild();
+	protected void doVisitToken(DetailAST detailAST) {
+		DetailAST firstChildAST = detailAST.getFirstChild();
 
-		if (!ArrayUtil.contains(_LITERAL_OR_NUM_TYPES, firstChild.getType())) {
+		if (!ArrayUtil.contains(
+				_LITERAL_OR_NUM_TYPES, firstChildAST.getType())) {
+
 			return;
 		}
 
-		DetailAST secondChild = firstChild.getNextSibling();
+		DetailAST secondChildAST = firstChildAST.getNextSibling();
 
-		if (!ArrayUtil.contains(_LITERAL_OR_NUM_TYPES, secondChild.getType())) {
+		if (!ArrayUtil.contains(
+				_LITERAL_OR_NUM_TYPES, secondChildAST.getType())) {
+
 			log(
-				firstChild.getLineNo(), MSG_LITERAL_OR_NUM_LEFT_ARGUMENT,
-				firstChild.getText());
+				firstChildAST.getLineNo(), _MSG_LITERAL_OR_NUM_LEFT_ARGUMENT,
+				firstChildAST.getText());
 		}
 	}
 
@@ -57,5 +57,8 @@ public class OperatorOrderCheck extends AbstractCheck {
 		TokenTypes.NUM_DOUBLE, TokenTypes.NUM_FLOAT, TokenTypes.NUM_INT,
 		TokenTypes.NUM_LONG, TokenTypes.STRING_LITERAL
 	};
+
+	private static final String _MSG_LITERAL_OR_NUM_LEFT_ARGUMENT =
+		"left.argument.literal.or.num";
 
 }

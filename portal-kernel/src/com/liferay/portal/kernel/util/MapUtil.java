@@ -14,6 +14,7 @@
 
 package com.liferay.portal.kernel.util;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 
@@ -239,9 +240,8 @@ public class MapUtil {
 		if (value == null) {
 			return defaultValue;
 		}
-		else {
-			return value;
-		}
+
+		return value;
 	}
 
 	public static long getLong(Map<String, ?> map, String key) {

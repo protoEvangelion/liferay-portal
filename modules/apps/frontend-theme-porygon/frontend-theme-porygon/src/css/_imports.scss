@@ -1,13 +1,11 @@
+@import "clay_custom";
+
 @import "bourbon";
 
 @import "mixins";
 
+@import "compat/mixins";
+
 @import "partials/variables";
 
-@import "aui/lexicon/atlas-variables";
-
-@import "aui/lexicon/bootstrap/mixins";
-
-@import "aui/lexicon/lexicon-base/mixins";
-
-@import "aui/lexicon/atlas-theme/mixins";
+@import "clay/atlas-variables";

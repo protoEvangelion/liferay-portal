@@ -19,8 +19,10 @@ import com.liferay.portal.kernel.messaging.BaseMessageListener;
 import com.liferay.portal.kernel.messaging.Message;
 
 /**
- * @author Alexander Chow
+ * @author     Alexander Chow
+ * @deprecated As of Judson (7.1.x), with no direct replacement
  */
+@Deprecated
 public class CheckFileRankMessageListener extends BaseMessageListener {
 
 	@Override

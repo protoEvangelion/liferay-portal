@@ -16,7 +16,6 @@ package com.liferay.source.formatter.checkstyle.checks;
 
 import com.liferay.source.formatter.checkstyle.util.DetailASTUtil;
 
-import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 
@@ -25,10 +24,7 @@ import java.util.List;
 /**
  * @author Hugo Huijser
  */
-public class AssertEqualsCheck extends AbstractCheck {
-
-	public static final String MSG_ASSERT_ADD_INFORMATION =
-		"assert.add.information";
+public class AssertEqualsCheck extends BaseCheck {
 
 	@Override
 	public int[] getDefaultTokens() {
@@ -36,7 +32,7 @@ public class AssertEqualsCheck extends AbstractCheck {
 	}
 
 	@Override
-	public void visitToken(DetailAST detailAST) {
+	protected void doVisitToken(DetailAST detailAST) {
 		List<DetailAST> methodCallASTList = DetailASTUtil.getMethodCalls(
 			detailAST, "Assert", "assertEquals");
 
@@ -58,12 +54,12 @@ public class AssertEqualsCheck extends AbstractCheck {
 				firstChildAST, "getLength");
 
 			if (variableName != null) {
-				DetailAST typeAST = DetailASTUtil.findTypeAST(
-					detailAST, variableName);
+				DetailAST typeAST = DetailASTUtil.getVariableTypeAST(
+					methodCallAST, variableName);
 
 				if ((typeAST != null) && _isHits(typeAST)) {
 					log(
-						methodCallAST.getLineNo(), MSG_ASSERT_ADD_INFORMATION,
+						methodCallAST.getLineNo(), _MSG_ASSERT_ADD_INFORMATION,
 						variableName + ".toString()");
 				}
 
@@ -73,12 +69,12 @@ public class AssertEqualsCheck extends AbstractCheck {
 			variableName = _getVariableNameForCall(firstChildAST, "length");
 
 			if (variableName != null) {
-				DetailAST typeAST = DetailASTUtil.findTypeAST(
-					detailAST, variableName);
+				DetailAST typeAST = DetailASTUtil.getVariableTypeAST(
+					methodCallAST, variableName);
 
 				if ((typeAST != null) && DetailASTUtil.isArray(typeAST)) {
 					log(
-						methodCallAST.getLineNo(), MSG_ASSERT_ADD_INFORMATION,
+						methodCallAST.getLineNo(), _MSG_ASSERT_ADD_INFORMATION,
 						"Arrays.toString(" + variableName + ")");
 				}
 
@@ -88,12 +84,12 @@ public class AssertEqualsCheck extends AbstractCheck {
 			variableName = _getVariableNameForMethodCall(firstChildAST, "size");
 
 			if (variableName != null) {
-				DetailAST typeAST = DetailASTUtil.findTypeAST(
-					detailAST, variableName);
+				DetailAST typeAST = DetailASTUtil.getVariableTypeAST(
+					methodCallAST, variableName);
 
 				if ((typeAST != null) && DetailASTUtil.isCollection(typeAST)) {
 					log(
-						methodCallAST.getLineNo(), MSG_ASSERT_ADD_INFORMATION,
+						methodCallAST.getLineNo(), _MSG_ASSERT_ADD_INFORMATION,
 						variableName + ".toString()");
 				}
 			}
@@ -132,9 +128,9 @@ public class AssertEqualsCheck extends AbstractCheck {
 			return null;
 		}
 
-		DetailAST firstChild = detailAST.getFirstChild();
+		DetailAST firstChildAST = detailAST.getFirstChild();
 
-		return _getVariableNameForCall(firstChild, methodName);
+		return _getVariableNameForCall(firstChildAST, methodName);
 	}
 
 	private boolean _isHits(DetailAST detailAST) {
@@ -148,5 +144,8 @@ public class AssertEqualsCheck extends AbstractCheck {
 
 		return false;
 	}
+
+	private static final String _MSG_ASSERT_ADD_INFORMATION =
+		"assert.add.information";
 
 }

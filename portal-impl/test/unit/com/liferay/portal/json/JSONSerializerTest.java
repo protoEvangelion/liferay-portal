@@ -15,13 +15,13 @@
 package com.liferay.portal.json;
 
 import com.liferay.dynamic.data.mapping.kernel.DDMStructure;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONSerializer;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.HitsImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.LocalizationUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.util.LocalizationImpl;
 
 import org.junit.Assert;
@@ -61,7 +61,7 @@ public class JSONSerializerTest extends PowerMockito {
 
 		String json = jsonSerializer.serialize(_ddmStructure);
 
-		Assert.assertTrue(json.contains("\"definition\":\"value\""));
+		Assert.assertTrue(json, json.contains("\"definition\":\"value\""));
 	}
 
 	@Test
@@ -74,20 +74,20 @@ public class JSONSerializerTest extends PowerMockito {
 
 		json = json.replace(StringPool.SPACE, StringPool.BLANK);
 
-		Assert.assertTrue(json.contains("\"docs\":[]"));
-		Assert.assertFalse(json.contains("\"query\""));
-		Assert.assertTrue(json.contains("\"queryTerms\":null"));
-		Assert.assertTrue(json.contains("\"scores\":"));
-		Assert.assertTrue(json.contains("\"snippets\":["));
-		Assert.assertTrue(json.contains("\"start\":\"0\""));
-		Assert.assertTrue(json.contains("\"length\":0"));
+		Assert.assertTrue(json, json.contains("\"docs\":[]"));
+		Assert.assertFalse(json, json.contains("\"query\""));
+		Assert.assertTrue(json, json.contains("\"queryTerms\":null"));
+		Assert.assertTrue(json, json.contains("\"scores\":"));
+		Assert.assertTrue(json, json.contains("\"snippets\":["));
+		Assert.assertTrue(json, json.contains("\"start\":\"0\""));
+		Assert.assertTrue(json, json.contains("\"length\":0"));
 	}
 
 	@Test
 	public void testSerializeServiceContext() {
 		ServiceContext serviceContext = new ServiceContext();
 
-		String[] groupPermissions = new String[] {"VIEW"};
+		String[] groupPermissions = {"VIEW"};
 
 		serviceContext.setAttribute("groupPermissions", groupPermissions);
 		serviceContext.setGroupPermissions(groupPermissions);
@@ -104,7 +104,7 @@ public class JSONSerializerTest extends PowerMockito {
 	public void testSerializeTwice() {
 		ServiceContext serviceContext = new ServiceContext();
 
-		String[] groupPermissions = new String[] {"VIEW"};
+		String[] groupPermissions = {"VIEW"};
 
 		serviceContext.setAttribute("groupPermissions", groupPermissions);
 		serviceContext.setGroupPermissions(groupPermissions);

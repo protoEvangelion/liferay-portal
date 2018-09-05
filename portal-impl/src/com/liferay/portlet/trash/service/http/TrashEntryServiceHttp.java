@@ -51,8 +51,11 @@ import com.liferay.trash.kernel.service.TrashEntryServiceUtil;
  * @see TrashEntryServiceSoap
  * @see HttpPrincipal
  * @see TrashEntryServiceUtil
+ * @deprecated As of Judson (7.1.x), replaced by {@link
+           com.liferay.trash.service.impl.TrashEntryServiceImpl}
  * @generated
  */
+@Deprecated
 @ProviderType
 public class TrashEntryServiceHttp {
 	public static void deleteEntries(HttpPrincipal httpPrincipal, long groupId)

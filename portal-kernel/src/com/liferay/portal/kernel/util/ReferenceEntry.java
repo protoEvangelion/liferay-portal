@@ -14,6 +14,8 @@
 
 package com.liferay.portal.kernel.util;
 
+import com.liferay.petra.string.StringPool;
+
 import java.lang.reflect.Field;
 
 /**
@@ -29,9 +31,7 @@ public class ReferenceEntry {
 		_object = object;
 		_field = field;
 
-		if (!_field.isAccessible()) {
-			_field.setAccessible(true);
-		}
+		_field.setAccessible(true);
 	}
 
 	public Field getField() {

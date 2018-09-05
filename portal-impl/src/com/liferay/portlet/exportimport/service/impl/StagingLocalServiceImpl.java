@@ -14,19 +14,20 @@
 
 package com.liferay.portlet.exportimport.service.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.document.library.kernel.exception.NoSuchFileEntryException;
 import com.liferay.document.library.kernel.exception.NoSuchFolderException;
 import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.util.comparator.RepositoryModelTitleComparator;
-import com.liferay.exportimport.kernel.configuration.ExportImportConfigurationParameterMapFactory;
+import com.liferay.exportimport.kernel.configuration.ExportImportConfigurationConstants;
+import com.liferay.exportimport.kernel.configuration.ExportImportConfigurationParameterMapFactoryUtil;
+import com.liferay.exportimport.kernel.exception.ExportImportIOException;
 import com.liferay.exportimport.kernel.exception.RemoteExportException;
 import com.liferay.exportimport.kernel.lar.ExportImportDateUtil;
 import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.exportimport.kernel.lar.MissingReferences;
 import com.liferay.exportimport.kernel.model.ExportImportConfiguration;
 import com.liferay.exportimport.kernel.staging.StagingConstants;
+import com.liferay.exportimport.kernel.staging.StagingURLHelperUtil;
 import com.liferay.exportimport.kernel.staging.StagingUtil;
 import com.liferay.portal.kernel.exception.NoSuchGroupException;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -47,6 +48,7 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
+import com.liferay.portal.kernel.search.IndexStatusManagerThreadLocal;
 import com.liferay.portal.kernel.security.auth.HttpPrincipal;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.auth.RemoteAuthException;
@@ -59,6 +61,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropertiesParamUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
@@ -90,7 +93,6 @@ import javax.portlet.PortletRequest;
  * @author Mate Thurzo
  * @author Vilmos Papp
  */
-@ProviderType
 public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 
 	@Override
@@ -152,6 +154,10 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 	public void cleanUpStagingRequest(long stagingRequestId)
 		throws PortalException {
 
+		boolean indexReadOnly = IndexStatusManagerThreadLocal.isIndexReadOnly();
+
+		IndexStatusManagerThreadLocal.setIndexReadOnly(true);
+
 		try {
 			PortletFileRepositoryUtil.deletePortletFolder(stagingRequestId);
 		}
@@ -162,23 +168,36 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 					nsfe);
 			}
 		}
+		finally {
+			IndexStatusManagerThreadLocal.setIndexReadOnly(indexReadOnly);
+		}
 	}
 
 	@Override
 	public long createStagingRequest(long userId, long groupId, String checksum)
 		throws PortalException {
 
-		ServiceContext serviceContext = new ServiceContext();
+		boolean indexReadOnly = IndexStatusManagerThreadLocal.isIndexReadOnly();
 
-		Repository repository = PortletFileRepositoryUtil.addPortletRepository(
-			groupId, _PORTLET_REPOSITORY_ID, serviceContext);
+		IndexStatusManagerThreadLocal.setIndexReadOnly(true);
 
-		Folder folder = PortletFileRepositoryUtil.addPortletFolder(
-			userId, repository.getRepositoryId(),
-			DLFolderConstants.DEFAULT_PARENT_FOLDER_ID, checksum,
-			serviceContext);
+		try {
+			ServiceContext serviceContext = new ServiceContext();
 
-		return folder.getFolderId();
+			Repository repository =
+				PortletFileRepositoryUtil.addPortletRepository(
+					groupId, _PORTLET_REPOSITORY_ID, serviceContext);
+
+			Folder folder = PortletFileRepositoryUtil.addPortletFolder(
+				userId, repository.getRepositoryId(),
+				DLFolderConstants.DEFAULT_PARENT_FOLDER_ID, checksum,
+				serviceContext);
+
+			return folder.getFolderId();
+		}
+		finally {
+			IndexStatusManagerThreadLocal.setIndexReadOnly(indexReadOnly);
+		}
 	}
 
 	@Override
@@ -194,6 +213,13 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 			ServiceContext serviceContext)
 		throws PortalException {
 
+		if (liveGroup.isLayout()) {
+			disableStaging(
+				portletRequest, liveGroup.getParentGroup(), serviceContext);
+
+			return;
+		}
+
 		UnicodeProperties typeSettingsProperties =
 			liveGroup.getTypeSettingsProperties();
 
@@ -207,7 +233,7 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 		}
 
 		if (stagedRemotely) {
-			String remoteURL = StagingUtil.buildRemoteURL(
+			String remoteURL = StagingURLHelperUtil.buildRemoteURL(
 				typeSettingsProperties);
 
 			long remoteGroupId = GetterUtil.getLong(
@@ -265,14 +291,32 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 			boolean branchingPrivate, ServiceContext serviceContext)
 		throws PortalException {
 
+		if (liveGroup.isLayout()) {
+			enableLocalStaging(
+				userId, liveGroup.getParentGroup(), branchingPublic,
+				branchingPrivate, serviceContext);
+
+			return;
+		}
+
 		if (liveGroup.isStagedRemotely()) {
 			disableStaging(liveGroup, serviceContext);
 		}
 
+		UnicodeProperties typeSettingsProperties =
+			liveGroup.getTypeSettingsProperties();
+
 		boolean hasStagingGroup = liveGroup.hasStagingGroup();
 
 		if (!hasStagingGroup) {
-			serviceContext.setAttribute("staging", String.valueOf(true));
+			serviceContext.setAttribute("staging", Boolean.TRUE.toString());
+
+			String languageId = typeSettingsProperties.getProperty(
+				"languageId");
+
+			if (Validator.isNotNull(languageId)) {
+				serviceContext.setLanguageId(languageId);
+			}
 
 			addStagingGroup(userId, liveGroup, serviceContext);
 		}
@@ -280,9 +324,6 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 		checkDefaultLayoutSetBranches(
 			userId, liveGroup, branchingPublic, branchingPrivate, false,
 			serviceContext);
-
-		UnicodeProperties typeSettingsProperties =
-			liveGroup.getTypeSettingsProperties();
 
 		typeSettingsProperties.setProperty(
 			"branchingPrivate", String.valueOf(branchingPrivate));
@@ -293,7 +334,7 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 			typeSettingsProperties.setProperty(
 				"staged", Boolean.TRUE.toString());
 			typeSettingsProperties.setProperty(
-				"stagedRemotely", String.valueOf(false));
+				"stagedRemotely", Boolean.FALSE.toString());
 
 			setCommonStagingOptions(typeSettingsProperties, serviceContext);
 		}
@@ -305,13 +346,17 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 			Group stagingGroup = liveGroup.getStagingGroup();
 
 			Map<String, String[]> parameterMap =
-				ExportImportConfigurationParameterMapFactory.
-					buildParameterMap();
+				ExportImportConfigurationParameterMapFactoryUtil.
+					buildFullPublishParameterMap();
 
 			if (liveGroup.hasPrivateLayouts()) {
 				StagingUtil.publishLayouts(
 					userId, liveGroup.getGroupId(), stagingGroup.getGroupId(),
 					true, parameterMap);
+
+				parameterMap =
+					ExportImportConfigurationParameterMapFactoryUtil.
+						buildParameterMap();
 			}
 
 			if (liveGroup.hasPublicLayouts() ||
@@ -332,7 +377,7 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 			long remoteGroupId, ServiceContext serviceContext)
 		throws PortalException {
 
-		StagingUtil.validateRemote(
+		groupLocalService.validateRemote(
 			stagingGroup.getGroupId(), remoteAddress, remotePort,
 			remotePathContext, secureConnection, remoteGroupId);
 
@@ -347,14 +392,14 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 		UnicodeProperties typeSettingsProperties =
 			stagingGroup.getTypeSettingsProperties();
 
-		String remoteURL = StagingUtil.buildRemoteURL(
+		String remoteURL = StagingURLHelperUtil.buildRemoteURL(
 			remoteAddress, remotePort, remotePathContext, secureConnection);
 
 		if (stagedRemotely) {
 			long oldRemoteGroupId = GetterUtil.getLong(
 				typeSettingsProperties.getProperty("remoteGroupId"));
 
-			String oldRemoteURL = StagingUtil.buildRemoteURL(
+			String oldRemoteURL = StagingURLHelperUtil.buildRemoteURL(
 				typeSettingsProperties);
 
 			if (!remoteURL.equals(oldRemoteURL) ||
@@ -366,9 +411,20 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 			}
 		}
 
+		PermissionChecker permissionChecker =
+			PermissionThreadLocal.getPermissionChecker();
+
+		User user = permissionChecker.getUser();
+
+		HttpPrincipal httpPrincipal = new HttpPrincipal(
+			remoteURL, user.getLogin(), user.getPassword(),
+			user.isPasswordEncrypted());
+
 		if (!stagedRemotely) {
-			enableRemoteStaging(remoteURL, remoteGroupId);
+			enableRemoteStaging(httpPrincipal, remoteGroupId);
 		}
+
+		Group remoteGroup = fetchRemoteGroup(httpPrincipal, remoteGroupId);
 
 		checkDefaultLayoutSetBranches(
 			userId, stagingGroup, branchingPublic, branchingPrivate, true,
@@ -381,6 +437,8 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 		typeSettingsProperties.setProperty("remoteAddress", remoteAddress);
 		typeSettingsProperties.setProperty(
 			"remoteGroupId", String.valueOf(remoteGroupId));
+		typeSettingsProperties.setProperty(
+			"remoteGroupUUID", remoteGroup.getUuid());
 		typeSettingsProperties.setProperty(
 			"remotePathContext", remotePathContext);
 		typeSettingsProperties.setProperty(
@@ -404,11 +462,10 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Wilberforce (7.0.x), with no direct replacement
 	 */
 	@Deprecated
 	@Override
-	@SuppressWarnings("unused")
 	public MissingReferences publishStagingRequest(
 			long userId, long stagingRequestId, boolean privateLayout,
 			Map<String, String[]> parameterMap)
@@ -428,8 +485,17 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 		Locale siteDefaultLocale = LocaleThreadLocal.getSiteDefaultLocale();
 
 		try {
-			ExportImportThreadLocal.setLayoutImportInProcess(true);
-			ExportImportThreadLocal.setLayoutStagingInProcess(true);
+			if (exportImportConfiguration.getType() ==
+					ExportImportConfigurationConstants.
+						TYPE_PUBLISH_PORTLET_REMOTE) {
+
+				ExportImportThreadLocal.setPortletImportInProcess(true);
+				ExportImportThreadLocal.setPortletStagingInProcess(true);
+			}
+			else {
+				ExportImportThreadLocal.setLayoutImportInProcess(true);
+				ExportImportThreadLocal.setLayoutStagingInProcess(true);
+			}
 
 			Folder folder = PortletFileRepositoryUtil.getPortletFolder(
 				stagingRequestId);
@@ -451,29 +517,61 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 			LocaleThreadLocal.setSiteDefaultLocale(
 				PortalUtil.getSiteDefaultLocale(targetGroupId));
 
-			exportImportLocalService.importLayoutsDataDeletions(
-				exportImportConfiguration, file);
+			MissingReferences missingReferences = null;
 
-			MissingReferences missingReferences =
-				exportImportLocalService.validateImportLayoutsFile(
+			if (exportImportConfiguration.getType() ==
+					ExportImportConfigurationConstants.
+						TYPE_PUBLISH_PORTLET_REMOTE) {
+
+				exportImportLocalService.importPortletDataDeletions(
 					exportImportConfiguration, file);
 
-			exportImportLocalService.importLayouts(
-				exportImportConfiguration, file);
+				missingReferences =
+					exportImportLocalService.validateImportPortletInfo(
+						exportImportConfiguration, file);
+
+				exportImportLocalService.importPortletInfo(
+					exportImportConfiguration, file);
+			}
+			else {
+				exportImportLocalService.importLayoutsDataDeletions(
+					exportImportConfiguration, file);
+
+				missingReferences =
+					exportImportLocalService.validateImportLayoutsFile(
+						exportImportConfiguration, file);
+
+				exportImportLocalService.importLayouts(
+					exportImportConfiguration, file);
+			}
 
 			return missingReferences;
 		}
 		catch (IOException ioe) {
-			throw new SystemException(
-				"Unable to complete remote staging publication request " +
-					stagingRequestId + " due to a file system error",
-				ioe);
+			ExportImportIOException eiioe = new ExportImportIOException(
+				StagingLocalServiceImpl.class.getName(), ioe);
+
+			eiioe.setStagingRequestId(stagingRequestId);
+			eiioe.setType(ExportImportIOException.PUBLISH_STAGING_REQUEST);
+
+			throw eiioe;
 		}
 		finally {
-			ExportImportThreadLocal.setLayoutImportInProcess(false);
-			ExportImportThreadLocal.setLayoutStagingInProcess(false);
+			if (exportImportConfiguration.getType() ==
+					ExportImportConfigurationConstants.
+						TYPE_PUBLISH_PORTLET_REMOTE) {
+
+				ExportImportThreadLocal.setPortletImportInProcess(false);
+				ExportImportThreadLocal.setPortletStagingInProcess(false);
+			}
+			else {
+				ExportImportThreadLocal.setLayoutImportInProcess(false);
+				ExportImportThreadLocal.setLayoutStagingInProcess(false);
+			}
 
 			LocaleThreadLocal.setSiteDefaultLocale(siteDefaultLocale);
+
+			FileUtil.delete(file);
 		}
 	}
 
@@ -485,16 +583,25 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 		Folder folder = PortletFileRepositoryUtil.getPortletFolder(
 			stagingRequestId);
 
-		PortletFileRepositoryUtil.addPortletFileEntry(
-			folder.getGroupId(), userId, Group.class.getName(),
-			folder.getGroupId(), _PORTLET_REPOSITORY_ID, folder.getFolderId(),
-			new UnsyncByteArrayInputStream(bytes), fileName,
-			ContentTypes.APPLICATION_ZIP, false);
+		boolean indexReadOnly = IndexStatusManagerThreadLocal.isIndexReadOnly();
+
+		IndexStatusManagerThreadLocal.setIndexReadOnly(true);
+
+		try {
+			PortletFileRepositoryUtil.addPortletFileEntry(
+				folder.getGroupId(), userId, Group.class.getName(),
+				folder.getGroupId(), _PORTLET_REPOSITORY_ID,
+				folder.getFolderId(), new UnsyncByteArrayInputStream(bytes),
+				fileName, ContentTypes.APPLICATION_ZIP, false);
+		}
+		finally {
+			IndexStatusManagerThreadLocal.setIndexReadOnly(indexReadOnly);
+		}
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #publishStagingRequest(long,
-	 *             long, boolean, Map)}
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	 *             #publishStagingRequest(long, long, boolean, Map)}
 	 */
 	@Deprecated
 	@Override
@@ -556,19 +663,7 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 			long userId, Group liveGroup, ServiceContext serviceContext)
 		throws PortalException {
 
-		long parentGroupId = GroupConstants.DEFAULT_PARENT_GROUP_ID;
-
-		if (liveGroup.getParentGroupId() !=
-				GroupConstants.DEFAULT_PARENT_GROUP_ID) {
-
-			Group parentGroup = liveGroup.getParentGroup();
-
-			if (parentGroup.hasStagingGroup()) {
-				parentGroup = parentGroup.getStagingGroup();
-			}
-
-			parentGroupId = parentGroup.getGroupId();
-		}
+		long parentGroupId = liveGroup.getParentGroupId();
 
 		Group stagingGroup = groupLocalService.addGroup(
 			userId, parentGroupId, liveGroup.getClassName(),
@@ -692,7 +787,7 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 
 		HttpPrincipal httpPrincipal = new HttpPrincipal(
 			remoteURL, user.getLogin(), user.getPassword(),
-			user.getPasswordEncrypted());
+			user.isPasswordEncrypted());
 
 		try {
 			GroupServiceHttp.disableStaging(httpPrincipal, remoteGroupId);
@@ -752,17 +847,9 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 		}
 	}
 
-	protected void enableRemoteStaging(String remoteURL, long remoteGroupId)
+	protected void enableRemoteStaging(
+			HttpPrincipal httpPrincipal, long remoteGroupId)
 		throws PortalException {
-
-		PermissionChecker permissionChecker =
-			PermissionThreadLocal.getPermissionChecker();
-
-		User user = permissionChecker.getUser();
-
-		HttpPrincipal httpPrincipal = new HttpPrincipal(
-			remoteURL, user.getLogin(), user.getPassword(),
-			user.getPasswordEncrypted());
 
 		try {
 			GroupServiceHttp.enableStaging(httpPrincipal, remoteGroupId);
@@ -805,7 +892,7 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 				_log.debug(rae, rae);
 			}
 
-			rae.setURL(remoteURL);
+			rae.setURL(httpPrincipal.getUrl());
 
 			throw rae;
 		}
@@ -820,9 +907,27 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 			RemoteExportException ree = new RemoteExportException(
 				RemoteExportException.BAD_CONNECTION);
 
-			ree.setURL(remoteURL);
+			ree.setURL(httpPrincipal.getUrl());
 
 			throw ree;
+		}
+	}
+
+	protected Group fetchRemoteGroup(HttpPrincipal httpPrincipal, long groupId)
+		throws PortalException {
+
+		Thread currentThread = Thread.currentThread();
+
+		ClassLoader contextClassLoader = currentThread.getContextClassLoader();
+
+		try {
+			currentThread.setContextClassLoader(
+				PortalClassLoaderUtil.getClassLoader());
+
+			return GroupServiceHttp.getGroup(httpPrincipal, groupId);
+		}
+		finally {
+			currentThread.setContextClassLoader(contextClassLoader);
 		}
 	}
 
@@ -863,14 +968,14 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 			return stagingRequestFileEntry;
 		}
 
-		FileOutputStream fileOutputStream = null;
+		boolean indexReadOnly = IndexStatusManagerThreadLocal.isIndexReadOnly();
 
-		File tempFile = null;
+		IndexStatusManagerThreadLocal.setIndexReadOnly(true);
 
-		try {
-			tempFile = FileUtil.createTempFile("lar");
+		File tempFile = FileUtil.createTempFile("lar");
 
-			fileOutputStream = new FileOutputStream(tempFile);
+		try (FileOutputStream fileOutputStream =
+				new FileOutputStream(tempFile)) {
 
 			List<FileEntry> fileEntries =
 				PortletFileRepositoryUtil.getPortletFileEntries(
@@ -892,10 +997,13 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 			String checksum = FileUtil.getMD5Checksum(tempFile);
 
 			if (!checksum.equals(folder.getName())) {
-				throw new SystemException(
-					"Unable to process LAR file pieces for remote staging " +
-						"publication because LAR file checksum is not " +
-							checksum);
+				ExportImportIOException eiioe = new ExportImportIOException(
+					StagingLocalServiceImpl.class.getName());
+
+				eiioe.setChecksum(checksum);
+				eiioe.setType(ExportImportIOException.STAGING_REQUEST_CHECKSUM);
+
+				throw eiioe;
 			}
 
 			PortletFileRepositoryUtil.addPortletFileEntry(
@@ -909,21 +1017,23 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 				stagingRequestId, folder);
 
 			if (stagingRequestFileEntry == null) {
-				throw new SystemException(
-					"Unable to assemble LAR file for remote staging " +
-						"publication request " + stagingRequestId);
+				throw new IOException();
 			}
 
 			return stagingRequestFileEntry;
 		}
 		catch (IOException ioe) {
-			throw new SystemException(
-				"Unable to reassemble LAR file for remote staging " +
-					"publication request " + stagingRequestId,
-				ioe);
+			ExportImportIOException eiioe = new ExportImportIOException(
+				StagingLocalServiceImpl.class.getName(), ioe);
+
+			eiioe.setStagingRequestId(stagingRequestId);
+			eiioe.setType(
+				ExportImportIOException.STAGING_REQUEST_REASSEMBLE_FILE);
+
+			throw eiioe;
 		}
 		finally {
-			StreamUtil.cleanUp(fileOutputStream);
+			IndexStatusManagerThreadLocal.setIndexReadOnly(indexReadOnly);
 
 			FileUtil.delete(tempFile);
 		}
@@ -965,7 +1075,7 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 		layout.setUserName(layoutRevision.getUserName());
 		layout.setCreateDate(layoutRevision.getCreateDate());
 		layout.setModifiedDate(layoutRevision.getModifiedDate());
-		layout.setPrivateLayout(layoutRevision.getPrivateLayout());
+		layout.setPrivateLayout(layoutRevision.isPrivateLayout());
 		layout.setName(layoutRevision.getName());
 		layout.setTitle(layoutRevision.getTitle());
 		layout.setDescription(layoutRevision.getDescription());
@@ -1011,7 +1121,7 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 
 		HttpPrincipal httpPrincipal = new HttpPrincipal(
 			remoteURL, user.getLogin(), user.getPassword(),
-			user.getPasswordEncrypted());
+			user.isPasswordEncrypted());
 
 		Map<String, String> stagedPortletIds = new HashMap<>();
 

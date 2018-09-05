@@ -29,9 +29,8 @@ public class UserLoginDateComparator extends OrderByComparator<User> {
 	public static final String ORDER_BY_DESC =
 		"loginDate DESC, lastName DESC, firstName DESC, middleName DESC";
 
-	public static final String[] ORDER_BY_FIELDS = {
-		"loginDate", "lastName", "firstName", "middleName"
-	};
+	public static final String[] ORDER_BY_FIELDS =
+		{"loginDate", "lastName", "firstName", "middleName"};
 
 	public UserLoginDateComparator() {
 		this(false);
@@ -70,9 +69,8 @@ public class UserLoginDateComparator extends OrderByComparator<User> {
 		if (_ascending) {
 			return value;
 		}
-		else {
-			return -value;
-		}
+
+		return -value;
 	}
 
 	@Override
@@ -80,9 +78,8 @@ public class UserLoginDateComparator extends OrderByComparator<User> {
 		if (_ascending) {
 			return ORDER_BY_ASC;
 		}
-		else {
-			return ORDER_BY_DESC;
-		}
+
+		return ORDER_BY_DESC;
 	}
 
 	@Override

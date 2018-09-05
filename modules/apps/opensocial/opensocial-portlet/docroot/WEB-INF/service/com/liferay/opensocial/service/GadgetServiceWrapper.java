@@ -34,28 +34,11 @@ public class GadgetServiceWrapper implements GadgetService,
 
 	@Override
 	public com.liferay.opensocial.model.Gadget addGadget(long companyId,
-		java.lang.String url, java.lang.String portletCategoryNames,
+		String url, String portletCategoryNames,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _gadgetService.addGadget(companyId, url, portletCategoryNames,
 			serviceContext);
-	}
-
-	@Override
-	public java.lang.Object invokeMethod(java.lang.String name,
-		java.lang.String[] parameterTypes, java.lang.Object[] arguments)
-		throws java.lang.Throwable {
-		return _gadgetService.invokeMethod(name, parameterTypes, arguments);
-	}
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	@Override
-	public java.lang.String getOSGiServiceIdentifier() {
-		return _gadgetService.getOSGiServiceIdentifier();
 	}
 
 	@Override
@@ -65,9 +48,18 @@ public class GadgetServiceWrapper implements GadgetService,
 		_gadgetService.deleteGadget(gadgetId, serviceContext);
 	}
 
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
 	@Override
-	public void updateGadget(long gadgetId,
-		java.lang.String portletCategoryNames,
+	public String getOSGiServiceIdentifier() {
+		return _gadgetService.getOSGiServiceIdentifier();
+	}
+
+	@Override
+	public void updateGadget(long gadgetId, String portletCategoryNames,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_gadgetService.updateGadget(gadgetId, portletCategoryNames,

@@ -12,7 +12,25 @@
 
 		<execute macro="User#firstLoginPG" />
 
-		<execute macro="Page#add">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Build" />
+			<var name="panel" value="Site Administration" />
+			<var name="portlet" value="Pages" />
+		</execute>
+
+		<execute macro="SitePages#addPublicPage">
+			<var name="pageName" value="Announcements Page" />
+			<var name="sitePageType" value="Widget Page" />
+		</execute>
+
+		<execute macro="SitePages#configurePage">
+			<var name="columnName" value="1 Column" />
+			<var name="pageName" value="Announcements Page" />
+			<var name="privacy" value="Public Pages" />
+			<var name="sitePageType" value="Widget Page" />
+		</execute>
+
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Announcements Page" />
 		</execute>
 
@@ -22,7 +40,7 @@
 	</set-up>
 
 	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
 
 		<if>
 			<equals arg1="${testPortalInstance}" arg2="true" />
@@ -36,7 +54,7 @@
 
 				<execute macro="AnnouncementsEntry#tearDownPG" />
 
-				<execute macro="Page#tearDownPG" />
+				<execute macro="Page#tearDownCP" />
 			</else>
 		</if>
 	</tear-down>
@@ -82,7 +100,7 @@
 
 		<execute function="Pause" locator1="10000" />
 
-		<execute function="AssertClick" locator1="Announcements#NAVIGATION_ENTRIES_NEW" value1="New" />
+		<execute function="AssertClick" locator1="Announcements#NAVIGATION_ENTRIES_UNREAD" value1="Unread" />
 
 		<execute function="AssertTextNotPresent" value1="Announcements Entry Title" />
 		<execute function="Pause" locator1="120000" />
@@ -120,11 +138,11 @@
 
 		<execute function="AssertTextNotPresent" value1="Announcements Entry Title" />
 
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Announcements and Alerts" />
 		</execute>
-
-		<execute function="AssertTextEquals" locator1="Dropdown#FILTER" value1="General" />
 
 		<execute function="AssertTextEquals" locator1="Message#NO_ENTRIES" value1="No entries were found." />
 	</command>
@@ -155,7 +173,9 @@
 	</command>
 
 	<command name="AddAnnouncementsEntrySite" priority="3">
-		<execute macro="ProductMenu#gotoControlPanelSites">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Sites" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Sites" />
 		</execute>
 
@@ -163,13 +183,22 @@
 			<var name="siteName" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Build" />
+			<var name="panel" value="Site Administration" />
+			<var name="portlet" value="Pages" />
 		</execute>
 
-		<execute macro="Page#add">
+		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Announcements Page" />
-			<var name="siteName" value="Site Name" />
+			<var name="sitePageType" value="Widget Page" />
+		</execute>
+
+		<execute macro="SitePages#configurePage">
+			<var name="columnName" value="1 Column" />
+			<var name="pageName" value="Announcements Page" />
+			<var name="privacy" value="Public Pages" />
+			<var name="sitePageType" value="Widget Page" />
 		</execute>
 
 		<execute macro="Navigator#gotoSitePage">
@@ -296,14 +325,14 @@
 			<var name="entryTitle" value="Announcements Entry Title" />
 		</execute>
 
-		<execute macro="AnnouncementsEntry#viewPreviousPG">
+		<execute macro="AnnouncementsEntry#viewReadPG">
 			<var name="announcementType" value="General" />
 			<var name="distributionScope" value="General" />
 			<var name="entryContent" value="Announcements Entry Content" />
 			<var name="entryTitle" value="Announcements Entry Title" />
 		</execute>
 
-		<execute function="AssertClick" locator1="Announcements#NAVIGATION_ENTRIES_NEW" value1="New" />
+		<execute function="AssertClick" locator1="Announcements#NAVIGATION_ENTRIES_UNREAD" value1="Unread" />
 
 		<execute macro="AnnouncementsEntry#viewNoPG">
 			<var name="entryTitle" value="Announcements Entry Title" />

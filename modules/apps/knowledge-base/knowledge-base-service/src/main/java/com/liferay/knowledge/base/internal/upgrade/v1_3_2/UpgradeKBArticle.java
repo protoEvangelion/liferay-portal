@@ -16,9 +16,9 @@ package com.liferay.knowledge.base.internal.upgrade.v1_3_2;
 
 import com.liferay.knowledge.base.constants.KBArticleConstants;
 import com.liferay.knowledge.base.constants.KBFolderConstants;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 
 /**
  * @author Adolfo Pérez
@@ -31,9 +31,10 @@ public class UpgradeKBArticle extends UpgradeProcess {
 			"com.liferay.knowledgebase.model.KBArticle");
 
 		runSQL(
-			"update KBArticle set parentResourceClassNameId = " +
-				kbArticleClassNameId + " where parentResourcePrimKey != " +
-					KBArticleConstants.DEFAULT_PARENT_RESOURCE_PRIM_KEY);
+			StringBundler.concat(
+				"update KBArticle set parentResourceClassNameId = ",
+				kbArticleClassNameId, " where parentResourcePrimKey != ",
+				KBArticleConstants.DEFAULT_PARENT_RESOURCE_PRIM_KEY));
 
 		StringBundler sb = new StringBundler(6);
 

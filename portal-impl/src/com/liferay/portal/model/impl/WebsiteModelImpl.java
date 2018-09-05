@@ -21,10 +21,13 @@ import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 
 import com.liferay.exportimport.kernel.lar.StagedModelType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.Website;
 import com.liferay.portal.kernel.model.WebsiteModel;
@@ -36,8 +39,6 @@ import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
@@ -157,7 +158,7 @@ public class WebsiteModelImpl extends BaseModelImpl<Website>
 		model.setClassPK(soapModel.getClassPK());
 		model.setUrl(soapModel.getUrl());
 		model.setTypeId(soapModel.getTypeId());
-		model.setPrimary(soapModel.getPrimary());
+		model.setPrimary(soapModel.isPrimary());
 		model.setLastPublishDate(soapModel.getLastPublishDate());
 
 		return model;
@@ -235,7 +236,7 @@ public class WebsiteModelImpl extends BaseModelImpl<Website>
 		attributes.put("classPK", getClassPK());
 		attributes.put("url", getUrl());
 		attributes.put("typeId", getTypeId());
-		attributes.put("primary", getPrimary());
+		attributes.put("primary", isPrimary());
 		attributes.put("lastPublishDate", getLastPublishDate());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
@@ -346,7 +347,7 @@ public class WebsiteModelImpl extends BaseModelImpl<Website>
 	@Override
 	public String getUuid() {
 		if (_uuid == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _uuid;
@@ -427,7 +428,7 @@ public class WebsiteModelImpl extends BaseModelImpl<Website>
 			return user.getUuid();
 		}
 		catch (PortalException pe) {
-			return StringPool.BLANK;
+			return "";
 		}
 	}
 
@@ -443,7 +444,7 @@ public class WebsiteModelImpl extends BaseModelImpl<Website>
 	@Override
 	public String getUserName() {
 		if (_userName == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _userName;
@@ -488,7 +489,7 @@ public class WebsiteModelImpl extends BaseModelImpl<Website>
 	@Override
 	public String getClassName() {
 		if (getClassNameId() <= 0) {
-			return StringPool.BLANK;
+			return "";
 		}
 
 		return PortalUtil.getClassName(getClassNameId());
@@ -555,7 +556,7 @@ public class WebsiteModelImpl extends BaseModelImpl<Website>
 	@Override
 	public String getUrl() {
 		if (_url == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _url;
@@ -667,7 +668,7 @@ public class WebsiteModelImpl extends BaseModelImpl<Website>
 		websiteImpl.setClassPK(getClassPK());
 		websiteImpl.setUrl(getUrl());
 		websiteImpl.setTypeId(getTypeId());
-		websiteImpl.setPrimary(getPrimary());
+		websiteImpl.setPrimary(isPrimary());
 		websiteImpl.setLastPublishDate(getLastPublishDate());
 
 		websiteImpl.resetOriginalValues();
@@ -816,7 +817,7 @@ public class WebsiteModelImpl extends BaseModelImpl<Website>
 
 		websiteCacheModel.typeId = getTypeId();
 
-		websiteCacheModel.primary = getPrimary();
+		websiteCacheModel.primary = isPrimary();
 
 		Date lastPublishDate = getLastPublishDate();
 
@@ -859,7 +860,7 @@ public class WebsiteModelImpl extends BaseModelImpl<Website>
 		sb.append(", typeId=");
 		sb.append(getTypeId());
 		sb.append(", primary=");
-		sb.append(getPrimary());
+		sb.append(isPrimary());
 		sb.append(", lastPublishDate=");
 		sb.append(getLastPublishDate());
 		sb.append("}");
@@ -925,7 +926,7 @@ public class WebsiteModelImpl extends BaseModelImpl<Website>
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>primary</column-name><column-value><![CDATA[");
-		sb.append(getPrimary());
+		sb.append(isPrimary());
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>lastPublishDate</column-name><column-value><![CDATA[");
@@ -939,7 +940,7 @@ public class WebsiteModelImpl extends BaseModelImpl<Website>
 
 	private static final ClassLoader _classLoader = Website.class.getClassLoader();
 	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
-			Website.class
+			Website.class, ModelWrapper.class
 		};
 	private long _mvccVersion;
 	private String _uuid;

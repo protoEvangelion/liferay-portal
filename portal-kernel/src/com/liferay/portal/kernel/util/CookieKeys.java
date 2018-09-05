@@ -14,6 +14,9 @@
 
 package com.liferay.portal.kernel.util;
 
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.configuration.Filter;
 import com.liferay.portal.kernel.exception.CookieNotSupportedException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -242,9 +245,8 @@ public class CookieKeys {
 		if (jsessionid != null) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	public static boolean isEncodedCookie(String name) {
@@ -253,9 +255,8 @@ public class CookieKeys {
 
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	public static void validateSupportCookie(HttpServletRequest request)
@@ -286,9 +287,8 @@ public class CookieKeys {
 		if (cookie == null) {
 			return null;
 		}
-		else {
-			return cookie.getValue();
-		}
+
+		return cookie.getValue();
 	}
 
 	private static Map<String, Cookie> _getCookieMap(
@@ -329,7 +329,9 @@ public class CookieKeys {
 
 	private static final boolean _SESSION_COOKIE_USE_FULL_HOSTNAME =
 		GetterUtil.getBoolean(
-			PropsUtil.get(PropsKeys.SESSION_COOKIE_USE_FULL_HOSTNAME));
+			PropsUtil.get(
+				PropsKeys.SESSION_COOKIE_USE_FULL_HOSTNAME,
+				new Filter(ServerDetector.getServerId())));
 
 	private static final boolean _SESSION_ENABLE_PERSISTENT_COOKIES =
 		GetterUtil.getBoolean(

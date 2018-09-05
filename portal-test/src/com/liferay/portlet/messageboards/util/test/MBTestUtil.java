@@ -32,9 +32,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author Eudaldo Alonso
- * @author Daniel Kocsis
+ * @author     Eudaldo Alonso
+ * @author     Daniel Kocsis
+ * @deprecated As of Judson (7.1.x), replaced by {@link
+ *             com.liferay.message.boards.test.util.MBTestUtil}
  */
+@Deprecated
 public class MBTestUtil {
 
 	public static MBMessage addMessageWithWorkflow(

@@ -18,10 +18,10 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.expando.kernel.model.ExpandoValue;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -100,7 +100,7 @@ public class ExpandoValueCacheModel implements CacheModel<ExpandoValue>,
 		expandoValueImpl.setClassPK(classPK);
 
 		if (data == null) {
-			expandoValueImpl.setData(StringPool.BLANK);
+			expandoValueImpl.setData("");
 		}
 		else {
 			expandoValueImpl.setData(data);
@@ -147,7 +147,7 @@ public class ExpandoValueCacheModel implements CacheModel<ExpandoValue>,
 		objectOutput.writeLong(classPK);
 
 		if (data == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(data);

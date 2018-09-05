@@ -27,8 +27,11 @@ import java.io.Serializable;
 import org.aopalliance.intercept.MethodInvocation;
 
 /**
- * @author Shuyang Zhou
+ * @author     Shuyang Zhou
+ * @deprecated As of Judson (7.1.x), moved to {@link
+ *             com.liferay.portal.internal.messaging.async.AsyncProcessCallable}
  */
+@Deprecated
 public class AsyncProcessCallable
 	implements Externalizable, ProcessCallable<Serializable> {
 

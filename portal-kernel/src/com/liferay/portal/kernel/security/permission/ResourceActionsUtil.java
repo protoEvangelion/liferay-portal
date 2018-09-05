@@ -18,7 +18,6 @@ import com.liferay.portal.kernel.exception.NoSuchResourceActionException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.model.Role;
-import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 
 import java.io.InputStream;
 
@@ -32,6 +31,10 @@ import javax.servlet.http.HttpServletRequest;
  * @author Daeyoung Song
  */
 public class ResourceActionsUtil {
+
+	public static void check(Portlet portlet) {
+		getResourceActions().check(portlet);
+	}
 
 	public static void check(String portletName) {
 		getResourceActions().check(portletName);
@@ -56,7 +59,7 @@ public class ResourceActionsUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Wilberforce (7.0.x)
 	 */
 	@Deprecated
 	public static List<String> getActionsNames(
@@ -66,7 +69,7 @@ public class ResourceActionsUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Wilberforce (7.0.x)
 	 */
 	@Deprecated
 	public static List<String> getActionsNames(
@@ -197,8 +200,6 @@ public class ResourceActionsUtil {
 	}
 
 	public static ResourceActions getResourceActions() {
-		PortalRuntimePermission.checkGetBeanProperty(ResourceActionsUtil.class);
-
 		return _resourceActions;
 	}
 
@@ -267,7 +268,7 @@ public class ResourceActionsUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Wilberforce (7.0.x)
 	 */
 	@Deprecated
 	public static void read(String servletContextName, InputStream inputStream)
@@ -290,8 +291,6 @@ public class ResourceActionsUtil {
 	}
 
 	public void setResourceActions(ResourceActions resourceActions) {
-		PortalRuntimePermission.checkSetBeanProperty(getClass());
-
 		_resourceActions = resourceActions;
 	}
 

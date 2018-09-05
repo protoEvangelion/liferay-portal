@@ -11,7 +11,7 @@
 	</set-up>
 
 	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
 
 		<if>
 			<equals arg1="${testPortalInstance}" arg2="true" />
@@ -21,77 +21,63 @@
 			<else>
 				<execute macro="WebContent#tearDownCP" />
 
-				<execute macro="Page#tearDownPG" />
+				<execute macro="Page#tearDownCP" />
 			</else>
 		</if>
 	</tear-down>
 
-	<command name="AddPageFromExistingPage" priority="3">
+	<command name="AddPageFromExistingPage" priority="5">
+		<property name="testray.component.names" value="Training" />
+
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="Page#add">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Build" />
+			<var name="panel" value="Site Administration" />
+			<var name="portlet" value="Pages" />
+		</execute>
+
+		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Site Page" />
 		</execute>
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Site Page" />
-		</execute>
-
-		<execute macro="Page#add">
+		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Site Page Name" />
-			<var name="pageTemplateName" value="Content Display Page" />
+			<var name="pageTemplateName" value="Wiki" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Site Page Name" />
 		</execute>
 
-		<for list="Tags Navigation,Categories Navigation,Asset Publisher" param="portletName">
+		<for list="Tags Navigation,Categories Navigation,Wiki" param="portletName">
 			<execute macro="Portlet#viewSpecificPG">
 				<var name="portletName" value="${portletName}" />
 			</execute>
 		</for>
 	</command>
 
-	<command name="DeletePages" priority="5">
-		<property name="portal.acceptance" value="true" />
+	<command name="EditPageViaControlMenu" priority="5">
+		<description message="This is a use case for LPS-71160" />
 
-		<execute macro="Page#add">
-			<var name="pageName" value="Page1" />
+		<property name="testray.component.names" value="Training" />
+
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Build" />
+			<var name="panel" value="Site Administration" />
+			<var name="portlet" value="Pages" />
 		</execute>
 
-		<execute macro="Page#add">
-			<var name="pageName" value="Page2" />
-		</execute>
-
-		<execute macro="Page#deletePG">
-			<var name="pageName" value="Page1" />
-		</execute>
-
-		<execute macro="Page#viewDeletedPage">
-			<var name="pageName" value="Page1" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Page#deleteViaX">
-			<var name="pageName" value="Page2" />
-		</execute>
-
-		<execute macro="Page#viewDeletedPage">
-			<var name="pageName" value="Page2" />
-		</execute>
-	</command>
-
-	<command name="EditSitePage" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Page#add">
+		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Site Page" />
 		</execute>
 
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Site Page" />
+		<execute macro="Navigator#gotoPage">
+			<var name="pageName" value="Site Page" />
+		</execute>
+
+		<execute macro="Navigator#gotoEditPageViaControlMenu">
+			<var name="pageName" value="Site Page" />
 		</execute>
 
 		<execute macro="Page#editName">
@@ -104,6 +90,71 @@
 
 		<execute macro="Page#view">
 			<var name="pageName" value="Site Page Edit" />
+			<var name="privacy" value="Public Pages" />
+		</execute>
+
+		<execute macro="Navigator#gotoPage">
+			<var name="pageName" value="Site Page Edit" />
+		</execute>
+
+		<execute macro="Navigator#gotoEditPageViaControlMenu">
+			<var name="pageName" value="Site Page Edit" />
+		</execute>
+
+		<execute macro="Navigator#gotoSEOPanel" />
+
+		<execute macro="Page#editPageMetadata">
+			<var name="HTMLTitle" value="S.P.A.C.E.Home" />
+			<var name="metaTagsDescription" value="Welcome to S.P.A.C.E., a graduate-level school for those passionate about expanding their horizons through science, research, and space travel" />
+			<var name="metaTagsKeywords" value="space, education, space travel, graduateschool" />
+		</execute>
+
+		<execute macro="Navigator#gotoPage">
+			<var name="pageName" value="Site Page Edit" />
+		</execute>
+
+		<execute macro="Navigator#gotoEditPageViaControlMenu">
+			<var name="pageName" value="Site Page Edit" />
+		</execute>
+
+		<execute macro="Navigator#gotoSEOPanel" />
+
+		<execute macro="Page#viewPageMetadata">
+			<var name="HTMLTitle" value="S.P.A.C.E.Home" />
+			<var name="metaTagsDescription" value="Welcome to S.P.A.C.E., a graduate-level school for those passionate about expanding their horizons through science, research, and space travel" />
+			<var name="metaTagsKeywords" value="space, education, space travel, graduateschool" />
+		</execute>
+	</command>
+
+	<command name="EditSitePage" priority="4">
+		<execute macro="Navigator#openURL" />
+
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Build" />
+			<var name="panel" value="Site Administration" />
+			<var name="portlet" value="Pages" />
+		</execute>
+
+		<execute macro="SitePages#addPublicPage">
+			<var name="pageName" value="Site Page" />
+		</execute>
+
+		<execute macro="SitePages#gotoPageMenuItem">
+			<var name="menuItem" value="Configure" />
+			<var name="pageName" value="Site Page" />
+		</execute>
+
+		<execute macro="Page#editName">
+			<var name="pageNameEdit" value="Site Page Edit" />
+		</execute>
+
+		<execute macro="Navigator#gotoPage">
+			<var name="pageName" value="Site Page Edit" />
+		</execute>
+
+		<execute macro="Page#view">
+			<var name="pageName" value="Site Page Edit" />
+			<var name="privacy" value="Public Pages" />
 		</execute>
 	</command>
 </definition>

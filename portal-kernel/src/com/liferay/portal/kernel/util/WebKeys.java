@@ -58,6 +58,10 @@ public interface WebKeys {
 
 	public static final String AVAILABLE_LOCALES = "AVAILABLE_LOCALES";
 
+	public static final String BEAN_FILTER_NAMES = "BEAN_FILTER_NAMES";
+
+	public static final String BEAN_PORTLET_IDS = "BEAN_PORTLET_IDS";
+
 	public static final String BLOGS_CATEGORY = "BLOGS_CATEGORY";
 
 	public static final String BLOGS_ENTRY = "BLOGS_ENTRY";
@@ -101,7 +105,7 @@ public interface WebKeys {
 	public static final String CTX = "CTX";
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
 	 */
 	@Deprecated
 	public static final String CTX_PATH = "CTX_PATH";
@@ -155,6 +159,8 @@ public interface WebKeys {
 
 	public static final String FACEBOOK_INCOMPLETE_USER_ID = "FACEBOOK_INCOMPLETE_USER_ID";
 
+	public static final String FACEBOOK_NONCE = "FACEBOOK_NONCE";
+
 	public static final String FACEBOOK_USER_EMAIL_ADDRESS = "FACEBOOK_USER_EMAIL_ADDRESS";
 
 	public static final String FORGOT_PASSWORD_REMINDER_ATTEMPTS = "FORGOT_PASSWORD_REMINDER_ATTEMPTS";
@@ -170,7 +176,9 @@ public interface WebKeys {
 	public static final String FORWARD_URL = "FORWARD_URL";
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link com.liferay.taglib.util.FriendlyURLUtil.getFriendlyURL(HttpServletRequest, javax.servlet.jsp.PageContext)}
+	 * @deprecated As of Judson (7.1.x), replaced by {@link
+	 *             com.liferay.taglib.util.FriendlyURLUtil.getFriendlyURL(
+	 *             HttpServletRequest, javax.servlet.jsp.PageContext)}
 	 */
 	@Deprecated
 	public static final String FRIENDLY_URL = "FRIENDLY_URL";
@@ -489,7 +497,7 @@ public interface WebKeys {
 	public static final String SEARCH_CONTAINER = "SEARCH_CONTAINER";
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
 	 */
 	@Deprecated
 	public static final String SEARCH_CONTAINER_REFERENCE = "LIFERAY_SHARED_SEARCH_CONTAINER_REFERENCE";
@@ -642,7 +650,7 @@ public interface WebKeys {
 	public static final String USER_PASSWORD = "USER_PASSWORD";
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
 	 */
 	@Deprecated
 	public static final String USER_UUID = "USER_UUID";
@@ -674,10 +682,6 @@ public interface WebKeys {
 	public static final String WORKFLOW_INSTANCE = "WORKFLOW_INSTANCE";
 
 	public static final String WORKFLOW_TASK = "WORKFLOW_TASK";
-
-	public static final String WSRP_NEW_SESSION = "WSRP_NEW_SESSION";
-
-	public static final String WSRP_PRODUCER = "WSRP_PRODUCER";
 
 	public static final String XUGGLER_INSTALL_STATUS = "XUGGLER_INSTALL_STATUS";
 

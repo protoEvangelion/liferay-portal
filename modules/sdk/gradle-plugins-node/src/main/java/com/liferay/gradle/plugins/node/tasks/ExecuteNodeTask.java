@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 
 import java.util.List;
+import java.util.Map;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.logging.Logger;
@@ -50,6 +51,18 @@ public class ExecuteNodeTask extends DefaultTask {
 		return this;
 	}
 
+	public ExecuteNodeTask environment(Map<?, ?> environment) {
+		_nodeExecutor.environment(environment);
+
+		return this;
+	}
+
+	public ExecuteNodeTask environment(Object key, Object value) {
+		_nodeExecutor.environment(key, value);
+
+		return this;
+	}
+
 	@TaskAction
 	public void executeNode() throws Exception {
 		int npmInstallRetries = getNpmInstallRetries();
@@ -68,13 +81,17 @@ public class ExecuteNodeTask extends DefaultTask {
 
 		Logger logger = getLogger();
 
-		for (int i = 0; i < npmInstallRetries; i++) {
+		for (int i = 1; i <= npmInstallRetries; i++) {
 			try {
 				_nodeExecutor.execute();
 
 				break;
 			}
 			catch (IOException ioe) {
+				if (i == npmInstallRetries) {
+					throw ioe;
+				}
+
 				if (logger.isWarnEnabled()) {
 					logger.warn(
 						ioe.getMessage() + ". Running \"npm install\" again");
@@ -91,6 +108,10 @@ public class ExecuteNodeTask extends DefaultTask {
 
 	public String getCommand() {
 		return _nodeExecutor.getCommand();
+	}
+
+	public Map<?, ?> getEnvironment() {
+		return _nodeExecutor.getEnvironment();
 	}
 
 	public File getNodeDir() {
@@ -123,6 +144,10 @@ public class ExecuteNodeTask extends DefaultTask {
 
 	public void setCommand(Object command) {
 		_nodeExecutor.setCommand(command);
+	}
+
+	public void setEnvironment(Map<?, ?> environment) {
+		_nodeExecutor.setEnvironment(environment);
 	}
 
 	public void setInheritProxy(boolean inheritProxy) {

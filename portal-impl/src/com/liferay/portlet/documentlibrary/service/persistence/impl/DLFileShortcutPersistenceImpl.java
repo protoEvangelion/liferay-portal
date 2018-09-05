@@ -20,6 +20,8 @@ import com.liferay.document.library.kernel.exception.NoSuchFileShortcutException
 import com.liferay.document.library.kernel.model.DLFileShortcut;
 import com.liferay.document.library.kernel.service.persistence.DLFileShortcutPersistence;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
@@ -40,10 +42,8 @@ import com.liferay.portal.kernel.service.persistence.CompanyProvider;
 import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.ReflectionUtil;
+import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 
@@ -53,6 +53,7 @@ import com.liferay.portlet.documentlibrary.model.impl.DLFileShortcutModelImpl;
 import java.io.Serializable;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
 
 import java.util.Collections;
 import java.util.Date;
@@ -236,7 +237,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 			if (uuid == null) {
 				query.append(_FINDER_COLUMN_UUID_UUID_1);
 			}
-			else if (uuid.equals(StringPool.BLANK)) {
+			else if (uuid.equals("")) {
 				query.append(_FINDER_COLUMN_UUID_UUID_3);
 			}
 			else {
@@ -325,7 +326,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 		msg.append("uuid=");
 		msg.append(uuid);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchFileShortcutException(msg.toString());
 	}
@@ -374,7 +375,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 		msg.append("uuid=");
 		msg.append(uuid);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchFileShortcutException(msg.toString());
 	}
@@ -466,7 +467,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 		if (uuid == null) {
 			query.append(_FINDER_COLUMN_UUID_UUID_1);
 		}
-		else if (uuid.equals(StringPool.BLANK)) {
+		else if (uuid.equals("")) {
 			query.append(_FINDER_COLUMN_UUID_UUID_3);
 		}
 		else {
@@ -602,7 +603,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 			if (uuid == null) {
 				query.append(_FINDER_COLUMN_UUID_UUID_1);
 			}
-			else if (uuid.equals(StringPool.BLANK)) {
+			else if (uuid.equals("")) {
 				query.append(_FINDER_COLUMN_UUID_UUID_3);
 			}
 			else {
@@ -682,7 +683,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 			msg.append(", groupId=");
 			msg.append(groupId);
 
-			msg.append(StringPool.CLOSE_CURLY_BRACE);
+			msg.append("}");
 
 			if (_log.isDebugEnabled()) {
 				_log.debug(msg.toString());
@@ -745,7 +746,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 			if (uuid == null) {
 				query.append(_FINDER_COLUMN_UUID_G_UUID_1);
 			}
-			else if (uuid.equals(StringPool.BLANK)) {
+			else if (uuid.equals("")) {
 				query.append(_FINDER_COLUMN_UUID_G_UUID_3);
 			}
 			else {
@@ -785,13 +786,6 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 					result = dlFileShortcut;
 
 					cacheResult(dlFileShortcut);
-
-					if ((dlFileShortcut.getUuid() == null) ||
-							!dlFileShortcut.getUuid().equals(uuid) ||
-							(dlFileShortcut.getGroupId() != groupId)) {
-						finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G,
-							finderArgs, dlFileShortcut);
-					}
 				}
 			}
 			catch (Exception e) {
@@ -852,7 +846,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 			if (uuid == null) {
 				query.append(_FINDER_COLUMN_UUID_G_UUID_1);
 			}
-			else if (uuid.equals(StringPool.BLANK)) {
+			else if (uuid.equals("")) {
 				query.append(_FINDER_COLUMN_UUID_G_UUID_3);
 			}
 			else {
@@ -1051,7 +1045,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 			if (uuid == null) {
 				query.append(_FINDER_COLUMN_UUID_C_UUID_1);
 			}
-			else if (uuid.equals(StringPool.BLANK)) {
+			else if (uuid.equals("")) {
 				query.append(_FINDER_COLUMN_UUID_C_UUID_3);
 			}
 			else {
@@ -1148,7 +1142,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 		msg.append(", companyId=");
 		msg.append(companyId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchFileShortcutException(msg.toString());
 	}
@@ -1204,7 +1198,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 		msg.append(", companyId=");
 		msg.append(companyId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchFileShortcutException(msg.toString());
 	}
@@ -1299,7 +1293,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 		if (uuid == null) {
 			query.append(_FINDER_COLUMN_UUID_C_UUID_1);
 		}
-		else if (uuid.equals(StringPool.BLANK)) {
+		else if (uuid.equals("")) {
 			query.append(_FINDER_COLUMN_UUID_C_UUID_3);
 		}
 		else {
@@ -1441,7 +1435,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 			if (uuid == null) {
 				query.append(_FINDER_COLUMN_UUID_C_UUID_1);
 			}
-			else if (uuid.equals(StringPool.BLANK)) {
+			else if (uuid.equals("")) {
 				query.append(_FINDER_COLUMN_UUID_C_UUID_3);
 			}
 			else {
@@ -1705,7 +1699,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 		msg.append("companyId=");
 		msg.append(companyId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchFileShortcutException(msg.toString());
 	}
@@ -1756,7 +1750,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 		msg.append("companyId=");
 		msg.append(companyId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchFileShortcutException(msg.toString());
 	}
@@ -2219,7 +2213,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 		msg.append("toFileEntryId=");
 		msg.append(toFileEntryId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchFileShortcutException(msg.toString());
 	}
@@ -2270,7 +2264,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 		msg.append("toFileEntryId=");
 		msg.append(toFileEntryId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchFileShortcutException(msg.toString());
 	}
@@ -2745,7 +2739,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 		msg.append(", folderId=");
 		msg.append(folderId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchFileShortcutException(msg.toString());
 	}
@@ -2801,7 +2795,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 		msg.append(", folderId=");
 		msg.append(folderId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchFileShortcutException(msg.toString());
 	}
@@ -3652,7 +3646,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 		msg.append(", status=");
 		msg.append(status);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchFileShortcutException(msg.toString());
 	}
@@ -3708,7 +3702,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 		msg.append(", status=");
 		msg.append(status);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchFileShortcutException(msg.toString());
 	}
@@ -4102,7 +4096,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 				for (DLFileShortcut dlFileShortcut : list) {
 					if ((groupId != dlFileShortcut.getGroupId()) ||
 							(folderId != dlFileShortcut.getFolderId()) ||
-							(active != dlFileShortcut.getActive())) {
+							(active != dlFileShortcut.isActive())) {
 						list = null;
 
 						break;
@@ -4220,7 +4214,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 		msg.append(", active=");
 		msg.append(active);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchFileShortcutException(msg.toString());
 	}
@@ -4281,7 +4275,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 		msg.append(", active=");
 		msg.append(active);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchFileShortcutException(msg.toString());
 	}
@@ -5094,7 +5088,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 				for (DLFileShortcut dlFileShortcut : list) {
 					if ((groupId != dlFileShortcut.getGroupId()) ||
 							(folderId != dlFileShortcut.getFolderId()) ||
-							(active != dlFileShortcut.getActive()) ||
+							(active != dlFileShortcut.isActive()) ||
 							(status != dlFileShortcut.getStatus())) {
 						list = null;
 
@@ -5222,7 +5216,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 		msg.append(", status=");
 		msg.append(status);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchFileShortcutException(msg.toString());
 	}
@@ -5290,7 +5284,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 		msg.append(", status=");
 		msg.append(status);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchFileShortcutException(msg.toString());
 	}
@@ -5999,8 +5993,10 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 		setModelClass(DLFileShortcut.class);
 
 		try {
-			Field field = ReflectionUtil.getDeclaredField(BasePersistenceImpl.class,
+			Field field = BasePersistenceImpl.class.getDeclaredField(
 					"_dbColumnNames");
+
+			field.setAccessible(true);
 
 			Map<String, String> dbColumnNames = new HashMap<String, String>();
 
@@ -6215,8 +6211,6 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 
 	@Override
 	protected DLFileShortcut removeImpl(DLFileShortcut dlFileShortcut) {
-		dlFileShortcut = toUnwrappedModel(dlFileShortcut);
-
 		Session session = null;
 
 		try {
@@ -6247,9 +6241,23 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 
 	@Override
 	public DLFileShortcut updateImpl(DLFileShortcut dlFileShortcut) {
-		dlFileShortcut = toUnwrappedModel(dlFileShortcut);
-
 		boolean isNew = dlFileShortcut.isNew();
+
+		if (!(dlFileShortcut instanceof DLFileShortcutModelImpl)) {
+			InvocationHandler invocationHandler = null;
+
+			if (ProxyUtil.isProxyClass(dlFileShortcut.getClass())) {
+				invocationHandler = ProxyUtil.getInvocationHandler(dlFileShortcut);
+
+				throw new IllegalArgumentException(
+					"Implement ModelWrapper in dlFileShortcut proxy " +
+					invocationHandler.getClass());
+			}
+
+			throw new IllegalArgumentException(
+				"Implement ModelWrapper in custom DLFileShortcut implementation " +
+				dlFileShortcut.getClass());
+		}
 
 		DLFileShortcutModelImpl dlFileShortcutModelImpl = (DLFileShortcutModelImpl)dlFileShortcut;
 
@@ -6349,7 +6357,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 			args = new Object[] {
 					dlFileShortcutModelImpl.getGroupId(),
 					dlFileShortcutModelImpl.getFolderId(),
-					dlFileShortcutModelImpl.getActive()
+					dlFileShortcutModelImpl.isActive()
 				};
 
 			finderCache.removeResult(FINDER_PATH_COUNT_BY_G_F_A, args);
@@ -6359,7 +6367,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 			args = new Object[] {
 					dlFileShortcutModelImpl.getGroupId(),
 					dlFileShortcutModelImpl.getFolderId(),
-					dlFileShortcutModelImpl.getActive(),
+					dlFileShortcutModelImpl.isActive(),
 					dlFileShortcutModelImpl.getStatus()
 				};
 
@@ -6483,7 +6491,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 				args = new Object[] {
 						dlFileShortcutModelImpl.getGroupId(),
 						dlFileShortcutModelImpl.getFolderId(),
-						dlFileShortcutModelImpl.getActive()
+						dlFileShortcutModelImpl.isActive()
 					};
 
 				finderCache.removeResult(FINDER_PATH_COUNT_BY_G_F_A, args);
@@ -6507,7 +6515,7 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 				args = new Object[] {
 						dlFileShortcutModelImpl.getGroupId(),
 						dlFileShortcutModelImpl.getFolderId(),
-						dlFileShortcutModelImpl.getActive(),
+						dlFileShortcutModelImpl.isActive(),
 						dlFileShortcutModelImpl.getStatus()
 					};
 
@@ -6527,38 +6535,6 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 		dlFileShortcut.resetOriginalValues();
 
 		return dlFileShortcut;
-	}
-
-	protected DLFileShortcut toUnwrappedModel(DLFileShortcut dlFileShortcut) {
-		if (dlFileShortcut instanceof DLFileShortcutImpl) {
-			return dlFileShortcut;
-		}
-
-		DLFileShortcutImpl dlFileShortcutImpl = new DLFileShortcutImpl();
-
-		dlFileShortcutImpl.setNew(dlFileShortcut.isNew());
-		dlFileShortcutImpl.setPrimaryKey(dlFileShortcut.getPrimaryKey());
-
-		dlFileShortcutImpl.setUuid(dlFileShortcut.getUuid());
-		dlFileShortcutImpl.setFileShortcutId(dlFileShortcut.getFileShortcutId());
-		dlFileShortcutImpl.setGroupId(dlFileShortcut.getGroupId());
-		dlFileShortcutImpl.setCompanyId(dlFileShortcut.getCompanyId());
-		dlFileShortcutImpl.setUserId(dlFileShortcut.getUserId());
-		dlFileShortcutImpl.setUserName(dlFileShortcut.getUserName());
-		dlFileShortcutImpl.setCreateDate(dlFileShortcut.getCreateDate());
-		dlFileShortcutImpl.setModifiedDate(dlFileShortcut.getModifiedDate());
-		dlFileShortcutImpl.setRepositoryId(dlFileShortcut.getRepositoryId());
-		dlFileShortcutImpl.setFolderId(dlFileShortcut.getFolderId());
-		dlFileShortcutImpl.setToFileEntryId(dlFileShortcut.getToFileEntryId());
-		dlFileShortcutImpl.setTreePath(dlFileShortcut.getTreePath());
-		dlFileShortcutImpl.setActive(dlFileShortcut.isActive());
-		dlFileShortcutImpl.setLastPublishDate(dlFileShortcut.getLastPublishDate());
-		dlFileShortcutImpl.setStatus(dlFileShortcut.getStatus());
-		dlFileShortcutImpl.setStatusByUserId(dlFileShortcut.getStatusByUserId());
-		dlFileShortcutImpl.setStatusByUserName(dlFileShortcut.getStatusByUserName());
-		dlFileShortcutImpl.setStatusDate(dlFileShortcut.getStatusDate());
-
-		return dlFileShortcutImpl;
 	}
 
 	/**
@@ -6712,12 +6688,12 @@ public class DLFileShortcutPersistenceImpl extends BasePersistenceImpl<DLFileSho
 		for (Serializable primaryKey : uncachedPrimaryKeys) {
 			query.append((long)primaryKey);
 
-			query.append(StringPool.COMMA);
+			query.append(",");
 		}
 
 		query.setIndex(query.index() - 1);
 
-		query.append(StringPool.CLOSE_PARENTHESIS);
+		query.append(")");
 
 		String sql = query.toString();
 

@@ -16,6 +16,7 @@ package com.liferay.source.formatter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Raymond Augé
@@ -45,12 +46,26 @@ public class SourceFormatterArgs {
 
 	public static final int PROCESSOR_THREAD_COUNT = 5;
 
-	public static final boolean SHOW_DOCUMENTATION = true;
+	public static final boolean SHOW_DEBUG_INFORMATION = false;
+
+	public static final boolean SHOW_DOCUMENTATION = false;
+
+	public static final boolean SHOW_STATUS_UPDATES = false;
 
 	public static final boolean THROW_EXCEPTION = false;
 
+	public void addRecentChangesFileNames(Set<String> fileNames) {
+		if (_recentChangesFileNames != null) {
+			_recentChangesFileNames.addAll(fileNames);
+		}
+	}
+
 	public String getBaseDirName() {
 		return _baseDirName;
+	}
+
+	public String getCheckName() {
+		return _checkName;
 	}
 
 	public List<String> getFileExtensions() {
@@ -101,8 +116,16 @@ public class SourceFormatterArgs {
 		return _printErrors;
 	}
 
+	public boolean isShowDebugInformation() {
+		return _showDebugInformation;
+	}
+
 	public boolean isShowDocumentation() {
 		return _showDocumentation;
+	}
+
+	public boolean isShowStatusUpdates() {
+		return _showStatusUpdates;
 	}
 
 	public boolean isThrowException() {
@@ -123,6 +146,10 @@ public class SourceFormatterArgs {
 		}
 
 		_baseDirName = baseDirName;
+	}
+
+	public void setCheckName(String checkName) {
+		_checkName = checkName;
 	}
 
 	public void setFileExtensions(List<String> fileExtensions) {
@@ -178,8 +205,16 @@ public class SourceFormatterArgs {
 		_recentChangesFileNames = recentChangesFileNames;
 	}
 
+	public void setShowDebugInformation(boolean showDebugInformation) {
+		_showDebugInformation = showDebugInformation;
+	}
+
 	public void setShowDocumentation(boolean showDocumentation) {
 		_showDocumentation = showDocumentation;
+	}
+
+	public void setShowStatusUpdates(boolean showStatusUpdates) {
+		_showStatusUpdates = showStatusUpdates;
 	}
 
 	public void setThrowException(boolean throwException) {
@@ -188,6 +223,7 @@ public class SourceFormatterArgs {
 
 	private boolean _autoFix = AUTO_FIX;
 	private String _baseDirName = BASE_DIR_NAME;
+	private String _checkName;
 	private List<String> _fileExtensions = new ArrayList<>();
 	private List<String> _fileNames;
 	private boolean _formatCurrentBranch = FORMAT_CURRENT_BRANCH;
@@ -199,7 +235,9 @@ public class SourceFormatterArgs {
 	private boolean _printErrors = PRINT_ERRORS;
 	private int _processorThreadCount = PROCESSOR_THREAD_COUNT;
 	private List<String> _recentChangesFileNames;
+	private boolean _showDebugInformation = SHOW_DEBUG_INFORMATION;
 	private boolean _showDocumentation = SHOW_DOCUMENTATION;
+	private boolean _showStatusUpdates = SHOW_STATUS_UPDATES;
 	private boolean _throwException = THROW_EXCEPTION;
 
 }

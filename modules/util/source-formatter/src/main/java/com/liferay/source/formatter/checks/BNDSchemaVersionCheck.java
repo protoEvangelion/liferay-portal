@@ -14,7 +14,7 @@
 
 package com.liferay.source.formatter.checks;
 
-import com.liferay.portal.kernel.util.CharPool;
+import com.liferay.petra.string.CharPool;
 
 import java.io.File;
 
@@ -29,15 +29,14 @@ public class BNDSchemaVersionCheck extends BaseFileCheck {
 
 		_checkMissingSchemaVersion(fileName, absolutePath, content);
 
-		// LPS-61288
-
 		if (fileName.endsWith("-web/bnd.bnd") &&
 			content.contains("Liferay-Require-SchemaVersion: 1.0.0")) {
 
 			addMessage(
 				fileName,
 				"Do not include the header Liferay-Require-SchemaVersion in " +
-					"web modules");
+					"web modules",
+				"bnd_schema_version.markdown");
 		}
 
 		return content;
@@ -59,8 +58,8 @@ public class BNDSchemaVersionCheck extends BaseFileCheck {
 
 		if (serviceXMLfile.exists()) {
 			addMessage(
-				fileName,
-				"Missing 'Liferay-Require-SchemaVersion', see LPS-69385");
+				fileName, "Missing 'Liferay-Require-SchemaVersion'",
+				"bnd_schema_version.markdown");
 		}
 	}
 

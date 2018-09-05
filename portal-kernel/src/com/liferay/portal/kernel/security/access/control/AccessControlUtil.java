@@ -14,12 +14,11 @@
 
 package com.liferay.portal.kernel.security.access.control;
 
+import com.liferay.petra.lang.CentralizedThreadLocal;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.auth.AccessControlContext;
 import com.liferay.portal.kernel.security.auth.AuthException;
 import com.liferay.portal.kernel.security.auth.verifier.AuthVerifierResult;
-import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
-import com.liferay.portal.kernel.util.AutoResetThreadLocal;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.registry.Registry;
 import com.liferay.registry.RegistryUtil;
@@ -39,15 +38,10 @@ import javax.servlet.http.HttpServletResponse;
 public class AccessControlUtil {
 
 	public static AccessControl getAccessControl() {
-		PortalRuntimePermission.checkGetBeanProperty(AccessControlUtil.class);
-
 		return _instance._serviceTracker.getService();
 	}
 
 	public static AccessControlContext getAccessControlContext() {
-		PortalRuntimePermission.checkGetBeanProperty(
-			AccessControlUtil.class, "accessControlContext");
-
 		return _accessControlContext.get();
 	}
 
@@ -90,9 +84,6 @@ public class AccessControlUtil {
 	public static void setAccessControlContext(
 		AccessControlContext accessControlContext) {
 
-		PortalRuntimePermission.checkSetBeanProperty(
-			AccessControlUtil.class, "accessControlContext");
-
 		_accessControlContext.set(accessControlContext);
 	}
 
@@ -115,7 +106,7 @@ public class AccessControlUtil {
 	private static final AccessControlUtil _instance = new AccessControlUtil();
 
 	private static final ThreadLocal<AccessControlContext>
-		_accessControlContext = new AutoResetThreadLocal<>(
+		_accessControlContext = new CentralizedThreadLocal<>(
 			AccessControlUtil.class + "._accessControlContext");
 
 	private final ServiceTracker<?, AccessControl> _serviceTracker;

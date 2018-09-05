@@ -18,8 +18,8 @@ import com.liferay.portal.cache.key.HashCodeHexStringCacheKeyGenerator;
 import com.liferay.portal.kernel.cache.key.CacheKeyGeneratorUtil;
 import com.liferay.portal.kernel.test.CaptureHandler;
 import com.liferay.portal.kernel.test.JDKLoggerTestUtil;
-import com.liferay.portal.minifier.GoogleJavaScriptMinifier;
 import com.liferay.portal.minifier.MinifierUtil;
+import com.liferay.portal.tools.ToolDependencies;
 
 import java.io.StringWriter;
 
@@ -41,6 +41,8 @@ public class StripFilterTest {
 
 	@BeforeClass
 	public static void setUpClass() {
+		ToolDependencies.wireCaches();
+
 		CacheKeyGeneratorUtil cacheKeyGeneratorUtil =
 			new CacheKeyGeneratorUtil();
 
@@ -97,6 +99,8 @@ public class StripFilterTest {
 	public void testProcessCSS() throws Exception {
 		StripFilter stripFilter = new StripFilter();
 
+		char[] styleOpenTag = "style type=\"text/css\">".toCharArray();
+
 		// Missing close tag
 
 		CharBuffer charBuffer = CharBuffer.wrap("style type=\"text/css\">abc");
@@ -107,7 +111,8 @@ public class StripFilterTest {
 				JDKLoggerTestUtil.configureJDKLogger(
 					StripFilter.class.getName(), Level.WARNING)) {
 
-			stripFilter.processCSS(null, null, charBuffer, stringWriter);
+			stripFilter.processCSS(
+				null, null, charBuffer, stringWriter, styleOpenTag);
 
 			List<LogRecord> logRecords = captureHandler.getLogRecords();
 
@@ -127,7 +132,8 @@ public class StripFilterTest {
 		charBuffer = CharBuffer.wrap("style type=\"text/css\"></style>");
 		stringWriter = new StringWriter();
 
-		stripFilter.processCSS(null, null, charBuffer, stringWriter);
+		stripFilter.processCSS(
+			null, null, charBuffer, stringWriter, styleOpenTag);
 
 		Assert.assertEquals(
 			"style type=\"text/css\"></style>", stringWriter.toString());
@@ -139,7 +145,8 @@ public class StripFilterTest {
 		charBuffer = CharBuffer.wrap("style type=\"text/css\"> \r\t\n</style>");
 		stringWriter = new StringWriter();
 
-		stripFilter.processCSS(null, null, charBuffer, stringWriter);
+		stripFilter.processCSS(
+			null, null, charBuffer, stringWriter, styleOpenTag);
 
 		Assert.assertEquals(
 			"style type=\"text/css\"></style>", stringWriter.toString());
@@ -159,7 +166,8 @@ public class StripFilterTest {
 
 		stringWriter = new StringWriter();
 
-		stripFilter.processCSS(null, null, charBuffer, stringWriter);
+		stripFilter.processCSS(
+			null, null, charBuffer, stringWriter, styleOpenTag);
 
 		Assert.assertEquals(
 			"style type=\"text/css\">" + minifiedCode + "</style>",
@@ -173,7 +181,8 @@ public class StripFilterTest {
 			"style type=\"text/css\">" + code + "</style> \r\t\n");
 		stringWriter = new StringWriter();
 
-		stripFilter.processCSS(null, null, charBuffer, stringWriter);
+		stripFilter.processCSS(
+			null, null, charBuffer, stringWriter, styleOpenTag);
 
 		Assert.assertEquals(
 			"style type=\"text/css\">" + minifiedCode + "</style> ",
@@ -223,87 +232,6 @@ public class StripFilterTest {
 		Assert.assertEquals("script></script>", stringWriter.toString());
 
 		Assert.assertEquals(16, charBuffer.position());
-
-		// Minifier spaces
-
-		charBuffer = CharBuffer.wrap("script> \t\r\n</script>");
-		stringWriter = new StringWriter();
-
-		stripFilter.processJavaScript(
-			"test.js", charBuffer, stringWriter, "script".toCharArray());
-
-		Assert.assertEquals("script></script>", stringWriter.toString());
-
-		Assert.assertEquals(20, charBuffer.position());
-
-		// Minifier code
-
-		String code = "function(){ var abcd; var efgh; }";
-
-		try (CaptureHandler captureHandler =
-				JDKLoggerTestUtil.configureJDKLogger(
-					GoogleJavaScriptMinifier.class.getName(), Level.SEVERE)) {
-
-			String minifiedCode = MinifierUtil.minifyJavaScript(
-				"test.js", code);
-
-			List<LogRecord> logRecords = captureHandler.getLogRecords();
-
-			Assert.assertEquals(logRecords.toString(), 2, logRecords.size());
-
-			LogRecord logRecord = logRecords.get(0);
-
-			Assert.assertEquals(
-				"(test.js:1): Parse error. unnamed function statement",
-				logRecord.getMessage());
-
-			logRecord = logRecords.get(1);
-
-			Assert.assertEquals(
-				"{0} error(s), {1} warning(s)", logRecord.getMessage());
-
-			logRecords = captureHandler.resetLogLevel(Level.SEVERE);
-
-			charBuffer = CharBuffer.wrap("script>" + code + "</script>");
-
-			stringWriter = new StringWriter();
-
-			stripFilter.processJavaScript(
-				"test.js", charBuffer, stringWriter, "script".toCharArray());
-
-			Assert.assertEquals(logRecords.toString(), 2, logRecords.size());
-
-			logRecord = logRecords.get(0);
-
-			Assert.assertEquals(
-				"(test.js:1): Parse error. unnamed function statement",
-				logRecord.getMessage());
-
-			logRecord = logRecords.get(1);
-
-			Assert.assertEquals(
-				"{0} error(s), {1} warning(s)", logRecord.getMessage());
-
-			Assert.assertEquals(
-				"script>" + minifiedCode + "</script>",
-				stringWriter.toString());
-			Assert.assertEquals(code.length() + 16, charBuffer.position());
-
-			// Minifier code with trailing spaces
-
-			charBuffer = CharBuffer.wrap("script>" + code + "</script> \t\r\n");
-
-			stringWriter = new StringWriter();
-
-			stripFilter.processJavaScript(
-				"test.js", charBuffer, stringWriter, "script".toCharArray());
-
-			Assert.assertEquals(
-				"script>" + minifiedCode + "</script> ",
-				stringWriter.toString());
-		}
-
-		Assert.assertEquals(code.length() + 20, charBuffer.position());
 	}
 
 	@Test

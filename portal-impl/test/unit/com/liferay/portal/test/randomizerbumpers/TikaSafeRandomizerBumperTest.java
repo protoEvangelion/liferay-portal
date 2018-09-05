@@ -44,7 +44,7 @@ public class TikaSafeRandomizerBumperTest {
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
 		new AggregateTestRule(
-			CodeCoverageAssertor.INSTANCE, AspectJNewEnvTestRule.INSTANCE);
+			AspectJNewEnvTestRule.INSTANCE, CodeCoverageAssertor.INSTANCE);
 
 	@Test
 	public void testAcceptAny() {
@@ -91,7 +91,7 @@ public class TikaSafeRandomizerBumperTest {
 			tikaSafeRandomizerBumper, _BROKEN_EXE_BYTES, false, Level.INFO);
 	}
 
-	@AdviseWith(adviceClasses = {ReflectionTestUtilAdvice.class})
+	@AdviseWith(adviceClasses = ReflectionTestUtilAdvice.class)
 	@NewEnv(type = NewEnv.Type.CLASSLOADER)
 	@Test
 	public void testExceptionInInitializerError()
@@ -151,7 +151,8 @@ public class TikaSafeRandomizerBumperTest {
 						logRecord.getMessage());
 				}
 				else {
-					Assert.assertTrue(logRecords.isEmpty());
+					Assert.assertTrue(
+						logRecords.toString(), logRecords.isEmpty());
 				}
 			}
 			else {
@@ -159,7 +160,7 @@ public class TikaSafeRandomizerBumperTest {
 
 				List<LogRecord> logRecords = captureHandler.getLogRecords();
 
-				Assert.assertTrue(logRecords.isEmpty());
+				Assert.assertTrue(logRecords.toString(), logRecords.isEmpty());
 			}
 		}
 	}
@@ -168,7 +169,7 @@ public class TikaSafeRandomizerBumperTest {
 
 	// http://www.phreedom.org/research/tinype
 
-	private static final byte[] _EXE_BYTE_ARRAY = new byte[] {
+	private static final byte[] _EXE_BYTE_ARRAY = {
 		77, 90, 0, 0, 80, 69, 0, 0, 76, 1, 1, 0, 106, 42, 88, -61, 0, 0, 0, 0,
 		0, 0, 0, 0, 4, 0, 3, 1, 11, 1, 8, 0, 4, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0,
 		12, 0, 0, 0, 4, 0, 0, 0, 12, 0, 0, 0, 0, 0, 64, 0, 4, 0, 0, 0, 4, 0, 0,

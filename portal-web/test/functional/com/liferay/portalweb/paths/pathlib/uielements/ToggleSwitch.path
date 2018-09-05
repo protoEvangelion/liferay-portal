@@ -60,7 +60,7 @@
 </tr>
 <tr>
 	<td>ENABLE_SOCIAL_BOOKMARKS</td>
-	<td>//label[contains(.,'Enable Social Bookmarks')]/input[@type='checkbox']/../span[2]/span</td>
+	<td>//label[contains(@for,'enableSocialBookmarks')]/input/../span/span</td>
 	<td></td>
 </tr>
 <tr>
@@ -86,6 +86,11 @@
 <tr>
 	<td>SHOW_SPECIFIC_TOGGLE_SWITCH</td>
 	<td>//label[contains(.,'${key_checkSetupName}')]/input[contains(@class,'field') and contains(@class,'toggle-switch')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>STAGED_CONTENT</td>
+	<td>//li[contains(.,'${key_contentName}')]//input/..//span[contains(@class,'toggle-switch')]</td>
 	<td></td>
 </tr>
 <tr>

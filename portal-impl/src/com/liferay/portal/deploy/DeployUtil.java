@@ -14,16 +14,17 @@
 
 package com.liferay.portal.deploy;
 
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.ServerDetector;
 import com.liferay.portal.kernel.util.StreamUtil;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.kernel.util.Validator;
@@ -38,12 +39,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 
@@ -57,19 +63,53 @@ public class DeployUtil {
 			Map<String, String> filterMap, boolean overwrite)
 		throws Exception {
 
-		File file = new File(getResourcePath(fileName));
 		File targetFile = new File(targetDir, targetFileName);
 
 		if (!targetFile.exists()) {
+			Set<Path> tempPaths = new HashSet<>();
+
+			File file = new File(getResourcePath(tempPaths, fileName));
+
 			CopyTask.copyFile(
 				file, new File(targetDir), targetFileName, filterMap, overwrite,
 				true);
+
+			for (Path tempPath : tempPaths) {
+				deletePath(tempPath);
+			}
 		}
 	}
 
+	public static void deletePath(Path tempPath) throws IOException {
+		Files.walkFileTree(
+			tempPath,
+			new SimpleFileVisitor<Path>() {
+
+				@Override
+				public FileVisitResult postVisitDirectory(
+						Path dirPath, IOException ioe)
+					throws IOException {
+
+					Files.delete(dirPath);
+
+					return FileVisitResult.CONTINUE;
+				}
+
+				@Override
+				public FileVisitResult visitFile(
+						Path filePath, BasicFileAttributes basicFileAttributes)
+					throws IOException {
+
+					Files.delete(filePath);
+
+					return FileVisitResult.CONTINUE;
+				}
+
+			});
+	}
+
 	public static String getAutoDeployDestDir() throws Exception {
-		String destDir = PrefsPropsUtil.getString(
-			PropsKeys.AUTO_DEPLOY_DEST_DIR, PropsValues.AUTO_DEPLOY_DEST_DIR);
+		String destDir = PropsValues.AUTO_DEPLOY_DEST_DIR;
 
 		if (Validator.isNull(destDir)) {
 			destDir = getAutoDeployServerDestDir();
@@ -86,9 +126,7 @@ public class DeployUtil {
 		String serverId = GetterUtil.getString(ServerDetector.getServerId());
 
 		if (serverId.equals(ServerDetector.TOMCAT_ID)) {
-			destDir = PrefsPropsUtil.getString(
-				PropsKeys.AUTO_DEPLOY_TOMCAT_DEST_DIR,
-				PropsValues.AUTO_DEPLOY_TOMCAT_DEST_DIR);
+			destDir = PropsValues.AUTO_DEPLOY_TOMCAT_DEST_DIR;
 		}
 		else {
 			destDir = PrefsPropsUtil.getString(
@@ -96,9 +134,7 @@ public class DeployUtil {
 		}
 
 		if (Validator.isNull(destDir)) {
-			destDir = PrefsPropsUtil.getString(
-				PropsKeys.AUTO_DEPLOY_DEFAULT_DEST_DIR,
-				PropsValues.AUTO_DEPLOY_DEFAULT_DEST_DIR);
+			destDir = PropsValues.AUTO_DEPLOY_DEFAULT_DEST_DIR;
 		}
 
 		destDir = StringUtil.replace(
@@ -107,8 +143,19 @@ public class DeployUtil {
 		return destDir;
 	}
 
+	public static String getResourcePath(Set<Path> tempPaths, String resource)
+		throws Exception {
+
+		return _instance._getResourcePath(tempPaths, resource);
+	}
+
+	/**
+	 * @deprecated As of Judson (7.1.x), replaced by {@link
+	 *             #getResourcePath(Set, String)}
+	 */
+	@Deprecated
 	public static String getResourcePath(String resource) throws Exception {
-		return _instance._getResourcePath(resource);
+		return _instance._getResourcePath(new HashSet<>(), resource);
 	}
 
 	public static void redeployJetty(String context) throws Exception {
@@ -206,7 +253,9 @@ public class DeployUtil {
 
 		if (appServerType.equals(ServerDetector.JETTY_ID)) {
 			FileUtil.delete(
-				_getJettyHome() + "/contexts/" + deployDir.getName() + ".xml");
+				StringBundler.concat(
+					_getJettyHome(), "/contexts/", deployDir.getName(),
+					".xml"));
 		}
 
 		if (appServerType.equals(ServerDetector.JBOSS_ID) ||
@@ -256,7 +305,9 @@ public class DeployUtil {
 	private DeployUtil() {
 	}
 
-	private String _getResourcePath(String resource) throws IOException {
+	private String _getResourcePath(Set<Path> tempDirPaths, String resource)
+		throws IOException {
+
 		Class<?> clazz = getClass();
 
 		InputStream inputStream = clazz.getResourceAsStream(
@@ -268,6 +319,8 @@ public class DeployUtil {
 
 		Path tempDirPath = Files.createTempDirectory(
 			Paths.get(SystemProperties.get(SystemProperties.TMP_DIR)), null);
+
+		tempDirPaths.add(tempDirPath);
 
 		File file = new File(
 			tempDirPath + "/liferay/com/liferay/portal/deploy/dependencies/" +

@@ -14,9 +14,9 @@
 
 package com.liferay.source.formatter.checks;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.NaturalOrderStringComparator;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.source.formatter.checks.util.JavaSourceUtil;
 
@@ -33,9 +33,7 @@ public class MethodCallsOrderCheck extends BaseFileCheck {
 	protected String doProcess(
 		String fileName, String absolutePath, String content) {
 
-		content = _sortMethodCalls(absolutePath, content);
-
-		return content;
+		return _sortMethodCalls(content);
 	}
 
 	private boolean _isAllowedVariableType(
@@ -49,25 +47,32 @@ public class MethodCallsOrderCheck extends BaseFileCheck {
 		for (String variableTypeRegex : variableTypeRegexStrings) {
 			StringBundler sb = new StringBundler(5);
 
-			sb.append("[\\s\\S]*\\W");
+			sb.append("\\W");
 			sb.append(variableTypeRegex);
 			sb.append("\\s+");
 			sb.append(variableName);
-			sb.append("\\W[\\s\\S]*");
+			sb.append("\\W");
 
-			if (content.matches(sb.toString())) {
+			Pattern pattern = Pattern.compile(sb.toString());
+
+			Matcher matcher = pattern.matcher(content);
+
+			if (matcher.find()) {
 				return true;
 			}
 
-			sb = new StringBundler(5);
+			sb = new StringBundler(4);
 
-			sb.append("[\\s\\S]*\\W");
+			sb.append("\\W");
 			sb.append(variableName);
 			sb.append(" =\\s+new ");
 			sb.append(variableTypeRegex);
-			sb.append("[\\s\\S]*");
 
-			if (content.matches(sb.toString())) {
+			pattern = Pattern.compile(sb.toString());
+
+			matcher = pattern.matcher(content);
+
+			if (matcher.find()) {
 				return true;
 			}
 		}
@@ -77,6 +82,10 @@ public class MethodCallsOrderCheck extends BaseFileCheck {
 
 	private String _sortMethodCall(
 		String content, String methodName, String... variableTypeRegexStrings) {
+
+		if (!content.contains("." + methodName + "(")) {
+			return content;
+		}
 
 		Pattern codeBlockPattern = Pattern.compile(
 			"(\t+(\\w*)\\." + methodName + "\\(\\s*\".*?\\);\n)+",
@@ -121,6 +130,7 @@ public class MethodCallsOrderCheck extends BaseFileCheck {
 
 					String newCodeBlock = StringUtil.replaceFirst(
 						codeBlock, previousParameters, parameters);
+
 					newCodeBlock = StringUtil.replaceLast(
 						newCodeBlock, parameters, previousParameters);
 
@@ -135,17 +145,14 @@ public class MethodCallsOrderCheck extends BaseFileCheck {
 		return content;
 	}
 
-	private String _sortMethodCalls(String absolutePath, String content) {
-		if (isExcludedPath(METHOD_CALL_SORT_EXCLUDES, absolutePath)) {
-			return content;
-		}
-
+	private String _sortMethodCalls(String content) {
 		content = _sortMethodCall(
-			content, "add", "ConcurrentSkipListSet<.*>", "HashSet<.*>",
-			"TreeSet<.*>");
+			content, "add", "ConcurrentSkipListSet(<.*>|\\(\\))",
+			"HashSet(<.*>|\\(\\))", "TreeSet(<.*>|\\(\\))");
 		content = _sortMethodCall(
-			content, "put", "ConcurrentHashMap<.*>", "HashMap<.*>",
-			"JSONObject", "TreeMap<.*>");
+			content, "put", "ConcurrentHashMap(<.*>|\\(\\))",
+			"HashMap(<.*>|\\(\\))", "JSONObject", "SortedMap(<.*>|\\(\\))",
+			"TreeMap(<.*>|\\(\\))");
 		content = _sortMethodCall(content, "setAttribute");
 
 		return content;

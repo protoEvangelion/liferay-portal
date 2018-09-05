@@ -55,6 +55,7 @@ public class BuildCSSTask extends JavaExec {
 		setDefaultCharacterEncoding(StandardCharsets.UTF_8.toString());
 		setDirNames("/");
 		setMain("com.liferay.css.builder.CSSBuilder");
+		systemProperty("sass.compiler.jni.clean.temp.dir", true);
 	}
 
 	public BuildCSSTask dirNames(Iterable<Object> dirNames) {
@@ -74,13 +75,17 @@ public class BuildCSSTask extends JavaExec {
 		super.exec();
 	}
 
+	public File getBaseDir() {
+		return GradleUtil.toFile(getProject(), _baseDir);
+	}
+
 	@InputFiles
 	@SkipWhenEmpty
 	public FileCollection getCSSFiles() {
 		Project project = getProject();
 
 		List<String> dirNames = getDirNames();
-		File docrootDir = getDocrootDir();
+		File docrootDir = getBaseDir();
 
 		if (dirNames.isEmpty() || (docrootDir == null)) {
 			return project.files();
@@ -119,8 +124,35 @@ public class BuildCSSTask extends JavaExec {
 		return GradleUtil.toStringList(_dirNames);
 	}
 
+	/**
+	 * @deprecated As of 2.2.0, replaced by {@link #getBaseDir()}
+	 */
+	@Deprecated
 	public File getDocrootDir() {
-		return GradleUtil.toFile(getProject(), _docrootDir);
+		return getBaseDir();
+	}
+
+	@InputDirectory
+	@Optional
+	public File getImportDir() {
+		return GradleUtil.toFile(getProject(), _importDir);
+	}
+
+	@InputFile
+	@Optional
+	public File getImportFile() {
+		return GradleUtil.toFile(getProject(), _importFile);
+	}
+
+	@Input
+	public File getImportPath() {
+		File importPath = getImportDir();
+
+		if (importPath == null) {
+			importPath = getImportFile();
+		}
+
+		return importPath;
 	}
 
 	@Input
@@ -147,27 +179,28 @@ public class BuildCSSTask extends JavaExec {
 		return project.files(outputDirs);
 	}
 
-	@InputDirectory
-	@Optional
+	/**
+	 * @deprecated As of 2.2.0, replaced by {@link #getImportDir()}
+	 */
+	@Deprecated
 	public File getPortalCommonDir() {
-		return GradleUtil.toFile(getProject(), _portalCommonDir);
+		return getImportDir();
 	}
 
-	@InputFile
-	@Optional
+	/**
+	 * @deprecated As of 2.2.0, replaced by {@link #getImportFile()}
+	 */
+	@Deprecated
 	public File getPortalCommonFile() {
-		return GradleUtil.toFile(getProject(), _portalCommonFile);
+		return getImportFile();
 	}
 
-	@Input
+	/**
+	 * @deprecated As of 2.2.0, replaced by {@link #getImportPath()}
+	 */
+	@Deprecated
 	public File getPortalCommonPath() {
-		File portalCommonPath = getPortalCommonDir();
-
-		if (portalCommonPath == null) {
-			portalCommonPath = getPortalCommonFile();
-		}
-
-		return portalCommonPath;
+		return getImportPath();
 	}
 
 	@Input
@@ -206,6 +239,11 @@ public class BuildCSSTask extends JavaExec {
 	}
 
 	@Input
+	public boolean isAppendCssImportTimestamps() {
+		return _appendCssImportTimestamps;
+	}
+
+	@Input
 	public boolean isGenerateSourceMap() {
 		return _generateSourceMap;
 	}
@@ -224,6 +262,16 @@ public class BuildCSSTask extends JavaExec {
 		return rtlExcludedPathRegexps(Arrays.asList(rtlExcludedPathRegexps));
 	}
 
+	public void setAppendCssImportTimestamps(
+		boolean appendCssImportTimestamps) {
+
+		_appendCssImportTimestamps = appendCssImportTimestamps;
+	}
+
+	public void setBaseDir(Object baseDir) {
+		_baseDir = baseDir;
+	}
+
 	public void setDirNames(Iterable<Object> dirNames) {
 		_dirNames.clear();
 
@@ -234,24 +282,44 @@ public class BuildCSSTask extends JavaExec {
 		setDirNames(Arrays.asList(dirNames));
 	}
 
+	/**
+	 * @deprecated As of 2.2.0, replaced by {@link #setBaseDir(Object)}
+	 */
+	@Deprecated
 	public void setDocrootDir(Object docrootDir) {
-		_docrootDir = docrootDir;
+		setBaseDir(docrootDir);
 	}
 
 	public void setGenerateSourceMap(boolean generateSourceMap) {
 		_generateSourceMap = generateSourceMap;
 	}
 
+	public void setImportDir(Object importDir) {
+		_importDir = importDir;
+	}
+
+	public void setImportFile(Object importFile) {
+		_importFile = importFile;
+	}
+
 	public void setOutputDirName(Object outputDirName) {
 		_outputDirName = outputDirName;
 	}
 
+	/**
+	 * @deprecated As of 2.2.0, replaced by {@link #setImportDir(Object)}
+	 */
+	@Deprecated
 	public void setPortalCommonDir(Object portalCommonDir) {
-		_portalCommonDir = portalCommonDir;
+		setImportDir(portalCommonDir);
 	}
 
+	/**
+	 * @deprecated As of 2.2.0, replaced by {@link #setImportFile(Object)}
+	 */
+	@Deprecated
 	public void setPortalCommonFile(Object portalCommonFile) {
-		_portalCommonFile = portalCommonFile;
+		setImportFile(portalCommonFile);
 	}
 
 	public void setPrecision(Object precision) {
@@ -291,20 +359,13 @@ public class BuildCSSTask extends JavaExec {
 	private List<String> _getCompleteArgs() {
 		List<String> args = new ArrayList<>(getArgs());
 
-		List<String> dirNames = getDirNames();
+		args.add(
+			"sass.append.css.import.timestamps=" +
+				isAppendCssImportTimestamps());
 
-		if (dirNames.size() == 1) {
-			args.add("sass.dir=/" + _removeLeadingSlash(dirNames.get(0)));
-		}
-		else {
-			for (int i = 0; i < dirNames.size(); i++) {
-				String dirName = dirNames.get(i);
+		args.add("sass.dir=" + _getDirNamesArg());
 
-				args.add("sass.dir." + i + "=/" + _removeLeadingSlash(dirName));
-			}
-		}
-
-		String docrootDirName = FileUtil.getAbsolutePath(getDocrootDir());
+		String docrootDirName = FileUtil.getAbsolutePath(getBaseDir());
 
 		args.add("sass.docroot.dir=" + _removeTrailingSlash(docrootDirName));
 
@@ -312,10 +373,9 @@ public class BuildCSSTask extends JavaExec {
 
 		args.add("sass.output.dir=" + _addTrailingSlash(getOutputDirName()));
 
-		String portalCommonPath = FileUtil.getAbsolutePath(
-			getPortalCommonPath());
+		String importPath = FileUtil.getAbsolutePath(getImportPath());
 
-		args.add("sass.portal.common.path=" + portalCommonPath);
+		args.add("sass.portal.common.path=" + importPath);
 
 		args.add("sass.precision=" + getPrecision());
 
@@ -331,6 +391,25 @@ public class BuildCSSTask extends JavaExec {
 		}
 
 		return args;
+	}
+
+	private String _getDirNamesArg() {
+		StringBuilder sb = new StringBuilder();
+
+		boolean first = true;
+
+		for (String dirName : getDirNames()) {
+			if (!first) {
+				sb.append(',');
+			}
+
+			first = false;
+
+			sb.append('/');
+			sb.append(_removeLeadingSlash(dirName));
+		}
+
+		return sb.toString();
 	}
 
 	private String _removeLeadingSlash(String path) {
@@ -361,12 +440,14 @@ public class BuildCSSTask extends JavaExec {
 		return path;
 	}
 
+	private boolean _appendCssImportTimestamps =
+		CSSBuilderArgs.APPEND_CSS_IMPORT_TIMESTAMPS;
+	private Object _baseDir;
 	private final Set<Object> _dirNames = new LinkedHashSet<>();
-	private Object _docrootDir;
 	private boolean _generateSourceMap;
+	private Object _importDir;
+	private Object _importFile;
 	private Object _outputDirName = CSSBuilderArgs.OUTPUT_DIR_NAME;
-	private Object _portalCommonDir;
-	private Object _portalCommonFile;
 	private Object _precision = CSSBuilderArgs.PRECISION;
 	private final Set<Object> _rtlExcludedPathRegexps = new LinkedHashSet<>();
 	private Object _sassCompilerClassName;

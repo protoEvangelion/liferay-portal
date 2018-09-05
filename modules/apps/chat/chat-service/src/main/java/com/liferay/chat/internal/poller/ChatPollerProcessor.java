@@ -14,14 +14,15 @@
 
 package com.liferay.chat.internal.poller;
 
-import com.liferay.chat.configuration.ChatGroupServiceConfiguration;
 import com.liferay.chat.constants.ChatPortletKeys;
+import com.liferay.chat.internal.configuration.ChatGroupServiceConfiguration;
+import com.liferay.chat.internal.util.ChatConstants;
 import com.liferay.chat.model.Entry;
 import com.liferay.chat.model.Status;
 import com.liferay.chat.service.EntryLocalServiceUtil;
 import com.liferay.chat.service.StatusLocalServiceUtil;
-import com.liferay.chat.util.BuddyFinderUtil;
-import com.liferay.chat.util.ChatConstants;
+import com.liferay.chat.util.BuddyFinder;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.exception.NoSuchLayoutSetException;
 import com.liferay.portal.kernel.exception.NoSuchUserException;
@@ -41,15 +42,16 @@ import com.liferay.portal.kernel.poller.PollerResponse;
 import com.liferay.portal.kernel.service.LayoutSetLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.HtmlUtil;
-import com.liferay.portal.kernel.util.HttpUtil;
+import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -64,7 +66,7 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	configurationPid = "com.liferay.chat.configuration.ChatConfiguration",
 	configurationPolicy = ConfigurationPolicy.OPTIONAL, enabled = false,
-	immediate = true, property = {"javax.portlet.name=" + ChatPortletKeys.CHAT},
+	immediate = true, property = "javax.portlet.name=" + ChatPortletKeys.CHAT,
 	service = PollerProcessor.class
 )
 public class ChatPollerProcessor extends BasePollerProcessor {
@@ -101,6 +103,10 @@ public class ChatPollerProcessor extends BasePollerProcessor {
 
 	@Override
 	protected void doSend(PollerRequest pollerRequest) throws Exception {
+		if (pollerRequest.isStartPolling()) {
+			_processedEntryIds.clear();
+		}
+
 		addEntry(pollerRequest);
 		updateStatus(pollerRequest);
 	}
@@ -109,7 +115,7 @@ public class ChatPollerProcessor extends BasePollerProcessor {
 			PollerRequest pollerRequest, PollerResponse pollerResponse)
 		throws Exception {
 
-		List<Object[]> buddies = BuddyFinderUtil.getBuddies(
+		List<Object[]> buddies = _buddyFinder.getBuddies(
 			pollerRequest.getCompanyId(), pollerRequest.getUserId());
 
 		JSONArray buddiesJSONArray = JSONFactoryUtil.createJSONArray();
@@ -130,7 +136,7 @@ public class ChatPollerProcessor extends BasePollerProcessor {
 
 			Status buddyStatus = StatusLocalServiceUtil.getUserStatus(userId);
 
-			awake = buddyStatus.getAwake();
+			awake = buddyStatus.isAwake();
 
 			curUserJSONObject.put("awake", awake);
 
@@ -144,7 +150,7 @@ public class ChatPollerProcessor extends BasePollerProcessor {
 					displayURL = _portal.getLayoutSetDisplayURL(
 						layoutSet, false);
 
-					displayURL = HttpUtil.removeDomain(displayURL);
+					displayURL = _http.removeDomain(displayURL);
 				}
 			}
 			catch (NoSuchLayoutSetException nslse) {
@@ -189,6 +195,10 @@ public class ChatPollerProcessor extends BasePollerProcessor {
 			PollerRequest pollerRequest, PollerResponse pollerResponse)
 		throws Exception {
 
+		JSONArray entriesJSONArray = JSONFactoryUtil.createJSONArray();
+
+		boolean hasProcessedEntry = false;
+
 		Status status = StatusLocalServiceUtil.getUserStatus(
 			pollerRequest.getUserId());
 
@@ -206,9 +216,11 @@ public class ChatPollerProcessor extends BasePollerProcessor {
 
 		Collections.reverse(entries);
 
-		JSONArray entriesJSONArray = JSONFactoryUtil.createJSONArray();
-
 		for (Entry entry : entries) {
+			hasProcessedEntry = _processedEntryIds.contains(entry.getEntryId());
+
+			_processedEntryIds.add(entry.getEntryId());
+
 			JSONObject entryJSONObject = JSONFactoryUtil.createJSONObject();
 
 			entryJSONObject.put("createDate", entry.getCreateDate());
@@ -245,7 +257,7 @@ public class ChatPollerProcessor extends BasePollerProcessor {
 
 		pollerResponse.setParameter("entries", entriesJSONArray);
 
-		if (!entries.isEmpty()) {
+		if (!entries.isEmpty() && !hasProcessedEntry) {
 			pollerResponse.setParameter(
 				PollerResponse.POLLER_HINT_HIGH_CONNECTIVITY,
 				Boolean.TRUE.toString());
@@ -306,12 +318,20 @@ public class ChatPollerProcessor extends BasePollerProcessor {
 	private static final Log _log = LogFactoryUtil.getLog(
 		ChatPollerProcessor.class);
 
+	@Reference
+	private BuddyFinder _buddyFinder;
+
 	private ChatGroupServiceConfiguration _chatGroupServiceConfiguration;
+
+	@Reference
+	private Http _http;
+
 	private LayoutSetLocalService _layoutSetLocalService;
 
 	@Reference
 	private Portal _portal;
 
+	private final Set<Long> _processedEntryIds = new HashSet<>();
 	private UserLocalService _userLocalService;
 
 }

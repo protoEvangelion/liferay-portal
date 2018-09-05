@@ -14,12 +14,12 @@
 
 package com.liferay.portal.kernel.webdav;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.lock.Lock;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.TimeZoneUtil;
 import com.liferay.portal.kernel.util.URLCodec;
 import com.liferay.portal.kernel.util.Validator;
@@ -93,7 +93,6 @@ public class BaseResourceImpl implements Resource {
 	}
 
 	@Override
-	@SuppressWarnings("unused")
 	public InputStream getContentAsStream() throws WebDAVException {
 		return null;
 	}

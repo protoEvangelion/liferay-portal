@@ -19,13 +19,12 @@ import com.liferay.portal.kernel.dao.orm.LockMode;
 import com.liferay.portal.kernel.dao.orm.ORMException;
 import com.liferay.portal.kernel.dao.orm.Query;
 import com.liferay.portal.kernel.dao.orm.ScrollableResults;
-import com.liferay.portal.kernel.security.pacl.DoPrivileged;
-import com.liferay.portal.kernel.security.pacl.NotPrivileged;
-import com.liferay.portal.kernel.util.ClassLoaderUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 
 import java.io.Serializable;
+
+import java.math.BigDecimal;
 
 import java.sql.Timestamp;
 
@@ -40,7 +39,6 @@ import org.hibernate.LockOptions;
  * @author Brian Wing Shun Chan
  * @author Shuyang Zhou
  */
-@DoPrivileged
 public class QueryImpl implements Query {
 
 	public QueryImpl(org.hibernate.Query query, boolean strictName) {
@@ -58,7 +56,6 @@ public class QueryImpl implements Query {
 		_names = names;
 	}
 
-	@NotPrivileged
 	@Override
 	public int executeUpdate() throws ORMException {
 		try {
@@ -69,13 +66,11 @@ public class QueryImpl implements Query {
 		}
 	}
 
-	@NotPrivileged
 	@Override
 	public Iterator<?> iterate() throws ORMException {
 		return iterate(true);
 	}
 
-	@NotPrivileged
 	@Override
 	public Iterator<?> iterate(boolean unmodifiable) throws ORMException {
 		try {
@@ -86,7 +81,6 @@ public class QueryImpl implements Query {
 		}
 	}
 
-	@NotPrivileged
 	@Override
 	public Object iterateNext() throws ORMException {
 		Iterator<?> iterator = iterate(false);
@@ -98,30 +92,19 @@ public class QueryImpl implements Query {
 		return null;
 	}
 
-	@NotPrivileged
 	@Override
 	public List<?> list() throws ORMException {
 		return list(false, false);
 	}
 
-	@NotPrivileged
 	@Override
 	public List<?> list(boolean unmodifiable) throws ORMException {
 		return list(true, unmodifiable);
 	}
 
-	@NotPrivileged
 	@Override
 	public List<?> list(boolean copy, boolean unmodifiable)
 		throws ORMException {
-
-		// LPS-42478 is a workaround for HHH-8310. Remove this after upgrading
-		// to Hibernate 4.3.6+.
-
-		ClassLoader contextClassLoader =
-			ClassLoaderUtil.getContextClassLoader();
-
-		ClassLoaderUtil.setContextClassLoader(null);
 
 		try {
 			List<?> list = _query.list();
@@ -138,32 +121,34 @@ public class QueryImpl implements Query {
 		catch (Exception e) {
 			throw ExceptionTranslator.translate(e);
 		}
-		finally {
-			ClassLoaderUtil.setContextClassLoader(contextClassLoader);
-		}
 	}
 
-	@NotPrivileged
 	@Override
 	public ScrollableResults scroll() throws ORMException {
-
-		// LPS-42478 is a workaround for HHH-8310. Remove this after upgrading
-		// to Hibernate 4.3.6+.
-
-		ClassLoader contextClassLoader =
-			ClassLoaderUtil.getContextClassLoader();
-
-		ClassLoaderUtil.setContextClassLoader(null);
-
 		try {
 			return new ScrollableResultsImpl(_query.scroll());
 		}
 		catch (Exception e) {
 			throw ExceptionTranslator.translate(e);
 		}
-		finally {
-			ClassLoaderUtil.setContextClassLoader(contextClassLoader);
+	}
+
+	@Override
+	public Query setBigDecimal(int pos, BigDecimal value) {
+		_query.setBigDecimal(pos, value);
+
+		return this;
+	}
+
+	@Override
+	public Query setBigDecimal(String name, BigDecimal value) {
+		if (!_strictName && (Arrays.binarySearch(_names, name) < 0)) {
+			return this;
 		}
+
+		_query.setBigDecimal(name, value);
+
+		return this;
 	}
 
 	@Override
@@ -392,7 +377,6 @@ public class QueryImpl implements Query {
 		return sb.toString();
 	}
 
-	@NotPrivileged
 	@Override
 	public Object uniqueResult() throws ORMException {
 		try {

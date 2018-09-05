@@ -22,6 +22,8 @@ import com.liferay.chat.model.impl.EntryImpl;
 import com.liferay.chat.model.impl.EntryModelImpl;
 import com.liferay.chat.service.persistence.EntryPersistence;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
@@ -33,11 +35,12 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import java.io.Serializable;
+
+import java.lang.reflect.InvocationHandler;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -291,7 +294,7 @@ public class EntryPersistenceImpl extends BasePersistenceImpl<Entry>
 		msg.append("createDate=");
 		msg.append(createDate);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchEntryException(msg.toString());
 	}
@@ -339,7 +342,7 @@ public class EntryPersistenceImpl extends BasePersistenceImpl<Entry>
 		msg.append("createDate=");
 		msg.append(createDate);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchEntryException(msg.toString());
 	}
@@ -790,7 +793,7 @@ public class EntryPersistenceImpl extends BasePersistenceImpl<Entry>
 		msg.append("fromUserId=");
 		msg.append(fromUserId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchEntryException(msg.toString());
 	}
@@ -838,7 +841,7 @@ public class EntryPersistenceImpl extends BasePersistenceImpl<Entry>
 		msg.append("fromUserId=");
 		msg.append(fromUserId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchEntryException(msg.toString());
 	}
@@ -1288,7 +1291,7 @@ public class EntryPersistenceImpl extends BasePersistenceImpl<Entry>
 		msg.append("toUserId=");
 		msg.append(toUserId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchEntryException(msg.toString());
 	}
@@ -1336,7 +1339,7 @@ public class EntryPersistenceImpl extends BasePersistenceImpl<Entry>
 		msg.append("toUserId=");
 		msg.append(toUserId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchEntryException(msg.toString());
 	}
@@ -1805,7 +1808,7 @@ public class EntryPersistenceImpl extends BasePersistenceImpl<Entry>
 		msg.append(", fromUserId=");
 		msg.append(fromUserId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchEntryException(msg.toString());
 	}
@@ -1859,7 +1862,7 @@ public class EntryPersistenceImpl extends BasePersistenceImpl<Entry>
 		msg.append(", fromUserId=");
 		msg.append(fromUserId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchEntryException(msg.toString());
 	}
@@ -2342,7 +2345,7 @@ public class EntryPersistenceImpl extends BasePersistenceImpl<Entry>
 		msg.append(", toUserId=");
 		msg.append(toUserId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchEntryException(msg.toString());
 	}
@@ -2396,7 +2399,7 @@ public class EntryPersistenceImpl extends BasePersistenceImpl<Entry>
 		msg.append(", toUserId=");
 		msg.append(toUserId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchEntryException(msg.toString());
 	}
@@ -2880,7 +2883,7 @@ public class EntryPersistenceImpl extends BasePersistenceImpl<Entry>
 		msg.append(", toUserId=");
 		msg.append(toUserId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchEntryException(msg.toString());
 	}
@@ -2934,7 +2937,7 @@ public class EntryPersistenceImpl extends BasePersistenceImpl<Entry>
 		msg.append(", toUserId=");
 		msg.append(toUserId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchEntryException(msg.toString());
 	}
@@ -3439,7 +3442,7 @@ public class EntryPersistenceImpl extends BasePersistenceImpl<Entry>
 		msg.append(", toUserId=");
 		msg.append(toUserId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchEntryException(msg.toString());
 	}
@@ -3500,7 +3503,7 @@ public class EntryPersistenceImpl extends BasePersistenceImpl<Entry>
 		msg.append(", toUserId=");
 		msg.append(toUserId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchEntryException(msg.toString());
 	}
@@ -3935,7 +3938,7 @@ public class EntryPersistenceImpl extends BasePersistenceImpl<Entry>
 			if (content == null) {
 				query.append(_FINDER_COLUMN_F_T_C_CONTENT_1);
 			}
-			else if (content.equals(StringPool.BLANK)) {
+			else if (content.equals("")) {
 				query.append(_FINDER_COLUMN_F_T_C_CONTENT_3);
 			}
 			else {
@@ -4036,7 +4039,7 @@ public class EntryPersistenceImpl extends BasePersistenceImpl<Entry>
 		msg.append(", content=");
 		msg.append(content);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchEntryException(msg.toString());
 	}
@@ -4097,7 +4100,7 @@ public class EntryPersistenceImpl extends BasePersistenceImpl<Entry>
 		msg.append(", content=");
 		msg.append(content);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchEntryException(msg.toString());
 	}
@@ -4197,7 +4200,7 @@ public class EntryPersistenceImpl extends BasePersistenceImpl<Entry>
 		if (content == null) {
 			query.append(_FINDER_COLUMN_F_T_C_CONTENT_1);
 		}
-		else if (content.equals(StringPool.BLANK)) {
+		else if (content.equals("")) {
 			query.append(_FINDER_COLUMN_F_T_C_CONTENT_3);
 		}
 		else {
@@ -4345,7 +4348,7 @@ public class EntryPersistenceImpl extends BasePersistenceImpl<Entry>
 			if (content == null) {
 				query.append(_FINDER_COLUMN_F_T_C_CONTENT_1);
 			}
-			else if (content.equals(StringPool.BLANK)) {
+			else if (content.equals("")) {
 				query.append(_FINDER_COLUMN_F_T_C_CONTENT_3);
 			}
 			else {
@@ -4542,8 +4545,6 @@ public class EntryPersistenceImpl extends BasePersistenceImpl<Entry>
 
 	@Override
 	protected Entry removeImpl(Entry entry) {
-		entry = toUnwrappedModel(entry);
-
 		Session session = null;
 
 		try {
@@ -4574,9 +4575,23 @@ public class EntryPersistenceImpl extends BasePersistenceImpl<Entry>
 
 	@Override
 	public Entry updateImpl(Entry entry) {
-		entry = toUnwrappedModel(entry);
-
 		boolean isNew = entry.isNew();
+
+		if (!(entry instanceof EntryModelImpl)) {
+			InvocationHandler invocationHandler = null;
+
+			if (ProxyUtil.isProxyClass(entry.getClass())) {
+				invocationHandler = ProxyUtil.getInvocationHandler(entry);
+
+				throw new IllegalArgumentException(
+					"Implement ModelWrapper in entry proxy " +
+					invocationHandler.getClass());
+			}
+
+			throw new IllegalArgumentException(
+				"Implement ModelWrapper in custom Entry implementation " +
+				entry.getClass());
+		}
 
 		EntryModelImpl entryModelImpl = (EntryModelImpl)entry;
 
@@ -4844,26 +4859,6 @@ public class EntryPersistenceImpl extends BasePersistenceImpl<Entry>
 		return entry;
 	}
 
-	protected Entry toUnwrappedModel(Entry entry) {
-		if (entry instanceof EntryImpl) {
-			return entry;
-		}
-
-		EntryImpl entryImpl = new EntryImpl();
-
-		entryImpl.setNew(entry.isNew());
-		entryImpl.setPrimaryKey(entry.getPrimaryKey());
-
-		entryImpl.setEntryId(entry.getEntryId());
-		entryImpl.setCreateDate(entry.getCreateDate());
-		entryImpl.setFromUserId(entry.getFromUserId());
-		entryImpl.setToUserId(entry.getToUserId());
-		entryImpl.setContent(entry.getContent());
-		entryImpl.setFlag(entry.getFlag());
-
-		return entryImpl;
-	}
-
 	/**
 	 * Returns the entry with the primary key or throws a {@link com.liferay.portal.kernel.exception.NoSuchModelException} if it could not be found.
 	 *
@@ -5013,12 +5008,12 @@ public class EntryPersistenceImpl extends BasePersistenceImpl<Entry>
 		for (Serializable primaryKey : uncachedPrimaryKeys) {
 			query.append((long)primaryKey);
 
-			query.append(StringPool.COMMA);
+			query.append(",");
 		}
 
 		query.setIndex(query.index() - 1);
 
-		query.append(StringPool.CLOSE_PARENTHESIS);
+		query.append(")");
 
 		String sql = query.toString();
 

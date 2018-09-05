@@ -32,12 +32,14 @@ import com.liferay.dynamic.data.mapping.kernel.DDMFormValues;
 import com.liferay.portal.kernel.dao.orm.QueryDefinition;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.lock.Lock;
+import com.liferay.portal.kernel.model.UserConstants;
 import com.liferay.portal.kernel.repository.Repository;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileShortcut;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.repository.model.RepositoryEntry;
+import com.liferay.portal.kernel.repository.util.RepositoryUserUtil;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.IndexSearcherHelperUtil;
 import com.liferay.portal.kernel.search.Indexer;
@@ -151,8 +153,9 @@ public class LiferayRepository
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, see {@link #addFileEntry(long, long, String,
-	 *             String, String, String, String, File, ServiceContext)}
+	 * @deprecated As of Wilberforce (7.0.x), see {@link #addFileEntry(long,
+	 *             long, String, String, String, String, String, File,
+	 *             ServiceContext)}
 	 */
 	@Deprecated
 	@Override
@@ -163,16 +166,14 @@ public class LiferayRepository
 		throws PortalException {
 
 		return addFileEntry(
-			com.liferay.portal.kernel.repository.util.RepositoryUserUtil.
-				getUserId(),
-			folderId, sourceFileName, mimeType, title, description, changeLog,
-			file, serviceContext);
+			RepositoryUserUtil.getUserId(), folderId, sourceFileName, mimeType,
+			title, description, changeLog, file, serviceContext);
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, see {@link #addFileEntry(long, long, String,
-	 *             String, String, String, String, InputStream, long,
-	 *             ServiceContext)}
+	 * @deprecated As of Wilberforce (7.0.x), see {@link #addFileEntry(long,
+	 *             long, String, String, String, String, String, InputStream,
+	 *             long, ServiceContext)}
 	 */
 	@Deprecated
 	@Override
@@ -183,10 +184,8 @@ public class LiferayRepository
 		throws PortalException {
 
 		return addFileEntry(
-			com.liferay.portal.kernel.repository.util.RepositoryUserUtil.
-				getUserId(),
-			folderId, sourceFileName, mimeType, title, description, changeLog,
-			is, size, serviceContext);
+			RepositoryUserUtil.getUserId(), folderId, sourceFileName, mimeType,
+			title, description, changeLog, is, size, serviceContext);
 	}
 
 	@Override
@@ -218,8 +217,8 @@ public class LiferayRepository
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #addFolder(long, long,
-	 *             String, String, ServiceContext)}
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	 *             #addFolder(long, long, String, String, ServiceContext)}
 	 */
 	@Deprecated
 	@Override
@@ -229,9 +228,8 @@ public class LiferayRepository
 		throws PortalException {
 
 		return addFolder(
-			com.liferay.portal.kernel.repository.util.RepositoryUserUtil.
-				getUserId(),
-			parentFolderId, name, description, serviceContext);
+			RepositoryUserUtil.getUserId(), parentFolderId, name, description,
+			serviceContext);
 	}
 
 	@Override
@@ -247,8 +245,9 @@ public class LiferayRepository
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #checkInFileEntry(long, long,
-	 *             boolean, String, ServiceContext)}
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	 *             #checkInFileEntry(long, long, boolean, String,
+	 *             ServiceContext)}
 	 */
 	@Deprecated
 	@Override
@@ -258,9 +257,8 @@ public class LiferayRepository
 		throws PortalException {
 
 		checkInFileEntry(
-			com.liferay.portal.kernel.repository.util.RepositoryUserUtil.
-				getUserId(),
-			fileEntryId, major, changeLog, serviceContext);
+			RepositoryUserUtil.getUserId(), fileEntryId, major, changeLog,
+			serviceContext);
 	}
 
 	@Override
@@ -284,8 +282,8 @@ public class LiferayRepository
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #checkInFileEntry(long, long,
-	 *             String, ServiceContext)}
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	 *             #checkInFileEntry(long, long, String, ServiceContext)}
 	 */
 	@Deprecated
 	@Override
@@ -294,9 +292,8 @@ public class LiferayRepository
 		throws PortalException {
 
 		checkInFileEntry(
-			com.liferay.portal.kernel.repository.util.RepositoryUserUtil.
-				getUserId(),
-			fileEntryId, lockUuid, serviceContext);
+			RepositoryUserUtil.getUserId(), fileEntryId, lockUuid,
+			serviceContext);
 	}
 
 	@Override
@@ -336,8 +333,8 @@ public class LiferayRepository
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #copyFileEntry(long, long,
-	 *             long, long, ServiceContext)}
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	 *             #copyFileEntry(long, long, long, long, ServiceContext)}
 	 */
 	@Deprecated
 	@Override
@@ -347,9 +344,8 @@ public class LiferayRepository
 		throws PortalException {
 
 		return copyFileEntry(
-			com.liferay.portal.kernel.repository.util.RepositoryUserUtil.
-				getUserId(),
-			groupId, fileEntryId, destFolderId, serviceContext);
+			RepositoryUserUtil.getUserId(), groupId, fileEntryId, destFolderId,
+			serviceContext);
 	}
 
 	@Override
@@ -636,12 +632,18 @@ public class LiferayRepository
 	@Override
 	public List<RepositoryEntry> getFoldersAndFileEntriesAndFileShortcuts(
 			long folderId, int status, String[] mimeTypes,
-			boolean includeMountFolders, int start, int end,
-			OrderByComparator<?> obc)
+			boolean includeMountFolders, boolean includeOwner, int start,
+			int end, OrderByComparator<?> obc)
 		throws PortalException {
 
+		long userId = UserConstants.USER_ID_DEFAULT;
+
+		if (includeOwner) {
+			userId = PrincipalThreadLocal.getUserId();
+		}
+
 		QueryDefinition<Object> queryDefinition = new QueryDefinition<>(
-			status, PrincipalThreadLocal.getUserId(), true, start, end,
+			status, userId, includeOwner, start, end,
 			(OrderByComparator<Object>)obc);
 
 		List<Object> dlFoldersAndDLFileEntriesAndDLFileShortcuts =
@@ -651,6 +653,18 @@ public class LiferayRepository
 
 		return RepositoryModelUtil.toRepositoryEntries(
 			dlFoldersAndDLFileEntriesAndDLFileShortcuts);
+	}
+
+	@Override
+	public List<RepositoryEntry> getFoldersAndFileEntriesAndFileShortcuts(
+			long folderId, int status, String[] mimeTypes,
+			boolean includeMountFolders, int start, int end,
+			OrderByComparator<?> obc)
+		throws PortalException {
+
+		return getFoldersAndFileEntriesAndFileShortcuts(
+			folderId, status, mimeTypes, includeMountFolders, true, start, end,
+			obc);
 	}
 
 	@Override
@@ -668,8 +682,24 @@ public class LiferayRepository
 			boolean includeMountFolders)
 		throws PortalException {
 
+		return getFoldersAndFileEntriesAndFileShortcutsCount(
+			folderId, status, mimeTypes, includeMountFolders, true);
+	}
+
+	@Override
+	public int getFoldersAndFileEntriesAndFileShortcutsCount(
+			long folderId, int status, String[] mimeTypes,
+			boolean includeMountFolders, boolean includeOwner)
+		throws PortalException {
+
+		long userId = UserConstants.USER_ID_DEFAULT;
+
+		if (includeOwner) {
+			userId = PrincipalThreadLocal.getUserId();
+		}
+
 		QueryDefinition<Object> queryDefinition = new QueryDefinition<>(
-			status, PrincipalThreadLocal.getUserId(), true);
+			status, userId, includeOwner);
 
 		return dlFolderService.getFoldersAndFileEntriesAndFileShortcutsCount(
 			getGroupId(), toFolderId(folderId), mimeTypes, includeMountFolders,
@@ -813,8 +843,8 @@ public class LiferayRepository
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #moveFileEntry(long, long,
-	 *             long, ServiceContext)}
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	 *             #moveFileEntry(long, long, long, ServiceContext)}
 	 */
 	@Deprecated
 	@Override
@@ -823,9 +853,8 @@ public class LiferayRepository
 		throws PortalException {
 
 		return moveFileEntry(
-			com.liferay.portal.kernel.repository.util.RepositoryUserUtil.
-				getUserId(),
-			fileEntryId, newFolderId, serviceContext);
+			RepositoryUserUtil.getUserId(), fileEntryId, newFolderId,
+			serviceContext);
 	}
 
 	@Override
@@ -841,8 +870,8 @@ public class LiferayRepository
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #moveFolder(long, long,
-	 *             ServiceContext)}
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	 *             #moveFolder(long, long, ServiceContext)}
 	 */
 	@Deprecated
 	@Override
@@ -852,9 +881,8 @@ public class LiferayRepository
 		throws PortalException {
 
 		return moveFolder(
-			com.liferay.portal.kernel.repository.util.RepositoryUserUtil.
-				getUserId(),
-			folderId, newParentFolderId, serviceContext);
+			RepositoryUserUtil.getUserId(), folderId, newParentFolderId,
+			serviceContext);
 	}
 
 	@Override
@@ -886,8 +914,8 @@ public class LiferayRepository
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #revertFileEntry(long, long,
-	 *             String, ServiceContext)}
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	 *             #revertFileEntry(long, long, String, ServiceContext)}
 	 */
 	@Deprecated
 	@Override
@@ -1006,9 +1034,9 @@ public class LiferayRepository
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #updateFileEntry(long, long,
-	 *             String, String, String, String, String, boolean, File,
-	 *             ServiceContext)}
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	 *             #updateFileEntry(long, long, String, String, String, String,
+	 *             String, boolean, File, ServiceContext)}
 	 */
 	@Deprecated
 	@Override
@@ -1019,16 +1047,15 @@ public class LiferayRepository
 		throws PortalException {
 
 		return updateFileEntry(
-			com.liferay.portal.kernel.repository.util.RepositoryUserUtil.
-				getUserId(),
-			fileEntryId, sourceFileName, mimeType, title, description,
-			changeLog, majorVersion, file, serviceContext);
+			RepositoryUserUtil.getUserId(), fileEntryId, sourceFileName,
+			mimeType, title, description, changeLog, majorVersion, file,
+			serviceContext);
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #updateFileEntry(long, long,
-	 *             String, String, String, String, String, boolean, InputStream,
-	 *             long, ServiceContext)}
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	 *             #updateFileEntry(long, long, String, String, String, String,
+	 *             String, boolean, InputStream, long, ServiceContext)}
 	 */
 	@Deprecated
 	@Override
@@ -1040,10 +1067,9 @@ public class LiferayRepository
 		throws PortalException {
 
 		return updateFileEntry(
-			com.liferay.portal.kernel.repository.util.RepositoryUserUtil.
-				getUserId(),
-			fileEntryId, sourceFileName, mimeType, title, description,
-			changeLog, majorVersion, is, size, serviceContext);
+			RepositoryUserUtil.getUserId(), fileEntryId, sourceFileName,
+			mimeType, title, description, changeLog, majorVersion, is, size,
+			serviceContext);
 	}
 
 	@Override

@@ -144,38 +144,8 @@ public class AssetTagWrapper implements AssetTag, ModelWrapper<AssetTag> {
 	}
 
 	@Override
-	public AssetTag toEscapedModel() {
-		return new AssetTagWrapper(_assetTag.toEscapedModel());
-	}
-
-	@Override
-	public AssetTag toUnescapedModel() {
-		return new AssetTagWrapper(_assetTag.toUnescapedModel());
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _assetTag.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _assetTag.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _assetTag.isNew();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _assetTag.getExpandoBridge();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.CacheModel<AssetTag> toCacheModel() {
-		return _assetTag.toCacheModel();
+	public Object clone() {
+		return new AssetTagWrapper((AssetTag)_assetTag.clone());
 	}
 
 	@Override
@@ -193,69 +163,14 @@ public class AssetTagWrapper implements AssetTag, ModelWrapper<AssetTag> {
 		return _assetTag.getAssetCount();
 	}
 
-	@Override
-	public int hashCode() {
-		return _assetTag.hashCode();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _assetTag.getPrimaryKeyObj();
-	}
-
-	@Override
-	public java.lang.Object clone() {
-		return new AssetTagWrapper((AssetTag)_assetTag.clone());
-	}
-
 	/**
-	* Returns the name of this asset tag.
+	* Returns the company ID of this asset tag.
 	*
-	* @return the name of this asset tag
+	* @return the company ID of this asset tag
 	*/
 	@Override
-	public java.lang.String getName() {
-		return _assetTag.getName();
-	}
-
-	/**
-	* Returns the user name of this asset tag.
-	*
-	* @return the user name of this asset tag
-	*/
-	@Override
-	public java.lang.String getUserName() {
-		return _assetTag.getUserName();
-	}
-
-	/**
-	* Returns the user uuid of this asset tag.
-	*
-	* @return the user uuid of this asset tag
-	*/
-	@Override
-	public java.lang.String getUserUuid() {
-		return _assetTag.getUserUuid();
-	}
-
-	/**
-	* Returns the uuid of this asset tag.
-	*
-	* @return the uuid of this asset tag
-	*/
-	@Override
-	public java.lang.String getUuid() {
-		return _assetTag.getUuid();
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _assetTag.toString();
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _assetTag.toXmlString();
+	public long getCompanyId() {
+		return _assetTag.getCompanyId();
 	}
 
 	/**
@@ -266,6 +181,21 @@ public class AssetTagWrapper implements AssetTag, ModelWrapper<AssetTag> {
 	@Override
 	public Date getCreateDate() {
 		return _assetTag.getCreateDate();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _assetTag.getExpandoBridge();
+	}
+
+	/**
+	* Returns the group ID of this asset tag.
+	*
+	* @return the group ID of this asset tag
+	*/
+	@Override
+	public long getGroupId() {
+		return _assetTag.getGroupId();
 	}
 
 	/**
@@ -289,23 +219,13 @@ public class AssetTagWrapper implements AssetTag, ModelWrapper<AssetTag> {
 	}
 
 	/**
-	* Returns the company ID of this asset tag.
+	* Returns the name of this asset tag.
 	*
-	* @return the company ID of this asset tag
+	* @return the name of this asset tag
 	*/
 	@Override
-	public long getCompanyId() {
-		return _assetTag.getCompanyId();
-	}
-
-	/**
-	* Returns the group ID of this asset tag.
-	*
-	* @return the group ID of this asset tag
-	*/
-	@Override
-	public long getGroupId() {
-		return _assetTag.getGroupId();
+	public String getName() {
+		return _assetTag.getName();
 	}
 
 	/**
@@ -316,6 +236,11 @@ public class AssetTagWrapper implements AssetTag, ModelWrapper<AssetTag> {
 	@Override
 	public long getPrimaryKey() {
 		return _assetTag.getPrimaryKey();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _assetTag.getPrimaryKeyObj();
 	}
 
 	/**
@@ -336,6 +261,56 @@ public class AssetTagWrapper implements AssetTag, ModelWrapper<AssetTag> {
 	@Override
 	public long getUserId() {
 		return _assetTag.getUserId();
+	}
+
+	/**
+	* Returns the user name of this asset tag.
+	*
+	* @return the user name of this asset tag
+	*/
+	@Override
+	public String getUserName() {
+		return _assetTag.getUserName();
+	}
+
+	/**
+	* Returns the user uuid of this asset tag.
+	*
+	* @return the user uuid of this asset tag
+	*/
+	@Override
+	public String getUserUuid() {
+		return _assetTag.getUserUuid();
+	}
+
+	/**
+	* Returns the uuid of this asset tag.
+	*
+	* @return the uuid of this asset tag
+	*/
+	@Override
+	public String getUuid() {
+		return _assetTag.getUuid();
+	}
+
+	@Override
+	public int hashCode() {
+		return _assetTag.hashCode();
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _assetTag.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _assetTag.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _assetTag.isNew();
 	}
 
 	@Override
@@ -379,14 +354,14 @@ public class AssetTagWrapper implements AssetTag, ModelWrapper<AssetTag> {
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_assetTag.setExpandoBridgeAttributes(expandoBridge);
-	}
-
-	@Override
 	public void setExpandoBridgeAttributes(
 		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
 		_assetTag.setExpandoBridgeAttributes(baseModel);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_assetTag.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
@@ -430,7 +405,7 @@ public class AssetTagWrapper implements AssetTag, ModelWrapper<AssetTag> {
 	* @param name the name of this asset tag
 	*/
 	@Override
-	public void setName(java.lang.String name) {
+	public void setName(String name) {
 		_assetTag.setName(name);
 	}
 
@@ -480,7 +455,7 @@ public class AssetTagWrapper implements AssetTag, ModelWrapper<AssetTag> {
 	* @param userName the user name of this asset tag
 	*/
 	@Override
-	public void setUserName(java.lang.String userName) {
+	public void setUserName(String userName) {
 		_assetTag.setUserName(userName);
 	}
 
@@ -490,7 +465,7 @@ public class AssetTagWrapper implements AssetTag, ModelWrapper<AssetTag> {
 	* @param userUuid the user uuid of this asset tag
 	*/
 	@Override
-	public void setUserUuid(java.lang.String userUuid) {
+	public void setUserUuid(String userUuid) {
 		_assetTag.setUserUuid(userUuid);
 	}
 
@@ -500,8 +475,33 @@ public class AssetTagWrapper implements AssetTag, ModelWrapper<AssetTag> {
 	* @param uuid the uuid of this asset tag
 	*/
 	@Override
-	public void setUuid(java.lang.String uuid) {
+	public void setUuid(String uuid) {
 		_assetTag.setUuid(uuid);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.CacheModel<AssetTag> toCacheModel() {
+		return _assetTag.toCacheModel();
+	}
+
+	@Override
+	public AssetTag toEscapedModel() {
+		return new AssetTagWrapper(_assetTag.toEscapedModel());
+	}
+
+	@Override
+	public String toString() {
+		return _assetTag.toString();
+	}
+
+	@Override
+	public AssetTag toUnescapedModel() {
+		return new AssetTagWrapper(_assetTag.toUnescapedModel());
+	}
+
+	@Override
+	public String toXmlString() {
+		return _assetTag.toXmlString();
 	}
 
 	@Override

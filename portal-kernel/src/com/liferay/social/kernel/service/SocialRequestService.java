@@ -49,13 +49,14 @@ public interface SocialRequestService extends BaseService {
 	 *
 	 * Never modify or reference this interface directly. Always use {@link SocialRequestServiceUtil} to access the social request remote service. Add custom service methods to {@link com.liferay.portlet.social.service.impl.SocialRequestServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public SocialRequest updateRequest(long requestId, int status,
-		ThemeDisplay themeDisplay) throws PortalException;
 
 	/**
 	* Returns the OSGi service identifier.
 	*
 	* @return the OSGi service identifier
 	*/
-	public java.lang.String getOSGiServiceIdentifier();
+	public String getOSGiServiceIdentifier();
+
+	public SocialRequest updateRequest(long requestId, int status,
+		ThemeDisplay themeDisplay) throws PortalException;
 }

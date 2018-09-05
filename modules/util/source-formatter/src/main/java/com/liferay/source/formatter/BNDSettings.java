@@ -14,8 +14,11 @@
 
 package com.liferay.source.formatter;
 
+import com.liferay.petra.string.CharPool;
+
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -26,8 +29,8 @@ import java.util.regex.Pattern;
  */
 public class BNDSettings {
 
-	public BNDSettings(String fileLocation, String content) {
-		_fileLocation = fileLocation;
+	public BNDSettings(String fileName, String content) {
+		_fileName = fileName;
 		_content = content;
 	}
 
@@ -36,10 +39,16 @@ public class BNDSettings {
 	}
 
 	public String getFileLocation() {
-		return _fileLocation;
+		int pos = _fileName.lastIndexOf(CharPool.SLASH);
+
+		return _fileName.substring(0, pos + 1);
 	}
 
-	public Properties getLanguageProperties() throws Exception {
+	public String getFileName() {
+		return _fileName;
+	}
+
+	public Properties getLanguageProperties() throws IOException {
 		if (_languageProperties != null) {
 			return _languageProperties;
 		}
@@ -61,7 +70,7 @@ public class BNDSettings {
 
 		if (matcher.find()) {
 			File file = new File(
-				_fileLocation + matcher.group(1) + "/Language.properties");
+				getFileLocation() + matcher.group(1) + "/Language.properties");
 
 			if (file.exists()) {
 				languageProperties.load(new FileInputStream(file));
@@ -92,7 +101,7 @@ public class BNDSettings {
 	private final String _content;
 	private final Pattern _contentDirPattern = Pattern.compile(
 		"\\scontent=(.*?)(,\\\\|\n|$)");
-	private final String _fileLocation;
+	private final String _fileName;
 	private Properties _languageProperties;
 	private String _releaseVersion;
 	private final Pattern _releaseVersionPattern = Pattern.compile(

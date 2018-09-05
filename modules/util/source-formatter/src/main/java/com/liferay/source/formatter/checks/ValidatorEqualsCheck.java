@@ -14,6 +14,8 @@
 
 package com.liferay.source.formatter.checks;
 
+import com.liferay.portal.tools.ToolsUtil;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,9 +28,7 @@ public class ValidatorEqualsCheck extends BaseFileCheck {
 	protected String doProcess(
 		String fileName, String absolutePath, String content) {
 
-		if (!fileName.endsWith("ValidatorEqualsCheck.java")) {
-			_checkValidatorEquals(fileName, content);
-		}
+		_checkValidatorEquals(fileName, content);
 
 		return content;
 	}
@@ -37,11 +37,13 @@ public class ValidatorEqualsCheck extends BaseFileCheck {
 		Matcher matcher = _validatorEqualsPattern.matcher(content);
 
 		while (matcher.find()) {
-			addMessage(
-				fileName,
-				"Use Objects.equals(Object, Object) instead of " +
-					"Objects.equals(Object, Object), see LPS-65135",
-				getLineCount(content, matcher.start()));
+			if (!ToolsUtil.isInsideQuotes(content, matcher.start())) {
+				addMessage(
+					fileName,
+					"Use Objects.equals(Object, Object) instead of " +
+						"Validator.equals(Object, Object)",
+					"equals.markdown", getLineNumber(content, matcher.start()));
+			}
 		}
 	}
 

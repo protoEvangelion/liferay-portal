@@ -45,18 +45,16 @@ public class ETagFilter extends BasePortalFilter {
 
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	protected boolean isAlreadyFiltered(HttpServletRequest request) {
 		if (request.getAttribute(SKIP_FILTER) != null) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	protected boolean isEligibleForETag(int status) {
@@ -65,9 +63,8 @@ public class ETagFilter extends BasePortalFilter {
 
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	@Override
@@ -94,8 +91,6 @@ public class ETagFilter extends BasePortalFilter {
 			if (!isEligibleForETag(
 					restrictedByteBufferCacheServletResponse.getStatus()) ||
 				!ETagUtil.processETag(request, response, byteBuffer)) {
-
-				restrictedByteBufferCacheServletResponse.finishResponse(false);
 
 				restrictedByteBufferCacheServletResponse.flushCache();
 			}

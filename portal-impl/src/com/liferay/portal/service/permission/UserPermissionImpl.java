@@ -42,7 +42,7 @@ import java.util.List;
  * @author Jorge Ferrer
  */
 @OSGiBeanProperties(
-	property = {"model.class.name=com.liferay.portal.kernel.model.User"}
+	property = "model.class.name=com.liferay.portal.kernel.model.User"
 )
 public class UserPermissionImpl
 	implements BaseModelPermissionChecker, UserPermission {
@@ -166,7 +166,7 @@ public class UserPermissionImpl
 						continue;
 					}
 					else if (UserGroupRoleLocalServiceUtil.hasUserGroupRole(
-								user.getUserId(),
+								 user.getUserId(),
 								organizationGroup.getGroupId(),
 								RoleConstants.ORGANIZATION_ADMINISTRATOR,
 								true) &&

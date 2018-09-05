@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.webserver.WebServerServletTokenUtil;
 import com.liferay.taglib.ui.MessageTag;
+import com.liferay.taglib.util.IncludeTag;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -33,8 +34,7 @@ import javax.servlet.jsp.tagext.BodyTag;
 /**
  * @author Brian Wing Shun Chan
  */
-public class LayoutIconTag
-	extends com.liferay.taglib.util.IncludeTag implements BodyTag {
+public class LayoutIconTag extends IncludeTag implements BodyTag {
 
 	public static void doTag(Layout layout, PageContext pageContext)
 		throws JspException {
@@ -81,7 +81,8 @@ public class LayoutIconTag
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #doTag(Layout, PageContext)}
+	 * @deprecated As of Judson (7.1.x), replaced by {@link #doTag(Layout,
+	 *             PageContext)}
 	 */
 	@Deprecated
 	public static void doTag(
@@ -93,7 +94,8 @@ public class LayoutIconTag
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #doTag(Layout, PageContext)}
+	 * @deprecated As of Judson (7.1.x), replaced by {@link #doTag(Layout,
+	 *             PageContext)}
 	 */
 	@Deprecated
 	public static void doTag(

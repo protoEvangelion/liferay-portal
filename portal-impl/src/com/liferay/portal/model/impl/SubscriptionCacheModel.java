@@ -16,12 +16,12 @@ package com.liferay.portal.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.MVCCModel;
 import com.liferay.portal.kernel.model.Subscription;
 import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -35,8 +35,10 @@ import java.util.Date;
  *
  * @author Brian Wing Shun Chan
  * @see Subscription
+ * @deprecated
  * @generated
  */
+@Deprecated
 @ProviderType
 public class SubscriptionCacheModel implements CacheModel<Subscription>,
 	Externalizable, MVCCModel {
@@ -119,7 +121,7 @@ public class SubscriptionCacheModel implements CacheModel<Subscription>,
 		subscriptionImpl.setUserId(userId);
 
 		if (userName == null) {
-			subscriptionImpl.setUserName(StringPool.BLANK);
+			subscriptionImpl.setUserName("");
 		}
 		else {
 			subscriptionImpl.setUserName(userName);
@@ -143,7 +145,7 @@ public class SubscriptionCacheModel implements CacheModel<Subscription>,
 		subscriptionImpl.setClassPK(classPK);
 
 		if (frequency == null) {
-			subscriptionImpl.setFrequency(StringPool.BLANK);
+			subscriptionImpl.setFrequency("");
 		}
 		else {
 			subscriptionImpl.setFrequency(frequency);
@@ -189,7 +191,7 @@ public class SubscriptionCacheModel implements CacheModel<Subscription>,
 		objectOutput.writeLong(userId);
 
 		if (userName == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(userName);
@@ -203,7 +205,7 @@ public class SubscriptionCacheModel implements CacheModel<Subscription>,
 		objectOutput.writeLong(classPK);
 
 		if (frequency == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(frequency);

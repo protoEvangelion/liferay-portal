@@ -1,7 +1,8 @@
 <definition component-name="portal-permissions">
 	<property name="portal.release" value="true" />
 	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Permissions" />
+	<property name="testray.component.names" value="Roles" />
+	<property name="testray.main.component.name" value="Roles" />
 
 	<set-up>
 		<execute macro="TestCase#setUpPortalInstance" />
@@ -10,7 +11,7 @@
 	</set-up>
 
 	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
 
 		<if>
 			<equals arg1="${testPortalInstance}" arg2="true" />
@@ -23,13 +24,18 @@
 	<command name="RemoveNoGuestInlineView" priority="5">
 		<property name="portal.acceptance" value="true" />
 
-		<execute macro="Navigator#gotoPage">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Build" />
+			<var name="panel" value="Site Administration" />
+			<var name="portlet" value="Pages" />
+		</execute>
+
+		<execute macro="SitePages#gotoPageMenuItem">
+			<var name="menuItem" value="Permissions" />
 			<var name="pageName" value="Welcome" />
 		</execute>
 
-		<execute macro="PermissionsInline#gotoPagePG">
-			<var name="pageName" value="Welcome" />
-		</execute>
+		<execute macro="IFrame#selectPermissionsFrame" />
 
 		<var name="key_roleTitle" value="guest" />
 

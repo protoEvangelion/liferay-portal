@@ -137,9 +137,8 @@ public class WSDLBuilderPlugin implements Plugin<Project> {
 					if (buildWSDLTask.isBuildLibs()) {
 						return "lib";
 					}
-					else {
-						return _getJavaDir(buildWSDLTask.getProject());
-					}
+
+					return _getJavaDir(buildWSDLTask.getProject());
 				}
 
 			});
@@ -189,7 +188,7 @@ public class WSDLBuilderPlugin implements Plugin<Project> {
 
 	private Task _addTaskBuildWSDLGenerate(
 		BuildWSDLTask buildWSDLTask, FileCollection classpath, File inputFile,
-		final File destinationDir) {
+		final File destinationDir, boolean deleteDestinationDir) {
 
 		Project project = buildWSDLTask.getProject();
 
@@ -207,17 +206,19 @@ public class WSDLBuilderPlugin implements Plugin<Project> {
 
 		javaExec.args(FileUtil.getAbsolutePath(inputFile));
 
-		javaExec.doFirst(
-			new Action<Task>() {
+		if (deleteDestinationDir) {
+			javaExec.doFirst(
+				new Action<Task>() {
 
-				@Override
-				public void execute(Task task) {
-					Project project = task.getProject();
+					@Override
+					public void execute(Task task) {
+						Project project = task.getProject();
 
-					project.delete(destinationDir);
-				}
+						project.delete(destinationDir);
+					}
 
-			});
+				});
+		}
 
 		javaExec.setClasspath(classpath);
 		javaExec.setMain("org.apache.axis.wsdl.WSDL2Java");
@@ -283,7 +284,8 @@ public class WSDLBuilderPlugin implements Plugin<Project> {
 			File tmpSrcDir = new File(tmpDir, "src");
 
 			Task generateTask = _addTaskBuildWSDLGenerate(
-				buildWSDLTask, wsdlBuilderConfiguration, inputFile, tmpSrcDir);
+				buildWSDLTask, wsdlBuilderConfiguration, inputFile, tmpSrcDir,
+				true);
 
 			Task compileTask = _addTaskBuildWSDLCompile(
 				buildWSDLTask, wsdlBuilderConfiguration, inputFile, tmpDir,
@@ -301,7 +303,7 @@ public class WSDLBuilderPlugin implements Plugin<Project> {
 		else {
 			Task generateTask = _addTaskBuildWSDLGenerate(
 				buildWSDLTask, wsdlBuilderConfiguration, inputFile,
-				buildWSDLTask.getDestinationDir());
+				buildWSDLTask.getDestinationDir(), false);
 
 			buildWSDLTask.dependsOn(generateTask);
 		}
@@ -359,9 +361,8 @@ public class WSDLBuilderPlugin implements Plugin<Project> {
 							_getWebAppDir(buildWSDLTask.getProject()),
 							"WEB-INF/lib");
 					}
-					else {
-						return _getJavaDir(buildWSDLTask.getProject());
-					}
+
+					return _getJavaDir(buildWSDLTask.getProject());
 				}
 
 			});

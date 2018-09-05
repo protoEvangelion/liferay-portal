@@ -17,7 +17,6 @@ package com.liferay.source.formatter.checkstyle.checks;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.source.formatter.checkstyle.util.DetailASTUtil;
 
-import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 
@@ -26,9 +25,7 @@ import java.util.List;
 /**
  * @author Hugo Huijser
  */
-public class SizeIsZeroCheck extends AbstractCheck {
-
-	public static final String MSG_USE_METHOD = "method.use";
+public class SizeIsZeroCheck extends BaseCheck {
 
 	@Override
 	public int[] getDefaultTokens() {
@@ -36,7 +33,7 @@ public class SizeIsZeroCheck extends AbstractCheck {
 	}
 
 	@Override
-	public void visitToken(DetailAST detailAST) {
+	protected void doVisitToken(DetailAST detailAST) {
 		List<DetailAST> methodCallASTList = DetailASTUtil.getMethodCalls(
 			detailAST, "size");
 
@@ -48,15 +45,15 @@ public class SizeIsZeroCheck extends AbstractCheck {
 	private void _checkMethodCall(
 		DetailAST detailAST, DetailAST methodCallAST) {
 
-		DetailAST nextSibling = methodCallAST.getNextSibling();
+		DetailAST nextSiblingAST = methodCallAST.getNextSibling();
 
-		if ((nextSibling == null) ||
-			(nextSibling.getType() != TokenTypes.NUM_INT)) {
+		if ((nextSiblingAST == null) ||
+			(nextSiblingAST.getType() != TokenTypes.NUM_INT)) {
 
 			return;
 		}
 
-		int compareCount = GetterUtil.getInteger(nextSibling.getText());
+		int compareCount = GetterUtil.getInteger(nextSiblingAST.getText());
 
 		DetailAST parentAST = methodCallAST.getParent();
 
@@ -96,10 +93,12 @@ public class SizeIsZeroCheck extends AbstractCheck {
 
 			if (typeName.matches(".*(Collection|List|Map|Set)")) {
 				log(
-					methodCallAST.getLineNo(), MSG_USE_METHOD,
+					methodCallAST.getLineNo(), _MSG_USE_METHOD,
 					variableName + ".isEmpty()");
 			}
 		}
 	}
+
+	private static final String _MSG_USE_METHOD = "method.use";
 
 }

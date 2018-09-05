@@ -115,7 +115,7 @@ public class RatingsEntryUtil {
 	* @param uuid the uuid
 	* @return the matching ratings entries
 	*/
-	public static List<RatingsEntry> findByUuid(java.lang.String uuid) {
+	public static List<RatingsEntry> findByUuid(String uuid) {
 		return getPersistence().findByUuid(uuid);
 	}
 
@@ -131,8 +131,7 @@ public class RatingsEntryUtil {
 	* @param end the upper bound of the range of ratings entries (not inclusive)
 	* @return the range of matching ratings entries
 	*/
-	public static List<RatingsEntry> findByUuid(java.lang.String uuid,
-		int start, int end) {
+	public static List<RatingsEntry> findByUuid(String uuid, int start, int end) {
 		return getPersistence().findByUuid(uuid, start, end);
 	}
 
@@ -149,8 +148,8 @@ public class RatingsEntryUtil {
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching ratings entries
 	*/
-	public static List<RatingsEntry> findByUuid(java.lang.String uuid,
-		int start, int end, OrderByComparator<RatingsEntry> orderByComparator) {
+	public static List<RatingsEntry> findByUuid(String uuid, int start,
+		int end, OrderByComparator<RatingsEntry> orderByComparator) {
 		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
 	}
 
@@ -168,8 +167,8 @@ public class RatingsEntryUtil {
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the ordered range of matching ratings entries
 	*/
-	public static List<RatingsEntry> findByUuid(java.lang.String uuid,
-		int start, int end, OrderByComparator<RatingsEntry> orderByComparator,
+	public static List<RatingsEntry> findByUuid(String uuid, int start,
+		int end, OrderByComparator<RatingsEntry> orderByComparator,
 		boolean retrieveFromCache) {
 		return getPersistence()
 				   .findByUuid(uuid, start, end, orderByComparator,
@@ -184,7 +183,7 @@ public class RatingsEntryUtil {
 	* @return the first matching ratings entry
 	* @throws NoSuchEntryException if a matching ratings entry could not be found
 	*/
-	public static RatingsEntry findByUuid_First(java.lang.String uuid,
+	public static RatingsEntry findByUuid_First(String uuid,
 		OrderByComparator<RatingsEntry> orderByComparator)
 		throws com.liferay.ratings.kernel.exception.NoSuchEntryException {
 		return getPersistence().findByUuid_First(uuid, orderByComparator);
@@ -197,7 +196,7 @@ public class RatingsEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching ratings entry, or <code>null</code> if a matching ratings entry could not be found
 	*/
-	public static RatingsEntry fetchByUuid_First(java.lang.String uuid,
+	public static RatingsEntry fetchByUuid_First(String uuid,
 		OrderByComparator<RatingsEntry> orderByComparator) {
 		return getPersistence().fetchByUuid_First(uuid, orderByComparator);
 	}
@@ -210,7 +209,7 @@ public class RatingsEntryUtil {
 	* @return the last matching ratings entry
 	* @throws NoSuchEntryException if a matching ratings entry could not be found
 	*/
-	public static RatingsEntry findByUuid_Last(java.lang.String uuid,
+	public static RatingsEntry findByUuid_Last(String uuid,
 		OrderByComparator<RatingsEntry> orderByComparator)
 		throws com.liferay.ratings.kernel.exception.NoSuchEntryException {
 		return getPersistence().findByUuid_Last(uuid, orderByComparator);
@@ -223,7 +222,7 @@ public class RatingsEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching ratings entry, or <code>null</code> if a matching ratings entry could not be found
 	*/
-	public static RatingsEntry fetchByUuid_Last(java.lang.String uuid,
+	public static RatingsEntry fetchByUuid_Last(String uuid,
 		OrderByComparator<RatingsEntry> orderByComparator) {
 		return getPersistence().fetchByUuid_Last(uuid, orderByComparator);
 	}
@@ -238,7 +237,7 @@ public class RatingsEntryUtil {
 	* @throws NoSuchEntryException if a ratings entry with the primary key could not be found
 	*/
 	public static RatingsEntry[] findByUuid_PrevAndNext(long entryId,
-		java.lang.String uuid, OrderByComparator<RatingsEntry> orderByComparator)
+		String uuid, OrderByComparator<RatingsEntry> orderByComparator)
 		throws com.liferay.ratings.kernel.exception.NoSuchEntryException {
 		return getPersistence()
 				   .findByUuid_PrevAndNext(entryId, uuid, orderByComparator);
@@ -249,7 +248,7 @@ public class RatingsEntryUtil {
 	*
 	* @param uuid the uuid
 	*/
-	public static void removeByUuid(java.lang.String uuid) {
+	public static void removeByUuid(String uuid) {
 		getPersistence().removeByUuid(uuid);
 	}
 
@@ -259,7 +258,7 @@ public class RatingsEntryUtil {
 	* @param uuid the uuid
 	* @return the number of matching ratings entries
 	*/
-	public static int countByUuid(java.lang.String uuid) {
+	public static int countByUuid(String uuid) {
 		return getPersistence().countByUuid(uuid);
 	}
 
@@ -270,8 +269,7 @@ public class RatingsEntryUtil {
 	* @param companyId the company ID
 	* @return the matching ratings entries
 	*/
-	public static List<RatingsEntry> findByUuid_C(java.lang.String uuid,
-		long companyId) {
+	public static List<RatingsEntry> findByUuid_C(String uuid, long companyId) {
 		return getPersistence().findByUuid_C(uuid, companyId);
 	}
 
@@ -288,8 +286,8 @@ public class RatingsEntryUtil {
 	* @param end the upper bound of the range of ratings entries (not inclusive)
 	* @return the range of matching ratings entries
 	*/
-	public static List<RatingsEntry> findByUuid_C(java.lang.String uuid,
-		long companyId, int start, int end) {
+	public static List<RatingsEntry> findByUuid_C(String uuid, long companyId,
+		int start, int end) {
 		return getPersistence().findByUuid_C(uuid, companyId, start, end);
 	}
 
@@ -307,9 +305,8 @@ public class RatingsEntryUtil {
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching ratings entries
 	*/
-	public static List<RatingsEntry> findByUuid_C(java.lang.String uuid,
-		long companyId, int start, int end,
-		OrderByComparator<RatingsEntry> orderByComparator) {
+	public static List<RatingsEntry> findByUuid_C(String uuid, long companyId,
+		int start, int end, OrderByComparator<RatingsEntry> orderByComparator) {
 		return getPersistence()
 				   .findByUuid_C(uuid, companyId, start, end, orderByComparator);
 	}
@@ -329,9 +326,8 @@ public class RatingsEntryUtil {
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the ordered range of matching ratings entries
 	*/
-	public static List<RatingsEntry> findByUuid_C(java.lang.String uuid,
-		long companyId, int start, int end,
-		OrderByComparator<RatingsEntry> orderByComparator,
+	public static List<RatingsEntry> findByUuid_C(String uuid, long companyId,
+		int start, int end, OrderByComparator<RatingsEntry> orderByComparator,
 		boolean retrieveFromCache) {
 		return getPersistence()
 				   .findByUuid_C(uuid, companyId, start, end,
@@ -347,8 +343,8 @@ public class RatingsEntryUtil {
 	* @return the first matching ratings entry
 	* @throws NoSuchEntryException if a matching ratings entry could not be found
 	*/
-	public static RatingsEntry findByUuid_C_First(java.lang.String uuid,
-		long companyId, OrderByComparator<RatingsEntry> orderByComparator)
+	public static RatingsEntry findByUuid_C_First(String uuid, long companyId,
+		OrderByComparator<RatingsEntry> orderByComparator)
 		throws com.liferay.ratings.kernel.exception.NoSuchEntryException {
 		return getPersistence()
 				   .findByUuid_C_First(uuid, companyId, orderByComparator);
@@ -362,8 +358,8 @@ public class RatingsEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching ratings entry, or <code>null</code> if a matching ratings entry could not be found
 	*/
-	public static RatingsEntry fetchByUuid_C_First(java.lang.String uuid,
-		long companyId, OrderByComparator<RatingsEntry> orderByComparator) {
+	public static RatingsEntry fetchByUuid_C_First(String uuid, long companyId,
+		OrderByComparator<RatingsEntry> orderByComparator) {
 		return getPersistence()
 				   .fetchByUuid_C_First(uuid, companyId, orderByComparator);
 	}
@@ -377,8 +373,8 @@ public class RatingsEntryUtil {
 	* @return the last matching ratings entry
 	* @throws NoSuchEntryException if a matching ratings entry could not be found
 	*/
-	public static RatingsEntry findByUuid_C_Last(java.lang.String uuid,
-		long companyId, OrderByComparator<RatingsEntry> orderByComparator)
+	public static RatingsEntry findByUuid_C_Last(String uuid, long companyId,
+		OrderByComparator<RatingsEntry> orderByComparator)
 		throws com.liferay.ratings.kernel.exception.NoSuchEntryException {
 		return getPersistence()
 				   .findByUuid_C_Last(uuid, companyId, orderByComparator);
@@ -392,8 +388,8 @@ public class RatingsEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching ratings entry, or <code>null</code> if a matching ratings entry could not be found
 	*/
-	public static RatingsEntry fetchByUuid_C_Last(java.lang.String uuid,
-		long companyId, OrderByComparator<RatingsEntry> orderByComparator) {
+	public static RatingsEntry fetchByUuid_C_Last(String uuid, long companyId,
+		OrderByComparator<RatingsEntry> orderByComparator) {
 		return getPersistence()
 				   .fetchByUuid_C_Last(uuid, companyId, orderByComparator);
 	}
@@ -409,7 +405,7 @@ public class RatingsEntryUtil {
 	* @throws NoSuchEntryException if a ratings entry with the primary key could not be found
 	*/
 	public static RatingsEntry[] findByUuid_C_PrevAndNext(long entryId,
-		java.lang.String uuid, long companyId,
+		String uuid, long companyId,
 		OrderByComparator<RatingsEntry> orderByComparator)
 		throws com.liferay.ratings.kernel.exception.NoSuchEntryException {
 		return getPersistence()
@@ -423,7 +419,7 @@ public class RatingsEntryUtil {
 	* @param uuid the uuid
 	* @param companyId the company ID
 	*/
-	public static void removeByUuid_C(java.lang.String uuid, long companyId) {
+	public static void removeByUuid_C(String uuid, long companyId) {
 		getPersistence().removeByUuid_C(uuid, companyId);
 	}
 
@@ -434,7 +430,7 @@ public class RatingsEntryUtil {
 	* @param companyId the company ID
 	* @return the number of matching ratings entries
 	*/
-	public static int countByUuid_C(java.lang.String uuid, long companyId) {
+	public static int countByUuid_C(String uuid, long companyId) {
 		return getPersistence().countByUuid_C(uuid, companyId);
 	}
 
@@ -612,6 +608,91 @@ public class RatingsEntryUtil {
 	}
 
 	/**
+	* Returns all the ratings entries where userId = &#63; and classNameId = &#63; and classPK = any &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link RatingsEntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param userId the user ID
+	* @param classNameId the class name ID
+	* @param classPKs the class pks
+	* @return the matching ratings entries
+	*/
+	public static List<RatingsEntry> findByU_C_C(long userId, long classNameId,
+		long[] classPKs) {
+		return getPersistence().findByU_C_C(userId, classNameId, classPKs);
+	}
+
+	/**
+	* Returns a range of all the ratings entries where userId = &#63; and classNameId = &#63; and classPK = any &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link RatingsEntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param userId the user ID
+	* @param classNameId the class name ID
+	* @param classPKs the class pks
+	* @param start the lower bound of the range of ratings entries
+	* @param end the upper bound of the range of ratings entries (not inclusive)
+	* @return the range of matching ratings entries
+	*/
+	public static List<RatingsEntry> findByU_C_C(long userId, long classNameId,
+		long[] classPKs, int start, int end) {
+		return getPersistence()
+				   .findByU_C_C(userId, classNameId, classPKs, start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the ratings entries where userId = &#63; and classNameId = &#63; and classPK = any &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link RatingsEntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param userId the user ID
+	* @param classNameId the class name ID
+	* @param classPKs the class pks
+	* @param start the lower bound of the range of ratings entries
+	* @param end the upper bound of the range of ratings entries (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching ratings entries
+	*/
+	public static List<RatingsEntry> findByU_C_C(long userId, long classNameId,
+		long[] classPKs, int start, int end,
+		OrderByComparator<RatingsEntry> orderByComparator) {
+		return getPersistence()
+				   .findByU_C_C(userId, classNameId, classPKs, start, end,
+			orderByComparator);
+	}
+
+	/**
+	* Returns an ordered range of all the ratings entries where userId = &#63; and classNameId = &#63; and classPK = &#63;, optionally using the finder cache.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link RatingsEntryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param userId the user ID
+	* @param classNameId the class name ID
+	* @param classPK the class pk
+	* @param start the lower bound of the range of ratings entries
+	* @param end the upper bound of the range of ratings entries (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching ratings entries
+	*/
+	public static List<RatingsEntry> findByU_C_C(long userId, long classNameId,
+		long[] classPKs, int start, int end,
+		OrderByComparator<RatingsEntry> orderByComparator,
+		boolean retrieveFromCache) {
+		return getPersistence()
+				   .findByU_C_C(userId, classNameId, classPKs, start, end,
+			orderByComparator, retrieveFromCache);
+	}
+
+	/**
 	* Returns the ratings entry where userId = &#63; and classNameId = &#63; and classPK = &#63; or throws a {@link NoSuchEntryException} if it could not be found.
 	*
 	* @param userId the user ID
@@ -678,6 +759,19 @@ public class RatingsEntryUtil {
 	*/
 	public static int countByU_C_C(long userId, long classNameId, long classPK) {
 		return getPersistence().countByU_C_C(userId, classNameId, classPK);
+	}
+
+	/**
+	* Returns the number of ratings entries where userId = &#63; and classNameId = &#63; and classPK = any &#63;.
+	*
+	* @param userId the user ID
+	* @param classNameId the class name ID
+	* @param classPKs the class pks
+	* @return the number of matching ratings entries
+	*/
+	public static int countByU_C_C(long userId, long classNameId,
+		long[] classPKs) {
+		return getPersistence().countByU_C_C(userId, classNameId, classPKs);
 	}
 
 	/**
@@ -1024,7 +1118,7 @@ public class RatingsEntryUtil {
 		return getPersistence().countAll();
 	}
 
-	public static java.util.Set<java.lang.String> getBadColumnNames() {
+	public static java.util.Set<String> getBadColumnNames() {
 		return getPersistence().getBadColumnNames();
 	}
 

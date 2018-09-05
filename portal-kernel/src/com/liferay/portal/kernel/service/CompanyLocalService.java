@@ -62,13 +62,6 @@ public interface CompanyLocalService extends BaseLocalService,
 	 *
 	 * Never modify or reference this interface directly. Always use {@link CompanyLocalServiceUtil} to access the company local service. Add custom service methods to {@link com.liferay.portal.service.impl.CompanyLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public ActionableDynamicQuery getActionableDynamicQuery();
-
-	public DynamicQuery dynamicQuery();
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
 
 	/**
 	* Adds the company to the database. Also notifies the appropriate model listeners.
@@ -92,9 +85,8 @@ public interface CompanyLocalService extends BaseLocalService,
 	* @param active whether the company is active
 	* @return the company
 	*/
-	public Company addCompany(java.lang.String webId,
-		java.lang.String virtualHostname, java.lang.String mx, boolean system,
-		int maxUsers, boolean active) throws PortalException;
+	public Company addCompany(String webId, String virtualHostname, String mx,
+		boolean system, int maxUsers, boolean active) throws PortalException;
 
 	/**
 	* Returns the company with the web domain.
@@ -105,8 +97,7 @@ public interface CompanyLocalService extends BaseLocalService,
 	* @param webId the company's web domain
 	* @return the company with the web domain
 	*/
-	public Company checkCompany(java.lang.String webId)
-		throws PortalException;
+	public Company checkCompany(String webId) throws PortalException;
 
 	/**
 	* Returns the company with the web domain and mail domain. If no such
@@ -122,8 +113,16 @@ public interface CompanyLocalService extends BaseLocalService,
 	@Transactional(isolation = Isolation.PORTAL, rollbackFor =  {
 		PortalException.class, SystemException.class}
 	)
-	public Company checkCompany(java.lang.String webId, java.lang.String mx)
+	public Company checkCompany(String webId, String mx)
 		throws PortalException;
+
+	/**
+	* Checks if the company has an encryption key. It will create a key if one
+	* does not exist.
+	*
+	* @param companyId the primary key of the company
+	*/
+	public void checkCompanyKey(long companyId) throws PortalException;
 
 	/**
 	* Creates a new company with the primary key. Does not add the company to the database.
@@ -131,6 +130,7 @@ public interface CompanyLocalService extends BaseLocalService,
 	* @param companyId the primary key for the new company
 	* @return the new company
 	*/
+	@Transactional(enabled = false)
 	public Company createCompany(long companyId);
 
 	/**
@@ -161,214 +161,6 @@ public interface CompanyLocalService extends BaseLocalService,
 	*/
 	public Company deleteLogo(long companyId) throws PortalException;
 
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Company fetchCompany(long companyId);
-
-	/**
-	* Returns the company with the primary key.
-	*
-	* @param companyId the primary key of the company
-	* @return the company with the primary key, <code>null</code> if a company
-	with the primary key could not be found
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Company fetchCompanyById(long companyId);
-
-	/**
-	* Returns the company with the virtual host name.
-	*
-	* @param virtualHostname the virtual host name
-	* @return the company with the virtual host name, <code>null</code> if a
-	company with the virtual host could not be found
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Company fetchCompanyByVirtualHost(java.lang.String virtualHostname);
-
-	/**
-	* Returns the company with the primary key.
-	*
-	* @param companyId the primary key of the company
-	* @return the company
-	* @throws PortalException if a company with the primary key could not be found
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Company getCompany(long companyId) throws PortalException;
-
-	/**
-	* Returns the company with the primary key.
-	*
-	* @param companyId the primary key of the company
-	* @return the company with the primary key
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Company getCompanyById(long companyId) throws PortalException;
-
-	/**
-	* Returns the company with the logo.
-	*
-	* @param logoId the ID of the company's logo
-	* @return the company with the logo
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Company getCompanyByLogoId(long logoId) throws PortalException;
-
-	/**
-	* Returns the company with the mail domain.
-	*
-	* @param mx the company's mail domain
-	* @return the company with the mail domain
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Company getCompanyByMx(java.lang.String mx)
-		throws PortalException;
-
-	/**
-	* Returns the company with the virtual host name.
-	*
-	* @param virtualHostname the company's virtual host name
-	* @return the company with the virtual host name
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Company getCompanyByVirtualHost(java.lang.String virtualHostname)
-		throws PortalException;
-
-	/**
-	* Returns the company with the web domain.
-	*
-	* @param webId the company's web domain
-	* @return the company with the web domain
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Company getCompanyByWebId(java.lang.String webId)
-		throws PortalException;
-
-	/**
-	* Updates the company in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param company the company
-	* @return the company that was updated
-	*/
-	@Indexable(type = IndexableType.REINDEX)
-	public Company updateCompany(Company company);
-
-	/**
-	* Updates the company.
-	*
-	* @param companyId the primary key of the company
-	* @param virtualHostname the company's virtual host name
-	* @param mx the company's mail domain
-	* @param maxUsers the max number of company users (optionally
-	<code>0</code>)
-	* @param active whether the company is active
-	* @return the company with the primary key
-	*/
-	public Company updateCompany(long companyId,
-		java.lang.String virtualHostname, java.lang.String mx, int maxUsers,
-		boolean active) throws PortalException;
-
-	/**
-	* Update the company with additional account information.
-	*
-	* @param companyId the primary key of the company
-	* @param virtualHostname the company's virtual host name
-	* @param mx the company's mail domain
-	* @param homeURL the company's home URL (optionally <code>null</code>)
-	* @param logo whether to update the company's logo
-	* @param logoBytes the new logo image data
-	* @param name the company's account name(optionally <code>null</code>)
-	* @param legalName the company's account legal name (optionally
-	<code>null</code>)
-	* @param legalId the company's account legal ID (optionally
-	<code>null</code>)
-	* @param legalType the company's account legal type (optionally
-	<code>null</code>)
-	* @param sicCode the company's account SIC code (optionally
-	<code>null</code>)
-	* @param tickerSymbol the company's account ticker symbol (optionally
-	<code>null</code>)
-	* @param industry the company's account industry (optionally
-	<code>null</code>)
-	* @param type the company's account type (optionally <code>null</code>)
-	* @param size the company's account size (optionally <code>null</code>)
-	* @return the company with the primary key
-	*/
-	public Company updateCompany(long companyId,
-		java.lang.String virtualHostname, java.lang.String mx,
-		java.lang.String homeURL, boolean logo, byte[] logoBytes,
-		java.lang.String name, java.lang.String legalName,
-		java.lang.String legalId, java.lang.String legalType,
-		java.lang.String sicCode, java.lang.String tickerSymbol,
-		java.lang.String industry, java.lang.String type, java.lang.String size)
-		throws PortalException;
-
-	/**
-	* Update the company with additional account information.
-	*
-	* @param companyId the primary key of the company
-	* @param virtualHostname the company's virtual host name
-	* @param mx the company's mail domain
-	* @param homeURL the company's home URL (optionally <code>null</code>)
-	* @param name the company's account name(optionally <code>null</code>)
-	* @param legalName the company's account legal name (optionally
-	<code>null</code>)
-	* @param legalId the company's account legal ID (optionally
-	<code>null</code>)
-	* @param legalType the company's account legal type (optionally
-	<code>null</code>)
-	* @param sicCode the company's account SIC code (optionally
-	<code>null</code>)
-	* @param tickerSymbol the company's account ticker symbol (optionally
-	<code>null</code>)
-	* @param industry the company's account industry (optionally
-	<code>null</code>)
-	* @param type the company's account type (optionally
-	<code>null</code>)
-	* @param size the company's account size (optionally
-	<code>null</code>)
-	* @return the company with the primary key
-	* @deprecated As of 7.0.0, replaced by {@link #updateCompany(long, String,
-	String, String, boolean, byte[], String, String, String,
-	String, String, String, String, String, String)}
-	*/
-	@java.lang.Deprecated
-	public Company updateCompany(long companyId,
-		java.lang.String virtualHostname, java.lang.String mx,
-		java.lang.String homeURL, java.lang.String name,
-		java.lang.String legalName, java.lang.String legalId,
-		java.lang.String legalType, java.lang.String sicCode,
-		java.lang.String tickerSymbol, java.lang.String industry,
-		java.lang.String type, java.lang.String size) throws PortalException;
-
-	/**
-	* Updates the company's logo.
-	*
-	* @param companyId the primary key of the company
-	* @param bytes the bytes of the company's logo image
-	* @return the company with the primary key
-	*/
-	public Company updateLogo(long companyId, byte[] bytes)
-		throws PortalException;
-
-	/**
-	* Updates the company's logo.
-	*
-	* @param companyId the primary key of the company
-	* @param file the file of the company's logo image
-	* @return the company with the primary key
-	*/
-	public Company updateLogo(long companyId, File file)
-		throws PortalException;
-
-	/**
-	* Update the company's logo.
-	*
-	* @param companyId the primary key of the company
-	* @param is the input stream of the company's logo image
-	* @return the company with the primary key
-	*/
-	public Company updateLogo(long companyId, InputStream is)
-		throws PortalException;
-
 	/**
 	* @throws PortalException
 	*/
@@ -376,79 +168,7 @@ public interface CompanyLocalService extends BaseLocalService,
 	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
 		throws PortalException;
 
-	@Override
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException;
-
-	/**
-	* Returns an ordered range of all assets that match the keywords in the
-	* company.
-	*
-	* The method is called in {@link
-	* com.liferay.portal.search.PortalOpenSearchImpl} which is not longer used
-	* by the Search portlet.
-	*
-	* @param companyId the primary key of the company
-	* @param userId the primary key of the user
-	* @param keywords the keywords (space separated),which may occur in assets
-	in the company (optionally <code>null</code>)
-	* @param start the lower bound of the range of assets to return
-	* @param end the upper bound of the range of assets to return (not
-	inclusive)
-	* @return the matching assets in the company
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Hits search(long companyId, long userId, java.lang.String keywords,
-		int start, int end);
-
-	/**
-	* Returns an ordered range of all assets that match the keywords in the
-	* portlet within the company.
-	*
-	* @param companyId the primary key of the company
-	* @param userId the primary key of the user
-	* @param portletId the primary key of the portlet (optionally
-	<code>null</code>)
-	* @param groupId the primary key of the group (optionally <code>0</code>)
-	* @param type the mime type of assets to return(optionally
-	<code>null</code>)
-	* @param keywords the keywords (space separated), which may occur in any
-	assets in the portlet (optionally <code>null</code>)
-	* @param start the lower bound of the range of assets to return
-	* @param end the upper bound of the range of assets to return (not
-	inclusive)
-	* @return the matching assets in the portlet within the company
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Hits search(long companyId, long userId, java.lang.String portletId,
-		long groupId, java.lang.String type, java.lang.String keywords,
-		int start, int end);
-
-	/**
-	* Returns the number of companies.
-	*
-	* @return the number of companies
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getCompaniesCount();
-
-	/**
-	* Returns the number of companies used by WSRP.
-	*
-	* @param system whether the company is the very first company (i.e., the
-	super company)
-	* @return the number of companies used by WSRP
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getCompaniesCount(boolean system);
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	public java.lang.String getOSGiServiceIdentifier();
+	public DynamicQuery dynamicQuery();
 
 	/**
 	* Performs a dynamic query on the database and returns the matching rows.
@@ -490,6 +210,50 @@ public interface CompanyLocalService extends BaseLocalService,
 		int end, OrderByComparator<T> orderByComparator);
 
 	/**
+	* Returns the number of rows matching the dynamic query.
+	*
+	* @param dynamicQuery the dynamic query
+	* @return the number of rows matching the dynamic query
+	*/
+	public long dynamicQueryCount(DynamicQuery dynamicQuery);
+
+	/**
+	* Returns the number of rows matching the dynamic query.
+	*
+	* @param dynamicQuery the dynamic query
+	* @param projection the projection to apply to the query
+	* @return the number of rows matching the dynamic query
+	*/
+	public long dynamicQueryCount(DynamicQuery dynamicQuery,
+		Projection projection);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Company fetchCompany(long companyId);
+
+	/**
+	* Returns the company with the primary key.
+	*
+	* @param companyId the primary key of the company
+	* @return the company with the primary key, <code>null</code> if a company
+	with the primary key could not be found
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Company fetchCompanyById(long companyId);
+
+	/**
+	* Returns the company with the virtual host name.
+	*
+	* @param virtualHostname the virtual host name
+	* @return the company with the virtual host name, <code>null</code> if a
+	company with the virtual host could not be found
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Company fetchCompanyByVirtualHost(String virtualHostname);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public ActionableDynamicQuery getActionableDynamicQuery();
+
+	/**
 	* Returns all the companies.
 	*
 	* @return the companies
@@ -525,22 +289,78 @@ public interface CompanyLocalService extends BaseLocalService,
 	public List<Company> getCompanies(int start, int end);
 
 	/**
-	* Returns the number of rows matching the dynamic query.
+	* Returns the number of companies.
 	*
-	* @param dynamicQuery the dynamic query
-	* @return the number of rows matching the dynamic query
+	* @return the number of companies
 	*/
-	public long dynamicQueryCount(DynamicQuery dynamicQuery);
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getCompaniesCount();
 
 	/**
-	* Returns the number of rows matching the dynamic query.
+	* Returns the number of companies used by WSRP.
 	*
-	* @param dynamicQuery the dynamic query
-	* @param projection the projection to apply to the query
-	* @return the number of rows matching the dynamic query
+	* @param system whether the company is the very first company (i.e., the
+	super company)
+	* @return the number of companies used by WSRP
 	*/
-	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection);
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getCompaniesCount(boolean system);
+
+	/**
+	* Returns the company with the primary key.
+	*
+	* @param companyId the primary key of the company
+	* @return the company
+	* @throws PortalException if a company with the primary key could not be found
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Company getCompany(long companyId) throws PortalException;
+
+	/**
+	* Returns the company with the primary key.
+	*
+	* @param companyId the primary key of the company
+	* @return the company with the primary key
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Company getCompanyById(long companyId) throws PortalException;
+
+	/**
+	* Returns the company with the logo.
+	*
+	* @param logoId the ID of the company's logo
+	* @return the company with the logo
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Company getCompanyByLogoId(long logoId) throws PortalException;
+
+	/**
+	* Returns the company with the mail domain.
+	*
+	* @param mx the company's mail domain
+	* @return the company with the mail domain
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Company getCompanyByMx(String mx) throws PortalException;
+
+	/**
+	* Returns the company with the virtual host name.
+	*
+	* @param virtualHostname the company's virtual host name
+	* @return the company with the virtual host name
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Company getCompanyByVirtualHost(String virtualHostname)
+		throws PortalException;
+
+	/**
+	* Returns the company with the web domain.
+	*
+	* @param webId the company's web domain
+	* @return the company with the web domain
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Company getCompanyByWebId(String webId) throws PortalException;
 
 	/**
 	* Returns the user's company.
@@ -552,15 +372,22 @@ public interface CompanyLocalService extends BaseLocalService,
 	* @throws Exception if a user with the primary key could not be found
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public long getCompanyIdByUserId(long userId) throws java.lang.Exception;
+	public long getCompanyIdByUserId(long userId) throws Exception;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
 
 	/**
-	* Checks if the company has an encryption key. It will create a key if one
-	* does not exist.
+	* Returns the OSGi service identifier.
 	*
-	* @param companyId the primary key of the company
+	* @return the OSGi service identifier
 	*/
-	public void checkCompanyKey(long companyId) throws PortalException;
+	public String getOSGiServiceIdentifier();
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
+		throws PortalException;
 
 	/**
 	* Removes the values that match the keys of the company's preferences.
@@ -572,7 +399,141 @@ public interface CompanyLocalService extends BaseLocalService,
 	* @param companyId the primary key of the company
 	* @param keys the company's preferences keys to be remove
 	*/
-	public void removePreferences(long companyId, java.lang.String[] keys);
+	public void removePreferences(long companyId, String[] keys);
+
+	/**
+	* Returns an ordered range of all assets that match the keywords in the
+	* company.
+	*
+	* The method is called in {@link
+	* com.liferay.portal.search.PortalOpenSearchImpl} which is not longer used
+	* by the Search portlet.
+	*
+	* @param companyId the primary key of the company
+	* @param userId the primary key of the user
+	* @param keywords the keywords (space separated),which may occur in assets
+	in the company (optionally <code>null</code>)
+	* @param start the lower bound of the range of assets to return
+	* @param end the upper bound of the range of assets to return (not
+	inclusive)
+	* @return the matching assets in the company
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Hits search(long companyId, long userId, String keywords, int start,
+		int end);
+
+	/**
+	* Returns an ordered range of all assets that match the keywords in the
+	* portlet within the company.
+	*
+	* @param companyId the primary key of the company
+	* @param userId the primary key of the user
+	* @param portletId the primary key of the portlet (optionally
+	<code>null</code>)
+	* @param groupId the primary key of the group (optionally <code>0</code>)
+	* @param type the mime type of assets to return(optionally
+	<code>null</code>)
+	* @param keywords the keywords (space separated), which may occur in any
+	assets in the portlet (optionally <code>null</code>)
+	* @param start the lower bound of the range of assets to return
+	* @param end the upper bound of the range of assets to return (not
+	inclusive)
+	* @return the matching assets in the portlet within the company
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Hits search(long companyId, long userId, String portletId,
+		long groupId, String type, String keywords, int start, int end);
+
+	/**
+	* Updates the company in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param company the company
+	* @return the company that was updated
+	*/
+	@Indexable(type = IndexableType.REINDEX)
+	public Company updateCompany(Company company);
+
+	/**
+	* Updates the company.
+	*
+	* @param companyId the primary key of the company
+	* @param virtualHostname the company's virtual host name
+	* @param mx the company's mail domain
+	* @param maxUsers the max number of company users (optionally
+	<code>0</code>)
+	* @param active whether the company is active
+	* @return the company with the primary key
+	*/
+	public Company updateCompany(long companyId, String virtualHostname,
+		String mx, int maxUsers, boolean active) throws PortalException;
+
+	/**
+	* Update the company with additional account information.
+	*
+	* @param companyId the primary key of the company
+	* @param virtualHostname the company's virtual host name
+	* @param mx the company's mail domain
+	* @param homeURL the company's home URL (optionally <code>null</code>)
+	* @param logo whether to update the company's logo
+	* @param logoBytes the new logo image data
+	* @param name the company's account name(optionally <code>null</code>)
+	* @param legalName the company's account legal name (optionally
+	<code>null</code>)
+	* @param legalId the company's account legal ID (optionally
+	<code>null</code>)
+	* @param legalType the company's account legal type (optionally
+	<code>null</code>)
+	* @param sicCode the company's account SIC code (optionally
+	<code>null</code>)
+	* @param tickerSymbol the company's account ticker symbol (optionally
+	<code>null</code>)
+	* @param industry the company's account industry (optionally
+	<code>null</code>)
+	* @param type the company's account type (optionally <code>null</code>)
+	* @param size the company's account size (optionally <code>null</code>)
+	* @return the company with the primary key
+	*/
+	public Company updateCompany(long companyId, String virtualHostname,
+		String mx, String homeURL, boolean logo, byte[] logoBytes, String name,
+		String legalName, String legalId, String legalType, String sicCode,
+		String tickerSymbol, String industry, String type, String size)
+		throws PortalException;
+
+	/**
+	* Update the company with additional account information.
+	*
+	* @param companyId the primary key of the company
+	* @param virtualHostname the company's virtual host name
+	* @param mx the company's mail domain
+	* @param homeURL the company's home URL (optionally <code>null</code>)
+	* @param name the company's account name(optionally <code>null</code>)
+	* @param legalName the company's account legal name (optionally
+	<code>null</code>)
+	* @param legalId the company's account legal ID (optionally
+	<code>null</code>)
+	* @param legalType the company's account legal type (optionally
+	<code>null</code>)
+	* @param sicCode the company's account SIC code (optionally
+	<code>null</code>)
+	* @param tickerSymbol the company's account ticker symbol (optionally
+	<code>null</code>)
+	* @param industry the company's account industry (optionally
+	<code>null</code>)
+	* @param type the company's account type (optionally
+	<code>null</code>)
+	* @param size the company's account size (optionally
+	<code>null</code>)
+	* @return the company with the primary key
+	* @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	#updateCompany(long, String, String, String, boolean, byte[],
+	String, String, String, String, String, String, String,
+	String, String)}
+	*/
+	@Deprecated
+	public Company updateCompany(long companyId, String virtualHostname,
+		String mx, String homeURL, String name, String legalName,
+		String legalId, String legalType, String sicCode, String tickerSymbol,
+		String industry, String type, String size) throws PortalException;
 
 	/**
 	* Update the company's display.
@@ -581,11 +542,41 @@ public interface CompanyLocalService extends BaseLocalService,
 	* @param languageId the ID of the company's default user's language
 	* @param timeZoneId the ID of the company's default user's time zone
 	*/
-	public void updateDisplay(long companyId, java.lang.String languageId,
-		java.lang.String timeZoneId) throws PortalException;
+	public void updateDisplay(long companyId, String languageId,
+		String timeZoneId) throws PortalException;
 
 	@Async
 	public void updateDisplayGroupNames(long companyId)
+		throws PortalException;
+
+	/**
+	* Updates the company's logo.
+	*
+	* @param companyId the primary key of the company
+	* @param bytes the bytes of the company's logo image
+	* @return the company with the primary key
+	*/
+	public Company updateLogo(long companyId, byte[] bytes)
+		throws PortalException;
+
+	/**
+	* Updates the company's logo.
+	*
+	* @param companyId the primary key of the company
+	* @param file the file of the company's logo image
+	* @return the company with the primary key
+	*/
+	public Company updateLogo(long companyId, File file)
+		throws PortalException;
+
+	/**
+	* Update the company's logo.
+	*
+	* @param companyId the primary key of the company
+	* @param is the input stream of the company's logo image
+	* @return the company with the primary key
+	*/
+	public Company updateLogo(long companyId, InputStream is)
 		throws PortalException;
 
 	/**
@@ -616,7 +607,7 @@ public interface CompanyLocalService extends BaseLocalService,
 	* @param siteLogo whether to allow site administrators to use their own
 	logo instead of the enterprise logo
 	*/
-	public void updateSecurity(long companyId, java.lang.String authType,
+	public void updateSecurity(long companyId, String authType,
 		boolean autoLogin, boolean sendPassword, boolean strangers,
 		boolean strangersWithMx, boolean strangersVerify, boolean siteLogo);
 }

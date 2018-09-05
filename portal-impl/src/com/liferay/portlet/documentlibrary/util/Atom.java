@@ -51,9 +51,8 @@ public class Atom {
 
 	public static final String STCO = "stco";
 
-	public static final String[] TOP_LEVEL_ATOMS = {
-		FREE, FTYP, JUNK, MDAT, MOOV, PICT, PNOT, SKIP, Atom.WIDE
-	};
+	public static final String[] TOP_LEVEL_ATOMS =
+		{FREE, FTYP, JUNK, MDAT, MOOV, PICT, PNOT, SKIP, Atom.WIDE};
 
 	public static final String WIDE = "wide";
 
@@ -166,9 +165,8 @@ public class Atom {
 		if (StringUtil.equalsIgnoreCase(type, Atom.CMOV)) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	protected int patchCo64Atom(int index) {

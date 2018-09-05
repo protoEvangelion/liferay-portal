@@ -14,6 +14,7 @@
 
 package com.liferay.portal.model.impl;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.ColorScheme;
@@ -32,7 +33,7 @@ import com.liferay.portal.kernel.theme.ThemeCompanyLimit;
 import com.liferay.portal.kernel.theme.ThemeGroupLimit;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.ThemeHelper;
 import com.liferay.portal.kernel.util.Validator;
@@ -100,9 +101,8 @@ public class ThemeImpl extends PluginBaseImpl implements Theme {
 		if (getThemeId().equals(themeId)) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	@Override
@@ -196,9 +196,8 @@ public class ThemeImpl extends PluginBaseImpl implements Theme {
 		if (_loadFromServletContext) {
 			return TemplateConstants.SERVLET_SEPARATOR;
 		}
-		else {
-			return TemplateConstants.THEME_LOADER_SEPARATOR;
-		}
+
+		return TemplateConstants.THEME_LOADER_SEPARATOR;
 	}
 
 	@Override
@@ -403,9 +402,8 @@ public class ThemeImpl extends PluginBaseImpl implements Theme {
 		if (_loadFromServletContext) {
 			return TemplateConstants.SERVLET_SEPARATOR;
 		}
-		else {
-			return TemplateConstants.THEME_LOADER_SEPARATOR;
-		}
+
+		return TemplateConstants.THEME_LOADER_SEPARATOR;
 	}
 
 	@Override
@@ -423,9 +421,8 @@ public class ThemeImpl extends PluginBaseImpl implements Theme {
 		if (!_colorSchemesMap.isEmpty()) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	@Override
@@ -621,7 +618,9 @@ public class ThemeImpl extends PluginBaseImpl implements Theme {
 
 		if (_log.isDebugEnabled()) {
 			_log.debug(
-				"Check if theme " + getThemeId() + " is available for " + id);
+				StringBundler.concat(
+					"Check if theme ", getThemeId(), " is available for ",
+					String.valueOf(id)));
 		}
 
 		if (limit != null) {
@@ -680,8 +679,10 @@ public class ThemeImpl extends PluginBaseImpl implements Theme {
 
 		if (_log.isDebugEnabled()) {
 			_log.debug(
-				"Theme " + getThemeId() + " is " + (!available ? "NOT " : "") +
-					"available for " + id);
+				StringBundler.concat(
+					"Theme ", getThemeId(), " is ",
+					String.valueOf(!available ? "NOT " : ""), "available for ",
+					String.valueOf(id)));
 		}
 
 		return available;

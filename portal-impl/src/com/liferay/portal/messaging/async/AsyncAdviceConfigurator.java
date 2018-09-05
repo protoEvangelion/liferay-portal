@@ -17,8 +17,11 @@ package com.liferay.portal.messaging.async;
 import java.util.Map;
 
 /**
- * @author Shuyang Zhou
+ * @author     Shuyang Zhou
+ * @deprecated As of Judson (7.1.x), moved to {@link
+ *             com.liferay.portal.internal.messaging.async.AsyncAdviceConfigurator}
  */
+@Deprecated
 public class AsyncAdviceConfigurator {
 
 	public void afterPropertiesSet() {

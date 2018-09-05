@@ -14,6 +14,7 @@
 
 package com.liferay.portal.service.impl;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
@@ -23,26 +24,21 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.ResourceAction;
-import com.liferay.portal.kernel.model.ResourceBlock;
-import com.liferay.portal.kernel.model.ResourceBlockConstants;
-import com.liferay.portal.kernel.model.ResourceBlockPermissionsContainer;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.ResourcePermission;
-import com.liferay.portal.kernel.model.ResourceTypePermission;
 import com.liferay.portal.kernel.model.RoleConstants;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.spring.aop.Skip;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.security.permission.PermissionCacheUtil;
 import com.liferay.portal.service.base.ResourceActionLocalServiceBaseImpl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -107,12 +103,17 @@ public class ResourceActionLocalServiceImpl
 		}
 
 		long availableBits = -2;
+		Map<String, ResourceAction> resourceActionMap = new HashMap<>();
 
-		for (ResourceAction resourceAction : getResourceActions(name)) {
+		List<ResourceAction> resourceActions = getResourceActions(name);
+
+		for (ResourceAction resourceAction : resourceActions) {
 			availableBits &= ~resourceAction.getBitwiseValue();
+
+			resourceActionMap.put(resourceAction.getActionId(), resourceAction);
 		}
 
-		List<ResourceAction> newResourceActions = null;
+		List<Object[]> keyActionIdAndBitwiseValues = null;
 
 		for (String actionId : actionIds) {
 			String key = encodeKey(name, actionId);
@@ -123,8 +124,7 @@ public class ResourceActionLocalServiceImpl
 				continue;
 			}
 
-			resourceAction = resourceActionPersistence.fetchByN_A(
-				name, actionId);
+			resourceAction = resourceActionMap.get(actionId);
 
 			if (resourceAction == null) {
 				long bitwiseValue = 1;
@@ -135,28 +135,55 @@ public class ResourceActionLocalServiceImpl
 					availableBits ^= bitwiseValue;
 				}
 
-				try {
-					resourceAction =
-						resourceActionLocalService.addResourceAction(
-							name, actionId, bitwiseValue);
-				}
-				catch (Throwable t) {
-					resourceAction =
-						resourceActionLocalService.addResourceAction(
-							name, actionId, bitwiseValue);
+				if (keyActionIdAndBitwiseValues == null) {
+					keyActionIdAndBitwiseValues = new ArrayList<>();
 				}
 
-				if (newResourceActions == null) {
-					newResourceActions = new ArrayList<>();
-				}
+				keyActionIdAndBitwiseValues.add(
+					new Object[] {key, actionId, bitwiseValue});
+			}
+			else {
+				_resourceActions.put(key, resourceAction);
+			}
+		}
 
-				newResourceActions.add(resourceAction);
+		if (keyActionIdAndBitwiseValues == null) {
+			return;
+		}
+
+		long batchCounter = counterLocalService.increment(
+			ResourceAction.class.getName(), keyActionIdAndBitwiseValues.size());
+
+		batchCounter -= keyActionIdAndBitwiseValues.size();
+
+		for (Object[] keyActionIdAndBitwiseValue :
+				keyActionIdAndBitwiseValues) {
+
+			String key = (String)keyActionIdAndBitwiseValue[0];
+			String actionId = (String)keyActionIdAndBitwiseValue[1];
+			long bitwiseValue = (long)keyActionIdAndBitwiseValue[2];
+
+			ResourceAction resourceAction = null;
+
+			try {
+				resourceAction = resourceActionPersistence.create(
+					++batchCounter);
+
+				resourceAction.setName(name);
+				resourceAction.setActionId(actionId);
+				resourceAction.setBitwiseValue(bitwiseValue);
+
+				resourceActionPersistence.update(resourceAction);
+			}
+			catch (Throwable t) {
+				resourceAction = resourceActionLocalService.addResourceAction(
+					name, actionId, bitwiseValue);
 			}
 
 			_resourceActions.put(key, resourceAction);
 		}
 
-		if (!addDefaultActions || (newResourceActions == null)) {
+		if (!addDefaultActions) {
 			return;
 		}
 
@@ -170,17 +197,20 @@ public class ResourceActionLocalServiceImpl
 		long ownerBitwiseValue = 0;
 		long siteMemberBitwiseValue = 0;
 
-		for (ResourceAction resourceAction : newResourceActions) {
-			String actionId = resourceAction.getActionId();
+		for (Object[] keyActionIdAndBitwiseValue :
+				keyActionIdAndBitwiseValues) {
+
+			String actionId = (String)keyActionIdAndBitwiseValue[1];
+			long bitwiseValue = (long)keyActionIdAndBitwiseValue[2];
 
 			if (guestDefaultActions.contains(actionId)) {
-				guestBitwiseValue |= resourceAction.getBitwiseValue();
+				guestBitwiseValue |= bitwiseValue;
 			}
 
-			ownerBitwiseValue |= resourceAction.getBitwiseValue();
+			ownerBitwiseValue |= bitwiseValue;
 
 			if (groupDefaultActions.contains(actionId)) {
-				siteMemberBitwiseValue |= resourceAction.getBitwiseValue();
+				siteMemberBitwiseValue |= bitwiseValue;
 			}
 		}
 
@@ -229,131 +259,40 @@ public class ResourceActionLocalServiceImpl
 			};
 
 		for (Company company : companyLocalService.getCompanies()) {
-			if (resourceBlockLocalService.isSupported(
-					resourceAction.getName())) {
+			ActionableDynamicQuery actionableDynamicQuery =
+				resourcePermissionLocalService.getActionableDynamicQuery();
 
-				ActionableDynamicQuery resourceBlockActionableDynamicQuery =
-					resourceBlockLocalService.getActionableDynamicQuery();
+			actionableDynamicQuery.setAddCriteriaMethod(addCriteriaMethod);
+			actionableDynamicQuery.setCompanyId(company.getCompanyId());
+			actionableDynamicQuery.setPerformActionMethod(
+				new ActionableDynamicQuery.
+					PerformActionMethod<ResourcePermission>() {
 
-				resourceBlockActionableDynamicQuery.setAddCriteriaMethod(
-					addCriteriaMethod);
-				resourceBlockActionableDynamicQuery.setCompanyId(
-					company.getCompanyId());
-				resourceBlockActionableDynamicQuery.setPerformActionMethod(
-					new ActionableDynamicQuery.
-						PerformActionMethod<ResourceBlock>() {
+					@Override
+					public void performAction(
+						ResourcePermission resourcePermission) {
 
-						@Override
-						public void performAction(ResourceBlock resourceBlock) {
-							ResourceBlockPermissionsContainer
-								resourceBlockPermissionsContainer =
-									resourceBlockPermissionLocalService.
-										getResourceBlockPermissionsContainer(
-											resourceBlock.getResourceBlockId());
+						long actionIds = resourcePermission.getActionIds();
 
-							Set<Long> roleIds =
-								resourceBlockPermissionsContainer.getRoleIds();
+						if ((actionIds & bitwiseValue) != 0) {
+							actionIds &= ~bitwiseValue;
 
-							for (long roleId : roleIds) {
-								resourceBlockPermissionsContainer.
-									removePermission(roleId, bitwiseValue);
+							resourcePermission.setActionIds(actionIds);
+							resourcePermission.setViewActionId(
+								actionIds % 2 == 1);
 
-								resourceBlockPermissionLocalService.
-									updateResourceBlockPermission(
-										resourceBlock.getResourceBlockId(),
-										roleId, bitwiseValue,
-										ResourceBlockConstants.OPERATOR_REMOVE);
-							}
-
-							resourceBlock.setPermissionsHash(
-								resourceBlockPermissionsContainer.
-									getPermissionsHash());
-
-							resourceBlockPersistence.update(resourceBlock);
+							resourcePermissionPersistence.update(
+								resourcePermission);
 						}
+					}
 
-					});
+				});
 
-				try {
-					resourceBlockActionableDynamicQuery.performActions();
-				}
-				catch (PortalException pe) {
-					throw new SystemException(pe);
-				}
-
-				ActionableDynamicQuery resourceTypeActionableDynamicQuery =
-					resourceTypePermissionLocalService.
-						getActionableDynamicQuery();
-
-				resourceTypeActionableDynamicQuery.setAddCriteriaMethod(
-					addCriteriaMethod);
-				resourceTypeActionableDynamicQuery.setCompanyId(
-					company.getCompanyId());
-				resourceTypeActionableDynamicQuery.setPerformActionMethod(
-					new ActionableDynamicQuery.
-						PerformActionMethod<ResourceTypePermission>() {
-
-						@Override
-						public void performAction(
-							ResourceTypePermission resourceTypePermission) {
-
-							long actionIds =
-								resourceTypePermission.getActionIds();
-
-							if ((actionIds & bitwiseValue) != 0) {
-								resourceTypePermission.setActionIds(
-									actionIds & (~bitwiseValue));
-
-								resourceTypePermissionPersistence.update(
-									resourceTypePermission);
-							}
-						}
-
-					});
-
-				try {
-					resourceTypeActionableDynamicQuery.performActions();
-				}
-				catch (PortalException pe) {
-					throw new SystemException(pe);
-				}
+			try {
+				actionableDynamicQuery.performActions();
 			}
-			else {
-				ActionableDynamicQuery actionableDynamicQuery =
-					resourcePermissionLocalService.getActionableDynamicQuery();
-
-				actionableDynamicQuery.setAddCriteriaMethod(addCriteriaMethod);
-				actionableDynamicQuery.setCompanyId(company.getCompanyId());
-				actionableDynamicQuery.setPerformActionMethod(
-					new ActionableDynamicQuery.
-						PerformActionMethod<ResourcePermission>() {
-
-						@Override
-						public void performAction(
-							ResourcePermission resourcePermission) {
-
-							long actionIds = resourcePermission.getActionIds();
-
-							if ((actionIds & bitwiseValue) != 0) {
-								actionIds &= ~bitwiseValue;
-
-								resourcePermission.setActionIds(actionIds);
-								resourcePermission.setViewActionId(
-									actionIds % 2 == 1);
-
-								resourcePermissionPersistence.update(
-									resourcePermission);
-							}
-						}
-
-					});
-
-				try {
-					actionableDynamicQuery.performActions();
-				}
-				catch (PortalException pe) {
-					throw new SystemException(pe);
-				}
+			catch (PortalException pe) {
+				throw new SystemException(pe);
 			}
 		}
 

@@ -17,8 +17,11 @@ package com.liferay.portal.kernel.comment;
 import com.liferay.message.boards.kernel.model.MBDiscussion;
 
 /**
- * @author Adolfo Pérez
+ * @author     Adolfo Pérez
+ * @deprecated As of Judson (7.1.x), replaced by {@link
+ *             com.liferay.comment.constants.CommentConstants}
  */
+@Deprecated
 public class CommentConstants {
 
 	public static Class<?> getDiscussionClass() {

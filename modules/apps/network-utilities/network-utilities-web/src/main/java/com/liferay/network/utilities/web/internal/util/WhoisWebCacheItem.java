@@ -15,8 +15,8 @@
 package com.liferay.network.utilities.web.internal.util;
 
 import com.liferay.network.utilities.web.internal.model.Whois;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.io.unsync.UnsyncBufferedReader;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.webcache.WebCacheException;
@@ -61,12 +61,14 @@ public class WhoisWebCacheItem implements WebCacheItem {
 					break;
 				}
 
-				sb.append(line).append("\n");
+				sb.append(line);
+				sb.append("\n");
 			}
 
 			whois = new Whois(
 				_domain,
-				StringUtil.replace(sb.toString().trim(), "\n\n", "\n"));
+				StringUtil.replace(
+					StringUtil.trim(sb.toString()), "\n\n", "\n"));
 		}
 		catch (Exception e) {
 			throw new WebCacheException(_domain + " " + e.toString());

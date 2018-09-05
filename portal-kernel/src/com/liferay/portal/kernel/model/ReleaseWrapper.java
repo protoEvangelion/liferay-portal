@@ -64,7 +64,7 @@ public class ReleaseWrapper implements Release, ModelWrapper<Release> {
 		attributes.put("schemaVersion", getSchemaVersion());
 		attributes.put("buildNumber", getBuildNumber());
 		attributes.put("buildDate", getBuildDate());
-		attributes.put("verified", getVerified());
+		attributes.put("verified", isVerified());
 		attributes.put("state", getState());
 		attributes.put("testString", getTestString());
 
@@ -141,143 +141,13 @@ public class ReleaseWrapper implements Release, ModelWrapper<Release> {
 	}
 
 	@Override
-	public CacheModel<Release> toCacheModel() {
-		return _release.toCacheModel();
-	}
-
-	@Override
-	public Release toEscapedModel() {
-		return new ReleaseWrapper(_release.toEscapedModel());
-	}
-
-	@Override
-	public Release toUnescapedModel() {
-		return new ReleaseWrapper(_release.toUnescapedModel());
-	}
-
-	/**
-	* Returns the verified of this release.
-	*
-	* @return the verified of this release
-	*/
-	@Override
-	public boolean getVerified() {
-		return _release.getVerified();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _release.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _release.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _release.isNew();
-	}
-
-	/**
-	* Returns <code>true</code> if this release is verified.
-	*
-	* @return <code>true</code> if this release is verified; <code>false</code> otherwise
-	*/
-	@Override
-	public boolean isVerified() {
-		return _release.isVerified();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _release.getExpandoBridge();
+	public Object clone() {
+		return new ReleaseWrapper((Release)_release.clone());
 	}
 
 	@Override
 	public int compareTo(Release release) {
 		return _release.compareTo(release);
-	}
-
-	/**
-	* Returns the build number of this release.
-	*
-	* @return the build number of this release
-	*/
-	@Override
-	public int getBuildNumber() {
-		return _release.getBuildNumber();
-	}
-
-	/**
-	* Returns the state of this release.
-	*
-	* @return the state of this release
-	*/
-	@Override
-	public int getState() {
-		return _release.getState();
-	}
-
-	@Override
-	public int hashCode() {
-		return _release.hashCode();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _release.getPrimaryKeyObj();
-	}
-
-	@Override
-	public java.lang.Object clone() {
-		return new ReleaseWrapper((Release)_release.clone());
-	}
-
-	@Override
-	public java.lang.String getBundleSymbolicName() {
-		return _release.getBundleSymbolicName();
-	}
-
-	/**
-	* Returns the schema version of this release.
-	*
-	* @return the schema version of this release
-	*/
-	@Override
-	public java.lang.String getSchemaVersion() {
-		return _release.getSchemaVersion();
-	}
-
-	/**
-	* Returns the servlet context name of this release.
-	*
-	* @return the servlet context name of this release
-	*/
-	@Override
-	public java.lang.String getServletContextName() {
-		return _release.getServletContextName();
-	}
-
-	/**
-	* Returns the test string of this release.
-	*
-	* @return the test string of this release
-	*/
-	@Override
-	public java.lang.String getTestString() {
-		return _release.getTestString();
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _release.toString();
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _release.toXmlString();
 	}
 
 	/**
@@ -291,6 +161,21 @@ public class ReleaseWrapper implements Release, ModelWrapper<Release> {
 	}
 
 	/**
+	* Returns the build number of this release.
+	*
+	* @return the build number of this release
+	*/
+	@Override
+	public int getBuildNumber() {
+		return _release.getBuildNumber();
+	}
+
+	@Override
+	public String getBundleSymbolicName() {
+		return _release.getBundleSymbolicName();
+	}
+
+	/**
 	* Returns the create date of this release.
 	*
 	* @return the create date of this release
@@ -298,6 +183,11 @@ public class ReleaseWrapper implements Release, ModelWrapper<Release> {
 	@Override
 	public Date getCreateDate() {
 		return _release.getCreateDate();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _release.getExpandoBridge();
 	}
 
 	/**
@@ -330,6 +220,11 @@ public class ReleaseWrapper implements Release, ModelWrapper<Release> {
 		return _release.getPrimaryKey();
 	}
 
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _release.getPrimaryKeyObj();
+	}
+
 	/**
 	* Returns the release ID of this release.
 	*
@@ -338,6 +233,86 @@ public class ReleaseWrapper implements Release, ModelWrapper<Release> {
 	@Override
 	public long getReleaseId() {
 		return _release.getReleaseId();
+	}
+
+	/**
+	* Returns the schema version of this release.
+	*
+	* @return the schema version of this release
+	*/
+	@Override
+	public String getSchemaVersion() {
+		return _release.getSchemaVersion();
+	}
+
+	/**
+	* Returns the servlet context name of this release.
+	*
+	* @return the servlet context name of this release
+	*/
+	@Override
+	public String getServletContextName() {
+		return _release.getServletContextName();
+	}
+
+	/**
+	* Returns the state of this release.
+	*
+	* @return the state of this release
+	*/
+	@Override
+	public int getState() {
+		return _release.getState();
+	}
+
+	/**
+	* Returns the test string of this release.
+	*
+	* @return the test string of this release
+	*/
+	@Override
+	public String getTestString() {
+		return _release.getTestString();
+	}
+
+	/**
+	* Returns the verified of this release.
+	*
+	* @return the verified of this release
+	*/
+	@Override
+	public boolean getVerified() {
+		return _release.getVerified();
+	}
+
+	@Override
+	public int hashCode() {
+		return _release.hashCode();
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _release.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _release.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _release.isNew();
+	}
+
+	/**
+	* Returns <code>true</code> if this release is verified.
+	*
+	* @return <code>true</code> if this release is verified; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isVerified() {
+		return _release.isVerified();
 	}
 
 	@Override
@@ -451,7 +426,7 @@ public class ReleaseWrapper implements Release, ModelWrapper<Release> {
 	* @param schemaVersion the schema version of this release
 	*/
 	@Override
-	public void setSchemaVersion(java.lang.String schemaVersion) {
+	public void setSchemaVersion(String schemaVersion) {
 		_release.setSchemaVersion(schemaVersion);
 	}
 
@@ -461,7 +436,7 @@ public class ReleaseWrapper implements Release, ModelWrapper<Release> {
 	* @param servletContextName the servlet context name of this release
 	*/
 	@Override
-	public void setServletContextName(java.lang.String servletContextName) {
+	public void setServletContextName(String servletContextName) {
 		_release.setServletContextName(servletContextName);
 	}
 
@@ -481,7 +456,7 @@ public class ReleaseWrapper implements Release, ModelWrapper<Release> {
 	* @param testString the test string of this release
 	*/
 	@Override
-	public void setTestString(java.lang.String testString) {
+	public void setTestString(String testString) {
 		_release.setTestString(testString);
 	}
 
@@ -493,6 +468,31 @@ public class ReleaseWrapper implements Release, ModelWrapper<Release> {
 	@Override
 	public void setVerified(boolean verified) {
 		_release.setVerified(verified);
+	}
+
+	@Override
+	public CacheModel<Release> toCacheModel() {
+		return _release.toCacheModel();
+	}
+
+	@Override
+	public Release toEscapedModel() {
+		return new ReleaseWrapper(_release.toEscapedModel());
+	}
+
+	@Override
+	public String toString() {
+		return _release.toString();
+	}
+
+	@Override
+	public Release toUnescapedModel() {
+		return new ReleaseWrapper(_release.toUnescapedModel());
+	}
+
+	@Override
+	public String toXmlString() {
+		return _release.toXmlString();
 	}
 
 	@Override

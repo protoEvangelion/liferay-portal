@@ -14,13 +14,14 @@
 
 package com.liferay.portal.kernel.util;
 
-import com.liferay.portal.kernel.concurrent.ConcurrentHashSet;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 
 import java.lang.reflect.Field;
 
+import java.util.Collections;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Shuyang Zhou
@@ -31,19 +32,25 @@ public class ReferenceRegistry {
 		Class<?> clazz, Object object, String fieldName) {
 
 		try {
-			ReferenceEntry referenceEntry = _pacl.getReferenceEntry(
-				clazz, object, fieldName);
+			Field field = clazz.getDeclaredField(fieldName);
+
+			ReferenceEntry referenceEntry = new ReferenceEntry(object, field);
 
 			_referenceEntries.add(referenceEntry);
 		}
 		catch (SecurityException se) {
 			if (_log.isWarnEnabled()) {
 				_log.warn(
-					"Not allowed to get field " + fieldName + " for " + clazz);
+					StringBundler.concat(
+						"Not allowed to get field ", fieldName, " for ",
+						String.valueOf(clazz)));
 			}
 		}
 		catch (Exception e) {
-			_log.error("Unable to get field " + fieldName + " for " + clazz);
+			_log.error(
+				StringBundler.concat(
+					"Unable to get field ", fieldName, " for ",
+					String.valueOf(clazz)));
 		}
 	}
 
@@ -77,6 +84,10 @@ public class ReferenceRegistry {
 		_referenceEntries.clear();
 	}
 
+	/**
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
+	 */
+	@Deprecated
 	public interface PACL {
 
 		public ReferenceEntry getReferenceEntry(
@@ -88,22 +99,7 @@ public class ReferenceRegistry {
 	private static final Log _log = LogFactoryUtil.getLog(
 		ReferenceRegistry.class);
 
-	private static final PACL _pacl = new NoPACL();
 	private static final Set<ReferenceEntry> _referenceEntries =
-		new ConcurrentHashSet<>();
-
-	private static class NoPACL implements PACL {
-
-		@Override
-		public ReferenceEntry getReferenceEntry(
-				Class<?> clazz, Object object, String fieldName)
-			throws NoSuchFieldException, SecurityException {
-
-			Field field = clazz.getDeclaredField(fieldName);
-
-			return new ReferenceEntry(object, field);
-		}
-
-	}
+		Collections.newSetFromMap(new ConcurrentHashMap<>());
 
 }

@@ -115,7 +115,7 @@
 <!--FIELD_SET_PAGINATION-->
 <tr>
 	<td>FIELD_SET_PAGINATION_SELECTOR_BUTTON</td>
-	<td>//div[@class='dropdown pagination-items-per-page']//a[@type='button']</td>
+	<td>//div[@class='dropdown pagination-items-per-page']//a[@role='button']</td>
 	<td></td>
 </tr>
 <tr>
@@ -133,38 +133,10 @@
 	<td></td>
 	<td></td>
 </tr>
-
-<!--FIELD_SET_MENULIST-->
-<tr>
-	<td>FIELD_SET_MENULIST_EDIT</td>
-	<td>//a[@role='menuitem' and contains(.,'Edit')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>FIELD_SET_MENULIST_CHOOSE</td>
-	<td>//a[@role='menuitem' and contains(.,'Choose')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td></td>
-	<td></td>
-	<td></td>
-</tr>
-<!--FIELD_SET_PAGINATION_MENULIST-->
-<tr>
-	<td>FIELD_SET_PAGINATION_MENULIST_NUMBER</td>
-	<td>//ul[contains(@class,'dropdown-menu')]/li/a[contains(.,'${key_paginationNumber}')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td></td>
-	<td></td>
-	<td></td>
-</tr>
 <!--WORKFLOW-->
 <tr>
 	<td>SELECTED_WORKFLOW</td>
-	<td>//div[contains(.,'Selected Workflow')]/span</td>
+	<td>//div[contains(.,'Selected Workflow')]//span[contains(@id,'workflowDefinitionDisplay')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -175,11 +147,6 @@
 <tr>
 	<td>ADD_WORKFLOW_BUTTON</td>
 	<td>//button[contains(.,'Add Workflow')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>WORKFLOW_MENULIST_DEACTIVATE</td>
-	<td>//a[@role='menuitem' and contains(.,'Deactivate')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -219,22 +186,6 @@
 	<td></td>
 	<td></td>
 </tr>
-<!--WORKFLOW_MENULIST-->
-<tr>
-	<td>WORKFLOW_MENULIST_EDIT</td>
-	<td>//a[@role='menuitem' and contains(.,'Edit')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>WORKFLOW_MENULIST_CHOOSE</td>
-	<td>//a[@role='menuitem' and contains(.,'Choose')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td></td>
-	<td></td>
-	<td></td>
-</tr>
 <!--WORKFLOW_UNPUBLISHED_TABLE-->
 <tr>
 	<td>WORKFLOW_UNPUBLISHED_TABLE_TITLE</td>
@@ -251,31 +202,15 @@
 	<td></td>
 	<td></td>
 </tr>
-<!--WORKFLOW_UNPUBLISHED_MENULIST-->
-<tr>
-	<td>WORKFLOW_UNPUBLISHED_MENULIST_EDIT</td>
-	<td>//a[@role='menuitem' and contains(.,'Edit')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>WORKFLOW_UNPUBLISHED_MENULIST_DELETE</td>
-	<td>//a[@role='menuitem' and contains(.,'Delete')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td></td>
-	<td></td>
-	<td></td>
-</tr>
 <!--FORMS_TABLE-->
 <tr>
 	<td>FORMS_TABLE_TASK</td>
-	<td>//table[contains(@class,'table-list')]//tr[contains(.,'${key_workflowTask}')]/td</td>
+	<td>//table[contains(@class,'table-autofit')]//tr[contains(.,'${key_workflowTask}')]/td</td>
 	<td></td>
 </tr>
 <tr>
 	<td>FORMS_TABLE_FORM</td>
-	<td>//table[contains(@class,'table-list')]//tr[contains(.,'${key_workflowTask}')]//td[contains(@class,'form-column')]</td>
+	<td>//table[contains(@class,'table-autofit')]//tr[contains(.,'${key_workflowTask}')]//td[contains(@class,'form-column')]</td>
 	<td></td>
 </tr>
 <tr>

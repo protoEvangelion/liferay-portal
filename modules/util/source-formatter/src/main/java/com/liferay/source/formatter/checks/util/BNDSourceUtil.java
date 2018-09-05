@@ -16,9 +16,10 @@ package com.liferay.source.formatter.checks.util;
 
 import aQute.bnd.osgi.Constants;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -57,39 +58,18 @@ public class BNDSourceUtil {
 			new HashMap<>();
 
 		fileSpecificDefinitionKeysMap.put(
-			"app.bnd",
-			_populateDefinitionKeysMap(
-				"Liferay-Releng-App-Description", "Liferay-Releng-App-Title",
-				"Liferay-Releng-Bundle", "Liferay-Releng-Category",
-				"Liferay-Releng-Demo-Url", "Liferay-Releng-Deprecated",
-				"Liferay-Releng-Labs", "Liferay-Releng-Marketplace",
-				"Liferay-Releng-Portal-Required", "Liferay-Releng-Public",
-				"Liferay-Releng-Restart-Required", "Liferay-Releng-Support-Url",
-				"Liferay-Releng-Supported"));
+			"app.bnd", _populateDefinitionKeysMap(_APP_BND_DEFINITION_KEYS));
 		fileSpecificDefinitionKeysMap.put(
-			"bnd.bnd",
-			_populateDefinitionKeysMap(
-				"-metatype-inherit", "Can-Redefine-Classes",
-				"Can-Retransform-Classes", "Implementation-Version",
-				"JPM-Command", "Liferay-Configuration-Path",
-				"Liferay-Export-JS-Submodules", "Liferay-JS-Config",
-				"Liferay-Releng-App-Description",
-				"Liferay-Releng-Module-Group-Description",
-				"Liferay-Releng-Module-Group-Title",
-				"Liferay-Require-SchemaVersion", "Liferay-Service",
-				"Liferay-Theme-Contributor-Type",
-				"Liferay-Theme-Contributor-Weight", "Main-Class",
-				"Premain-Class", "Web-ContextPath"));
+			"bnd.bnd", _populateDefinitionKeysMap(_BND_BND_DEFINITION_KEYS));
 		fileSpecificDefinitionKeysMap.put(
 			"common.bnd",
-			_populateDefinitionKeysMap(
-				"Git-Descriptor", "Git-SHA", "Javac-Compiler", "Javac-Debug",
-				"Javac-Deprecation", "Javac-Encoding",
-				"Liferay-Portal-Build-Date", "Liferay-Portal-Build-Number",
-				"Liferay-Portal-Build-Time", "Liferay-Portal-Code-Name",
-				"Liferay-Portal-Parent-Build-Number",
-				"Liferay-Portal-Release-Info", "Liferay-Portal-Server-Info",
-				"Liferay-Portal-Version"));
+			_populateDefinitionKeysMap(_COMMON_BND_DEFINITION_KEYS));
+		fileSpecificDefinitionKeysMap.put(
+			"subsystem.bnd",
+			_populateDefinitionKeysMap(_SUBSYSTEM_BND_DEFINITION_KEYS));
+		fileSpecificDefinitionKeysMap.put(
+			"suite.bnd",
+			_populateDefinitionKeysMap(_SUITE_BND_DEFINITION_KEYS));
 
 		return fileSpecificDefinitionKeysMap;
 	}
@@ -102,8 +82,32 @@ public class BNDSourceUtil {
 		return absolutePath.substring(y + 1, x);
 	}
 
+	public static String updateInstruction(
+		String content, String header, String value) {
+
+		String instruction = header + StringPool.COLON;
+
+		if (Validator.isNotNull(value)) {
+			instruction = instruction + StringPool.SPACE + value;
+		}
+
+		if (!content.contains(header)) {
+			return content + StringPool.NEW_LINE + instruction;
+		}
+
+		String[] lines = StringUtil.splitLines(content);
+
+		for (String line : lines) {
+			if (line.contains(header)) {
+				content = StringUtil.replaceFirst(content, line, instruction);
+			}
+		}
+
+		return content;
+	}
+
 	private static Map<String, String> _populateDefinitionKeysMap(
-		String... keys) {
+		String[] keys) {
 
 		Map<String, String> definitionKeysMap = new HashMap<>();
 
@@ -113,5 +117,47 @@ public class BNDSourceUtil {
 
 		return definitionKeysMap;
 	}
+
+	private static final String[] _APP_BND_DEFINITION_KEYS = {
+		"Liferay-Releng-App-Description", "Liferay-Releng-App-Title",
+		"Liferay-Releng-Bundle", "Liferay-Releng-Category",
+		"Liferay-Releng-Demo-Url", "Liferay-Releng-Deprecated",
+		"Liferay-Releng-Fix-Delivery-Method", "Liferay-Releng-Labs",
+		"Liferay-Releng-Marketplace", "Liferay-Releng-Portal-Required",
+		"Liferay-Releng-Public", "Liferay-Releng-Restart-Required",
+		"Liferay-Releng-Suite", "Liferay-Releng-Support-Url",
+		"Liferay-Releng-Supported"
+	};
+
+	private static final String[] _BND_BND_DEFINITION_KEYS = {
+		"-jsp", "-metatype-inherit", "-sass", "Bundle-ActivationPolicy",
+		"Can-Redefine-Classes", "Can-Retransform-Classes",
+		"Eclipse-PlatformFilter", "Implementation-Version", "JPM-Command",
+		"Liferay-Configuration-Path", "Liferay-JS-Config",
+		"Liferay-JS-Resources-Top-Head-Authenticated",
+		"Liferay-JS-Resources-Top-Head", "Liferay-JS-Submodules-Bridge",
+		"Liferay-JS-Submodules-Export", "Liferay-Modules-Compat-Adapters",
+		"Liferay-Releng-App-Description",
+		"Liferay-Releng-Module-Group-Description",
+		"Liferay-Releng-Module-Group-Title", "Liferay-Require-SchemaVersion",
+		"Liferay-RTL-Support-Required", "Liferay-Service",
+		"Liferay-Theme-Contributor-Type", "Liferay-Theme-Contributor-Weight",
+		"Liferay-Versions", "Main-Class", "Premain-Class", "Web-ContextPath"
+	};
+
+	private static final String[] _COMMON_BND_DEFINITION_KEYS = {
+		"Git-Descriptor", "Git-SHA", "Javac-Compiler", "Javac-Debug",
+		"Javac-Deprecation", "Javac-Encoding", "Liferay-Portal-Build-Date",
+		"Liferay-Portal-Build-Number", "Liferay-Portal-Build-Time",
+		"Liferay-Portal-Code-Name", "Liferay-Portal-Parent-Build-Number",
+		"Liferay-Portal-Release-Info", "Liferay-Portal-Server-Info",
+		"Liferay-Portal-Version"
+	};
+
+	private static final String[] _SUBSYSTEM_BND_DEFINITION_KEYS =
+		{"Liferay-Releng-Marketplace", "Liferay-Releng-Subsystem-Title"};
+
+	private static final String[] _SUITE_BND_DEFINITION_KEYS =
+		{"Liferay-Releng-Suite-Description", "Liferay-Releng-Suite-Title"};
 
 }

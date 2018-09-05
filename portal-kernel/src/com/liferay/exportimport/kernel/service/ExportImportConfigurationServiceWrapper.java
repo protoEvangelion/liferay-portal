@@ -35,6 +35,23 @@ public class ExportImportConfigurationServiceWrapper
 	}
 
 	@Override
+	public void deleteExportImportConfiguration(
+		long exportImportConfigurationId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_exportImportConfigurationService.deleteExportImportConfiguration(exportImportConfigurationId);
+	}
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	@Override
+	public String getOSGiServiceIdentifier() {
+		return _exportImportConfigurationService.getOSGiServiceIdentifier();
+	}
+
+	@Override
 	public com.liferay.exportimport.kernel.model.ExportImportConfiguration moveExportImportConfigurationToTrash(
 		long exportImportConfigurationId)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -46,23 +63,6 @@ public class ExportImportConfigurationServiceWrapper
 		long exportImportConfigurationId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _exportImportConfigurationService.restoreExportImportConfigurationFromTrash(exportImportConfigurationId);
-	}
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	@Override
-	public java.lang.String getOSGiServiceIdentifier() {
-		return _exportImportConfigurationService.getOSGiServiceIdentifier();
-	}
-
-	@Override
-	public void deleteExportImportConfiguration(
-		long exportImportConfigurationId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_exportImportConfigurationService.deleteExportImportConfiguration(exportImportConfigurationId);
 	}
 
 	@Override

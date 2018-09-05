@@ -16,12 +16,12 @@ package com.liferay.portal.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.LayoutSetPrototype;
 import com.liferay.portal.kernel.model.MVCCModel;
 import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -117,7 +117,7 @@ public class LayoutSetPrototypeCacheModel implements CacheModel<LayoutSetPrototy
 		layoutSetPrototypeImpl.setMvccVersion(mvccVersion);
 
 		if (uuid == null) {
-			layoutSetPrototypeImpl.setUuid(StringPool.BLANK);
+			layoutSetPrototypeImpl.setUuid("");
 		}
 		else {
 			layoutSetPrototypeImpl.setUuid(uuid);
@@ -128,7 +128,7 @@ public class LayoutSetPrototypeCacheModel implements CacheModel<LayoutSetPrototy
 		layoutSetPrototypeImpl.setUserId(userId);
 
 		if (userName == null) {
-			layoutSetPrototypeImpl.setUserName(StringPool.BLANK);
+			layoutSetPrototypeImpl.setUserName("");
 		}
 		else {
 			layoutSetPrototypeImpl.setUserName(userName);
@@ -149,21 +149,21 @@ public class LayoutSetPrototypeCacheModel implements CacheModel<LayoutSetPrototy
 		}
 
 		if (name == null) {
-			layoutSetPrototypeImpl.setName(StringPool.BLANK);
+			layoutSetPrototypeImpl.setName("");
 		}
 		else {
 			layoutSetPrototypeImpl.setName(name);
 		}
 
 		if (description == null) {
-			layoutSetPrototypeImpl.setDescription(StringPool.BLANK);
+			layoutSetPrototypeImpl.setDescription("");
 		}
 		else {
 			layoutSetPrototypeImpl.setDescription(description);
 		}
 
 		if (settings == null) {
-			layoutSetPrototypeImpl.setSettings(StringPool.BLANK);
+			layoutSetPrototypeImpl.setSettings("");
 		}
 		else {
 			layoutSetPrototypeImpl.setSettings(settings);
@@ -202,7 +202,7 @@ public class LayoutSetPrototypeCacheModel implements CacheModel<LayoutSetPrototy
 		objectOutput.writeLong(mvccVersion);
 
 		if (uuid == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(uuid);
@@ -215,7 +215,7 @@ public class LayoutSetPrototypeCacheModel implements CacheModel<LayoutSetPrototy
 		objectOutput.writeLong(userId);
 
 		if (userName == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(userName);
@@ -225,21 +225,21 @@ public class LayoutSetPrototypeCacheModel implements CacheModel<LayoutSetPrototy
 		objectOutput.writeLong(modifiedDate);
 
 		if (name == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(name);
 		}
 
 		if (description == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(description);
 		}
 
 		if (settings == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(settings);

@@ -18,7 +18,6 @@ import aQute.bnd.annotation.ProviderType;
 
 import java.io.Serializable;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
@@ -29,7 +28,6 @@ import javax.portlet.ResourceURL;
  * Represents a URL pointing to a portlet.
  *
  * @author Brian Wing Shun Chan
- * @see    com.liferay.portlet.PortletURLImpl
  */
 @ProviderType
 public interface LiferayPortletURL
@@ -52,11 +50,15 @@ public interface LiferayPortletURL
 	public String getLifecycle();
 
 	/**
+	 * @deprecated As of Judson (7.1.x), replaced by
+	 * {@link javax.portlet.PortletParameters#getValue(String)}
+	 *
 	 * Returns the first value of the URL parameter.
 	 *
 	 * @param  name the name of the URL parameter
 	 * @return the first value of the URL parameter
 	 */
+	@Deprecated
 	public String getParameter(String name);
 
 	/**
@@ -78,22 +80,6 @@ public interface LiferayPortletURL
 	public String getPortletId();
 
 	public Set<String> getRemovedParameterNames();
-
-	/**
-	 * Returns the map of reserved parameters for this URL.
-	 *
-	 * <p>
-	 * This method is only used internally. Reserved parameters contain special,
-	 * Liferay specific information, such as <code>p_p_id</code> and
-	 * <code>p_p_lifecycle</code>.
-	 * </p>
-	 *
-	 * @return the reserved parameter names and values in a read-only map
-	 * @deprecated As of 7.0.0, replaced by {@link #visitReservedParameters(
-	 *             BiConsumer)}
-	 */
-	@Deprecated
-	public Map<String, String> getReservedParameterMap();
 
 	/**
 	 * Returns the ID of this URL's target resource.
@@ -269,6 +255,9 @@ public interface LiferayPortletURL
 	public void setLifecycle(String lifecycle);
 
 	/**
+	 * @deprecated As of Judson (7.1.x), replaced by
+	 * {@link javax.portlet.MutablePortletParameters#setValue(String, String)}
+	 *
 	 * Sets the URL parameter to the value.
 	 *
 	 * @param name the name of the URL parameter
@@ -278,9 +267,14 @@ public interface LiferayPortletURL
 	 *        <code>false</code> any existing values will be overwritten with
 	 *        the new value.
 	 */
+	@Deprecated
 	public void setParameter(String name, String value, boolean append);
 
 	/**
+	 * @deprecated As of Judson (7.1.x), replaced by
+	 * {@link javax.portlet.MutablePortletParameters#setValues(String,
+	 * String...)}
+	 *
 	 * Sets the URL parameter the values.
 	 *
 	 * @param name the name of the URL parameter
@@ -290,6 +284,7 @@ public interface LiferayPortletURL
 	 *        <code>false</code> any existing values will be overwritten with
 	 *        the new values.
 	 */
+	@Deprecated
 	public void setParameter(String name, String[] values, boolean append);
 
 	/**
@@ -314,6 +309,16 @@ public interface LiferayPortletURL
 	public void setRefererPlid(long refererPlid);
 
 	public void setRemovedParameterNames(Set<String> removedParamNames);
+
+	/**
+	 * Sets whether this portlet restores to the current view when toggling
+	 * between maximized and normal states.
+	 *
+	 * @param windowStateRestoreCurrentView whether this portlet restores to the
+	 *        current view when toggling between maximized and normal states
+	 */
+	public void setWindowStateRestoreCurrentView(
+		boolean windowStateRestoreCurrentView);
 
 	public void visitReservedParameters(BiConsumer<String, String> biConsumer);
 

@@ -14,8 +14,6 @@
 
 package com.liferay.push.notifications.service.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -42,7 +40,6 @@ import org.osgi.framework.FrameworkUtil;
  * @author Silvio Santos
  * @author Bruno Farache
  */
-@ProviderType
 public class PushNotificationsDeviceLocalServiceImpl
 	extends PushNotificationsDeviceLocalServiceBaseImpl {
 
@@ -79,10 +76,8 @@ public class PushNotificationsDeviceLocalServiceImpl
 
 		BundleContext bundleContext = bundle.getBundleContext();
 
-		_serviceTrackerMap = ServiceTrackerMapFactory.singleValueMap(
+		_serviceTrackerMap = ServiceTrackerMapFactory.openSingleValueMap(
 			bundleContext, PushNotificationsSender.class, "platform");
-
-		_serviceTrackerMap.open();
 	}
 
 	@Override

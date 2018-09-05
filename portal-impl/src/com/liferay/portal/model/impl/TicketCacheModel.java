@@ -16,12 +16,12 @@ package com.liferay.portal.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.MVCCModel;
 import com.liferay.portal.kernel.model.Ticket;
 import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -125,7 +125,7 @@ public class TicketCacheModel implements CacheModel<Ticket>, Externalizable,
 		ticketImpl.setClassPK(classPK);
 
 		if (key == null) {
-			ticketImpl.setKey(StringPool.BLANK);
+			ticketImpl.setKey("");
 		}
 		else {
 			ticketImpl.setKey(key);
@@ -134,7 +134,7 @@ public class TicketCacheModel implements CacheModel<Ticket>, Externalizable,
 		ticketImpl.setType(type);
 
 		if (extraInfo == null) {
-			ticketImpl.setExtraInfo(StringPool.BLANK);
+			ticketImpl.setExtraInfo("");
 		}
 		else {
 			ticketImpl.setExtraInfo(extraInfo);
@@ -186,7 +186,7 @@ public class TicketCacheModel implements CacheModel<Ticket>, Externalizable,
 		objectOutput.writeLong(classPK);
 
 		if (key == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(key);
@@ -195,7 +195,7 @@ public class TicketCacheModel implements CacheModel<Ticket>, Externalizable,
 		objectOutput.writeInt(type);
 
 		if (extraInfo == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(extraInfo);

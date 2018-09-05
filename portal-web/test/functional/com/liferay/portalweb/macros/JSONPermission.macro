@@ -1,0 +1,58 @@
+<definition>
+	<command name="editPermission">
+		<execute macro="JSONCompany#getPortalURL">
+			<return name="portalURL" />
+		</execute>
+
+		<execute macro="JSONRole#getRoleIdByName">
+			<return name="roleId" />
+			<var name="roleTitle" value="${roleTitle}" />
+		</execute>
+
+		<execute macro="JSONCompany#getCompanyId">
+			<return name="companyId" />
+		</execute>
+
+		<if>
+			<equals arg1="${roleType}" arg2="regular" />
+			<then>
+				<var name="primKey" value="${companyId}" />
+				<var name="scope" value="1" />
+			</then>
+			<elseif>
+				<or>
+					<equals arg1="${roleType}" arg2="site" />
+					<equals arg1="${roleType}" arg2="organization" />
+				</or>
+				<then>
+					<var name="primKey" value="0" />
+					<var name="scope" value="3" />
+				</then>
+			</elseif>
+			<else>
+				<fail message="Invalid 'roleType', '${roleType}' must be 'regular/site/organization'." />
+			</else>
+		</if>
+
+		<execute macro="JSONGroup#getGroupIdByName">
+			<return name="groupId" />
+			<var name="groupName" value="${groupName}" />
+		</execute>
+
+		<var name="curl"><![CDATA[
+			${portalURL}/api/jsonws/resourcepermission/${method} \
+				-u test@liferay.com:test \
+				-d groupId=${groupId} \
+				-d companyId=${companyId} \
+				-d name=${resourceName} \
+				-d scope=${scope} \
+				-d primKey=${primKey} \
+				-d roleId=${roleId} \
+				-d actionId=${resourceAction}
+		]]></var>
+
+		<execute class="com.liferay.poshi.runner.util.JSONCurlUtil" method="post">
+			<arg value="${curl}" />
+		</execute>
+	</command>
+</definition>

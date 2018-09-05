@@ -25,8 +25,11 @@ import java.util.List;
  * This class is used by SOAP remote services.
  *
  * @author Brian Wing Shun Chan
+ * @deprecated As of Judson (7.1.x), replaced by {@link
+            com.liferay.asset.tag.stats.model.impl.AssetTagStatsImpl}
  * @generated
  */
+@Deprecated
 @ProviderType
 public class AssetTagStatsSoap implements Serializable {
 	public static AssetTagStatsSoap toSoapModel(AssetTagStats model) {

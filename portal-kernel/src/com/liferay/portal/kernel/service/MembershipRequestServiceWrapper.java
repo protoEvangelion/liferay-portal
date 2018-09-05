@@ -33,10 +33,16 @@ public class MembershipRequestServiceWrapper implements MembershipRequestService
 
 	@Override
 	public com.liferay.portal.kernel.model.MembershipRequest addMembershipRequest(
-		long groupId, java.lang.String comments, ServiceContext serviceContext)
+		long groupId, String comments, ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _membershipRequestService.addMembershipRequest(groupId,
 			comments, serviceContext);
+	}
+
+	@Override
+	public void deleteMembershipRequests(long groupId, long statusId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_membershipRequestService.deleteMembershipRequests(groupId, statusId);
 	}
 
 	@Override
@@ -52,20 +58,13 @@ public class MembershipRequestServiceWrapper implements MembershipRequestService
 	* @return the OSGi service identifier
 	*/
 	@Override
-	public java.lang.String getOSGiServiceIdentifier() {
+	public String getOSGiServiceIdentifier() {
 		return _membershipRequestService.getOSGiServiceIdentifier();
 	}
 
 	@Override
-	public void deleteMembershipRequests(long groupId, long statusId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_membershipRequestService.deleteMembershipRequests(groupId, statusId);
-	}
-
-	@Override
-	public void updateStatus(long membershipRequestId,
-		java.lang.String reviewComments, long statusId,
-		ServiceContext serviceContext)
+	public void updateStatus(long membershipRequestId, String reviewComments,
+		long statusId, ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_membershipRequestService.updateStatus(membershipRequestId,
 			reviewComments, statusId, serviceContext);

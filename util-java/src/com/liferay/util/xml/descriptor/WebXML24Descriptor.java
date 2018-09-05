@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
+import org.dom4j.QName;
 
 /**
  * @author Jorge Ferrer
@@ -29,9 +30,9 @@ import org.dom4j.Element;
 public class WebXML24Descriptor extends SimpleXMLDescriptor {
 
 	public WebXML24Descriptor() {
-		_orderedChildren.put(
+		orderedChildren.put(
 			"jsp-config", new String[] {"taglib", "jsp-property-group"});
-		_orderedChildren.put(
+		orderedChildren.put(
 			"servlet",
 			new String[] {
 				"icon", "servlet-name", "display-name", "description",
@@ -47,9 +48,11 @@ public class WebXML24Descriptor extends SimpleXMLDescriptor {
 
 	@Override
 	public String[] getChildrenOrder(Element parentElement) {
-		String parentName = parentElement.getQName().getName();
+		QName qName = parentElement.getQName();
 
-		String[] childrenOrder = _orderedChildren.get(parentName);
+		String parentName = qName.getName();
+
+		String[] childrenOrder = orderedChildren.get(parentName);
 
 		if (childrenOrder == null) {
 			childrenOrder = new String[0];
@@ -83,6 +86,8 @@ public class WebXML24Descriptor extends SimpleXMLDescriptor {
 		return _UNIQUE_ELEMENTS;
 	}
 
+	protected final Map<String, String[]> orderedChildren = new HashMap<>();
+
 	private static final ElementIdentifier[] _ELEMENTS_IDENTIFIED_BY_ATTR = {};
 
 	private static final ElementIdentifier[] _ELEMENTS_IDENTIFIED_BY_CHILD = {
@@ -98,9 +103,8 @@ public class WebXML24Descriptor extends SimpleXMLDescriptor {
 		new ElementIdentifier("ejb-local-ref", "ejb-ref-name")
 	};
 
-	private static final String[] _JOINABLE_ELEMENTS = {
-		"welcome-file-list", "jsp-config"
-	};
+	private static final String[] _JOINABLE_ELEMENTS =
+		{"welcome-file-list", "jsp-config"};
 
 	private static final String[] _ROOT_ORDERED_CHILDREN = {
 		"icon", "display-name", "description", "distributable", "context-param",
@@ -114,7 +118,5 @@ public class WebXML24Descriptor extends SimpleXMLDescriptor {
 		"icon", "display-name", "description", "distributable",
 		"session-config", "welcome-file-list", "jsp-config", "login-config"
 	};
-
-	private final Map<String, String[]> _orderedChildren = new HashMap<>();
 
 }

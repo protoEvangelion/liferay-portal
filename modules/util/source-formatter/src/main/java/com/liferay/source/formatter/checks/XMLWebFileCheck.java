@@ -14,7 +14,7 @@
 
 package com.liferay.source.formatter.checks;
 
-import com.liferay.portal.kernel.util.CharPool;
+import com.liferay.petra.string.CharPool;
 import com.liferay.portal.kernel.util.PropertiesUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.source.formatter.util.FileUtil;
 
 import java.io.File;
+import java.io.IOException;
 
 import java.util.Arrays;
 import java.util.Properties;
@@ -41,7 +42,7 @@ public class XMLWebFileCheck extends BaseFileCheck {
 	@Override
 	protected String doProcess(
 			String fileName, String absolutePath, String content)
-		throws Exception {
+		throws IOException {
 
 		if (fileName.endsWith("portal-web/docroot/WEB-INF/web.xml")) {
 			content = _formatWebXML(content);
@@ -50,7 +51,7 @@ public class XMLWebFileCheck extends BaseFileCheck {
 		return content;
 	}
 
-	private String _formatWebXML(String content) throws Exception {
+	private String _formatWebXML(String content) throws IOException {
 		Properties properties = new Properties();
 
 		File propertiesFile = new File(

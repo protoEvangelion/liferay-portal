@@ -30,18 +30,13 @@ public class ThemeServiceWrapper implements ThemeService,
 		_themeService = themeService;
 	}
 
-	@Override
-	public com.liferay.portal.kernel.json.JSONArray getWARThemes() {
-		return _themeService.getWARThemes();
-	}
-
 	/**
 	* Returns the OSGi service identifier.
 	*
 	* @return the OSGi service identifier
 	*/
 	@Override
-	public java.lang.String getOSGiServiceIdentifier() {
+	public String getOSGiServiceIdentifier() {
 		return _themeService.getOSGiServiceIdentifier();
 	}
 
@@ -49,6 +44,11 @@ public class ThemeServiceWrapper implements ThemeService,
 	public java.util.List<com.liferay.portal.kernel.model.Theme> getThemes(
 		long companyId) {
 		return _themeService.getThemes(companyId);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.json.JSONArray getWARThemes() {
+		return _themeService.getWARThemes();
 	}
 
 	@Override

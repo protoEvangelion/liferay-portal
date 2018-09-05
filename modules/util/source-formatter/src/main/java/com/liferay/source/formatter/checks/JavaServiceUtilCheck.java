@@ -16,8 +16,12 @@ package com.liferay.source.formatter.checks;
 
 import com.liferay.source.formatter.checks.util.JavaSourceUtil;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * @author Hugo Huijser
+ * @author Brent Krone-Schmidt
  */
 public class JavaServiceUtilCheck extends BaseFileCheck {
 
@@ -32,18 +36,26 @@ public class JavaServiceUtilCheck extends BaseFileCheck {
 
 		String className = JavaSourceUtil.getClassName(fileName);
 
-		if (!absolutePath.contains("/wsrp/internal/bind/") &&
-			!className.equals("BaseServiceImpl") &&
-			className.endsWith("ServiceImpl") &&
-			content.contains("ServiceUtil.")) {
+		if (className.equals("BaseServiceImpl") ||
+			!className.endsWith("ServiceImpl")) {
 
+			return content;
+		}
+
+		Matcher matcher = _serviceUtilPattern.matcher(content);
+
+		if (matcher.find()) {
 			addMessage(
 				fileName,
-				"Do not use *ServiceUtil in *ServiceImpl class, create a " +
-					"reference via service.xml instead");
+				"Do not use a portal-kernel *ServiceUtil in a *ServiceImpl " +
+					"class, create a reference via service.xml instead",
+				"service_util.markdown");
 		}
 
 		return content;
 	}
+
+	private final Pattern _serviceUtilPattern = Pattern.compile(
+		"import com\\.liferay\\.[a-z]+\\.kernel\\..*ServiceUtil;");
 
 }

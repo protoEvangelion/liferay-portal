@@ -31,19 +31,20 @@ import org.osgi.service.component.annotations.Component;
 public class SyncWebUpgrade implements UpgradeStepRegistrator {
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public void register(Registry registry) {
 		registry.register(
-			"com.liferay.sync.web", "0.0.0", "1.0.0",
+			"0.0.0", "1.0.0",
 			new BaseUpgradePortletId() {
 
 				@Override
 				protected String[][] getRenamePortletIdsArray() {
 					return new String[][] {
-						new String[] {
+						{
 							SyncAdminPortletKeys.SYNC_ADMIN_PORTLET,
 							SyncPortletKeys.SYNC_ADMIN_PORTLET
 						},
-						new String[] {
+						{
 							SyncAdminPortletKeys.SYNC_DEVICES_PORTLET,
 							SyncPortletKeys.SYNC_DEVICES_PORTLET
 						}

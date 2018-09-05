@@ -29,7 +29,7 @@ import com.liferay.sync.constants.SyncPortletKeys;
 import com.liferay.sync.exception.OAuthPortletUndeployedException;
 import com.liferay.sync.oauth.helper.SyncOAuthHelperUtil;
 import com.liferay.sync.service.configuration.SyncServiceConfigurationKeys;
-import com.liferay.sync.util.SyncUtil;
+import com.liferay.sync.util.SyncHelper;
 
 import java.io.IOException;
 
@@ -59,7 +59,7 @@ import org.osgi.service.component.annotations.Reference;
 		"com.liferay.portlet.use-default-template=true",
 		"javax.portlet.display-name=Sync Connector Admin",
 		"javax.portlet.expiration-cache=0",
-		"javax.portlet.init-param.template-path=/",
+		"javax.portlet.init-param.template-path=/META-INF/resources/",
 		"javax.portlet.init-param.view-template=/view.jsp",
 		"javax.portlet.name=" + SyncPortletKeys.SYNC_ADMIN_PORTLET,
 		"javax.portlet.resource-bundle=content.Language",
@@ -141,7 +141,7 @@ public class SyncAdminPortlet extends BaseSyncPortlet {
 		boolean lanEnabled = ParamUtil.getBoolean(actionRequest, "lanEnabled");
 
 		if (lanEnabled) {
-			SyncUtil.enableLanSync(CompanyThreadLocal.getCompanyId());
+			_syncHelper.enableLanSync(CompanyThreadLocal.getCompanyId());
 		}
 
 		portletPreferences.setValue(
@@ -216,6 +216,10 @@ public class SyncAdminPortlet extends BaseSyncPortlet {
 	}
 
 	private GroupLocalService _groupLocalService;
+
+	@Reference
+	private SyncHelper _syncHelper;
+
 	private SyncOAuthHelperUtil _syncOAuthHelperUtil;
 
 }

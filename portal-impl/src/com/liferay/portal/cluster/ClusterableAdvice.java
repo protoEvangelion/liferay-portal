@@ -26,8 +26,11 @@ import java.lang.reflect.Method;
 import org.aopalliance.intercept.MethodInvocation;
 
 /**
- * @author Shuyang Zhou
+ * @author     Shuyang Zhou
+ * @deprecated As of Judson (7.1.x), moved to {@link
+ *             com.liferay.portal.internal.cluster.ClusterableAdvice}
  */
+@Deprecated
 public class ClusterableAdvice
 	extends AnnotationChainableMethodAdvice<Clusterable> {
 

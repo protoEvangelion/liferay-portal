@@ -14,7 +14,7 @@
 
 package com.liferay.taglib.ui;
 
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.taglib.BaseBodyTagSupport;
@@ -131,6 +131,8 @@ public class PanelTag extends IncludeTag {
 
 	@Override
 	protected void cleanUp() {
+		super.cleanUp();
+
 		_accordion = false;
 		_collapsible = true;
 		_cssClass = null;
@@ -157,9 +159,8 @@ public class PanelTag extends IncludeTag {
 
 			return "/html/taglib/ui/panel/end.jsp";
 		}
-		else {
-			return _endPage;
-		}
+
+		return _endPage;
 	}
 
 	@Override
@@ -171,9 +172,8 @@ public class PanelTag extends IncludeTag {
 
 			return "/html/taglib/ui/panel/start.jsp";
 		}
-		else {
-			return _startPage;
-		}
+
+		return _startPage;
 	}
 
 	private boolean _accordion;

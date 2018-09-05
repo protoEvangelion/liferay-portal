@@ -14,27 +14,23 @@
 
 package com.liferay.portal.kernel.process;
 
-import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
-
 import java.io.Serializable;
 
 /**
- * @author Shuyang Zhou
+ * @author     Shuyang Zhou
+ * @deprecated As of Judson (7.1.x), with no direct replacement
  */
+@Deprecated
 public class ProcessExecutorUtil {
 
 	public static <T extends Serializable> ProcessChannel<T> execute(
 			ProcessConfig processConfig, ProcessCallable<T> processCallable)
 		throws ProcessException {
 
-		PortalRuntimePermission.checkGetBeanProperty(ProcessExecutorUtil.class);
-
 		return _processExecutor.execute(processConfig, processCallable);
 	}
 
 	public void setProcessExecutor(ProcessExecutor processExecutor) {
-		PortalRuntimePermission.checkSetBeanProperty(getClass());
-
 		_processExecutor = processExecutor;
 	}
 

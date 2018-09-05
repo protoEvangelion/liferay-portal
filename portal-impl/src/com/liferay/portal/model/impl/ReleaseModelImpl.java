@@ -19,16 +19,17 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.model.Release;
 import com.liferay.portal.kernel.model.ReleaseModel;
 import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Serializable;
 
@@ -155,7 +156,7 @@ public class ReleaseModelImpl extends BaseModelImpl<Release>
 		attributes.put("schemaVersion", getSchemaVersion());
 		attributes.put("buildNumber", getBuildNumber());
 		attributes.put("buildDate", getBuildDate());
-		attributes.put("verified", getVerified());
+		attributes.put("verified", isVerified());
 		attributes.put("state", getState());
 		attributes.put("testString", getTestString());
 
@@ -283,7 +284,7 @@ public class ReleaseModelImpl extends BaseModelImpl<Release>
 	@Override
 	public String getServletContextName() {
 		if (_servletContextName == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _servletContextName;
@@ -308,7 +309,7 @@ public class ReleaseModelImpl extends BaseModelImpl<Release>
 	@Override
 	public String getSchemaVersion() {
 		if (_schemaVersion == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _schemaVersion;
@@ -368,7 +369,7 @@ public class ReleaseModelImpl extends BaseModelImpl<Release>
 	@Override
 	public String getTestString() {
 		if (_testString == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _testString;
@@ -419,7 +420,7 @@ public class ReleaseModelImpl extends BaseModelImpl<Release>
 		releaseImpl.setSchemaVersion(getSchemaVersion());
 		releaseImpl.setBuildNumber(getBuildNumber());
 		releaseImpl.setBuildDate(getBuildDate());
-		releaseImpl.setVerified(getVerified());
+		releaseImpl.setVerified(isVerified());
 		releaseImpl.setState(getState());
 		releaseImpl.setTestString(getTestString());
 
@@ -544,7 +545,7 @@ public class ReleaseModelImpl extends BaseModelImpl<Release>
 			releaseCacheModel.buildDate = Long.MIN_VALUE;
 		}
 
-		releaseCacheModel.verified = getVerified();
+		releaseCacheModel.verified = isVerified();
 
 		releaseCacheModel.state = getState();
 
@@ -580,7 +581,7 @@ public class ReleaseModelImpl extends BaseModelImpl<Release>
 		sb.append(", buildDate=");
 		sb.append(getBuildDate());
 		sb.append(", verified=");
-		sb.append(getVerified());
+		sb.append(isVerified());
 		sb.append(", state=");
 		sb.append(getState());
 		sb.append(", testString=");
@@ -632,7 +633,7 @@ public class ReleaseModelImpl extends BaseModelImpl<Release>
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>verified</column-name><column-value><![CDATA[");
-		sb.append(getVerified());
+		sb.append(isVerified());
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>state</column-name><column-value><![CDATA[");
@@ -650,7 +651,7 @@ public class ReleaseModelImpl extends BaseModelImpl<Release>
 
 	private static final ClassLoader _classLoader = Release.class.getClassLoader();
 	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
-			Release.class
+			Release.class, ModelWrapper.class
 		};
 	private long _mvccVersion;
 	private long _releaseId;

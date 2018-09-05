@@ -37,6 +37,7 @@ import com.liferay.ratings.kernel.model.RatingsStats;
 import java.io.Serializable;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Provides the local service interface for RatingsStats. Methods of this
@@ -60,25 +61,6 @@ public interface RatingsStatsLocalService extends BaseLocalService,
 	 *
 	 * Never modify or reference this interface directly. Always use {@link RatingsStatsLocalServiceUtil} to access the ratings stats local service. Add custom service methods to {@link com.liferay.portlet.ratings.service.impl.RatingsStatsLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public ActionableDynamicQuery getActionableDynamicQuery();
-
-	public DynamicQuery dynamicQuery();
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
-
-	/**
-	* @throws PortalException
-	*/
-	@Override
-	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
-		throws PortalException;
-
-	@Override
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException;
 
 	/**
 	* Adds the ratings stats to the database. Also notifies the appropriate model listeners.
@@ -97,16 +79,15 @@ public interface RatingsStatsLocalService extends BaseLocalService,
 	* @param statsId the primary key for the new ratings stats
 	* @return the new ratings stats
 	*/
+	@Transactional(enabled = false)
 	public RatingsStats createRatingsStats(long statsId);
 
 	/**
-	* Deletes the ratings stats from the database. Also notifies the appropriate model listeners.
-	*
-	* @param ratingsStats the ratings stats
-	* @return the ratings stats that was removed
+	* @throws PortalException
 	*/
-	@Indexable(type = IndexableType.DELETE)
-	public RatingsStats deleteRatingsStats(RatingsStats ratingsStats);
+	@Override
+	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
+		throws PortalException;
 
 	/**
 	* Deletes the ratings stats with the primary key from the database. Also notifies the appropriate model listeners.
@@ -119,51 +100,18 @@ public interface RatingsStatsLocalService extends BaseLocalService,
 	public RatingsStats deleteRatingsStats(long statsId)
 		throws PortalException;
 
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public RatingsStats fetchRatingsStats(long statsId);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public RatingsStats fetchStats(java.lang.String className, long classPK);
-
 	/**
-	* Returns the ratings stats with the primary key.
-	*
-	* @param statsId the primary key of the ratings stats
-	* @return the ratings stats
-	* @throws PortalException if a ratings stats with the primary key could not be found
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public RatingsStats getRatingsStats(long statsId) throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public RatingsStats getStats(java.lang.String className, long classPK);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public RatingsStats getStats(long statsId) throws PortalException;
-
-	/**
-	* Updates the ratings stats in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	* Deletes the ratings stats from the database. Also notifies the appropriate model listeners.
 	*
 	* @param ratingsStats the ratings stats
-	* @return the ratings stats that was updated
+	* @return the ratings stats that was removed
 	*/
-	@Indexable(type = IndexableType.REINDEX)
-	public RatingsStats updateRatingsStats(RatingsStats ratingsStats);
+	@Indexable(type = IndexableType.DELETE)
+	public RatingsStats deleteRatingsStats(RatingsStats ratingsStats);
 
-	/**
-	* Returns the number of ratings statses.
-	*
-	* @return the number of ratings statses
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getRatingsStatsesCount();
+	public void deleteStats(String className, long classPK);
 
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	public java.lang.String getOSGiServiceIdentifier();
+	public DynamicQuery dynamicQuery();
 
 	/**
 	* Performs a dynamic query on the database and returns the matching rows.
@@ -205,24 +153,6 @@ public interface RatingsStatsLocalService extends BaseLocalService,
 		int end, OrderByComparator<T> orderByComparator);
 
 	/**
-	* Returns a range of all the ratings statses.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portlet.ratings.model.impl.RatingsStatsModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param start the lower bound of the range of ratings statses
-	* @param end the upper bound of the range of ratings statses (not inclusive)
-	* @return the range of ratings statses
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<RatingsStats> getRatingsStatses(int start, int end);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<RatingsStats> getStats(java.lang.String className,
-		List<java.lang.Long> classPKs);
-
-	/**
 	* Returns the number of rows matching the dynamic query.
 	*
 	* @param dynamicQuery the dynamic query
@@ -240,5 +170,85 @@ public interface RatingsStatsLocalService extends BaseLocalService,
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
 		Projection projection);
 
-	public void deleteStats(java.lang.String className, long classPK);
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public RatingsStats fetchRatingsStats(long statsId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public RatingsStats fetchStats(String className, long classPK);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public ActionableDynamicQuery getActionableDynamicQuery();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	public String getOSGiServiceIdentifier();
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
+		throws PortalException;
+
+	/**
+	* Returns the ratings stats with the primary key.
+	*
+	* @param statsId the primary key of the ratings stats
+	* @return the ratings stats
+	* @throws PortalException if a ratings stats with the primary key could not be found
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public RatingsStats getRatingsStats(long statsId) throws PortalException;
+
+	/**
+	* Returns a range of all the ratings statses.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portlet.ratings.model.impl.RatingsStatsModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param start the lower bound of the range of ratings statses
+	* @param end the upper bound of the range of ratings statses (not inclusive)
+	* @return the range of ratings statses
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<RatingsStats> getRatingsStatses(int start, int end);
+
+	/**
+	* Returns the number of ratings statses.
+	*
+	* @return the number of ratings statses
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getRatingsStatsesCount();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public RatingsStats getStats(long statsId) throws PortalException;
+
+	/**
+	* @deprecated As of Judson (7.1.x), with no direct replacement
+	*/
+	@Deprecated
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<RatingsStats> getStats(String className, List<Long> classPKs);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public RatingsStats getStats(String className, long classPK)
+		throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Map<Long, RatingsStats> getStats(String className, long[] classPKs);
+
+	/**
+	* Updates the ratings stats in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param ratingsStats the ratings stats
+	* @return the ratings stats that was updated
+	*/
+	@Indexable(type = IndexableType.REINDEX)
+	public RatingsStats updateRatingsStats(RatingsStats ratingsStats);
 }

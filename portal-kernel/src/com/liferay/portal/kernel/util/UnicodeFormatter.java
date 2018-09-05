@@ -52,9 +52,8 @@ public class UnicodeFormatter {
 		if (upperCase) {
 			return _byteToHex(b, hexes, _HEX_DIGITS_UPPER_CASE);
 		}
-		else {
-			return _byteToHex(b, hexes, _HEX_DIGITS);
-		}
+
+		return _byteToHex(b, hexes, _HEX_DIGITS);
 	}
 
 	public static String charToHex(char c) {
@@ -124,9 +123,9 @@ public class UnicodeFormatter {
 
 		char[] hexes = new char[4];
 
-		for (int i = 0; i < array.length; i++) {
+		for (char c : array) {
 			sb.append(UNICODE_PREFIX);
-			sb.append(_charToHex(array[i], hexes));
+			sb.append(_charToHex(c, hexes));
 		}
 
 		return sb.toString();

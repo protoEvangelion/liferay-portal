@@ -46,7 +46,7 @@ public class ObjectDecodeChannelInboundHandlerTest {
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
 		new AggregateTestRule(
-			CodeCoverageAssertor.INSTANCE, AspectJNewEnvTestRule.INSTANCE);
+			AspectJNewEnvTestRule.INSTANCE, CodeCoverageAssertor.INSTANCE);
 
 	@Test
 	public void testChannelRead() throws Exception {
@@ -123,7 +123,7 @@ public class ObjectDecodeChannelInboundHandlerTest {
 
 		Map<String, ChannelHandler> map = channelPipeline.toMap();
 
-		Assert.assertTrue(map.isEmpty());
+		Assert.assertTrue(map.toString(), map.isEmpty());
 
 		AnnotatedObjectDecoder annotatedObjectDecoder =
 			new AnnotatedObjectDecoder();

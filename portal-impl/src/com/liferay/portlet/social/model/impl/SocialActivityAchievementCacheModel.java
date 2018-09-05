@@ -16,10 +16,10 @@ package com.liferay.portlet.social.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import com.liferay.social.kernel.model.SocialActivityAchievement;
 
@@ -96,7 +96,7 @@ public class SocialActivityAchievementCacheModel implements CacheModel<SocialAct
 		socialActivityAchievementImpl.setCreateDate(createDate);
 
 		if (name == null) {
-			socialActivityAchievementImpl.setName(StringPool.BLANK);
+			socialActivityAchievementImpl.setName("");
 		}
 		else {
 			socialActivityAchievementImpl.setName(name);
@@ -139,7 +139,7 @@ public class SocialActivityAchievementCacheModel implements CacheModel<SocialAct
 		objectOutput.writeLong(createDate);
 
 		if (name == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(name);

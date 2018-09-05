@@ -16,12 +16,12 @@ package com.liferay.portal.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.MVCCModel;
 import com.liferay.portal.kernel.model.PasswordPolicy;
 import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -163,7 +163,7 @@ public class PasswordPolicyCacheModel implements CacheModel<PasswordPolicy>,
 		passwordPolicyImpl.setMvccVersion(mvccVersion);
 
 		if (uuid == null) {
-			passwordPolicyImpl.setUuid(StringPool.BLANK);
+			passwordPolicyImpl.setUuid("");
 		}
 		else {
 			passwordPolicyImpl.setUuid(uuid);
@@ -174,7 +174,7 @@ public class PasswordPolicyCacheModel implements CacheModel<PasswordPolicy>,
 		passwordPolicyImpl.setUserId(userId);
 
 		if (userName == null) {
-			passwordPolicyImpl.setUserName(StringPool.BLANK);
+			passwordPolicyImpl.setUserName("");
 		}
 		else {
 			passwordPolicyImpl.setUserName(userName);
@@ -197,14 +197,14 @@ public class PasswordPolicyCacheModel implements CacheModel<PasswordPolicy>,
 		passwordPolicyImpl.setDefaultPolicy(defaultPolicy);
 
 		if (name == null) {
-			passwordPolicyImpl.setName(StringPool.BLANK);
+			passwordPolicyImpl.setName("");
 		}
 		else {
 			passwordPolicyImpl.setName(name);
 		}
 
 		if (description == null) {
-			passwordPolicyImpl.setDescription(StringPool.BLANK);
+			passwordPolicyImpl.setDescription("");
 		}
 		else {
 			passwordPolicyImpl.setDescription(description);
@@ -223,7 +223,7 @@ public class PasswordPolicyCacheModel implements CacheModel<PasswordPolicy>,
 		passwordPolicyImpl.setMinUpperCase(minUpperCase);
 
 		if (regex == null) {
-			passwordPolicyImpl.setRegex(StringPool.BLANK);
+			passwordPolicyImpl.setRegex("");
 		}
 		else {
 			passwordPolicyImpl.setRegex(regex);
@@ -319,7 +319,7 @@ public class PasswordPolicyCacheModel implements CacheModel<PasswordPolicy>,
 		objectOutput.writeLong(mvccVersion);
 
 		if (uuid == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(uuid);
@@ -332,7 +332,7 @@ public class PasswordPolicyCacheModel implements CacheModel<PasswordPolicy>,
 		objectOutput.writeLong(userId);
 
 		if (userName == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(userName);
@@ -344,14 +344,14 @@ public class PasswordPolicyCacheModel implements CacheModel<PasswordPolicy>,
 		objectOutput.writeBoolean(defaultPolicy);
 
 		if (name == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(name);
 		}
 
 		if (description == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(description);
@@ -380,7 +380,7 @@ public class PasswordPolicyCacheModel implements CacheModel<PasswordPolicy>,
 		objectOutput.writeInt(minUpperCase);
 
 		if (regex == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(regex);

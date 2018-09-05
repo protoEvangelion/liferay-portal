@@ -1,6 +1,6 @@
 <definition>
 	<command name="search15Results">
-		<var method="TestPropsUtil#get('browser.type')" name="browserType" />
+		<var method="PropsUtil#get('browser.type')" name="browserType" />
 
 		<if>
 			<equals arg1="${browserType}" arg2="firefox" />
@@ -22,7 +22,9 @@
 
 		<var name="key_itemsPerPage" value="${itemsPerPage}" />
 
-		<execute function="AssertClick" locator1="MenuItem#ITEMS_PER_PAGE" value1="${itemsPerPage}" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="${itemsPerPage}" />
+		</execute>
 
 		<execute function="AssertTextEquals" locator1="TestSearchPagination#SEARCH_RESULTS" value1="Showing 1 - 5 of 15 results." />
 

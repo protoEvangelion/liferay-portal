@@ -28,6 +28,7 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionContext;
 
 /**
  * @author Brian Wing Shun Chan
@@ -120,18 +121,18 @@ public class SharedSessionWrapper implements HttpSession {
 	}
 
 	/**
-	 * @deprecated As of 6.1.0
+	 * @deprecated As of Paton (6.1.x)
 	 */
 	@Deprecated
 	@Override
-	public javax.servlet.http.HttpSessionContext getSessionContext() {
+	public HttpSessionContext getSessionContext() {
 		HttpSession session = getSessionDelegate();
 
 		return session.getSessionContext();
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Wilberforce (7.0.x)
 	 */
 	@Deprecated
 	@Override
@@ -140,7 +141,7 @@ public class SharedSessionWrapper implements HttpSession {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Wilberforce (7.0.x)
 	 */
 	@Deprecated
 	@Override
@@ -165,7 +166,7 @@ public class SharedSessionWrapper implements HttpSession {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Wilberforce (7.0.x)
 	 */
 	@Deprecated
 	@Override
@@ -181,7 +182,7 @@ public class SharedSessionWrapper implements HttpSession {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Wilberforce (7.0.x)
 	 */
 	@Deprecated
 	@Override
@@ -217,9 +218,8 @@ public class SharedSessionWrapper implements HttpSession {
 		if (_portletSession != null) {
 			return _portletSession;
 		}
-		else {
-			return _portalSession;
-		}
+
+		return _portalSession;
 	}
 
 	protected HttpSession getSessionDelegate(String name) {
@@ -233,9 +233,8 @@ public class SharedSessionWrapper implements HttpSession {
 		else if (containsSharedAttribute(name)) {
 			return _portalSession;
 		}
-		else {
-			return _portletSession;
-		}
+
+		return _portletSession;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

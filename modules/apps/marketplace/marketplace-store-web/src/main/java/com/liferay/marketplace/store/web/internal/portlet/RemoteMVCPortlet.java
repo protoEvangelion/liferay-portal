@@ -15,6 +15,7 @@
 package com.liferay.marketplace.store.web.internal.portlet;
 
 import com.liferay.marketplace.store.web.internal.oauth.util.OAuthManager;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.PortletResponseUtil;
@@ -30,7 +31,6 @@ import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 
@@ -104,7 +104,7 @@ public class RemoteMVCPortlet extends MVCPortlet {
 		oAuthManager.deleteAccessToken(themeDisplay.getUser());
 
 		LiferayPortletResponse liferayPortletResponse =
-			(LiferayPortletResponse)actionResponse;
+			PortalUtil.getLiferayPortletResponse(actionResponse);
 
 		PortletURL portletURL = liferayPortletResponse.createRenderURL();
 

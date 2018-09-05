@@ -14,11 +14,11 @@
 
 package com.liferay.portal.jsonwebservice;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONDeserializer;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.HashMap;
@@ -102,9 +102,8 @@ public class JSONRPCRequest {
 		if (value != null) {
 			return String.valueOf(value);
 		}
-		else {
-			return null;
-		}
+
+		return null;
 	}
 
 	public Set<String> getParameterNames() {

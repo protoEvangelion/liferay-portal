@@ -33,15 +33,14 @@ public class PasswordPolicyServiceWrapper implements PasswordPolicyService,
 
 	@Override
 	public com.liferay.portal.kernel.model.PasswordPolicy addPasswordPolicy(
-		java.lang.String name, java.lang.String description,
-		boolean changeable, boolean changeRequired, long minAge,
-		boolean checkSyntax, boolean allowDictionaryWords, int minAlphanumeric,
-		int minLength, int minLowerCase, int minNumbers, int minSymbols,
-		int minUpperCase, java.lang.String regex, boolean history,
-		int historyCount, boolean expireable, long maxAge, long warningTime,
-		int graceLimit, boolean lockout, int maxFailure, long lockoutDuration,
-		long resetFailureCount, long resetTicketMaxAge,
-		ServiceContext serviceContext)
+		String name, String description, boolean changeable,
+		boolean changeRequired, long minAge, boolean checkSyntax,
+		boolean allowDictionaryWords, int minAlphanumeric, int minLength,
+		int minLowerCase, int minNumbers, int minSymbols, int minUpperCase,
+		String regex, boolean history, int historyCount, boolean expireable,
+		long maxAge, long warningTime, int graceLimit, boolean lockout,
+		int maxFailure, long lockoutDuration, long resetFailureCount,
+		long resetTicketMaxAge, ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _passwordPolicyService.addPasswordPolicy(name, description,
 			changeable, changeRequired, minAge, checkSyntax,
@@ -53,20 +52,47 @@ public class PasswordPolicyServiceWrapper implements PasswordPolicyService,
 	}
 
 	@Override
+	public void deletePasswordPolicy(long passwordPolicyId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_passwordPolicyService.deletePasswordPolicy(passwordPolicyId);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.model.PasswordPolicy fetchPasswordPolicy(
 		long passwordPolicyId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _passwordPolicyService.fetchPasswordPolicy(passwordPolicyId);
 	}
 
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	@Override
+	public String getOSGiServiceIdentifier() {
+		return _passwordPolicyService.getOSGiServiceIdentifier();
+	}
+
+	@Override
+	public java.util.List<com.liferay.portal.kernel.model.PasswordPolicy> search(
+		long companyId, String name, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.kernel.model.PasswordPolicy> obc) {
+		return _passwordPolicyService.search(companyId, name, start, end, obc);
+	}
+
+	@Override
+	public int searchCount(long companyId, String name) {
+		return _passwordPolicyService.searchCount(companyId, name);
+	}
+
 	@Override
 	public com.liferay.portal.kernel.model.PasswordPolicy updatePasswordPolicy(
-		long passwordPolicyId, java.lang.String name,
-		java.lang.String description, boolean changeable,
-		boolean changeRequired, long minAge, boolean checkSyntax,
-		boolean allowDictionaryWords, int minAlphanumeric, int minLength,
-		int minLowerCase, int minNumbers, int minSymbols, int minUpperCase,
-		java.lang.String regex, boolean history, int historyCount,
+		long passwordPolicyId, String name, String description,
+		boolean changeable, boolean changeRequired, long minAge,
+		boolean checkSyntax, boolean allowDictionaryWords, int minAlphanumeric,
+		int minLength, int minLowerCase, int minNumbers, int minSymbols,
+		int minUpperCase, String regex, boolean history, int historyCount,
 		boolean expireable, long maxAge, long warningTime, int graceLimit,
 		boolean lockout, int maxFailure, long lockoutDuration,
 		long resetFailureCount, long resetTicketMaxAge,
@@ -79,34 +105,6 @@ public class PasswordPolicyServiceWrapper implements PasswordPolicyService,
 			expireable, maxAge, warningTime, graceLimit, lockout, maxFailure,
 			lockoutDuration, resetFailureCount, resetTicketMaxAge,
 			serviceContext);
-	}
-
-	@Override
-	public int searchCount(long companyId, java.lang.String name) {
-		return _passwordPolicyService.searchCount(companyId, name);
-	}
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	@Override
-	public java.lang.String getOSGiServiceIdentifier() {
-		return _passwordPolicyService.getOSGiServiceIdentifier();
-	}
-
-	@Override
-	public java.util.List<com.liferay.portal.kernel.model.PasswordPolicy> search(
-		long companyId, java.lang.String name, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.kernel.model.PasswordPolicy> obc) {
-		return _passwordPolicyService.search(companyId, name, start, end, obc);
-	}
-
-	@Override
-	public void deletePasswordPolicy(long passwordPolicyId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_passwordPolicyService.deletePasswordPolicy(passwordPolicyId);
 	}
 
 	@Override

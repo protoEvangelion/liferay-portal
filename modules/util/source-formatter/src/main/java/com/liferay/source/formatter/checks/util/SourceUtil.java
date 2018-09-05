@@ -14,21 +14,46 @@
 
 package com.liferay.source.formatter.checks.util;
 
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringReader;
-import com.liferay.portal.kernel.util.CharPool;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.tools.ToolsUtil;
 import com.liferay.portal.xml.SAXReaderFactory;
 
+import java.io.File;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;
 
 /**
  * @author Hugo Huijser
  */
 public class SourceUtil {
+
+	public static String getAbsolutePath(File file) {
+		return getAbsolutePath(file.toPath());
+	}
+
+	public static String getAbsolutePath(Path filePath) {
+		filePath = filePath.toAbsolutePath();
+
+		filePath = filePath.normalize();
+
+		return StringUtil.replace(
+			filePath.toString(), CharPool.BACK_SLASH, CharPool.SLASH);
+	}
+
+	public static String getAbsolutePath(String fileName) {
+		return getAbsolutePath(Paths.get(fileName));
+	}
 
 	public static String getIndent(String s) {
 		StringBundler sb = new StringBundler(s.length());
@@ -82,7 +107,72 @@ public class SourceUtil {
 		return level;
 	}
 
-	public static Document readXML(String content) throws Exception {
+	public static int getLineNumber(String content, int pos) {
+		return StringUtil.count(content, 0, pos, CharPool.NEW_LINE) + 1;
+	}
+
+	public static String getTitleCase(String s, String[] exceptions) {
+		String[] words = s.split("\\s+");
+
+		if (ArrayUtil.isEmpty(words)) {
+			return s;
+		}
+
+		StringBundler sb = new StringBundler(words.length * 2);
+
+		outerLoop:
+		for (int i = 0; i < words.length; i++) {
+			String word = words[i];
+
+			if (Validator.isNull(word)) {
+				continue;
+			}
+
+			for (String exception : exceptions) {
+				if (StringUtil.equalsIgnoreCase(exception, word)) {
+					sb.append(exception);
+					sb.append(CharPool.SPACE);
+
+					continue outerLoop;
+				}
+			}
+
+			if ((i != 0) && (i != words.length)) {
+				String lowerCaseWord = StringUtil.toLowerCase(word);
+
+				if (ArrayUtil.contains(_ARTICLES, lowerCaseWord) ||
+					ArrayUtil.contains(_CONJUNCTIONS, lowerCaseWord) ||
+					ArrayUtil.contains(_PREPOSITIONS, lowerCaseWord)) {
+
+					sb.append(lowerCaseWord);
+					sb.append(CharPool.SPACE);
+
+					continue;
+				}
+			}
+
+			if (Character.isUpperCase(word.charAt(0))) {
+				sb.append(word);
+			}
+			else {
+				sb.append(StringUtil.upperCaseFirstLetter(word));
+			}
+
+			sb.append(CharPool.SPACE);
+		}
+
+		sb.setIndex(sb.index() - 1);
+
+		return sb.toString();
+	}
+
+	public static Document readXML(File file) throws DocumentException {
+		SAXReader saxReader = SAXReaderFactory.getSAXReader(null, false, false);
+
+		return saxReader.read(file);
+	}
+
+	public static Document readXML(String content) throws DocumentException {
 		SAXReader saxReader = SAXReaderFactory.getSAXReader(null, false, false);
 
 		return saxReader.read(new UnsyncStringReader(content));
@@ -97,7 +187,7 @@ public class SourceUtil {
 		for (String line : lines) {
 			line = StringUtil.trim(line);
 
-			if (line.startsWith("//")) {
+			if (line.startsWith("//") || line.startsWith("*")) {
 				continue;
 			}
 
@@ -118,5 +208,27 @@ public class SourceUtil {
 
 		return level;
 	}
+
+	private static final String[] _ARTICLES = {"a", "an", "the"};
+
+	private static final String[] _CONJUNCTIONS =
+		{"and", "but", "for", "nor", "or", "yet"};
+
+	private static final String[] _PREPOSITIONS = {
+		"a", "abaft", "aboard", "about", "above", "absent", "across", "afore",
+		"after", "against", "along", "alongside", "amid", "amidst", "among",
+		"amongst", "an", "apropos", "apud", "around", "as", "aside", "astride",
+		"at", "athwart", "atop", "barring", "before", "behind", "below",
+		"beneath", "beside", "besides", "between", "beyond", "but", "by",
+		"circa", "concerning", "despite", "down", "during", "except",
+		"excluding", "failing", "for", "from", "given", "in", "including",
+		"inside", "into", "lest", "mid", "midst", "modulo", "near", "next",
+		"notwithstanding", "of", "off", "on", "onto", "opposite", "out",
+		"outside", "over", "pace", "past", "per", "plus", "pro", "qua",
+		"regarding", "sans", "since", "through", "throughout", "thru",
+		"thruout", "till", "to", "toward", "towards", "under", "underneath",
+		"unlike", "until", "unto", "up", "upon", "v", "versus", "via", "vice",
+		"vs", "with", "within", "without", "worth"
+	};
 
 }

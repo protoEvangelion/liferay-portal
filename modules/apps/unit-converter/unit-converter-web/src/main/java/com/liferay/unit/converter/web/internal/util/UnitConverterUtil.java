@@ -73,47 +73,75 @@ public class UnitConverterUtil {
 
 	private static final double _fromTemperature(int toId, double fromValue) {
 		if (toId == 0) {
-			return fromValue;					// Kelvin
+
+			// Kelvin
+
+			return fromValue;
 		}
 		else if (toId == 1) {
-			return fromValue - 273.15;			// Celsius
+
+			// Celsius
+
+			return fromValue - 273.15;
 		}
 		else if (toId == 2) {
-			return (1.8 * fromValue) - 459.67;	// Fahrenheit
+
+			// Fahrenheit
+
+			return (1.8 * fromValue) - 459.67;
 		}
 		else if (toId == 3) {
-			return 1.8 * fromValue;				// Rankine
+
+			// Rankine
+
+			return 1.8 * fromValue;
 		}
 		else if (toId == 4) {
-			return .8 * (fromValue - 273.15);	// R?aumure
+
+			// R?aumure
+
+			return .8 * (fromValue - 273.15);
 		}
-		else {
-			return 0;
-		}
+
+		return 0;
 	}
 
 	private static final double _toTemperature(int fromId, double fromValue) {
-		if (fromId == 0) {						// Kelvin
+		if (fromId == 0) {
+
+			// Kelvin
+
 			return fromValue;
 		}
-		else if (fromId == 1) {					// Celsius
+		else if (fromId == 1) {
+
+			// Celsius
+
 			return fromValue + 273.15;
 		}
-		else if (fromId == 2) {				// Fahrenheit
+		else if (fromId == 2) {
+
+			// Fahrenheit
+
 			return .5555555555 * (fromValue + 459.67);
 		}
-		else if (fromId == 3) {				// Rankine
+		else if (fromId == 3) {
+
+			// Rankine
+
 			return .5555555555 * fromValue;
 		}
 		else if (fromId == 4) {
-			return (1.25 * fromValue) + 273.15;	// R?aumure
+
+			// R?aumure
+
+			return (1.25 * fromValue) + 273.15;
 		}
-		else {
-			return 0;
-		}
+
+		return 0;
 	}
 
-	private static final double[] _AREA = new double[] {
+	private static final double[] _AREA = {
 		1.0,				// Square Kilometer
 		1000000.0,			// Square Meter
 		10000000000.0,		// Square Centimeter
@@ -126,7 +154,7 @@ public class UnitConverterUtil {
 		247.1054,			// Acre
 	};
 
-	private static final double[] _LENGTH = new double[] {
+	private static final double[] _LENGTH = {
 		1.0,				// Meter
 		1000.0,				// Millimeter
 		100.0,				// Centimeter
@@ -140,7 +168,7 @@ public class UnitConverterUtil {
 		13.12336			// Handbreath
 	};
 
-	private static final double[] _MASS = new double[] {
+	private static final double[] _MASS = {
 		1.0,				// Kilogram
 		2.204623,			// Pound
 		0.00110,			// Ton
@@ -152,7 +180,7 @@ public class UnitConverterUtil {
 		1763.698,			// Gerah
 	};
 
-	private static final double[] _VOLUME = new double[] {
+	private static final double[] _VOLUME = {
 		1.0,				// Liter
 		1000,				// Cubic Centimeter
 		61.02374,			// Cubic Inch (Liquid Measure)

@@ -14,8 +14,6 @@
 
 package com.liferay.portlet.exportimport.service.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.exportimport.kernel.lar.MissingReferences;
 import com.liferay.exportimport.kernel.model.ExportImportConfiguration;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -35,7 +33,6 @@ import java.util.Map;
 /**
  * @author Daniel Kocsis
  */
-@ProviderType
 public class ExportImportServiceImpl extends ExportImportServiceBaseImpl {
 
 	@Override
@@ -54,6 +51,22 @@ public class ExportImportServiceImpl extends ExportImportServiceBaseImpl {
 
 		return exportImportLocalService.exportLayoutsAsFile(
 			exportImportConfiguration);
+	}
+
+	/**
+	 * @deprecated As of Judson (7.1.x)
+	 */
+	@Deprecated
+	public File exportLayoutsAsFile(
+			long userId, long groupId, boolean privateLayout,
+			Map<String, String[]> parameterMap)
+		throws PortalException {
+
+		GroupPermissionUtil.check(
+			getPermissionChecker(), groupId, ActionKeys.EXPORT_IMPORT_LAYOUTS);
+
+		return exportImportLocalService.exportLayoutsAsFile(
+			userId, groupId, privateLayout, parameterMap);
 	}
 
 	@Override
@@ -160,6 +173,23 @@ public class ExportImportServiceImpl extends ExportImportServiceBaseImpl {
 
 		exportImportLocalService.importLayouts(
 			exportImportConfiguration, inputStream);
+	}
+
+	/**
+	 * @deprecated As of Judson (7.1.x)
+	 */
+	@Deprecated
+	@Override
+	public void importLayouts(
+			long userId, long groupId, boolean privateLayout,
+			Map<String, String[]> parameterMap, File file)
+		throws PortalException {
+
+		GroupPermissionUtil.check(
+			getPermissionChecker(), groupId, ActionKeys.EXPORT_IMPORT_LAYOUTS);
+
+		exportImportLocalService.importLayouts(
+			userId, groupId, privateLayout, parameterMap, file);
 	}
 
 	@Override

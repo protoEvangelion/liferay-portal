@@ -76,8 +76,8 @@ public class AddressWrapper implements Address, ModelWrapper<Address> {
 		attributes.put("regionId", getRegionId());
 		attributes.put("countryId", getCountryId());
 		attributes.put("typeId", getTypeId());
-		attributes.put("mailing", getMailing());
-		attributes.put("primary", getPrimary());
+		attributes.put("mailing", isMailing());
+		attributes.put("primary", isPrimary());
 
 		return attributes;
 	}
@@ -206,18 +206,73 @@ public class AddressWrapper implements Address, ModelWrapper<Address> {
 	}
 
 	@Override
-	public Address toEscapedModel() {
-		return new AddressWrapper(_address.toEscapedModel());
+	public Object clone() {
+		return new AddressWrapper((Address)_address.clone());
 	}
 
 	@Override
-	public Address toUnescapedModel() {
-		return new AddressWrapper(_address.toUnescapedModel());
+	public int compareTo(Address address) {
+		return _address.compareTo(address);
 	}
 
+	/**
+	* Returns the address ID of this address.
+	*
+	* @return the address ID of this address
+	*/
 	@Override
-	public CacheModel<Address> toCacheModel() {
-		return _address.toCacheModel();
+	public long getAddressId() {
+		return _address.getAddressId();
+	}
+
+	/**
+	* Returns the city of this address.
+	*
+	* @return the city of this address
+	*/
+	@Override
+	public String getCity() {
+		return _address.getCity();
+	}
+
+	/**
+	* Returns the fully qualified class name of this address.
+	*
+	* @return the fully qualified class name of this address
+	*/
+	@Override
+	public String getClassName() {
+		return _address.getClassName();
+	}
+
+	/**
+	* Returns the class name ID of this address.
+	*
+	* @return the class name ID of this address
+	*/
+	@Override
+	public long getClassNameId() {
+		return _address.getClassNameId();
+	}
+
+	/**
+	* Returns the class pk of this address.
+	*
+	* @return the class pk of this address
+	*/
+	@Override
+	public long getClassPK() {
+		return _address.getClassPK();
+	}
+
+	/**
+	* Returns the company ID of this address.
+	*
+	* @return the company ID of this address
+	*/
+	@Override
+	public long getCompanyId() {
+		return _address.getCompanyId();
 	}
 
 	@Override
@@ -225,14 +280,29 @@ public class AddressWrapper implements Address, ModelWrapper<Address> {
 		return _address.getCountry();
 	}
 
+	/**
+	* Returns the country ID of this address.
+	*
+	* @return the country ID of this address
+	*/
 	@Override
-	public ListType getType() {
-		return _address.getType();
+	public long getCountryId() {
+		return _address.getCountryId();
+	}
+
+	/**
+	* Returns the create date of this address.
+	*
+	* @return the create date of this address
+	*/
+	@Override
+	public Date getCreateDate() {
+		return _address.getCreateDate();
 	}
 
 	@Override
-	public Region getRegion() {
-		return _address.getRegion();
+	public ExpandoBridge getExpandoBridge() {
+		return _address.getExpandoBridge();
 	}
 
 	/**
@@ -246,6 +316,26 @@ public class AddressWrapper implements Address, ModelWrapper<Address> {
 	}
 
 	/**
+	* Returns the modified date of this address.
+	*
+	* @return the modified date of this address
+	*/
+	@Override
+	public Date getModifiedDate() {
+		return _address.getModifiedDate();
+	}
+
+	/**
+	* Returns the mvcc version of this address.
+	*
+	* @return the mvcc version of this address
+	*/
+	@Override
+	public long getMvccVersion() {
+		return _address.getMvccVersion();
+	}
+
+	/**
 	* Returns the primary of this address.
 	*
 	* @return the primary of this address
@@ -253,6 +343,136 @@ public class AddressWrapper implements Address, ModelWrapper<Address> {
 	@Override
 	public boolean getPrimary() {
 		return _address.getPrimary();
+	}
+
+	/**
+	* Returns the primary key of this address.
+	*
+	* @return the primary key of this address
+	*/
+	@Override
+	public long getPrimaryKey() {
+		return _address.getPrimaryKey();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _address.getPrimaryKeyObj();
+	}
+
+	@Override
+	public Region getRegion() {
+		return _address.getRegion();
+	}
+
+	/**
+	* Returns the region ID of this address.
+	*
+	* @return the region ID of this address
+	*/
+	@Override
+	public long getRegionId() {
+		return _address.getRegionId();
+	}
+
+	/**
+	* Returns the street1 of this address.
+	*
+	* @return the street1 of this address
+	*/
+	@Override
+	public String getStreet1() {
+		return _address.getStreet1();
+	}
+
+	/**
+	* Returns the street2 of this address.
+	*
+	* @return the street2 of this address
+	*/
+	@Override
+	public String getStreet2() {
+		return _address.getStreet2();
+	}
+
+	/**
+	* Returns the street3 of this address.
+	*
+	* @return the street3 of this address
+	*/
+	@Override
+	public String getStreet3() {
+		return _address.getStreet3();
+	}
+
+	@Override
+	public ListType getType() {
+		return _address.getType();
+	}
+
+	/**
+	* Returns the type ID of this address.
+	*
+	* @return the type ID of this address
+	*/
+	@Override
+	public long getTypeId() {
+		return _address.getTypeId();
+	}
+
+	/**
+	* Returns the user ID of this address.
+	*
+	* @return the user ID of this address
+	*/
+	@Override
+	public long getUserId() {
+		return _address.getUserId();
+	}
+
+	/**
+	* Returns the user name of this address.
+	*
+	* @return the user name of this address
+	*/
+	@Override
+	public String getUserName() {
+		return _address.getUserName();
+	}
+
+	/**
+	* Returns the user uuid of this address.
+	*
+	* @return the user uuid of this address
+	*/
+	@Override
+	public String getUserUuid() {
+		return _address.getUserUuid();
+	}
+
+	/**
+	* Returns the uuid of this address.
+	*
+	* @return the uuid of this address
+	*/
+	@Override
+	public String getUuid() {
+		return _address.getUuid();
+	}
+
+	/**
+	* Returns the zip of this address.
+	*
+	* @return the zip of this address
+	*/
+	@Override
+	public String getZip() {
+		return _address.getZip();
+	}
+
+	@Override
+	public int hashCode() {
+		return _address.hashCode();
 	}
 
 	@Override
@@ -291,251 +511,6 @@ public class AddressWrapper implements Address, ModelWrapper<Address> {
 	}
 
 	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _address.getExpandoBridge();
-	}
-
-	@Override
-	public int compareTo(Address address) {
-		return _address.compareTo(address);
-	}
-
-	@Override
-	public int hashCode() {
-		return _address.hashCode();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _address.getPrimaryKeyObj();
-	}
-
-	@Override
-	public java.lang.Object clone() {
-		return new AddressWrapper((Address)_address.clone());
-	}
-
-	/**
-	* Returns the city of this address.
-	*
-	* @return the city of this address
-	*/
-	@Override
-	public java.lang.String getCity() {
-		return _address.getCity();
-	}
-
-	/**
-	* Returns the fully qualified class name of this address.
-	*
-	* @return the fully qualified class name of this address
-	*/
-	@Override
-	public java.lang.String getClassName() {
-		return _address.getClassName();
-	}
-
-	/**
-	* Returns the street1 of this address.
-	*
-	* @return the street1 of this address
-	*/
-	@Override
-	public java.lang.String getStreet1() {
-		return _address.getStreet1();
-	}
-
-	/**
-	* Returns the street2 of this address.
-	*
-	* @return the street2 of this address
-	*/
-	@Override
-	public java.lang.String getStreet2() {
-		return _address.getStreet2();
-	}
-
-	/**
-	* Returns the street3 of this address.
-	*
-	* @return the street3 of this address
-	*/
-	@Override
-	public java.lang.String getStreet3() {
-		return _address.getStreet3();
-	}
-
-	/**
-	* Returns the user name of this address.
-	*
-	* @return the user name of this address
-	*/
-	@Override
-	public java.lang.String getUserName() {
-		return _address.getUserName();
-	}
-
-	/**
-	* Returns the user uuid of this address.
-	*
-	* @return the user uuid of this address
-	*/
-	@Override
-	public java.lang.String getUserUuid() {
-		return _address.getUserUuid();
-	}
-
-	/**
-	* Returns the uuid of this address.
-	*
-	* @return the uuid of this address
-	*/
-	@Override
-	public java.lang.String getUuid() {
-		return _address.getUuid();
-	}
-
-	/**
-	* Returns the zip of this address.
-	*
-	* @return the zip of this address
-	*/
-	@Override
-	public java.lang.String getZip() {
-		return _address.getZip();
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _address.toString();
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _address.toXmlString();
-	}
-
-	/**
-	* Returns the create date of this address.
-	*
-	* @return the create date of this address
-	*/
-	@Override
-	public Date getCreateDate() {
-		return _address.getCreateDate();
-	}
-
-	/**
-	* Returns the modified date of this address.
-	*
-	* @return the modified date of this address
-	*/
-	@Override
-	public Date getModifiedDate() {
-		return _address.getModifiedDate();
-	}
-
-	/**
-	* Returns the address ID of this address.
-	*
-	* @return the address ID of this address
-	*/
-	@Override
-	public long getAddressId() {
-		return _address.getAddressId();
-	}
-
-	/**
-	* Returns the class name ID of this address.
-	*
-	* @return the class name ID of this address
-	*/
-	@Override
-	public long getClassNameId() {
-		return _address.getClassNameId();
-	}
-
-	/**
-	* Returns the class pk of this address.
-	*
-	* @return the class pk of this address
-	*/
-	@Override
-	public long getClassPK() {
-		return _address.getClassPK();
-	}
-
-	/**
-	* Returns the company ID of this address.
-	*
-	* @return the company ID of this address
-	*/
-	@Override
-	public long getCompanyId() {
-		return _address.getCompanyId();
-	}
-
-	/**
-	* Returns the country ID of this address.
-	*
-	* @return the country ID of this address
-	*/
-	@Override
-	public long getCountryId() {
-		return _address.getCountryId();
-	}
-
-	/**
-	* Returns the mvcc version of this address.
-	*
-	* @return the mvcc version of this address
-	*/
-	@Override
-	public long getMvccVersion() {
-		return _address.getMvccVersion();
-	}
-
-	/**
-	* Returns the primary key of this address.
-	*
-	* @return the primary key of this address
-	*/
-	@Override
-	public long getPrimaryKey() {
-		return _address.getPrimaryKey();
-	}
-
-	/**
-	* Returns the region ID of this address.
-	*
-	* @return the region ID of this address
-	*/
-	@Override
-	public long getRegionId() {
-		return _address.getRegionId();
-	}
-
-	/**
-	* Returns the type ID of this address.
-	*
-	* @return the type ID of this address
-	*/
-	@Override
-	public long getTypeId() {
-		return _address.getTypeId();
-	}
-
-	/**
-	* Returns the user ID of this address.
-	*
-	* @return the user ID of this address
-	*/
-	@Override
-	public long getUserId() {
-		return _address.getUserId();
-	}
-
-	@Override
 	public void persist() {
 		_address.persist();
 	}
@@ -561,12 +536,12 @@ public class AddressWrapper implements Address, ModelWrapper<Address> {
 	* @param city the city of this address
 	*/
 	@Override
-	public void setCity(java.lang.String city) {
+	public void setCity(String city) {
 		_address.setCity(city);
 	}
 
 	@Override
-	public void setClassName(java.lang.String className) {
+	public void setClassName(String className) {
 		_address.setClassName(className);
 	}
 
@@ -711,7 +686,7 @@ public class AddressWrapper implements Address, ModelWrapper<Address> {
 	* @param street1 the street1 of this address
 	*/
 	@Override
-	public void setStreet1(java.lang.String street1) {
+	public void setStreet1(String street1) {
 		_address.setStreet1(street1);
 	}
 
@@ -721,7 +696,7 @@ public class AddressWrapper implements Address, ModelWrapper<Address> {
 	* @param street2 the street2 of this address
 	*/
 	@Override
-	public void setStreet2(java.lang.String street2) {
+	public void setStreet2(String street2) {
 		_address.setStreet2(street2);
 	}
 
@@ -731,7 +706,7 @@ public class AddressWrapper implements Address, ModelWrapper<Address> {
 	* @param street3 the street3 of this address
 	*/
 	@Override
-	public void setStreet3(java.lang.String street3) {
+	public void setStreet3(String street3) {
 		_address.setStreet3(street3);
 	}
 
@@ -761,7 +736,7 @@ public class AddressWrapper implements Address, ModelWrapper<Address> {
 	* @param userName the user name of this address
 	*/
 	@Override
-	public void setUserName(java.lang.String userName) {
+	public void setUserName(String userName) {
 		_address.setUserName(userName);
 	}
 
@@ -771,7 +746,7 @@ public class AddressWrapper implements Address, ModelWrapper<Address> {
 	* @param userUuid the user uuid of this address
 	*/
 	@Override
-	public void setUserUuid(java.lang.String userUuid) {
+	public void setUserUuid(String userUuid) {
 		_address.setUserUuid(userUuid);
 	}
 
@@ -781,7 +756,7 @@ public class AddressWrapper implements Address, ModelWrapper<Address> {
 	* @param uuid the uuid of this address
 	*/
 	@Override
-	public void setUuid(java.lang.String uuid) {
+	public void setUuid(String uuid) {
 		_address.setUuid(uuid);
 	}
 
@@ -791,8 +766,33 @@ public class AddressWrapper implements Address, ModelWrapper<Address> {
 	* @param zip the zip of this address
 	*/
 	@Override
-	public void setZip(java.lang.String zip) {
+	public void setZip(String zip) {
 		_address.setZip(zip);
+	}
+
+	@Override
+	public CacheModel<Address> toCacheModel() {
+		return _address.toCacheModel();
+	}
+
+	@Override
+	public Address toEscapedModel() {
+		return new AddressWrapper(_address.toEscapedModel());
+	}
+
+	@Override
+	public String toString() {
+		return _address.toString();
+	}
+
+	@Override
+	public Address toUnescapedModel() {
+		return new AddressWrapper(_address.toUnescapedModel());
+	}
+
+	@Override
+	public String toXmlString() {
+		return _address.toXmlString();
 	}
 
 	@Override

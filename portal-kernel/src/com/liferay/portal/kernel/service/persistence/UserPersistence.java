@@ -47,7 +47,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param uuid the uuid
 	* @return the matching users
 	*/
-	public java.util.List<User> findByUuid(java.lang.String uuid);
+	public java.util.List<User> findByUuid(String uuid);
 
 	/**
 	* Returns a range of all the users where uuid = &#63;.
@@ -61,8 +61,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param end the upper bound of the range of users (not inclusive)
 	* @return the range of matching users
 	*/
-	public java.util.List<User> findByUuid(java.lang.String uuid, int start,
-		int end);
+	public java.util.List<User> findByUuid(String uuid, int start, int end);
 
 	/**
 	* Returns an ordered range of all the users where uuid = &#63;.
@@ -77,8 +76,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching users
 	*/
-	public java.util.List<User> findByUuid(java.lang.String uuid, int start,
-		int end,
+	public java.util.List<User> findByUuid(String uuid, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<User> orderByComparator);
 
 	/**
@@ -95,8 +93,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the ordered range of matching users
 	*/
-	public java.util.List<User> findByUuid(java.lang.String uuid, int start,
-		int end,
+	public java.util.List<User> findByUuid(String uuid, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<User> orderByComparator,
 		boolean retrieveFromCache);
 
@@ -108,7 +105,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @return the first matching user
 	* @throws NoSuchUserException if a matching user could not be found
 	*/
-	public User findByUuid_First(java.lang.String uuid,
+	public User findByUuid_First(String uuid,
 		com.liferay.portal.kernel.util.OrderByComparator<User> orderByComparator)
 		throws NoSuchUserException;
 
@@ -119,7 +116,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching user, or <code>null</code> if a matching user could not be found
 	*/
-	public User fetchByUuid_First(java.lang.String uuid,
+	public User fetchByUuid_First(String uuid,
 		com.liferay.portal.kernel.util.OrderByComparator<User> orderByComparator);
 
 	/**
@@ -130,7 +127,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @return the last matching user
 	* @throws NoSuchUserException if a matching user could not be found
 	*/
-	public User findByUuid_Last(java.lang.String uuid,
+	public User findByUuid_Last(String uuid,
 		com.liferay.portal.kernel.util.OrderByComparator<User> orderByComparator)
 		throws NoSuchUserException;
 
@@ -141,7 +138,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching user, or <code>null</code> if a matching user could not be found
 	*/
-	public User fetchByUuid_Last(java.lang.String uuid,
+	public User fetchByUuid_Last(String uuid,
 		com.liferay.portal.kernel.util.OrderByComparator<User> orderByComparator);
 
 	/**
@@ -153,7 +150,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @return the previous, current, and next user
 	* @throws NoSuchUserException if a user with the primary key could not be found
 	*/
-	public User[] findByUuid_PrevAndNext(long userId, java.lang.String uuid,
+	public User[] findByUuid_PrevAndNext(long userId, String uuid,
 		com.liferay.portal.kernel.util.OrderByComparator<User> orderByComparator)
 		throws NoSuchUserException;
 
@@ -162,7 +159,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	*
 	* @param uuid the uuid
 	*/
-	public void removeByUuid(java.lang.String uuid);
+	public void removeByUuid(String uuid);
 
 	/**
 	* Returns the number of users where uuid = &#63;.
@@ -170,7 +167,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param uuid the uuid
 	* @return the number of matching users
 	*/
-	public int countByUuid(java.lang.String uuid);
+	public int countByUuid(String uuid);
 
 	/**
 	* Returns all the users where uuid = &#63; and companyId = &#63;.
@@ -179,8 +176,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param companyId the company ID
 	* @return the matching users
 	*/
-	public java.util.List<User> findByUuid_C(java.lang.String uuid,
-		long companyId);
+	public java.util.List<User> findByUuid_C(String uuid, long companyId);
 
 	/**
 	* Returns a range of all the users where uuid = &#63; and companyId = &#63;.
@@ -195,8 +191,8 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param end the upper bound of the range of users (not inclusive)
 	* @return the range of matching users
 	*/
-	public java.util.List<User> findByUuid_C(java.lang.String uuid,
-		long companyId, int start, int end);
+	public java.util.List<User> findByUuid_C(String uuid, long companyId,
+		int start, int end);
 
 	/**
 	* Returns an ordered range of all the users where uuid = &#63; and companyId = &#63;.
@@ -212,8 +208,8 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching users
 	*/
-	public java.util.List<User> findByUuid_C(java.lang.String uuid,
-		long companyId, int start, int end,
+	public java.util.List<User> findByUuid_C(String uuid, long companyId,
+		int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<User> orderByComparator);
 
 	/**
@@ -231,8 +227,8 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the ordered range of matching users
 	*/
-	public java.util.List<User> findByUuid_C(java.lang.String uuid,
-		long companyId, int start, int end,
+	public java.util.List<User> findByUuid_C(String uuid, long companyId,
+		int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<User> orderByComparator,
 		boolean retrieveFromCache);
 
@@ -245,7 +241,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @return the first matching user
 	* @throws NoSuchUserException if a matching user could not be found
 	*/
-	public User findByUuid_C_First(java.lang.String uuid, long companyId,
+	public User findByUuid_C_First(String uuid, long companyId,
 		com.liferay.portal.kernel.util.OrderByComparator<User> orderByComparator)
 		throws NoSuchUserException;
 
@@ -257,7 +253,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching user, or <code>null</code> if a matching user could not be found
 	*/
-	public User fetchByUuid_C_First(java.lang.String uuid, long companyId,
+	public User fetchByUuid_C_First(String uuid, long companyId,
 		com.liferay.portal.kernel.util.OrderByComparator<User> orderByComparator);
 
 	/**
@@ -269,7 +265,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @return the last matching user
 	* @throws NoSuchUserException if a matching user could not be found
 	*/
-	public User findByUuid_C_Last(java.lang.String uuid, long companyId,
+	public User findByUuid_C_Last(String uuid, long companyId,
 		com.liferay.portal.kernel.util.OrderByComparator<User> orderByComparator)
 		throws NoSuchUserException;
 
@@ -281,7 +277,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching user, or <code>null</code> if a matching user could not be found
 	*/
-	public User fetchByUuid_C_Last(java.lang.String uuid, long companyId,
+	public User fetchByUuid_C_Last(String uuid, long companyId,
 		com.liferay.portal.kernel.util.OrderByComparator<User> orderByComparator);
 
 	/**
@@ -294,7 +290,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @return the previous, current, and next user
 	* @throws NoSuchUserException if a user with the primary key could not be found
 	*/
-	public User[] findByUuid_C_PrevAndNext(long userId, java.lang.String uuid,
+	public User[] findByUuid_C_PrevAndNext(long userId, String uuid,
 		long companyId,
 		com.liferay.portal.kernel.util.OrderByComparator<User> orderByComparator)
 		throws NoSuchUserException;
@@ -305,7 +301,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param uuid the uuid
 	* @param companyId the company ID
 	*/
-	public void removeByUuid_C(java.lang.String uuid, long companyId);
+	public void removeByUuid_C(String uuid, long companyId);
 
 	/**
 	* Returns the number of users where uuid = &#63; and companyId = &#63;.
@@ -314,7 +310,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param companyId the company ID
 	* @return the number of matching users
 	*/
-	public int countByUuid_C(java.lang.String uuid, long companyId);
+	public int countByUuid_C(String uuid, long companyId);
 
 	/**
 	* Returns all the users where companyId = &#63;.
@@ -495,8 +491,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param emailAddress the email address
 	* @return the matching users
 	*/
-	public java.util.List<User> findByEmailAddress(
-		java.lang.String emailAddress);
+	public java.util.List<User> findByEmailAddress(String emailAddress);
 
 	/**
 	* Returns a range of all the users where emailAddress = &#63;.
@@ -510,8 +505,8 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param end the upper bound of the range of users (not inclusive)
 	* @return the range of matching users
 	*/
-	public java.util.List<User> findByEmailAddress(
-		java.lang.String emailAddress, int start, int end);
+	public java.util.List<User> findByEmailAddress(String emailAddress,
+		int start, int end);
 
 	/**
 	* Returns an ordered range of all the users where emailAddress = &#63;.
@@ -526,8 +521,8 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching users
 	*/
-	public java.util.List<User> findByEmailAddress(
-		java.lang.String emailAddress, int start, int end,
+	public java.util.List<User> findByEmailAddress(String emailAddress,
+		int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<User> orderByComparator);
 
 	/**
@@ -544,8 +539,8 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the ordered range of matching users
 	*/
-	public java.util.List<User> findByEmailAddress(
-		java.lang.String emailAddress, int start, int end,
+	public java.util.List<User> findByEmailAddress(String emailAddress,
+		int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<User> orderByComparator,
 		boolean retrieveFromCache);
 
@@ -557,7 +552,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @return the first matching user
 	* @throws NoSuchUserException if a matching user could not be found
 	*/
-	public User findByEmailAddress_First(java.lang.String emailAddress,
+	public User findByEmailAddress_First(String emailAddress,
 		com.liferay.portal.kernel.util.OrderByComparator<User> orderByComparator)
 		throws NoSuchUserException;
 
@@ -568,7 +563,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching user, or <code>null</code> if a matching user could not be found
 	*/
-	public User fetchByEmailAddress_First(java.lang.String emailAddress,
+	public User fetchByEmailAddress_First(String emailAddress,
 		com.liferay.portal.kernel.util.OrderByComparator<User> orderByComparator);
 
 	/**
@@ -579,7 +574,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @return the last matching user
 	* @throws NoSuchUserException if a matching user could not be found
 	*/
-	public User findByEmailAddress_Last(java.lang.String emailAddress,
+	public User findByEmailAddress_Last(String emailAddress,
 		com.liferay.portal.kernel.util.OrderByComparator<User> orderByComparator)
 		throws NoSuchUserException;
 
@@ -590,7 +585,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching user, or <code>null</code> if a matching user could not be found
 	*/
-	public User fetchByEmailAddress_Last(java.lang.String emailAddress,
+	public User fetchByEmailAddress_Last(String emailAddress,
 		com.liferay.portal.kernel.util.OrderByComparator<User> orderByComparator);
 
 	/**
@@ -603,7 +598,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @throws NoSuchUserException if a user with the primary key could not be found
 	*/
 	public User[] findByEmailAddress_PrevAndNext(long userId,
-		java.lang.String emailAddress,
+		String emailAddress,
 		com.liferay.portal.kernel.util.OrderByComparator<User> orderByComparator)
 		throws NoSuchUserException;
 
@@ -612,7 +607,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	*
 	* @param emailAddress the email address
 	*/
-	public void removeByEmailAddress(java.lang.String emailAddress);
+	public void removeByEmailAddress(String emailAddress);
 
 	/**
 	* Returns the number of users where emailAddress = &#63;.
@@ -620,7 +615,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param emailAddress the email address
 	* @return the number of matching users
 	*/
-	public int countByEmailAddress(java.lang.String emailAddress);
+	public int countByEmailAddress(String emailAddress);
 
 	/**
 	* Returns the user where portraitId = &#63; or throws a {@link NoSuchUserException} if it could not be found.
@@ -663,6 +658,134 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @return the number of matching users
 	*/
 	public int countByPortraitId(long portraitId);
+
+	/**
+	* Returns all the users where userId &gt; &#63; and companyId = &#63;.
+	*
+	* @param userId the user ID
+	* @param companyId the company ID
+	* @return the matching users
+	*/
+	public java.util.List<User> findByU_C(long userId, long companyId);
+
+	/**
+	* Returns a range of all the users where userId &gt; &#63; and companyId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link UserModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param userId the user ID
+	* @param companyId the company ID
+	* @param start the lower bound of the range of users
+	* @param end the upper bound of the range of users (not inclusive)
+	* @return the range of matching users
+	*/
+	public java.util.List<User> findByU_C(long userId, long companyId,
+		int start, int end);
+
+	/**
+	* Returns an ordered range of all the users where userId &gt; &#63; and companyId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link UserModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param userId the user ID
+	* @param companyId the company ID
+	* @param start the lower bound of the range of users
+	* @param end the upper bound of the range of users (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching users
+	*/
+	public java.util.List<User> findByU_C(long userId, long companyId,
+		int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<User> orderByComparator);
+
+	/**
+	* Returns an ordered range of all the users where userId &gt; &#63; and companyId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link UserModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param userId the user ID
+	* @param companyId the company ID
+	* @param start the lower bound of the range of users
+	* @param end the upper bound of the range of users (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching users
+	*/
+	public java.util.List<User> findByU_C(long userId, long companyId,
+		int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<User> orderByComparator,
+		boolean retrieveFromCache);
+
+	/**
+	* Returns the first user in the ordered set where userId &gt; &#63; and companyId = &#63;.
+	*
+	* @param userId the user ID
+	* @param companyId the company ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching user
+	* @throws NoSuchUserException if a matching user could not be found
+	*/
+	public User findByU_C_First(long userId, long companyId,
+		com.liferay.portal.kernel.util.OrderByComparator<User> orderByComparator)
+		throws NoSuchUserException;
+
+	/**
+	* Returns the first user in the ordered set where userId &gt; &#63; and companyId = &#63;.
+	*
+	* @param userId the user ID
+	* @param companyId the company ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching user, or <code>null</code> if a matching user could not be found
+	*/
+	public User fetchByU_C_First(long userId, long companyId,
+		com.liferay.portal.kernel.util.OrderByComparator<User> orderByComparator);
+
+	/**
+	* Returns the last user in the ordered set where userId &gt; &#63; and companyId = &#63;.
+	*
+	* @param userId the user ID
+	* @param companyId the company ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching user
+	* @throws NoSuchUserException if a matching user could not be found
+	*/
+	public User findByU_C_Last(long userId, long companyId,
+		com.liferay.portal.kernel.util.OrderByComparator<User> orderByComparator)
+		throws NoSuchUserException;
+
+	/**
+	* Returns the last user in the ordered set where userId &gt; &#63; and companyId = &#63;.
+	*
+	* @param userId the user ID
+	* @param companyId the company ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching user, or <code>null</code> if a matching user could not be found
+	*/
+	public User fetchByU_C_Last(long userId, long companyId,
+		com.liferay.portal.kernel.util.OrderByComparator<User> orderByComparator);
+
+	/**
+	* Removes all the users where userId &gt; &#63; and companyId = &#63; from the database.
+	*
+	* @param userId the user ID
+	* @param companyId the company ID
+	*/
+	public void removeByU_C(long userId, long companyId);
+
+	/**
+	* Returns the number of users where userId &gt; &#63; and companyId = &#63;.
+	*
+	* @param userId the user ID
+	* @param companyId the company ID
+	* @return the number of matching users
+	*/
+	public int countByU_C(long userId, long companyId);
 
 	/**
 	* Returns the user where companyId = &#63; and userId = &#63; or throws a {@link NoSuchUserException} if it could not be found.
@@ -1058,7 +1181,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @return the matching user
 	* @throws NoSuchUserException if a matching user could not be found
 	*/
-	public User findByC_SN(long companyId, java.lang.String screenName)
+	public User findByC_SN(long companyId, String screenName)
 		throws NoSuchUserException;
 
 	/**
@@ -1068,7 +1191,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param screenName the screen name
 	* @return the matching user, or <code>null</code> if a matching user could not be found
 	*/
-	public User fetchByC_SN(long companyId, java.lang.String screenName);
+	public User fetchByC_SN(long companyId, String screenName);
 
 	/**
 	* Returns the user where companyId = &#63; and screenName = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
@@ -1078,7 +1201,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the matching user, or <code>null</code> if a matching user could not be found
 	*/
-	public User fetchByC_SN(long companyId, java.lang.String screenName,
+	public User fetchByC_SN(long companyId, String screenName,
 		boolean retrieveFromCache);
 
 	/**
@@ -1088,7 +1211,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param screenName the screen name
 	* @return the user that was removed
 	*/
-	public User removeByC_SN(long companyId, java.lang.String screenName)
+	public User removeByC_SN(long companyId, String screenName)
 		throws NoSuchUserException;
 
 	/**
@@ -1098,7 +1221,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param screenName the screen name
 	* @return the number of matching users
 	*/
-	public int countByC_SN(long companyId, java.lang.String screenName);
+	public int countByC_SN(long companyId, String screenName);
 
 	/**
 	* Returns the user where companyId = &#63; and emailAddress = &#63; or throws a {@link NoSuchUserException} if it could not be found.
@@ -1108,7 +1231,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @return the matching user
 	* @throws NoSuchUserException if a matching user could not be found
 	*/
-	public User findByC_EA(long companyId, java.lang.String emailAddress)
+	public User findByC_EA(long companyId, String emailAddress)
 		throws NoSuchUserException;
 
 	/**
@@ -1118,7 +1241,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param emailAddress the email address
 	* @return the matching user, or <code>null</code> if a matching user could not be found
 	*/
-	public User fetchByC_EA(long companyId, java.lang.String emailAddress);
+	public User fetchByC_EA(long companyId, String emailAddress);
 
 	/**
 	* Returns the user where companyId = &#63; and emailAddress = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
@@ -1128,7 +1251,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the matching user, or <code>null</code> if a matching user could not be found
 	*/
-	public User fetchByC_EA(long companyId, java.lang.String emailAddress,
+	public User fetchByC_EA(long companyId, String emailAddress,
 		boolean retrieveFromCache);
 
 	/**
@@ -1138,7 +1261,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param emailAddress the email address
 	* @return the user that was removed
 	*/
-	public User removeByC_EA(long companyId, java.lang.String emailAddress)
+	public User removeByC_EA(long companyId, String emailAddress)
 		throws NoSuchUserException;
 
 	/**
@@ -1148,7 +1271,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param emailAddress the email address
 	* @return the number of matching users
 	*/
-	public int countByC_EA(long companyId, java.lang.String emailAddress);
+	public int countByC_EA(long companyId, String emailAddress);
 
 	/**
 	* Returns the user where companyId = &#63; and facebookId = &#63; or throws a {@link NoSuchUserException} if it could not be found.
@@ -1208,7 +1331,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @return the matching user
 	* @throws NoSuchUserException if a matching user could not be found
 	*/
-	public User findByC_GUID(long companyId, java.lang.String googleUserId)
+	public User findByC_GUID(long companyId, String googleUserId)
 		throws NoSuchUserException;
 
 	/**
@@ -1218,7 +1341,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param googleUserId the google user ID
 	* @return the matching user, or <code>null</code> if a matching user could not be found
 	*/
-	public User fetchByC_GUID(long companyId, java.lang.String googleUserId);
+	public User fetchByC_GUID(long companyId, String googleUserId);
 
 	/**
 	* Returns the user where companyId = &#63; and googleUserId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
@@ -1228,7 +1351,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the matching user, or <code>null</code> if a matching user could not be found
 	*/
-	public User fetchByC_GUID(long companyId, java.lang.String googleUserId,
+	public User fetchByC_GUID(long companyId, String googleUserId,
 		boolean retrieveFromCache);
 
 	/**
@@ -1238,7 +1361,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param googleUserId the google user ID
 	* @return the user that was removed
 	*/
-	public User removeByC_GUID(long companyId, java.lang.String googleUserId)
+	public User removeByC_GUID(long companyId, String googleUserId)
 		throws NoSuchUserException;
 
 	/**
@@ -1248,7 +1371,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param googleUserId the google user ID
 	* @return the number of matching users
 	*/
-	public int countByC_GUID(long companyId, java.lang.String googleUserId);
+	public int countByC_GUID(long companyId, String googleUserId);
 
 	/**
 	* Returns the user where companyId = &#63; and openId = &#63; or throws a {@link NoSuchUserException} if it could not be found.
@@ -1258,7 +1381,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @return the matching user
 	* @throws NoSuchUserException if a matching user could not be found
 	*/
-	public User findByC_O(long companyId, java.lang.String openId)
+	public User findByC_O(long companyId, String openId)
 		throws NoSuchUserException;
 
 	/**
@@ -1268,7 +1391,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param openId the open ID
 	* @return the matching user, or <code>null</code> if a matching user could not be found
 	*/
-	public User fetchByC_O(long companyId, java.lang.String openId);
+	public User fetchByC_O(long companyId, String openId);
 
 	/**
 	* Returns the user where companyId = &#63; and openId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
@@ -1278,7 +1401,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the matching user, or <code>null</code> if a matching user could not be found
 	*/
-	public User fetchByC_O(long companyId, java.lang.String openId,
+	public User fetchByC_O(long companyId, String openId,
 		boolean retrieveFromCache);
 
 	/**
@@ -1288,7 +1411,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param openId the open ID
 	* @return the user that was removed
 	*/
-	public User removeByC_O(long companyId, java.lang.String openId)
+	public User removeByC_O(long companyId, String openId)
 		throws NoSuchUserException;
 
 	/**
@@ -1298,7 +1421,7 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @param openId the open ID
 	* @return the number of matching users
 	*/
-	public int countByC_O(long companyId, java.lang.String openId);
+	public int countByC_O(long companyId, String openId);
 
 	/**
 	* Returns all the users where companyId = &#63; and status = &#63;.
@@ -1761,6 +1884,56 @@ public interface UserPersistence extends BasePersistence<User> {
 	* @return the number of matching users
 	*/
 	public int countByC_DU_S(long companyId, boolean defaultUser, int status);
+
+	/**
+	* Returns the user where companyId = &#63; and externalReferenceCode = &#63; or throws a {@link NoSuchUserException} if it could not be found.
+	*
+	* @param companyId the company ID
+	* @param externalReferenceCode the external reference code
+	* @return the matching user
+	* @throws NoSuchUserException if a matching user could not be found
+	*/
+	public User findByC_ERC(long companyId, String externalReferenceCode)
+		throws NoSuchUserException;
+
+	/**
+	* Returns the user where companyId = &#63; and externalReferenceCode = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	*
+	* @param companyId the company ID
+	* @param externalReferenceCode the external reference code
+	* @return the matching user, or <code>null</code> if a matching user could not be found
+	*/
+	public User fetchByC_ERC(long companyId, String externalReferenceCode);
+
+	/**
+	* Returns the user where companyId = &#63; and externalReferenceCode = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	*
+	* @param companyId the company ID
+	* @param externalReferenceCode the external reference code
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the matching user, or <code>null</code> if a matching user could not be found
+	*/
+	public User fetchByC_ERC(long companyId, String externalReferenceCode,
+		boolean retrieveFromCache);
+
+	/**
+	* Removes the user where companyId = &#63; and externalReferenceCode = &#63; from the database.
+	*
+	* @param companyId the company ID
+	* @param externalReferenceCode the external reference code
+	* @return the user that was removed
+	*/
+	public User removeByC_ERC(long companyId, String externalReferenceCode)
+		throws NoSuchUserException;
+
+	/**
+	* Returns the number of users where companyId = &#63; and externalReferenceCode = &#63;.
+	*
+	* @param companyId the company ID
+	* @param externalReferenceCode the external reference code
+	* @return the number of matching users
+	*/
+	public int countByC_ERC(long companyId, String externalReferenceCode);
 
 	/**
 	* Caches the user in the entity cache if it is enabled.
@@ -2705,5 +2878,5 @@ public interface UserPersistence extends BasePersistence<User> {
 		java.util.List<com.liferay.portal.kernel.model.UserGroup> userGroups);
 
 	@Override
-	public java.util.Set<java.lang.String> getBadColumnNames();
+	public java.util.Set<String> getBadColumnNames();
 }

@@ -16,6 +16,8 @@ package com.liferay.portal.service.persistence.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
@@ -36,12 +38,14 @@ import com.liferay.portal.kernel.service.persistence.OrgGroupRolePK;
 import com.liferay.portal.kernel.service.persistence.OrgGroupRolePersistence;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.ProxyUtil;
+import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.model.impl.OrgGroupRoleImpl;
 import com.liferay.portal.model.impl.OrgGroupRoleModelImpl;
 
 import java.io.Serializable;
+
+import java.lang.reflect.InvocationHandler;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -293,7 +297,7 @@ public class OrgGroupRolePersistenceImpl extends BasePersistenceImpl<OrgGroupRol
 		msg.append("groupId=");
 		msg.append(groupId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchOrgGroupRoleException(msg.toString());
 	}
@@ -343,7 +347,7 @@ public class OrgGroupRolePersistenceImpl extends BasePersistenceImpl<OrgGroupRol
 		msg.append("groupId=");
 		msg.append(groupId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchOrgGroupRoleException(msg.toString());
 	}
@@ -796,7 +800,7 @@ public class OrgGroupRolePersistenceImpl extends BasePersistenceImpl<OrgGroupRol
 		msg.append("roleId=");
 		msg.append(roleId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchOrgGroupRoleException(msg.toString());
 	}
@@ -845,7 +849,7 @@ public class OrgGroupRolePersistenceImpl extends BasePersistenceImpl<OrgGroupRol
 		msg.append("roleId=");
 		msg.append(roleId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchOrgGroupRoleException(msg.toString());
 	}
@@ -1241,8 +1245,6 @@ public class OrgGroupRolePersistenceImpl extends BasePersistenceImpl<OrgGroupRol
 
 	@Override
 	protected OrgGroupRole removeImpl(OrgGroupRole orgGroupRole) {
-		orgGroupRole = toUnwrappedModel(orgGroupRole);
-
 		Session session = null;
 
 		try {
@@ -1273,9 +1275,23 @@ public class OrgGroupRolePersistenceImpl extends BasePersistenceImpl<OrgGroupRol
 
 	@Override
 	public OrgGroupRole updateImpl(OrgGroupRole orgGroupRole) {
-		orgGroupRole = toUnwrappedModel(orgGroupRole);
-
 		boolean isNew = orgGroupRole.isNew();
+
+		if (!(orgGroupRole instanceof OrgGroupRoleModelImpl)) {
+			InvocationHandler invocationHandler = null;
+
+			if (ProxyUtil.isProxyClass(orgGroupRole.getClass())) {
+				invocationHandler = ProxyUtil.getInvocationHandler(orgGroupRole);
+
+				throw new IllegalArgumentException(
+					"Implement ModelWrapper in orgGroupRole proxy " +
+					invocationHandler.getClass());
+			}
+
+			throw new IllegalArgumentException(
+				"Implement ModelWrapper in custom OrgGroupRole implementation " +
+				orgGroupRole.getClass());
+		}
 
 		OrgGroupRoleModelImpl orgGroupRoleModelImpl = (OrgGroupRoleModelImpl)orgGroupRole;
 
@@ -1367,25 +1383,6 @@ public class OrgGroupRolePersistenceImpl extends BasePersistenceImpl<OrgGroupRol
 		orgGroupRole.resetOriginalValues();
 
 		return orgGroupRole;
-	}
-
-	protected OrgGroupRole toUnwrappedModel(OrgGroupRole orgGroupRole) {
-		if (orgGroupRole instanceof OrgGroupRoleImpl) {
-			return orgGroupRole;
-		}
-
-		OrgGroupRoleImpl orgGroupRoleImpl = new OrgGroupRoleImpl();
-
-		orgGroupRoleImpl.setNew(orgGroupRole.isNew());
-		orgGroupRoleImpl.setPrimaryKey(orgGroupRole.getPrimaryKey());
-
-		orgGroupRoleImpl.setMvccVersion(orgGroupRole.getMvccVersion());
-		orgGroupRoleImpl.setOrganizationId(orgGroupRole.getOrganizationId());
-		orgGroupRoleImpl.setGroupId(orgGroupRole.getGroupId());
-		orgGroupRoleImpl.setRoleId(orgGroupRole.getRoleId());
-		orgGroupRoleImpl.setCompanyId(orgGroupRole.getCompanyId());
-
-		return orgGroupRoleImpl;
 	}
 
 	/**
@@ -1696,6 +1693,11 @@ public class OrgGroupRolePersistenceImpl extends BasePersistenceImpl<OrgGroupRol
 	}
 
 	@Override
+	public Set<String> getCompoundPKColumnNames() {
+		return _compoundPKColumnNames;
+	}
+
+	@Override
 	protected Map<String, Integer> getTableColumnsMap() {
 		return OrgGroupRoleModelImpl.TABLE_COLUMNS_MAP;
 	}
@@ -1725,4 +1727,7 @@ public class OrgGroupRolePersistenceImpl extends BasePersistenceImpl<OrgGroupRol
 	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY = "No OrgGroupRole exists with the primary key ";
 	private static final String _NO_SUCH_ENTITY_WITH_KEY = "No OrgGroupRole exists with the key {";
 	private static final Log _log = LogFactoryUtil.getLog(OrgGroupRolePersistenceImpl.class);
+	private static final Set<String> _compoundPKColumnNames = SetUtil.fromArray(new String[] {
+				"organizationId", "groupId", "roleId"
+			});
 }

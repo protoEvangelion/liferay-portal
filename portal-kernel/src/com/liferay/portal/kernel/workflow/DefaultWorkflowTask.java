@@ -121,14 +121,13 @@ public class DefaultWorkflowTask implements Serializable, WorkflowTask {
 		WorkflowTaskAssignee workflowTaskAssignee = _workflowTaskAssignees.get(
 			0);
 
-		if (User.class.getName().equals(
-				workflowTaskAssignee.getAssigneeClassName())) {
+		String userClassName = User.class.getName();
 
+		if (userClassName.equals(workflowTaskAssignee.getAssigneeClassName())) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	@Override
@@ -141,9 +140,8 @@ public class DefaultWorkflowTask implements Serializable, WorkflowTask {
 		if (_completionDate != null) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	public void setAsynchronous(boolean asynchronous) {

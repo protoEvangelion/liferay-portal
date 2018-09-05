@@ -14,22 +14,18 @@
 
 package com.liferay.source.formatter.checks;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
-import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.source.formatter.parser.JavaClass;
-import com.liferay.source.formatter.parser.JavaConstructor;
-import com.liferay.source.formatter.parser.JavaMethod;
 import com.liferay.source.formatter.parser.JavaTerm;
 import com.liferay.source.formatter.parser.JavaVariable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,15 +35,13 @@ import java.util.regex.Pattern;
 public class JavaVariableTypeCheck extends BaseJavaTermCheck {
 
 	@Override
-	public void init() {
-		_annotationsExclusions = _getAnnotationsExclusions();
-		_defaultPrimitiveValues = _getDefaultPrimitiveValues();
-		_immutableFieldTypes = _getImmutableFieldTypes();
-	}
-
-	@Override
 	public boolean isPortalCheck() {
 		return true;
+	}
+
+	public void setImmutableFieldTypes(String immutableFieldTypes) {
+		_immutableFieldTypes = ListUtil.fromString(
+			immutableFieldTypes, StringPool.COMMA);
 	}
 
 	@Override
@@ -55,16 +49,12 @@ public class JavaVariableTypeCheck extends BaseJavaTermCheck {
 		String fileName, String absolutePath, JavaTerm javaTerm,
 		String fileContent) {
 
-		if (isExcludedPath(_CHECK_JAVA_FIELD_TYPES_EXCLUDES, absolutePath)) {
-			return javaTerm.getContent();
-		}
-
 		JavaClass javaClass = (JavaClass)javaTerm;
 
 		String classContent = javaClass.getContent();
 
 		for (JavaTerm childJavaTerm : javaClass.getChildJavaTerms()) {
-			if (childJavaTerm instanceof JavaVariable) {
+			if (childJavaTerm.isJavaVariable()) {
 				classContent = _checkFieldType(
 					absolutePath, javaClass, classContent,
 					(JavaVariable)childJavaTerm);
@@ -90,7 +80,7 @@ public class JavaVariableTypeCheck extends BaseJavaTermCheck {
 		}
 
 		String fieldType = _getFieldType(javaVariable);
-		boolean isFinal = _containsNonAccessModifier(javaVariable, "final");
+		boolean isFinal = _containsNonaccessModifier(javaVariable, "final");
 
 		if (!isFinal) {
 			classContent = _formatDefaultValue(
@@ -102,16 +92,18 @@ public class JavaVariableTypeCheck extends BaseJavaTermCheck {
 		}
 
 		if (isFinal) {
-			if (!javaVariable.isStatic() &&
-				(_immutableFieldTypes.contains(fieldType) ||
+			JavaClass parentJavaClass = javaClass.getParentJavaClass();
+
+			if ((parentJavaClass == null) && !javaVariable.isStatic() &&
+				(_isImmutableField(fieldType) ||
 				 (fieldType.equals("Log") &&
 				  !isExcludedPath(_STATIC_LOG_EXCLUDES, absolutePath)))) {
 
 				classContent = _formatStaticableFieldType(
-					classContent, javaVariable.getContent());
+					classContent, javaVariable.getContent(), fieldType);
 			}
 		}
-		else if (!_containsNonAccessModifier(javaVariable, "volatile")) {
+		else if (!_containsNonaccessModifier(javaVariable, "volatile")) {
 			classContent = _formatFinalableFieldType(
 				classContent, javaClass, javaVariable, fieldType);
 		}
@@ -119,7 +111,7 @@ public class JavaVariableTypeCheck extends BaseJavaTermCheck {
 		return classContent;
 	}
 
-	private boolean _containsNonAccessModifier(
+	private boolean _containsNonaccessModifier(
 		JavaVariable javaVariable, String modifier) {
 
 		Pattern pattern = Pattern.compile(
@@ -145,7 +137,10 @@ public class JavaVariableTypeCheck extends BaseJavaTermCheck {
 		String defaultValue = null;
 
 		if (StringUtil.isLowerCase(fieldType)) {
-			defaultValue = _defaultPrimitiveValues.get(fieldType);
+			Map<String, String> defaultPrimitiveValues =
+				_getDefaultPrimitiveValues();
+
+			defaultValue = defaultPrimitiveValues.get(fieldType);
 		}
 		else {
 			defaultValue = StringPool.NULL;
@@ -170,7 +165,7 @@ public class JavaVariableTypeCheck extends BaseJavaTermCheck {
 		String classContent, JavaClass javaClass, JavaVariable javaVariable,
 		String fieldType) {
 
-		for (String annotation : _annotationsExclusions) {
+		for (String annotation : _getAnnotationsExclusions()) {
 			if (javaVariable.hasAnnotation(annotation)) {
 				return classContent;
 			}
@@ -200,9 +195,7 @@ public class JavaVariableTypeCheck extends BaseJavaTermCheck {
 
 		Pattern pattern = Pattern.compile(sb.toString());
 
-		if (!_isFinalableField(
-				javaClass, javaVariable, pattern, allChildJavaTerms)) {
-
+		if (!_isFinalableField(javaClass, pattern, allChildJavaTerms)) {
 			return classContent;
 		}
 
@@ -216,9 +209,13 @@ public class JavaVariableTypeCheck extends BaseJavaTermCheck {
 	}
 
 	private String _formatStaticableFieldType(
-		String classContent, String javaVariableContent) {
+		String classContent, String javaVariableContent, String fieldType) {
 
-		if (!javaVariableContent.contains(StringPool.EQUAL)) {
+		if (!javaVariableContent.contains(StringPool.EQUAL) ||
+			(fieldType.endsWith("[]") &&
+			 (javaVariableContent.contains(" new ") ||
+			  javaVariableContent.contains("\tnew ")))) {
+
 			return classContent;
 		}
 
@@ -235,7 +232,7 @@ public class JavaVariableTypeCheck extends BaseJavaTermCheck {
 		for (JavaTerm childJavaTerm : javaClass.getChildJavaTerms()) {
 			childJavaTerms.add(childJavaTerm);
 
-			if (childJavaTerm instanceof JavaClass) {
+			if (childJavaTerm.isJavaClass()) {
 				JavaClass childJavaClass = (JavaClass)childJavaTerm;
 
 				childJavaTerms.addAll(_getAllChildJavaTerms(childJavaClass));
@@ -245,21 +242,30 @@ public class JavaVariableTypeCheck extends BaseJavaTermCheck {
 		return childJavaTerms;
 	}
 
-	private List<String> _getAnnotationsExclusions() {
-		return ListUtil.fromArray(
-			new String[] {
-				"ArquillianResource", "Autowired", "BeanReference", "Captor",
-				"Inject", "Mock", "Parameter", "Reference", "ServiceReference",
-				"SuppressWarnings", "Value"
-			});
+	private synchronized List<String> _getAnnotationsExclusions() {
+		if (_annotationsExclusions == null) {
+			_annotationsExclusions = ListUtil.fromArray(
+				new String[] {
+					"ArquillianResource", "Autowired", "BeanReference",
+					"Captor", "Context", "Inject", "Mock", "Parameter",
+					"Reference", "ServiceReference", "SuppressWarnings", "Value"
+				});
+		}
+
+		return _annotationsExclusions;
 	}
 
-	private Map<String, String> _getDefaultPrimitiveValues() {
-		return MapUtil.fromArray(
-			new String[] {
-				"boolean", "false", "char", "'\\\\0'", "byte", "0", "double",
-				"0\\.0", "float", "0\\.0", "int", "0", "long", "0", "short", "0"
-			});
+	private synchronized Map<String, String> _getDefaultPrimitiveValues() {
+		if (_defaultPrimitiveValues == null) {
+			_defaultPrimitiveValues = MapUtil.fromArray(
+				new String[] {
+					"boolean", "false", "char", "'\\\\0'", "byte", "0",
+					"double", "0\\.0", "float", "0\\.0", "int", "0", "long",
+					"0", "short", "0"
+				});
+		}
+
+		return _defaultPrimitiveValues;
 	}
 
 	private String _getFieldType(JavaVariable javaVariable) {
@@ -281,61 +287,72 @@ public class JavaVariableTypeCheck extends BaseJavaTermCheck {
 		return null;
 	}
 
-	private Set<String> _getImmutableFieldTypes() {
-		Set<String> immutableFieldTypes = SetUtil.fromArray(
-			new String[] {
-				"boolean", "byte", "char", "double", "float", "int", "long",
-				"short", "Boolean", "Byte", "Character", "Class", "Double",
-				"Float", "Int", "Long", "Number", "Short", "String"
-			});
-
-		immutableFieldTypes.addAll(getPropertyList("immutable.field.types"));
-
-		return immutableFieldTypes;
-	}
-
 	private boolean _isFinalableField(
-		JavaClass javaClass, JavaVariable javaVariable, Pattern pattern,
+		JavaClass javaClass, Pattern pattern,
 		List<JavaTerm> allChildJavaTerms) {
+
+		int assignmentCount = 0;
 
 		for (JavaTerm childJavaTerm : allChildJavaTerms) {
 			String content = childJavaTerm.getContent();
 
 			Matcher matcher = pattern.matcher(content);
 
-			if (!matcher.find() || !content.contains(javaVariable.getName())) {
-				continue;
+			boolean found = matcher.find();
+
+			if (found) {
+				assignmentCount++;
 			}
 
-			if (childJavaTerm instanceof JavaConstructor) {
+			if (childJavaTerm.isJavaConstructor()) {
 				JavaClass constructorClass = childJavaTerm.getParentJavaClass();
 
 				String constructorClassName = constructorClass.getName();
 
-				if (!constructorClassName.equals(javaClass.getName())) {
+				if (constructorClassName.equals(javaClass.getName())) {
+					if (!found) {
+						return false;
+					}
+				}
+				else if (found) {
 					return false;
 				}
 			}
-			else if (childJavaTerm instanceof JavaMethod) {
-				return false;
+			else if (childJavaTerm.isJavaMethod()) {
+				if (found) {
+					return false;
+				}
 			}
-			else if ((childJavaTerm instanceof JavaVariable) &&
-					 content.contains("{\n\n")) {
+			else if (childJavaTerm.isJavaVariable()) {
+				if (found && content.contains("{\n\n")) {
+					return false;
+				}
+			}
+		}
 
-				return false;
-			}
+		if (assignmentCount == 0) {
+			return false;
 		}
 
 		return true;
 	}
 
-	private static final String _CHECK_JAVA_FIELD_TYPES_EXCLUDES =
-		"check.java.field.types.excludes";
+	private boolean _isImmutableField(String fieldType) {
+		for (String immutableFieldType : _immutableFieldTypes) {
+			if (fieldType.equals(immutableFieldType) ||
+				fieldType.startsWith(immutableFieldType + "[]")) {
+
+				return true;
+			}
+		}
+
+		return false;
+	}
 
 	private static final String _STATIC_LOG_EXCLUDES = "static.log.excludes";
 
 	private List<String> _annotationsExclusions;
 	private Map<String, String> _defaultPrimitiveValues;
-	private Set<String> _immutableFieldTypes;
+	private List<String> _immutableFieldTypes = new ArrayList<>();
 
 }

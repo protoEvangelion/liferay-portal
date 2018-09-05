@@ -14,8 +14,10 @@
 
 package com.liferay.portal.kernel.util;
 
-import com.liferay.portal.kernel.model.PortletConstants;
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.Theme;
+import com.liferay.portal.kernel.portlet.PortletIdCodec;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateResourceLoaderUtil;
 
@@ -34,6 +36,10 @@ public class ThemeHelper {
 
 	public static final String TEMPLATE_EXTENSION_JSP = "jsp";
 
+	/**
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
+	 */
+	@Deprecated
 	public static final String TEMPLATE_EXTENSION_VM = "vm";
 
 	public static String getResourcePath(
@@ -59,14 +65,6 @@ public class ThemeHelper {
 				servletContext.getServletContextName());
 		}
 
-		int start = 0;
-
-		if (path.startsWith(StringPool.SLASH)) {
-			start = 1;
-		}
-
-		int end = path.lastIndexOf(CharPool.PERIOD);
-
 		String extension = theme.getTemplateExtension();
 
 		if (extension.equals(TEMPLATE_EXTENSION_FTL)) {
@@ -81,7 +79,17 @@ public class ThemeHelper {
 			}
 
 			sb.append(StringPool.SLASH);
+
+			int start = 0;
+
+			if (path.startsWith(StringPool.SLASH)) {
+				start = 1;
+			}
+
+			int end = path.lastIndexOf(CharPool.PERIOD);
+
 			sb.append(path.substring(start, end));
+
 			sb.append(StringPool.PERIOD);
 
 			if (Validator.isNotNull(portletId)) {
@@ -93,33 +101,8 @@ public class ThemeHelper {
 
 			return sb.toString();
 		}
-		else if (extension.equals(TEMPLATE_EXTENSION_VM)) {
-			sb.append(theme.getVelocityResourceListener());
-			sb.append(theme.getTemplatesPath());
 
-			if (Validator.isNotNull(servletContextName) &&
-				!path.startsWith(StringPool.SLASH.concat(servletContextName))) {
-
-				sb.append(StringPool.SLASH);
-				sb.append(servletContextName);
-			}
-
-			sb.append(StringPool.SLASH);
-			sb.append(path.substring(start, end));
-			sb.append(StringPool.PERIOD);
-
-			if (Validator.isNotNull(portletId)) {
-				sb.append(portletId);
-				sb.append(StringPool.PERIOD);
-			}
-
-			sb.append(TEMPLATE_EXTENSION_VM);
-
-			return sb.toString();
-		}
-		else {
-			return path;
-		}
+		return path;
 	}
 
 	public static boolean resourceExists(
@@ -132,8 +115,8 @@ public class ThemeHelper {
 		if (Validator.isNotNull(portletId)) {
 			exists = _resourceExists(servletContext, theme, portletId, path);
 
-			if (!exists && PortletConstants.hasInstanceId(portletId)) {
-				String rootPortletId = PortletConstants.getRootPortletId(
+			if (!exists && PortletIdCodec.hasInstanceId(portletId)) {
+				String rootPortletId = PortletIdCodec.decodePortletName(
 					portletId);
 
 				exists = _resourceExists(
@@ -170,10 +153,6 @@ public class ThemeHelper {
 			return TemplateResourceLoaderUtil.hasTemplateResource(
 				TemplateConstants.LANG_TYPE_FTL, resourcePath);
 		}
-		else if (extension.equals(TEMPLATE_EXTENSION_VM)) {
-			return TemplateResourceLoaderUtil.hasTemplateResource(
-				TemplateConstants.LANG_TYPE_VM, resourcePath);
-		}
 		else {
 			URL url = null;
 
@@ -190,9 +169,8 @@ public class ThemeHelper {
 			if (url == null) {
 				return false;
 			}
-			else {
-				return true;
-			}
+
+			return true;
 		}
 	}
 

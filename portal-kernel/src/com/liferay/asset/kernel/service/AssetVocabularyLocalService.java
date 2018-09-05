@@ -85,16 +85,21 @@ public interface AssetVocabularyLocalService extends BaseLocalService,
 	public AssetVocabulary addDefaultVocabulary(long groupId)
 		throws PortalException;
 
-	public AssetVocabulary addVocabulary(long userId, long groupId,
-		java.lang.String title, ServiceContext serviceContext)
-		throws PortalException;
-
 	@Indexable(type = IndexableType.REINDEX)
 	public AssetVocabulary addVocabulary(long userId, long groupId,
-		java.lang.String title, Map<Locale, java.lang.String> titleMap,
-		Map<Locale, java.lang.String> descriptionMap,
-		java.lang.String settings, ServiceContext serviceContext)
+		String title, Map<Locale, String> titleMap,
+		Map<Locale, String> descriptionMap, String settings,
+		ServiceContext serviceContext) throws PortalException;
+
+	public AssetVocabulary addVocabulary(long userId, long groupId,
+		String title, ServiceContext serviceContext) throws PortalException;
+
+	public void addVocabularyResources(AssetVocabulary vocabulary,
+		boolean addGroupPermissions, boolean addGuestPermissions)
 		throws PortalException;
+
+	public void addVocabularyResources(AssetVocabulary vocabulary,
+		ModelPermissions modelPermissions) throws PortalException;
 
 	/**
 	* Creates a new asset vocabulary with the primary key. Does not add the asset vocabulary to the database.
@@ -102,6 +107,7 @@ public interface AssetVocabularyLocalService extends BaseLocalService,
 	* @param vocabularyId the primary key for the new asset vocabulary
 	* @return the new asset vocabulary
 	*/
+	@Transactional(enabled = false)
 	public AssetVocabulary createAssetVocabulary(long vocabularyId);
 
 	/**
@@ -125,89 +131,6 @@ public interface AssetVocabularyLocalService extends BaseLocalService,
 	public AssetVocabulary deleteAssetVocabulary(long vocabularyId)
 		throws PortalException;
 
-	@Indexable(type = IndexableType.DELETE)
-	@SystemEvent(action = SystemEventConstants.ACTION_SKIP, type = SystemEventConstants.TYPE_DELETE)
-	public AssetVocabulary deleteVocabulary(AssetVocabulary vocabulary)
-		throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public AssetVocabulary fetchAssetVocabulary(long vocabularyId);
-
-	/**
-	* Returns the asset vocabulary matching the UUID and group.
-	*
-	* @param uuid the asset vocabulary's UUID
-	* @param groupId the primary key of the group
-	* @return the matching asset vocabulary, or <code>null</code> if a matching asset vocabulary could not be found
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public AssetVocabulary fetchAssetVocabularyByUuidAndGroupId(
-		java.lang.String uuid, long groupId);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public AssetVocabulary fetchGroupVocabulary(long groupId,
-		java.lang.String name) throws PortalException;
-
-	/**
-	* Returns the asset vocabulary with the primary key.
-	*
-	* @param vocabularyId the primary key of the asset vocabulary
-	* @return the asset vocabulary
-	* @throws PortalException if a asset vocabulary with the primary key could not be found
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public AssetVocabulary getAssetVocabulary(long vocabularyId)
-		throws PortalException;
-
-	/**
-	* Returns the asset vocabulary matching the UUID and group.
-	*
-	* @param uuid the asset vocabulary's UUID
-	* @param groupId the primary key of the group
-	* @return the matching asset vocabulary
-	* @throws PortalException if a matching asset vocabulary could not be found
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public AssetVocabulary getAssetVocabularyByUuidAndGroupId(
-		java.lang.String uuid, long groupId) throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public AssetVocabulary getGroupVocabulary(long groupId,
-		java.lang.String name) throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public AssetVocabulary getVocabulary(long vocabularyId)
-		throws PortalException;
-
-	/**
-	* Updates the asset vocabulary in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param assetVocabulary the asset vocabulary
-	* @return the asset vocabulary that was updated
-	*/
-	@Indexable(type = IndexableType.REINDEX)
-	public AssetVocabulary updateAssetVocabulary(
-		AssetVocabulary assetVocabulary);
-
-	@Indexable(type = IndexableType.REINDEX)
-	public AssetVocabulary updateVocabulary(long vocabularyId,
-		java.lang.String title, Map<Locale, java.lang.String> titleMap,
-		Map<Locale, java.lang.String> descriptionMap,
-		java.lang.String settings, ServiceContext serviceContext)
-		throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public ActionableDynamicQuery getActionableDynamicQuery();
-
-	public DynamicQuery dynamicQuery();
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
-		PortletDataContext portletDataContext);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
-
 	/**
 	* @throws PortalException
 	*/
@@ -215,38 +138,16 @@ public interface AssetVocabularyLocalService extends BaseLocalService,
 	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
 		throws PortalException;
 
-	@Override
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
+	public void deleteVocabularies(long groupId) throws PortalException;
+
+	@Indexable(type = IndexableType.DELETE)
+	@SystemEvent(action = SystemEventConstants.ACTION_SKIP, type = SystemEventConstants.TYPE_DELETE)
+	public AssetVocabulary deleteVocabulary(AssetVocabulary vocabulary)
 		throws PortalException;
 
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public BaseModelSearchResult<AssetVocabulary> searchVocabularies(
-		long companyId, long groupId, java.lang.String title, int start, int end)
-		throws PortalException;
+	public void deleteVocabulary(long vocabularyId) throws PortalException;
 
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public BaseModelSearchResult<AssetVocabulary> searchVocabularies(
-		long companyId, long groupId, java.lang.String title, int start,
-		int end, Sort sort) throws PortalException;
-
-	/**
-	* Returns the number of asset vocabularies.
-	*
-	* @return the number of asset vocabularies
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getAssetVocabulariesCount();
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getGroupVocabulariesCount(long[] groupIds);
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	public java.lang.String getOSGiServiceIdentifier();
+	public DynamicQuery dynamicQuery();
 
 	/**
 	* Performs a dynamic query on the database and returns the matching rows.
@@ -288,6 +189,55 @@ public interface AssetVocabularyLocalService extends BaseLocalService,
 		int end, OrderByComparator<T> orderByComparator);
 
 	/**
+	* Returns the number of rows matching the dynamic query.
+	*
+	* @param dynamicQuery the dynamic query
+	* @return the number of rows matching the dynamic query
+	*/
+	public long dynamicQueryCount(DynamicQuery dynamicQuery);
+
+	/**
+	* Returns the number of rows matching the dynamic query.
+	*
+	* @param dynamicQuery the dynamic query
+	* @param projection the projection to apply to the query
+	* @return the number of rows matching the dynamic query
+	*/
+	public long dynamicQueryCount(DynamicQuery dynamicQuery,
+		Projection projection);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public AssetVocabulary fetchAssetVocabulary(long vocabularyId);
+
+	/**
+	* Returns the asset vocabulary with the matching external reference code and company.
+	*
+	* @param companyId the primary key of the company
+	* @param externalReferenceCode the asset vocabulary's external reference code
+	* @return the matching asset vocabulary, or <code>null</code> if a matching asset vocabulary could not be found
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public AssetVocabulary fetchAssetVocabularyByReferenceCode(long companyId,
+		String externalReferenceCode);
+
+	/**
+	* Returns the asset vocabulary matching the UUID and group.
+	*
+	* @param uuid the asset vocabulary's UUID
+	* @param groupId the primary key of the group
+	* @return the matching asset vocabulary, or <code>null</code> if a matching asset vocabulary could not be found
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public AssetVocabulary fetchAssetVocabularyByUuidAndGroupId(String uuid,
+		long groupId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public AssetVocabulary fetchGroupVocabulary(long groupId, String name);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public ActionableDynamicQuery getActionableDynamicQuery();
+
+	/**
 	* Returns a range of all the asset vocabularies.
 	*
 	* <p>
@@ -310,7 +260,7 @@ public interface AssetVocabularyLocalService extends BaseLocalService,
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<AssetVocabulary> getAssetVocabulariesByUuidAndCompanyId(
-		java.lang.String uuid, long companyId);
+		String uuid, long companyId);
 
 	/**
 	* Returns a range of asset vocabularies matching the UUID and company.
@@ -324,11 +274,57 @@ public interface AssetVocabularyLocalService extends BaseLocalService,
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<AssetVocabulary> getAssetVocabulariesByUuidAndCompanyId(
-		java.lang.String uuid, long companyId, int start, int end,
+		String uuid, long companyId, int start, int end,
 		OrderByComparator<AssetVocabulary> orderByComparator);
+
+	/**
+	* Returns the number of asset vocabularies.
+	*
+	* @return the number of asset vocabularies
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getAssetVocabulariesCount();
+
+	/**
+	* Returns the asset vocabulary with the primary key.
+	*
+	* @param vocabularyId the primary key of the asset vocabulary
+	* @return the asset vocabulary
+	* @throws PortalException if a asset vocabulary with the primary key could not be found
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public AssetVocabulary getAssetVocabulary(long vocabularyId)
+		throws PortalException;
+
+	/**
+	* Returns the asset vocabulary matching the UUID and group.
+	*
+	* @param uuid the asset vocabulary's UUID
+	* @param groupId the primary key of the group
+	* @return the matching asset vocabulary
+	* @throws PortalException if a matching asset vocabulary could not be found
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public AssetVocabulary getAssetVocabularyByUuidAndGroupId(String uuid,
+		long groupId) throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<AssetVocabulary> getCompanyVocabularies(long companyId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
+		PortletDataContext portletDataContext);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<AssetVocabulary> getGroupsVocabularies(long[] groupIds);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<AssetVocabulary> getGroupsVocabularies(long[] groupIds,
+		String className);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<AssetVocabulary> getGroupsVocabularies(long[] groupIds,
+		String className, long classTypePK);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<AssetVocabulary> getGroupVocabularies(long groupId)
@@ -340,22 +336,32 @@ public interface AssetVocabularyLocalService extends BaseLocalService,
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<AssetVocabulary> getGroupVocabularies(long groupId,
-		java.lang.String name, int start, int end,
-		OrderByComparator<AssetVocabulary> obc);
+		String name, int start, int end, OrderByComparator<AssetVocabulary> obc);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<AssetVocabulary> getGroupVocabularies(long[] groupIds);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<AssetVocabulary> getGroupsVocabularies(long[] groupIds);
+	public int getGroupVocabulariesCount(long[] groupIds);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<AssetVocabulary> getGroupsVocabularies(long[] groupIds,
-		java.lang.String className);
+	public AssetVocabulary getGroupVocabulary(long groupId, String name)
+		throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<AssetVocabulary> getGroupsVocabularies(long[] groupIds,
-		java.lang.String className, long classTypePK);
+	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	public String getOSGiServiceIdentifier();
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
+		throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<AssetVocabulary> getVocabularies(Hits hits)
@@ -365,32 +371,33 @@ public interface AssetVocabularyLocalService extends BaseLocalService,
 	public List<AssetVocabulary> getVocabularies(long[] vocabularyIds)
 		throws PortalException;
 
-	/**
-	* Returns the number of rows matching the dynamic query.
-	*
-	* @param dynamicQuery the dynamic query
-	* @return the number of rows matching the dynamic query
-	*/
-	public long dynamicQueryCount(DynamicQuery dynamicQuery);
-
-	/**
-	* Returns the number of rows matching the dynamic query.
-	*
-	* @param dynamicQuery the dynamic query
-	* @param projection the projection to apply to the query
-	* @return the number of rows matching the dynamic query
-	*/
-	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection);
-
-	public void addVocabularyResources(AssetVocabulary vocabulary,
-		boolean addGroupPermissions, boolean addGuestPermissions)
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public AssetVocabulary getVocabulary(long vocabularyId)
 		throws PortalException;
 
-	public void addVocabularyResources(AssetVocabulary vocabulary,
-		ModelPermissions modelPermissions) throws PortalException;
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public BaseModelSearchResult<AssetVocabulary> searchVocabularies(
+		long companyId, long groupId, String title, int start, int end)
+		throws PortalException;
 
-	public void deleteVocabularies(long groupId) throws PortalException;
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public BaseModelSearchResult<AssetVocabulary> searchVocabularies(
+		long companyId, long groupId, String title, int start, int end,
+		Sort sort) throws PortalException;
 
-	public void deleteVocabulary(long vocabularyId) throws PortalException;
+	/**
+	* Updates the asset vocabulary in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param assetVocabulary the asset vocabulary
+	* @return the asset vocabulary that was updated
+	*/
+	@Indexable(type = IndexableType.REINDEX)
+	public AssetVocabulary updateAssetVocabulary(
+		AssetVocabulary assetVocabulary);
+
+	@Indexable(type = IndexableType.REINDEX)
+	public AssetVocabulary updateVocabulary(long vocabularyId, String title,
+		Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
+		String settings, ServiceContext serviceContext)
+		throws PortalException;
 }

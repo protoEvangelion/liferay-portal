@@ -17,13 +17,14 @@ package com.liferay.portal.tools.bundle.support.commands;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
+import com.liferay.portal.tools.bundle.support.constants.BundleSupportConstants;
 import com.liferay.portal.tools.bundle.support.internal.util.FileUtil;
+import com.liferay.portal.tools.bundle.support.internal.util.HttpUtil;
 import com.liferay.portal.tools.bundle.support.util.StreamLogger;
 
 import java.io.File;
 import java.io.IOException;
 
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
@@ -66,12 +67,21 @@ public class InitBundleCommand extends BaseCommand implements StreamLogger {
 		if ("file".equals(uri.getScheme())) {
 			path = Paths.get(uri);
 		}
+		else if (_token) {
+			String tokenContent = FileUtil.read(_tokenFile);
+
+			tokenContent = tokenContent.trim();
+
+			path = HttpUtil.downloadFile(uri, tokenContent, cacheDirPath, this);
+		}
 		else {
-			path = FileUtil.downloadFile(
+			path = HttpUtil.downloadFile(
 				uri, _userName, _password, cacheDirPath, this);
 		}
 
-		FileUtil.unpack(path, getLiferayHomePath(), _stripComponents);
+		File liferayHomeDir = getLiferayHomeDir();
+
+		FileUtil.unpack(path, liferayHomeDir.toPath(), _stripComponents);
 
 		_copyConfigs();
 		_fixPosixFilePermissions();
@@ -97,12 +107,20 @@ public class InitBundleCommand extends BaseCommand implements StreamLogger {
 		return _stripComponents;
 	}
 
+	public File getTokenFile() {
+		return _tokenFile;
+	}
+
 	public URL getUrl() {
 		return _url;
 	}
 
 	public String getUserName() {
 		return _userName;
+	}
+
+	public boolean isToken() {
+		return _token;
 	}
 
 	@Override
@@ -151,6 +169,14 @@ public class InitBundleCommand extends BaseCommand implements StreamLogger {
 		_stripComponents = stripComponents;
 	}
 
+	public void setToken(boolean token) {
+		_token = token;
+	}
+
+	public void setTokenFile(File tokenFile) {
+		_tokenFile = tokenFile;
+	}
+
 	public void setUrl(URL url) {
 		_url = url;
 	}
@@ -184,28 +210,32 @@ public class InitBundleCommand extends BaseCommand implements StreamLogger {
 
 		Path configsCommonDirPath = configsDirPath.resolve("common");
 
+		File liferayHomeDir = getLiferayHomeDir();
+
+		Path liferayHomeDirPath = liferayHomeDir.toPath();
+
 		if (Files.exists(configsCommonDirPath)) {
-			FileUtil.copyDirectory(configsCommonDirPath, getLiferayHomePath());
+			FileUtil.copyDirectory(configsCommonDirPath, liferayHomeDirPath);
 		}
 
 		Path configsEnvironmentDirPath = configsDirPath.resolve(_environment);
 
 		if (Files.exists(configsEnvironmentDirPath)) {
 			FileUtil.copyDirectory(
-				configsEnvironmentDirPath, getLiferayHomePath());
+				configsEnvironmentDirPath, liferayHomeDirPath);
 		}
 	}
 
 	private void _deleteBundle() throws IOException {
-		Path dirPath = getLiferayHomePath();
+		File dir = getLiferayHomeDir();
 
-		if (Files.exists(dirPath)) {
-			FileUtil.deleteDirectory(dirPath);
-		}
+		FileUtil.deleteDirectory(dir.toPath());
 	}
 
 	private void _fixPosixFilePermissions() throws IOException {
-		Path dirPath = getLiferayHomePath();
+		File dir = getLiferayHomeDir();
+
+		Path dirPath = dir.toPath();
 
 		if (!FileUtil.isPosixSupported(dirPath)) {
 			return;
@@ -233,30 +263,16 @@ public class InitBundleCommand extends BaseCommand implements StreamLogger {
 			});
 	}
 
-	private static final int _DEFAULT_STRIP_COMPONENTS = 1;
-
-	private static final URL _DEFAULT_URL;
-
 	private static final Set<PosixFilePermission> _shPosixFilePermissions =
 		PosixFilePermissions.fromString("rwxr-x---");
-
-	static {
-		try {
-			_DEFAULT_URL = new URL(
-				"https://cdn.lfrs.sl/releases.liferay.com/portal/7.0.2-ga3" +
-					"/liferay-ce-portal-tomcat-7.0-ga3-20160804222206210.zip");
-		}
-		catch (MalformedURLException murle) {
-			throw new ExceptionInInitializerError(murle);
-		}
-	}
 
 	@Parameter(
 		description = "The directory where to cache the downloaded bundles.",
 		names = "--cache-dir"
 	)
 	private File _cacheDir = new File(
-		System.getProperty("user.home"), ".liferay/bundles");
+		System.getProperty("user.home"),
+		BundleSupportConstants.DEFAULT_BUNDLE_CACHE_DIR_NAME);
 
 	@Parameter(
 		description = "The directory that contains the configuration files.",
@@ -268,7 +284,7 @@ public class InitBundleCommand extends BaseCommand implements StreamLogger {
 		description = "The environment of your Liferay home deployment.",
 		names = "--environment"
 	)
-	private String _environment;
+	private String _environment = BundleSupportConstants.DEFAULT_ENVIRONMENT;
 
 	@Parameter(
 		description = "The password if your URL requires authentication.",
@@ -280,13 +296,25 @@ public class InitBundleCommand extends BaseCommand implements StreamLogger {
 		description = "The number of directories to strip when expanding your bundle.",
 		names = "--strip-components"
 	)
-	private int _stripComponents = _DEFAULT_STRIP_COMPONENTS;
+	private int _stripComponents =
+		BundleSupportConstants.DEFAULT_STRIP_COMPONENTS;
+
+	@Parameter(
+		description = "Use token authentication.", names = {"-t", "--token"}
+	)
+	private boolean _token;
+
+	@Parameter(
+		description = "The file where your liferay.com download token is stored.",
+		names = "--token-file"
+	)
+	private File _tokenFile = BundleSupportConstants.DEFAULT_TOKEN_FILE;
 
 	@Parameter(
 		description = "The URL of the Liferay Bundle to expand.",
 		names = "--url"
 	)
-	private URL _url = _DEFAULT_URL;
+	private URL _url = BundleSupportConstants.DEFAULT_BUNDLE_URL_OBJECT;
 
 	@Parameter(
 		description = "The user name if your URL requires authentication.",

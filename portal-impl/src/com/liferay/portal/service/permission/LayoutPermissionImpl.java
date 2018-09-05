@@ -30,11 +30,12 @@ import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.BaseModelPermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.UserBag;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.service.OrganizationLocalServiceUtil;
-import com.liferay.portal.kernel.service.ResourceLocalServiceUtil;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalServiceUtil;
+import com.liferay.portal.kernel.service.UserGroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
 import com.liferay.portal.kernel.service.permission.LayoutPermission;
@@ -49,6 +50,7 @@ import com.liferay.portal.util.LayoutTypeControllerTracker;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.sites.kernel.util.SitesUtil;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -59,7 +61,7 @@ import java.util.Objects;
  * @author Raymond Augé
  */
 @OSGiBeanProperties(
-	property = {"model.class.name=com.liferay.portal.kernel.model.Layout"}
+	property = "model.class.name=com.liferay.portal.kernel.model.Layout"
 )
 public class LayoutPermissionImpl
 	implements BaseModelPermissionChecker, LayoutPermission {
@@ -244,12 +246,19 @@ public class LayoutPermissionImpl
 			// Check upward recursively to see if any pages above grant the
 			// action
 
+			long layoutGroupId = layout.getGroupId();
+
+			if (layout instanceof VirtualLayout) {
+				VirtualLayout virtualLayout = (VirtualLayout)layout;
+
+				layoutGroupId = virtualLayout.getSourceGroupId();
+			}
+
 			long parentLayoutId = layout.getParentLayoutId();
 
 			while (parentLayoutId != LayoutConstants.DEFAULT_PARENT_LAYOUT_ID) {
 				Layout parentLayout = LayoutLocalServiceUtil.getLayout(
-					layout.getGroupId(), layout.isPrivateLayout(),
-					parentLayoutId);
+					layoutGroupId, layout.isPrivateLayout(), parentLayoutId);
 
 				if (contains(permissionChecker, parentLayout, actionId)) {
 					return true;
@@ -257,30 +266,6 @@ public class LayoutPermissionImpl
 
 				parentLayoutId = parentLayout.getParentLayoutId();
 			}
-		}
-
-		int resourcePermissionsCount =
-			ResourcePermissionLocalServiceUtil.getResourcePermissionsCount(
-				layout.getCompanyId(), Layout.class.getName(),
-				ResourceConstants.SCOPE_INDIVIDUAL,
-				String.valueOf(layout.getPlid()));
-
-		if (resourcePermissionsCount == 0) {
-			boolean addGroupPermission = true;
-			boolean addGuestPermission = true;
-
-			if (layout.isPrivateLayout()) {
-				addGuestPermission = false;
-
-				if (group.isUser() || group.isUserGroup()) {
-					addGroupPermission = false;
-				}
-			}
-
-			ResourceLocalServiceUtil.addResources(
-				layout.getCompanyId(), layout.getGroupId(), 0,
-				Layout.class.getName(), layout.getPlid(), false,
-				addGroupPermission, addGuestPermission);
 		}
 
 		if (permissionChecker.hasPermission(
@@ -368,6 +353,14 @@ public class LayoutPermissionImpl
 		throws PortalException {
 
 		Group group = GroupLocalServiceUtil.getGroup(layout.getGroupId());
+
+		if (group.isControlPanel() && layout.isTypeControlPanel()) {
+			if (!permissionChecker.isSignedIn()) {
+				return false;
+			}
+
+			return true;
+		}
 
 		// Inactive sites are not viewable
 
@@ -471,7 +464,8 @@ public class LayoutPermissionImpl
 				return true;
 			}
 			else if (OrganizationPermissionUtil.contains(
-						permissionChecker, organizationId, ActionKeys.UPDATE)) {
+						 permissionChecker, organizationId,
+						 ActionKeys.UPDATE)) {
 
 				return true;
 			}
@@ -544,14 +538,6 @@ public class LayoutPermissionImpl
 			}
 		}
 
-		if (layout.isTypeControlPanel()) {
-			if (!permissionChecker.isSignedIn()) {
-				return false;
-			}
-
-			return true;
-		}
-
 		if (actionId.equals(ActionKeys.CUSTOMIZE) &&
 			(layout instanceof VirtualLayout)) {
 
@@ -573,6 +559,37 @@ public class LayoutPermissionImpl
 
 			if (hasPermission != null) {
 				return hasPermission.booleanValue();
+			}
+		}
+		else if (!checkViewableGroup && group.isUserGroup() &&
+				 actionId.equals(ActionKeys.VIEW)) {
+
+			if (permissionChecker.isGroupAdmin(group.getGroupId())) {
+				return true;
+			}
+
+			try {
+				UserBag userBag = permissionChecker.getUserBag();
+
+				if (userBag == null) {
+					return UserGroupLocalServiceUtil.hasUserUserGroup(
+						permissionChecker.getUserId(), group.getClassPK());
+				}
+
+				if (Arrays.binarySearch(
+						userBag.getUserUserGroupsIds(),
+						group.getClassPK()) >= 0) {
+
+					return true;
+				}
+
+				return false;
+			}
+			catch (PortalException | RuntimeException e) {
+				throw e;
+			}
+			catch (Exception e) {
+				throw new PortalException(e);
 			}
 		}
 

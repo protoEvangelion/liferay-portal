@@ -26,6 +26,8 @@ import com.liferay.mail.reader.service.AttachmentLocalServiceUtil;
 import com.liferay.mail.reader.service.FolderLocalServiceUtil;
 import com.liferay.mail.reader.service.MessageLocalServiceUtil;
 import com.liferay.petra.mail.InternetAddressUtil;
+import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -35,8 +37,6 @@ import com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -58,7 +58,6 @@ import javax.mail.FetchProfile;
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
-import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
@@ -84,6 +83,7 @@ public class IMAPAccessor {
 		_user = user;
 		_account = account;
 		_password = password;
+
 		_imapConnection = new IMAPConnection(account, password);
 	}
 
@@ -473,20 +473,20 @@ public class IMAPAccessor {
 					MessageLocalServiceUtil.getMessage(
 						folderId, remoteMessageId);
 
-				StringBundler bodyPlain = new StringBundler();
-				StringBundler bodyHtml = new StringBundler();
+				StringBundler bodyPlainSB = new StringBundler();
+				StringBundler bodyHtmlSB = new StringBundler();
 				List<MailFile> mailFiles = new ArrayList<>();
 
 				getParts(
-					_user.getUserId(), bodyPlain, bodyHtml, StringPool.BLANK,
-					jxMessage, mailFiles);
+					_user.getUserId(), bodyPlainSB, bodyHtmlSB,
+					StringPool.BLANK, jxMessage, mailFiles);
 
-				if (bodyHtml.length() == 0) {
-					if (bodyPlain.length() == 0) {
-						bodyHtml.append("&nbsp;");
+				if (bodyHtmlSB.length() == 0) {
+					if (bodyPlainSB.length() == 0) {
+						bodyHtmlSB.append("&nbsp;");
 					}
 					else {
-						bodyHtml = bodyPlain;
+						bodyHtmlSB = bodyPlainSB;
 					}
 				}
 
@@ -505,7 +505,7 @@ public class IMAPAccessor {
 				}
 
 				MessageLocalServiceUtil.updateContent(
-					message.getMessageId(), bodyHtml.toString(), flags);
+					message.getMessageId(), bodyHtmlSB.toString(), flags);
 			}
 		}
 		catch (MessagingException me) {
@@ -636,11 +636,11 @@ public class IMAPAccessor {
 				String sender = InternetAddressUtil.toString(
 					jxMessage.getFrom());
 				String to = InternetAddressUtil.toString(
-					jxMessage.getRecipients(RecipientType.TO));
+					jxMessage.getRecipients(Message.RecipientType.TO));
 				String cc = InternetAddressUtil.toString(
-					jxMessage.getRecipients(RecipientType.CC));
+					jxMessage.getRecipients(Message.RecipientType.CC));
 				String bcc = InternetAddressUtil.toString(
-					jxMessage.getRecipients(RecipientType.BCC));
+					jxMessage.getRecipients(Message.RecipientType.BCC));
 				Date sentDate = jxMessage.getSentDate();
 				String subject = jxMessage.getSubject();
 				String flags = getFlags(jxMessage);
@@ -674,9 +674,10 @@ public class IMAPAccessor {
 			stopWatch.stop();
 
 			_log.debug(
-				"Downloaded " + jxMessages.length + " messages from folder " +
-					jxFolder.getFullName() + " completed in " +
-						stopWatch.getTime() + " ms");
+				StringBundler.concat(
+					"Downloaded ", jxMessages.length, " messages from folder ",
+					jxFolder.getFullName(), " completed in ",
+					stopWatch.getTime(), " ms"));
 		}
 	}
 
@@ -781,7 +782,7 @@ public class IMAPAccessor {
 	}
 
 	protected String getFlags(Message jxMessage) throws MessagingException {
-		StringBundler sb = new StringBundler();
+		StringBundler sb = new StringBundler(4);
 
 		if (jxMessage.isSet(Flags.Flag.FLAGGED)) {
 			sb.append(MailConstants.FLAG_FLAGGED);
@@ -865,9 +866,8 @@ public class IMAPAccessor {
 
 			return getMessage(folderId, jxFolder, oldest);
 		}
-		else {
-			return jxMessage;
-		}
+
+		return jxMessage;
 	}
 
 	protected int[] getMessageIndexes(
@@ -984,7 +984,7 @@ public class IMAPAccessor {
 	}
 
 	protected void getParts(
-			long userId, StringBundler bodyPlain, StringBundler bodyHtml,
+			long userId, StringBundler bodyPlainSB, StringBundler bodyHtmlSB,
 			String contentPath, Part part, List<MailFile> mailFiles)
 		throws IOException, MessagingException {
 
@@ -998,22 +998,21 @@ public class IMAPAccessor {
 				Part curPart = multipart.getBodyPart(i);
 
 				getParts(
-					userId, bodyPlain, bodyHtml,
+					userId, bodyPlainSB, bodyHtmlSB,
 					contentPath.concat(StringPool.PERIOD).concat(
 						String.valueOf(i)),
 					curPart, mailFiles);
 			}
 		}
 		else if (Validator.isNull(fileName)) {
+			String contentString = content.toString();
 			String contentType = StringUtil.toLowerCase(part.getContentType());
 
 			if (contentType.startsWith(ContentTypes.TEXT_PLAIN)) {
-				bodyPlain.append(
-					content.toString().replaceAll("\r\n", "<br />"));
+				bodyPlainSB.append(contentString.replaceAll("\r\n", "<br />"));
 			}
 			else if (contentType.startsWith(ContentTypes.TEXT_HTML)) {
-				bodyHtml.append(
-					HtmlContentUtil.getInlineHtml(content.toString()));
+				bodyHtmlSB.append(HtmlContentUtil.getInlineHtml(contentString));
 			}
 			//else if (contentType.startsWith(ContentTypes.MESSAGE_RFC822)) {
 			//}
@@ -1051,20 +1050,20 @@ public class IMAPAccessor {
 	}
 
 	protected InternetAddress[] getRecipients(
-			long messageId, RecipientType recipientType)
+			long messageId, Message.RecipientType recipientType)
 		throws PortalException {
 
 		try {
 			com.liferay.mail.reader.model.Message message =
 				MessageLocalServiceUtil.getMessage(messageId);
 
-			if (recipientType.equals(RecipientType.TO)) {
+			if (recipientType.equals(Message.RecipientType.TO)) {
 				return InternetAddress.parse(message.getTo());
 			}
-			else if (recipientType.equals(RecipientType.CC)) {
+			else if (recipientType.equals(Message.RecipientType.CC)) {
 				return InternetAddress.parse(message.getCc());
 			}
-			else if (recipientType.equals(RecipientType.BCC)) {
+			else if (recipientType.equals(Message.RecipientType.BCC)) {
 				return InternetAddress.parse(message.getBcc());
 			}
 			else {

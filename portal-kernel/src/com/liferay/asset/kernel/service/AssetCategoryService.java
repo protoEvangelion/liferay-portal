@@ -58,98 +58,94 @@ public interface AssetCategoryService extends BaseService {
 	 *
 	 * Never modify or reference this interface directly. Always use {@link AssetCategoryServiceUtil} to access the asset category remote service. Add custom service methods to {@link com.liferay.portlet.asset.service.impl.AssetCategoryServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public AssetCategory addCategory(long groupId, java.lang.String title,
+	public AssetCategory addCategory(long groupId, long parentCategoryId,
+		Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
+		long vocabularyId, String[] categoryProperties,
+		ServiceContext serviceContext) throws PortalException;
+
+	public AssetCategory addCategory(long groupId, String title,
 		long vocabularyId, ServiceContext serviceContext)
 		throws PortalException;
 
-	public AssetCategory addCategory(long groupId, long parentCategoryId,
-		Map<Locale, java.lang.String> titleMap,
-		Map<Locale, java.lang.String> descriptionMap, long vocabularyId,
-		java.lang.String[] categoryProperties, ServiceContext serviceContext)
-		throws PortalException;
+	public void deleteCategories(long[] categoryIds) throws PortalException;
+
+	/**
+	* @deprecated As of Wilberforce (7.0.x), Replaced by {@link
+	#deleteCategories(long[])}
+	*/
+	@Deprecated
+	public List<AssetCategory> deleteCategories(long[] categoryIds,
+		ServiceContext serviceContext) throws PortalException;
+
+	public void deleteCategory(long categoryId) throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public AssetCategory fetchCategory(long categoryId)
 		throws PortalException;
 
+	/**
+	* Returns a range of assetCategories related to an AssetEntry with the
+	* given "classNameId-classPK".
+	*
+	* @param classNameId the className of the asset
+	* @param classPK the classPK of the asset
+	* @param start the lower bound of the range of results
+	* @param end the upper bound of the range of results (not inclusive)
+	* @return the matching assetCategories
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<AssetCategory> getCategories(long classNameId, long classPK,
+		int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<AssetCategory> getCategories(String className, long classPK)
+		throws PortalException;
+
+	/**
+	* Returns the number of assetCategories related to an AssetEntry with the
+	* given "classNameId-classPK".
+	*
+	* @param classNameId the className of the asset
+	* @param classPK the classPK of the asset
+	* @return the number of matching assetCategories
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getCategoriesCount(long classNameId, long classPK);
+
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public AssetCategory getCategory(long categoryId) throws PortalException;
 
-	public AssetCategory moveCategory(long categoryId, long parentCategoryId,
-		long vocabularyId, ServiceContext serviceContext)
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public String getCategoryPath(long categoryId) throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<AssetCategory> getChildCategories(long parentCategoryId)
 		throws PortalException;
 
-	public AssetCategory updateCategory(long categoryId, long parentCategoryId,
-		Map<Locale, java.lang.String> titleMap,
-		Map<Locale, java.lang.String> descriptionMap, long vocabularyId,
-		java.lang.String[] categoryProperties, ServiceContext serviceContext)
+	/**
+	* eturns a range of child assetCategories.
+	*
+	* @param parentCategoryId the parent category ID
+	* @param start the lower bound of the range of results
+	* @param end the upper bound of the range of results (not inclusive)
+	* @param obc the comparator
+	* @return the matching categories
+	* @throws PortalException
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<AssetCategory> getChildCategories(long parentCategoryId,
+		int start, int end, OrderByComparator<AssetCategory> obc)
 		throws PortalException;
 
+	/**
+	* Returns the number of child categories
+	*
+	* @param parentCategoryId the parent category ID
+	* @return the number of child categories
+	* @throws PortalException
+	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public AssetCategoryDisplay getVocabularyCategoriesDisplay(long groupId,
-		java.lang.String name, long vocabularyId, int start, int end,
-		OrderByComparator<AssetCategory> obc) throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public AssetCategoryDisplay getVocabularyCategoriesDisplay(
-		long vocabularyId, int start, int end,
-		OrderByComparator<AssetCategory> obc) throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public AssetCategoryDisplay searchCategoriesDisplay(long groupId,
-		java.lang.String title, long parentCategoryId, long vocabularyId,
-		int start, int end) throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public AssetCategoryDisplay searchCategoriesDisplay(long groupId,
-		java.lang.String title, long vocabularyId, int start, int end)
-		throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public AssetCategoryDisplay searchCategoriesDisplay(long groupId,
-		java.lang.String title, long vocabularyId, long parentCategoryId,
-		int start, int end, Sort sort) throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public AssetCategoryDisplay searchCategoriesDisplay(long[] groupIds,
-		java.lang.String title, long[] parentCategoryIds, long[] vocabularyIds,
-		int start, int end) throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public AssetCategoryDisplay searchCategoriesDisplay(long[] groupIds,
-		java.lang.String title, long[] vocabularyIds, int start, int end)
-		throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public AssetCategoryDisplay searchCategoriesDisplay(long[] groupIds,
-		java.lang.String title, long[] vocabularyIds, long[] parentCategoryIds,
-		int start, int end, Sort sort) throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public JSONArray search(long groupId, java.lang.String name,
-		java.lang.String[] categoryProperties, int start, int end)
-		throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public JSONArray search(long[] groupIds, java.lang.String name,
-		long[] vocabularyIds, int start, int end) throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getVocabularyCategoriesCount(long groupId,
-		java.lang.String name, long vocabularyId);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getVocabularyCategoriesCount(long groupId, long parentCategory,
-		long vocabularyId);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getVocabularyCategoriesCount(long groupId, long vocabularyId);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getVocabularyRootCategoriesCount(long groupId, long vocabularyId);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.lang.String getCategoryPath(long categoryId)
+	public int getChildCategoriesCount(long parentCategoryId)
 		throws PortalException;
 
 	/**
@@ -157,42 +153,7 @@ public interface AssetCategoryService extends BaseService {
 	*
 	* @return the OSGi service identifier
 	*/
-	public java.lang.String getOSGiServiceIdentifier();
-
-	/**
-	* @deprecated As of 7.0.0, Replaced by {@link #deleteCategories(long[])}
-	*/
-	@java.lang.Deprecated
-	public List<AssetCategory> deleteCategories(long[] categoryIds,
-		ServiceContext serviceContext) throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<AssetCategory> getCategories(java.lang.String className,
-		long classPK) throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<AssetCategory> getChildCategories(long parentCategoryId)
-		throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<AssetCategory> getChildCategories(long parentCategoryId,
-		int start, int end, OrderByComparator<AssetCategory> obc)
-		throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<AssetCategory> getVocabularyCategories(long groupId,
-		java.lang.String name, long vocabularyId, int start, int end,
-		OrderByComparator<AssetCategory> obc);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<AssetCategory> getVocabularyCategories(long groupId,
-		long parentCategoryId, long vocabularyId, int start, int end,
-		OrderByComparator<AssetCategory> obc);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<AssetCategory> getVocabularyCategories(long parentCategoryId,
-		long vocabularyId, int start, int end,
-		OrderByComparator<AssetCategory> obc) throws PortalException;
+	public String getOSGiServiceIdentifier();
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<AssetCategory> getVocabularyCategories(long vocabularyId,
@@ -200,16 +161,99 @@ public interface AssetCategoryService extends BaseService {
 		throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<AssetCategory> getVocabularyCategories(long parentCategoryId,
+		long vocabularyId, int start, int end,
+		OrderByComparator<AssetCategory> obc) throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<AssetCategory> getVocabularyCategories(long groupId,
+		long parentCategoryId, long vocabularyId, int start, int end,
+		OrderByComparator<AssetCategory> obc);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<AssetCategory> getVocabularyCategories(long groupId,
+		String name, long vocabularyId, int start, int end,
+		OrderByComparator<AssetCategory> obc);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getVocabularyCategoriesCount(long groupId, long vocabularyId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getVocabularyCategoriesCount(long groupId, long parentCategory,
+		long vocabularyId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getVocabularyCategoriesCount(long groupId, String name,
+		long vocabularyId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public AssetCategoryDisplay getVocabularyCategoriesDisplay(
+		long vocabularyId, int start, int end,
+		OrderByComparator<AssetCategory> obc) throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public AssetCategoryDisplay getVocabularyCategoriesDisplay(long groupId,
+		String name, long vocabularyId, int start, int end,
+		OrderByComparator<AssetCategory> obc) throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<AssetCategory> getVocabularyRootCategories(long groupId,
 		long vocabularyId, int start, int end,
 		OrderByComparator<AssetCategory> obc);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<AssetCategory> search(long groupId, java.lang.String keywords,
+	public int getVocabularyRootCategoriesCount(long groupId, long vocabularyId);
+
+	public AssetCategory moveCategory(long categoryId, long parentCategoryId,
+		long vocabularyId, ServiceContext serviceContext)
+		throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<AssetCategory> search(long groupId, String keywords,
 		long vocabularyId, int start, int end,
 		OrderByComparator<AssetCategory> obc);
 
-	public void deleteCategories(long[] categoryIds) throws PortalException;
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public JSONArray search(long groupId, String name,
+		String[] categoryProperties, int start, int end)
+		throws PortalException;
 
-	public void deleteCategory(long categoryId) throws PortalException;
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public JSONArray search(long[] groupIds, String name, long[] vocabularyIds,
+		int start, int end) throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public AssetCategoryDisplay searchCategoriesDisplay(long groupId,
+		String title, long vocabularyId, int start, int end)
+		throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public AssetCategoryDisplay searchCategoriesDisplay(long groupId,
+		String title, long parentCategoryId, long vocabularyId, int start,
+		int end) throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public AssetCategoryDisplay searchCategoriesDisplay(long groupId,
+		String title, long vocabularyId, long parentCategoryId, int start,
+		int end, Sort sort) throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public AssetCategoryDisplay searchCategoriesDisplay(long[] groupIds,
+		String title, long[] vocabularyIds, int start, int end)
+		throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public AssetCategoryDisplay searchCategoriesDisplay(long[] groupIds,
+		String title, long[] parentCategoryIds, long[] vocabularyIds,
+		int start, int end) throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public AssetCategoryDisplay searchCategoriesDisplay(long[] groupIds,
+		String title, long[] vocabularyIds, long[] parentCategoryIds,
+		int start, int end, Sort sort) throws PortalException;
+
+	public AssetCategory updateCategory(long categoryId, long parentCategoryId,
+		Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
+		long vocabularyId, String[] categoryProperties,
+		ServiceContext serviceContext) throws PortalException;
 }

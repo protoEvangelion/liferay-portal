@@ -49,10 +49,24 @@ public class DLFileShortcutServiceUtil {
 			toFileEntryId, serviceContext);
 	}
 
+	public static void deleteFileShortcut(long fileShortcutId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		getService().deleteFileShortcut(fileShortcutId);
+	}
+
 	public static com.liferay.document.library.kernel.model.DLFileShortcut getFileShortcut(
 		long fileShortcutId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().getFileShortcut(fileShortcutId);
+	}
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	public static String getOSGiServiceIdentifier() {
+		return getService().getOSGiServiceIdentifier();
 	}
 
 	public static com.liferay.document.library.kernel.model.DLFileShortcut updateFileShortcut(
@@ -63,20 +77,6 @@ public class DLFileShortcutServiceUtil {
 		return getService()
 				   .updateFileShortcut(fileShortcutId, repositoryId, folderId,
 			toFileEntryId, serviceContext);
-	}
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	public static java.lang.String getOSGiServiceIdentifier() {
-		return getService().getOSGiServiceIdentifier();
-	}
-
-	public static void deleteFileShortcut(long fileShortcutId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().deleteFileShortcut(fileShortcutId);
 	}
 
 	public static void updateFileShortcuts(long oldToFileEntryId,

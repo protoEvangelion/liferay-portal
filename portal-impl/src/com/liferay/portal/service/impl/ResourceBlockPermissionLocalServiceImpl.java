@@ -36,8 +36,10 @@ import java.util.Set;
  * local service.
  * </p>
  *
- * @author Connor McKay
+ * @author     Connor McKay
+ * @deprecated As of Judson (7.1.x), with no direct replacement
  */
+@Deprecated
 public class ResourceBlockPermissionLocalServiceImpl
 	extends ResourceBlockPermissionLocalServiceBaseImpl {
 
@@ -71,7 +73,7 @@ public class ResourceBlockPermissionLocalServiceImpl
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
 	 *             #getAvailableResourceBlockPermissionActionIds(String, long,
 	 *             List)}
 	 */
@@ -135,18 +137,18 @@ public class ResourceBlockPermissionLocalServiceImpl
 			resourceBlockPermissionPersistence.findByResourceBlockId(
 				resourceBlockId);
 
-		ResourceBlockPermissionsContainer resourceBlockPermissionContainer =
+		ResourceBlockPermissionsContainer resourceBlockPermissionsContainer =
 			new ResourceBlockPermissionsContainer();
 
 		for (ResourceBlockPermission resourceBlockPermission :
 				resourceBlockPermissions) {
 
-			resourceBlockPermissionContainer.setPermissions(
+			resourceBlockPermissionsContainer.setPermissions(
 				resourceBlockPermission.getRoleId(),
 				resourceBlockPermission.getActionIds());
 		}
 
-		return resourceBlockPermissionContainer;
+		return resourceBlockPermissionsContainer;
 	}
 
 	@Override

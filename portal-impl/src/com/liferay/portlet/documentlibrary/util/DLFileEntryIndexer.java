@@ -14,6 +14,7 @@
 
 package com.liferay.portlet.documentlibrary.util;
 
+import com.liferay.document.library.kernel.exception.NoSuchFileVersionException;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.model.DLFileEntryMetadata;
 import com.liferay.document.library.kernel.model.DLFileVersion;
@@ -31,6 +32,8 @@ import com.liferay.dynamic.data.mapping.kernel.StorageEngineManagerUtil;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 import com.liferay.expando.kernel.util.ExpandoBridgeIndexerUtil;
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.comment.Comment;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
@@ -54,6 +57,7 @@ import com.liferay.portal.kernel.search.IndexWriterHelperUtil;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.RelatedEntryIndexer;
+import com.liferay.portal.kernel.search.RelatedEntryIndexerRegistryUtil;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.Summary;
@@ -62,22 +66,21 @@ import com.liferay.portal.kernel.search.filter.QueryFilter;
 import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
-import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.ServiceProxyFactory;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.repository.liferayrepository.model.LiferayFileEntry;
 import com.liferay.portal.util.PrefsPropsUtil;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portlet.documentlibrary.service.permission.DLFileEntryPermission;
 import com.liferay.trash.kernel.util.TrashUtil;
 
 import java.io.IOException;
@@ -92,11 +95,13 @@ import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 
 /**
- * @author Brian Wing Shun Chan
- * @author Raymond Augé
- * @author Alexander Chow
+ * @author     Brian Wing Shun Chan
+ * @author     Raymond Augé
+ * @author     Alexander Chow
+ * @deprecated As of Judson (7.1.x), replaced by {@link
+ *             com.liferay.document.library.internal.search.DLFileEntryIndexer}
  */
-@OSGiBeanProperties
+@Deprecated
 public class DLFileEntryIndexer
 	extends BaseIndexer<DLFileEntry> implements RelatedEntryIndexer {
 
@@ -158,7 +163,7 @@ public class DLFileEntryIndexer
 			long entryClassPK, String actionId)
 		throws Exception {
 
-		return DLFileEntryPermission.contains(
+		return _dlFileEntryModelResourcePermission.contains(
 			permissionChecker, entryClassPK, ActionKeys.VIEW);
 	}
 
@@ -175,17 +180,26 @@ public class DLFileEntryIndexer
 	public boolean isVisibleRelatedEntry(long classPK, int status)
 		throws Exception {
 
-		FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(classPK);
+		try {
+			FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(classPK);
 
-		if (fileEntry instanceof LiferayFileEntry) {
-			DLFileEntry dlFileEntry = (DLFileEntry)fileEntry.getModel();
+			if (fileEntry instanceof LiferayFileEntry) {
+				DLFileEntry dlFileEntry = (DLFileEntry)fileEntry.getModel();
 
-			if (dlFileEntry.isInHiddenFolder()) {
-				Indexer<?> indexer = IndexerRegistryUtil.getIndexer(
-					dlFileEntry.getClassName());
+				if (dlFileEntry.isInHiddenFolder()) {
+					Indexer<?> indexer = IndexerRegistryUtil.getIndexer(
+						dlFileEntry.getClassName());
 
-				return indexer.isVisible(dlFileEntry.getClassPK(), status);
+					return indexer.isVisible(dlFileEntry.getClassPK(), status);
+				}
 			}
+		}
+		catch (Exception e) {
+			if (_log.isInfoEnabled()) {
+				_log.info("Unble to get file entry", e);
+			}
+
+			return false;
 		}
 
 		return true;
@@ -202,7 +216,8 @@ public class DLFileEntryIndexer
 			addRelatedClassNames(contextBooleanFilter, searchContext);
 		}
 
-		if (ArrayUtil.contains(
+		if (ArrayUtil.isEmpty(searchContext.getFolderIds()) ||
+			ArrayUtil.contains(
 				searchContext.getFolderIds(),
 				DLFolderConstants.DEFAULT_PARENT_FOLDER_ID)) {
 
@@ -290,6 +305,8 @@ public class DLFileEntryIndexer
 		addSearchTerm(searchQuery, searchContext, "extension", false);
 		addSearchTerm(searchQuery, searchContext, "fileEntryTypeId", false);
 		addSearchTerm(searchQuery, searchContext, "path", false);
+		addSearchLocalizedTerm(
+			searchQuery, searchContext, Field.CONTENT, false);
 
 		LinkedHashMap<String, Object> params =
 			(LinkedHashMap<String, Object>)searchContext.getAttribute("params");
@@ -338,6 +355,19 @@ public class DLFileEntryIndexer
 		}
 	}
 
+	protected Summary createSummary(
+		Locale locale, Document document, String titleField,
+		String contentField) {
+
+		String prefix = Field.SNIPPET + StringPool.UNDERLINE;
+
+		String title = document.get(prefix + titleField, titleField);
+		String content = document.get(
+			locale, prefix + contentField, contentField);
+
+		return new Summary(title, content);
+	}
+
 	@Override
 	protected void doDelete(DLFileEntry dlFileEntry) throws Exception {
 		deleteDocument(
@@ -366,7 +396,9 @@ public class DLFileEntryIndexer
 			}
 
 			if (indexContent) {
-				is = dlFileEntry.getFileVersion().getContentStream(false);
+				DLFileVersion fileVersion = dlFileEntry.getFileVersion();
+
+				is = fileVersion.getContentStream(false);
 			}
 		}
 		catch (Exception e) {
@@ -384,13 +416,20 @@ public class DLFileEntryIndexer
 			if (indexContent) {
 				if (is != null) {
 					try {
+						Locale defaultLocale = PortalUtil.getSiteDefaultLocale(
+							dlFileEntry.getGroupId());
+
+						String localizedField =
+							LocalizationUtil.getLocalizedName(
+								Field.CONTENT, defaultLocale.toString());
+
 						document.addFile(
-							Field.CONTENT, is, dlFileEntry.getTitle(),
+							localizedField, is, dlFileEntry.getTitle(),
 							PropsValues.DL_FILE_INDEXING_MAX_SIZE);
 					}
 					catch (IOException ioe) {
 						throw new SearchException(
-							"Cannot extract text from file" + dlFileEntry);
+							"Cannot extract text from file" + dlFileEntry, ioe);
 					}
 				}
 				else if (_log.isDebugEnabled()) {
@@ -447,26 +486,27 @@ public class DLFileEntryIndexer
 			addFileEntryTypeAttributes(document, dlFileVersion);
 
 			if (dlFileEntry.isInHiddenFolder()) {
-				Indexer<?> indexer = IndexerRegistryUtil.getIndexer(
-					dlFileEntry.getClassName());
+				List<RelatedEntryIndexer> relatedEntryIndexers =
+					RelatedEntryIndexerRegistryUtil.getRelatedEntryIndexers(
+						dlFileEntry.getClassName());
 
-				if ((indexer != null) &&
-					(indexer instanceof RelatedEntryIndexer)) {
+				if (relatedEntryIndexers != null) {
+					for (RelatedEntryIndexer relatedEntryIndexer :
+							relatedEntryIndexers) {
 
-					RelatedEntryIndexer relatedEntryIndexer =
-						(RelatedEntryIndexer)indexer;
+						relatedEntryIndexer.addRelatedEntryFields(
+							document, new LiferayFileEntry(dlFileEntry));
 
-					relatedEntryIndexer.addRelatedEntryFields(
-						document, new LiferayFileEntry(dlFileEntry));
+						DocumentHelper documentHelper = new DocumentHelper(
+							document);
 
-					DocumentHelper documentHelper = new DocumentHelper(
-						document);
+						documentHelper.setAttachmentOwnerKey(
+							PortalUtil.getClassNameId(
+								dlFileEntry.getClassName()),
+							dlFileEntry.getClassPK());
 
-					documentHelper.setAttachmentOwnerKey(
-						PortalUtil.getClassNameId(dlFileEntry.getClassName()),
-						dlFileEntry.getClassPK());
-
-					document.addKeyword(Field.RELATED_ENTRY, true);
+						document.addKeyword(Field.RELATED_ENTRY, true);
+					}
 				}
 			}
 
@@ -492,7 +532,12 @@ public class DLFileEntryIndexer
 		Document document, Locale locale, String snippet,
 		PortletRequest portletRequest, PortletResponse portletResponse) {
 
-		Summary summary = createSummary(document, Field.TITLE, Field.CONTENT);
+		Summary summary = createSummary(
+			locale, document, Field.TITLE, Field.CONTENT);
+
+		if (Validator.isNull(summary.getContent())) {
+			summary = createSummary(document, Field.TITLE, Field.DESCRIPTION);
+		}
 
 		summary.setMaxContentLength(200);
 
@@ -501,7 +546,21 @@ public class DLFileEntryIndexer
 
 	@Override
 	protected void doReindex(DLFileEntry dlFileEntry) throws Exception {
-		DLFileVersion dlFileVersion = dlFileEntry.getFileVersion();
+		DLFileVersion dlFileVersion = null;
+
+		try {
+			dlFileVersion = dlFileEntry.getFileVersion();
+		}
+		catch (NoSuchFileVersionException nsfve) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					"Unable to get file version for file entry " +
+						dlFileEntry.getFileEntryId(),
+					nsfve);
+			}
+
+			return;
+		}
 
 		if (!dlFileVersion.isApproved() && !dlFileEntry.isInTrash()) {
 			return;
@@ -679,6 +738,13 @@ public class DLFileEntryIndexer
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		DLFileEntryIndexer.class);
+
+	private static volatile ModelResourcePermission<DLFileEntry>
+		_dlFileEntryModelResourcePermission =
+			ServiceProxyFactory.newServiceTrackedInstance(
+				ModelResourcePermission.class, DLFileEntryIndexer.class,
+				"_dlFileEntryModelResourcePermission",
+				"(model.class.name=" + DLFileEntry.class.getName() + ")", true);
 
 	private final RelatedEntryIndexer _relatedEntryIndexer =
 		new BaseRelatedEntryIndexer();

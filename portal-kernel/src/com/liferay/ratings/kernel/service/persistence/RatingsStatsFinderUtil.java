@@ -21,8 +21,10 @@ import com.liferay.portal.kernel.util.ReferenceRegistry;
 
 /**
  * @author Brian Wing Shun Chan
+ * @deprecated As of Judson (7.1.x), with no direct replacement
  * @generated
  */
+@Deprecated
 @ProviderType
 public class RatingsStatsFinderUtil {
 	public static java.util.Map<java.io.Serializable, com.liferay.ratings.kernel.model.RatingsStats> fetchByPrimaryKeys(
@@ -31,7 +33,7 @@ public class RatingsStatsFinderUtil {
 	}
 
 	public static java.util.List<com.liferay.ratings.kernel.model.RatingsStats> findByC_C(
-		long classNameId, java.util.List<java.lang.Long> classPKs) {
+		long classNameId, java.util.List<Long> classPKs) {
 		return getFinder().findByC_C(classNameId, classPKs);
 	}
 

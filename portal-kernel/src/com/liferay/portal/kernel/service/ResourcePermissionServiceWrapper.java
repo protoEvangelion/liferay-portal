@@ -33,16 +33,6 @@ public class ResourcePermissionServiceWrapper
 	}
 
 	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	@Override
-	public java.lang.String getOSGiServiceIdentifier() {
-		return _resourcePermissionService.getOSGiServiceIdentifier();
-	}
-
-	/**
 	* Grants the role permission at the scope to perform the action on
 	* resources of the type. Existing actions are retained.
 	*
@@ -80,11 +70,20 @@ public class ResourcePermissionServiceWrapper
 	*/
 	@Override
 	public void addResourcePermission(long groupId, long companyId,
-		java.lang.String name, int scope, java.lang.String primKey,
-		long roleId, java.lang.String actionId)
+		String name, int scope, String primKey, long roleId, String actionId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_resourcePermissionService.addResourcePermission(groupId, companyId,
 			name, scope, primKey, roleId, actionId);
+	}
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	@Override
+	public String getOSGiServiceIdentifier() {
+		return _resourcePermissionService.getOSGiServiceIdentifier();
 	}
 
 	/**
@@ -109,8 +108,7 @@ public class ResourcePermissionServiceWrapper
 	*/
 	@Override
 	public void removeResourcePermission(long groupId, long companyId,
-		java.lang.String name, int scope, java.lang.String primKey,
-		long roleId, java.lang.String actionId)
+		String name, int scope, String primKey, long roleId, String actionId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_resourcePermissionService.removeResourcePermission(groupId, companyId,
 			name, scope, primKey, roleId, actionId);
@@ -132,42 +130,10 @@ public class ResourcePermissionServiceWrapper
 	*/
 	@Override
 	public void removeResourcePermissions(long groupId, long companyId,
-		java.lang.String name, int scope, long roleId, java.lang.String actionId)
+		String name, int scope, long roleId, String actionId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_resourcePermissionService.removeResourcePermissions(groupId,
 			companyId, name, scope, roleId, actionId);
-	}
-
-	/**
-	* Updates the role's permissions at the scope, setting the actions that can
-	* be performed on resources of the type. Existing actions are replaced.
-	*
-	* <p>
-	* This method can be used to set permissions at any scope, but it is
-	* generally only used at the individual scope. For example, it could be
-	* used to set the guest permissions on a blog post.
-	* </p>
-	*
-	* <p>
-	* Depending on the scope, the value of <code>primKey</code> will have
-	* different meanings. For more information, see {@link
-	* com.liferay.portal.model.impl.ResourcePermissionImpl}.
-	* </p>
-	*
-	* @param groupId the primary key of the group
-	* @param companyId the primary key of the company
-	* @param name the resource's name, which can be either a class name or a
-	portlet ID
-	* @param primKey the primary key
-	* @param roleIdsToActionIds a map of role IDs to action IDs of the actions
-	*/
-	@Override
-	public void setIndividualResourcePermissions(long groupId, long companyId,
-		java.lang.String name, java.lang.String primKey,
-		java.util.Map<java.lang.Long, java.lang.String[]> roleIdsToActionIds)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_resourcePermissionService.setIndividualResourcePermissions(groupId,
-			companyId, name, primKey, roleIdsToActionIds);
 	}
 
 	/**
@@ -196,11 +162,42 @@ public class ResourcePermissionServiceWrapper
 	*/
 	@Override
 	public void setIndividualResourcePermissions(long groupId, long companyId,
-		java.lang.String name, java.lang.String primKey, long roleId,
-		java.lang.String[] actionIds)
+		String name, String primKey, long roleId, String[] actionIds)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_resourcePermissionService.setIndividualResourcePermissions(groupId,
 			companyId, name, primKey, roleId, actionIds);
+	}
+
+	/**
+	* Updates the role's permissions at the scope, setting the actions that can
+	* be performed on resources of the type. Existing actions are replaced.
+	*
+	* <p>
+	* This method can be used to set permissions at any scope, but it is
+	* generally only used at the individual scope. For example, it could be
+	* used to set the guest permissions on a blog post.
+	* </p>
+	*
+	* <p>
+	* Depending on the scope, the value of <code>primKey</code> will have
+	* different meanings. For more information, see {@link
+	* com.liferay.portal.model.impl.ResourcePermissionImpl}.
+	* </p>
+	*
+	* @param groupId the primary key of the group
+	* @param companyId the primary key of the company
+	* @param name the resource's name, which can be either a class name or a
+	portlet ID
+	* @param primKey the primary key
+	* @param roleIdsToActionIds a map of role IDs to action IDs of the actions
+	*/
+	@Override
+	public void setIndividualResourcePermissions(long groupId, long companyId,
+		String name, String primKey,
+		java.util.Map<Long, String[]> roleIdsToActionIds)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_resourcePermissionService.setIndividualResourcePermissions(groupId,
+			companyId, name, primKey, roleIdsToActionIds);
 	}
 
 	@Override

@@ -1,13 +1,18 @@
 import com.liferay.gradle.plugins.defaults.tasks.ReplaceRegexTask
 
+apply plugin: "com.gradle.plugin-publish"
+
 task updateReadme(type: ReplaceRegexTask)
 
 dependencies {
-	compile group: "com.liferay", name: "com.liferay.gradle.util", version: "1.0.26"
+	compile group: "com.liferay", name: "com.liferay.gradle.util", version: "1.0.31"
 
 	compileOnly fileTree(builtBy: [rootProject.tasks.extractGradleApi25], dir: new File(rootProject.buildDir, "gradle-2.5"))
+	compileOnly group: "com.liferay", name: "com.liferay.source.formatter", version: "1.0.722"
+}
 
-	provided group: "com.liferay", name: "com.liferay.source.formatter", version: "1.0.394"
+pluginBundle {
+	tags = ["java", "style"]
 }
 
 updateReadme {

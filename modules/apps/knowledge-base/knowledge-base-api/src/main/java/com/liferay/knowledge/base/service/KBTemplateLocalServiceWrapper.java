@@ -47,7 +47,7 @@ public class KBTemplateLocalServiceWrapper implements KBTemplateLocalService,
 
 	@Override
 	public com.liferay.knowledge.base.model.KBTemplate addKBTemplate(
-		long userId, java.lang.String title, java.lang.String content,
+		long userId, String title, String content,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _kbTemplateLocalService.addKBTemplate(userId, title, content,
@@ -64,6 +64,12 @@ public class KBTemplateLocalServiceWrapper implements KBTemplateLocalService,
 	public com.liferay.knowledge.base.model.KBTemplate createKBTemplate(
 		long kbTemplateId) {
 		return _kbTemplateLocalService.createKBTemplate(kbTemplateId);
+	}
+
+	@Override
+	public void deleteGroupKBTemplates(long groupId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_kbTemplateLocalService.deleteGroupKBTemplates(groupId);
 	}
 
 	/**
@@ -95,95 +101,9 @@ public class KBTemplateLocalServiceWrapper implements KBTemplateLocalService,
 	}
 
 	@Override
-	public com.liferay.knowledge.base.model.KBTemplate fetchKBTemplate(
-		long kbTemplateId) {
-		return _kbTemplateLocalService.fetchKBTemplate(kbTemplateId);
-	}
-
-	/**
-	* Returns the kb template matching the UUID and group.
-	*
-	* @param uuid the kb template's UUID
-	* @param groupId the primary key of the group
-	* @return the matching kb template, or <code>null</code> if a matching kb template could not be found
-	*/
-	@Override
-	public com.liferay.knowledge.base.model.KBTemplate fetchKBTemplateByUuidAndGroupId(
-		java.lang.String uuid, long groupId) {
-		return _kbTemplateLocalService.fetchKBTemplateByUuidAndGroupId(uuid,
-			groupId);
-	}
-
-	/**
-	* Returns the kb template with the primary key.
-	*
-	* @param kbTemplateId the primary key of the kb template
-	* @return the kb template
-	* @throws PortalException if a kb template with the primary key could not be found
-	*/
-	@Override
-	public com.liferay.knowledge.base.model.KBTemplate getKBTemplate(
-		long kbTemplateId)
+	public void deleteKBTemplates(long[] kbTemplateIds)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _kbTemplateLocalService.getKBTemplate(kbTemplateId);
-	}
-
-	/**
-	* Returns the kb template matching the UUID and group.
-	*
-	* @param uuid the kb template's UUID
-	* @param groupId the primary key of the group
-	* @return the matching kb template
-	* @throws PortalException if a matching kb template could not be found
-	*/
-	@Override
-	public com.liferay.knowledge.base.model.KBTemplate getKBTemplateByUuidAndGroupId(
-		java.lang.String uuid, long groupId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _kbTemplateLocalService.getKBTemplateByUuidAndGroupId(uuid,
-			groupId);
-	}
-
-	/**
-	* Updates the kb template in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param kbTemplate the kb template
-	* @return the kb template that was updated
-	*/
-	@Override
-	public com.liferay.knowledge.base.model.KBTemplate updateKBTemplate(
-		com.liferay.knowledge.base.model.KBTemplate kbTemplate) {
-		return _kbTemplateLocalService.updateKBTemplate(kbTemplate);
-	}
-
-	@Override
-	public com.liferay.knowledge.base.model.KBTemplate updateKBTemplate(
-		long kbTemplateId, java.lang.String title, java.lang.String content,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _kbTemplateLocalService.updateKBTemplate(kbTemplateId, title,
-			content, serviceContext);
-	}
-
-	@Override
-	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
-		return _kbTemplateLocalService.getActionableDynamicQuery();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
-		return _kbTemplateLocalService.dynamicQuery();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery getExportActionableDynamicQuery(
-		com.liferay.exportimport.kernel.lar.PortletDataContext portletDataContext) {
-		return _kbTemplateLocalService.getExportActionableDynamicQuery(portletDataContext);
-	}
-
-	@Override
-	public com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
-		return _kbTemplateLocalService.getIndexableActionableDynamicQuery();
+		_kbTemplateLocalService.deleteKBTemplates(kbTemplateIds);
 	}
 
 	/**
@@ -197,35 +117,8 @@ public class KBTemplateLocalServiceWrapper implements KBTemplateLocalService,
 	}
 
 	@Override
-	public com.liferay.portal.kernel.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _kbTemplateLocalService.getPersistedModel(primaryKeyObj);
-	}
-
-	@Override
-	public int getGroupKBTemplatesCount(long groupId) {
-		return _kbTemplateLocalService.getGroupKBTemplatesCount(groupId);
-	}
-
-	/**
-	* Returns the number of kb templates.
-	*
-	* @return the number of kb templates
-	*/
-	@Override
-	public int getKBTemplatesCount() {
-		return _kbTemplateLocalService.getKBTemplatesCount();
-	}
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	@Override
-	public java.lang.String getOSGiServiceIdentifier() {
-		return _kbTemplateLocalService.getOSGiServiceIdentifier();
+	public com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
+		return _kbTemplateLocalService.dynamicQuery();
 	}
 
 	/**
@@ -281,73 +174,6 @@ public class KBTemplateLocalServiceWrapper implements KBTemplateLocalService,
 			orderByComparator);
 	}
 
-	@Override
-	public java.util.List<com.liferay.knowledge.base.model.KBTemplate> getGroupKBTemplates(
-		long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.knowledge.base.model.KBTemplate> orderByComparator) {
-		return _kbTemplateLocalService.getGroupKBTemplates(groupId, start, end,
-			orderByComparator);
-	}
-
-	/**
-	* Returns a range of all the kb templates.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.knowledge.base.model.impl.KBTemplateModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param start the lower bound of the range of kb templates
-	* @param end the upper bound of the range of kb templates (not inclusive)
-	* @return the range of kb templates
-	*/
-	@Override
-	public java.util.List<com.liferay.knowledge.base.model.KBTemplate> getKBTemplates(
-		int start, int end) {
-		return _kbTemplateLocalService.getKBTemplates(start, end);
-	}
-
-	/**
-	* Returns all the kb templates matching the UUID and company.
-	*
-	* @param uuid the UUID of the kb templates
-	* @param companyId the primary key of the company
-	* @return the matching kb templates, or an empty list if no matches were found
-	*/
-	@Override
-	public java.util.List<com.liferay.knowledge.base.model.KBTemplate> getKBTemplatesByUuidAndCompanyId(
-		java.lang.String uuid, long companyId) {
-		return _kbTemplateLocalService.getKBTemplatesByUuidAndCompanyId(uuid,
-			companyId);
-	}
-
-	/**
-	* Returns a range of kb templates matching the UUID and company.
-	*
-	* @param uuid the UUID of the kb templates
-	* @param companyId the primary key of the company
-	* @param start the lower bound of the range of kb templates
-	* @param end the upper bound of the range of kb templates (not inclusive)
-	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	* @return the range of matching kb templates, or an empty list if no matches were found
-	*/
-	@Override
-	public java.util.List<com.liferay.knowledge.base.model.KBTemplate> getKBTemplatesByUuidAndCompanyId(
-		java.lang.String uuid, long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.knowledge.base.model.KBTemplate> orderByComparator) {
-		return _kbTemplateLocalService.getKBTemplatesByUuidAndCompanyId(uuid,
-			companyId, start, end, orderByComparator);
-	}
-
-	@Override
-	public java.util.List<com.liferay.knowledge.base.model.KBTemplate> search(
-		long groupId, java.lang.String title, java.lang.String content,
-		java.util.Date startDate, java.util.Date endDate, boolean andOperator,
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.knowledge.base.model.KBTemplate> orderByComparator) {
-		return _kbTemplateLocalService.search(groupId, title, content,
-			startDate, endDate, andOperator, start, end, orderByComparator);
-	}
-
 	/**
 	* Returns the number of rows matching the dynamic query.
 	*
@@ -376,21 +202,194 @@ public class KBTemplateLocalServiceWrapper implements KBTemplateLocalService,
 	}
 
 	@Override
-	public void deleteGroupKBTemplates(long groupId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_kbTemplateLocalService.deleteGroupKBTemplates(groupId);
+	public com.liferay.knowledge.base.model.KBTemplate fetchKBTemplate(
+		long kbTemplateId) {
+		return _kbTemplateLocalService.fetchKBTemplate(kbTemplateId);
+	}
+
+	/**
+	* Returns the kb template matching the UUID and group.
+	*
+	* @param uuid the kb template's UUID
+	* @param groupId the primary key of the group
+	* @return the matching kb template, or <code>null</code> if a matching kb template could not be found
+	*/
+	@Override
+	public com.liferay.knowledge.base.model.KBTemplate fetchKBTemplateByUuidAndGroupId(
+		String uuid, long groupId) {
+		return _kbTemplateLocalService.fetchKBTemplateByUuidAndGroupId(uuid,
+			groupId);
 	}
 
 	@Override
-	public void deleteKBTemplates(long[] kbTemplateIds)
+	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
+		return _kbTemplateLocalService.getActionableDynamicQuery();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery getExportActionableDynamicQuery(
+		com.liferay.exportimport.kernel.lar.PortletDataContext portletDataContext) {
+		return _kbTemplateLocalService.getExportActionableDynamicQuery(portletDataContext);
+	}
+
+	@Override
+	public java.util.List<com.liferay.knowledge.base.model.KBTemplate> getGroupKBTemplates(
+		long groupId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.knowledge.base.model.KBTemplate> orderByComparator) {
+		return _kbTemplateLocalService.getGroupKBTemplates(groupId, start, end,
+			orderByComparator);
+	}
+
+	@Override
+	public int getGroupKBTemplatesCount(long groupId) {
+		return _kbTemplateLocalService.getGroupKBTemplatesCount(groupId);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
+		return _kbTemplateLocalService.getIndexableActionableDynamicQuery();
+	}
+
+	/**
+	* Returns the kb template with the primary key.
+	*
+	* @param kbTemplateId the primary key of the kb template
+	* @return the kb template
+	* @throws PortalException if a kb template with the primary key could not be found
+	*/
+	@Override
+	public com.liferay.knowledge.base.model.KBTemplate getKBTemplate(
+		long kbTemplateId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		_kbTemplateLocalService.deleteKBTemplates(kbTemplateIds);
+		return _kbTemplateLocalService.getKBTemplate(kbTemplateId);
+	}
+
+	/**
+	* Returns the kb template matching the UUID and group.
+	*
+	* @param uuid the kb template's UUID
+	* @param groupId the primary key of the group
+	* @return the matching kb template
+	* @throws PortalException if a matching kb template could not be found
+	*/
+	@Override
+	public com.liferay.knowledge.base.model.KBTemplate getKBTemplateByUuidAndGroupId(
+		String uuid, long groupId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _kbTemplateLocalService.getKBTemplateByUuidAndGroupId(uuid,
+			groupId);
+	}
+
+	/**
+	* Returns a range of all the kb templates.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.knowledge.base.model.impl.KBTemplateModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param start the lower bound of the range of kb templates
+	* @param end the upper bound of the range of kb templates (not inclusive)
+	* @return the range of kb templates
+	*/
+	@Override
+	public java.util.List<com.liferay.knowledge.base.model.KBTemplate> getKBTemplates(
+		int start, int end) {
+		return _kbTemplateLocalService.getKBTemplates(start, end);
+	}
+
+	/**
+	* Returns all the kb templates matching the UUID and company.
+	*
+	* @param uuid the UUID of the kb templates
+	* @param companyId the primary key of the company
+	* @return the matching kb templates, or an empty list if no matches were found
+	*/
+	@Override
+	public java.util.List<com.liferay.knowledge.base.model.KBTemplate> getKBTemplatesByUuidAndCompanyId(
+		String uuid, long companyId) {
+		return _kbTemplateLocalService.getKBTemplatesByUuidAndCompanyId(uuid,
+			companyId);
+	}
+
+	/**
+	* Returns a range of kb templates matching the UUID and company.
+	*
+	* @param uuid the UUID of the kb templates
+	* @param companyId the primary key of the company
+	* @param start the lower bound of the range of kb templates
+	* @param end the upper bound of the range of kb templates (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the range of matching kb templates, or an empty list if no matches were found
+	*/
+	@Override
+	public java.util.List<com.liferay.knowledge.base.model.KBTemplate> getKBTemplatesByUuidAndCompanyId(
+		String uuid, long companyId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.knowledge.base.model.KBTemplate> orderByComparator) {
+		return _kbTemplateLocalService.getKBTemplatesByUuidAndCompanyId(uuid,
+			companyId, start, end, orderByComparator);
+	}
+
+	/**
+	* Returns the number of kb templates.
+	*
+	* @return the number of kb templates
+	*/
+	@Override
+	public int getKBTemplatesCount() {
+		return _kbTemplateLocalService.getKBTemplatesCount();
+	}
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	@Override
+	public String getOSGiServiceIdentifier() {
+		return _kbTemplateLocalService.getOSGiServiceIdentifier();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _kbTemplateLocalService.getPersistedModel(primaryKeyObj);
+	}
+
+	@Override
+	public java.util.List<com.liferay.knowledge.base.model.KBTemplate> search(
+		long groupId, String title, String content, java.util.Date startDate,
+		java.util.Date endDate, boolean andOperator, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.knowledge.base.model.KBTemplate> orderByComparator) {
+		return _kbTemplateLocalService.search(groupId, title, content,
+			startDate, endDate, andOperator, start, end, orderByComparator);
+	}
+
+	/**
+	* Updates the kb template in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param kbTemplate the kb template
+	* @return the kb template that was updated
+	*/
+	@Override
+	public com.liferay.knowledge.base.model.KBTemplate updateKBTemplate(
+		com.liferay.knowledge.base.model.KBTemplate kbTemplate) {
+		return _kbTemplateLocalService.updateKBTemplate(kbTemplate);
+	}
+
+	@Override
+	public com.liferay.knowledge.base.model.KBTemplate updateKBTemplate(
+		long kbTemplateId, String title, String content,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _kbTemplateLocalService.updateKBTemplate(kbTemplateId, title,
+			content, serviceContext);
 	}
 
 	@Override
 	public void updateKBTemplateResources(
 		com.liferay.knowledge.base.model.KBTemplate kbTemplate,
-		java.lang.String[] groupPermissions, java.lang.String[] guestPermissions)
+		String[] groupPermissions, String[] guestPermissions)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_kbTemplateLocalService.updateKBTemplateResources(kbTemplate,
 			groupPermissions, guestPermissions);

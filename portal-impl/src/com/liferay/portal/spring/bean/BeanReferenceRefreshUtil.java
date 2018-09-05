@@ -17,6 +17,7 @@ package com.liferay.portal.spring.bean;
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 
 import java.lang.reflect.Field;
 
@@ -30,7 +31,9 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
 /**
  * @author Shuyang Zhou
+ * @deprecated As of Judson (7.1.x), with no direct replacement
  */
+@Deprecated
 public class BeanReferenceRefreshUtil {
 
 	public static void refresh(BeanFactory beanFactory) throws Exception {
@@ -61,6 +64,10 @@ public class BeanReferenceRefreshUtil {
 			targetBean, field, referencedBeanName);
 	}
 
+	/**
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
+	 */
+	@Deprecated
 	public interface PACL {
 
 		public Object getNewReferencedBean(
@@ -71,7 +78,6 @@ public class BeanReferenceRefreshUtil {
 	private static final Log _log = LogFactoryUtil.getLog(
 		BeanReferenceRefreshUtil.class);
 
-	private static final PACL _pacl = new NoPACL();
 	private static final Map<BeanFactory, BeanRegistrations>
 		_registeredRefreshPoints = new IdentityHashMap<>();
 
@@ -121,8 +127,22 @@ public class BeanReferenceRefreshUtil {
 
 			String referencedBeanName = refreshPoint._referencedBeanName;
 
-			Object newReferencedBean = _pacl.getNewReferencedBean(
-				referencedBeanName, _beanFactory);
+			Object newReferencedBean = null;
+
+			try {
+				newReferencedBean = _beanFactory.getBean(referencedBeanName);
+			}
+			catch (NoSuchBeanDefinitionException nsbde) {
+				if (_log.isInfoEnabled()) {
+					_log.info(
+						StringBundler.concat(
+							"Bean ", referencedBeanName, " may be defined in ",
+							"the portal"));
+				}
+
+				newReferencedBean = PortalBeanLocatorUtil.locate(
+					referencedBeanName);
+			}
 
 			if (oldReferenceBean == newReferencedBean) {
 				return;
@@ -132,37 +152,17 @@ public class BeanReferenceRefreshUtil {
 
 			if (_log.isDebugEnabled()) {
 				_log.debug(
-					"Refreshed field " + field + " with old value " +
-						oldReferenceBean + " with new value " +
-							newReferencedBean + " on bean " + targetBean);
+					StringBundler.concat(
+						"Refreshed field ", String.valueOf(field),
+						" with old value ", String.valueOf(oldReferenceBean),
+						" with new value ", String.valueOf(newReferencedBean),
+						" on bean ", String.valueOf(targetBean)));
 			}
 		}
 
 		private final BeanFactory _beanFactory;
 		private final Map<Object, List<RefreshPoint>> _beansToRefresh =
 			new IdentityHashMap<>();
-
-	}
-
-	private static class NoPACL implements PACL {
-
-		@Override
-		public Object getNewReferencedBean(
-			String referencedBeanName, BeanFactory beanFactory) {
-
-			try {
-				return beanFactory.getBean(referencedBeanName);
-			}
-			catch (NoSuchBeanDefinitionException nsbde) {
-				if (_log.isInfoEnabled()) {
-					_log.info(
-						"Bean " + referencedBeanName + " may be defined in " +
-							"the portal");
-				}
-
-				return PortalBeanLocatorUtil.locate(referencedBeanName);
-			}
-		}
 
 	}
 

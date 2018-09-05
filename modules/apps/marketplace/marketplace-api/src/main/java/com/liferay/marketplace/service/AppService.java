@@ -55,16 +55,16 @@ public interface AppService extends BaseService {
 	 */
 	public App deleteApp(long appId) throws PortalException;
 
-	public App updateApp(File file) throws PortalException;
-
 	/**
 	* Returns the OSGi service identifier.
 	*
 	* @return the OSGi service identifier
 	*/
-	public java.lang.String getOSGiServiceIdentifier();
+	public String getOSGiServiceIdentifier();
 
 	public void installApp(long remoteAppId) throws PortalException;
 
 	public void uninstallApp(long remoteAppId) throws PortalException;
+
+	public App updateApp(File file) throws PortalException;
 }

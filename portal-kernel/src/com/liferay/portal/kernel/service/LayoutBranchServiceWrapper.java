@@ -32,8 +32,7 @@ public class LayoutBranchServiceWrapper implements LayoutBranchService,
 
 	@Override
 	public com.liferay.portal.kernel.model.LayoutBranch addLayoutBranch(
-		long layoutRevisionId, java.lang.String name,
-		java.lang.String description, boolean master,
+		long layoutRevisionId, String name, String description, boolean master,
 		ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _layoutBranchService.addLayoutBranch(layoutRevisionId, name,
@@ -41,12 +40,9 @@ public class LayoutBranchServiceWrapper implements LayoutBranchService,
 	}
 
 	@Override
-	public com.liferay.portal.kernel.model.LayoutBranch updateLayoutBranch(
-		long layoutBranchId, java.lang.String name,
-		java.lang.String description, ServiceContext serviceContext)
+	public void deleteLayoutBranch(long layoutBranchId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _layoutBranchService.updateLayoutBranch(layoutBranchId, name,
-			description, serviceContext);
+		_layoutBranchService.deleteLayoutBranch(layoutBranchId);
 	}
 
 	/**
@@ -55,14 +51,17 @@ public class LayoutBranchServiceWrapper implements LayoutBranchService,
 	* @return the OSGi service identifier
 	*/
 	@Override
-	public java.lang.String getOSGiServiceIdentifier() {
+	public String getOSGiServiceIdentifier() {
 		return _layoutBranchService.getOSGiServiceIdentifier();
 	}
 
 	@Override
-	public void deleteLayoutBranch(long layoutBranchId)
+	public com.liferay.portal.kernel.model.LayoutBranch updateLayoutBranch(
+		long layoutBranchId, String name, String description,
+		ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		_layoutBranchService.deleteLayoutBranch(layoutBranchId);
+		return _layoutBranchService.updateLayoutBranch(layoutBranchId, name,
+			description, serviceContext);
 	}
 
 	@Override

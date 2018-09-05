@@ -14,6 +14,7 @@
 
 package com.liferay.web.form.web.internal.portlet;
 
+import com.liferay.captcha.util.CaptchaUtil;
 import com.liferay.counter.kernel.service.CounterLocalService;
 import com.liferay.expando.kernel.model.ExpandoRow;
 import com.liferay.expando.kernel.service.ExpandoRowLocalService;
@@ -21,13 +22,15 @@ import com.liferay.expando.kernel.service.ExpandoTableLocalService;
 import com.liferay.expando.kernel.service.ExpandoValueLocalService;
 import com.liferay.mail.kernel.model.MailMessage;
 import com.liferay.mail.kernel.service.MailService;
-import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.captcha.CaptchaTextException;
-import com.liferay.portal.kernel.captcha.CaptchaUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortletResponseUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
@@ -36,7 +39,6 @@ import com.liferay.portal.kernel.service.permission.PortletPermissionUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.FileUtil;
@@ -44,12 +46,10 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.web.form.web.configuration.WebFormGroupServiceConfiguration;
+import com.liferay.web.form.web.configuration.WebFormServiceConfiguration;
 import com.liferay.web.form.web.internal.constants.WebFormPortletKeys;
 import com.liferay.web.form.web.internal.util.WebFormUtil;
 
@@ -70,10 +70,7 @@ import javax.portlet.PortletPreferences;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
 
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.ConfigurationPolicy;
-import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -85,8 +82,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Peter Fellwock
  */
 @Component(
-	configurationPid = "com.liferay.web.form.web.configuration.WebFormConfiguration",
-	configurationPolicy = ConfigurationPolicy.OPTIONAL, immediate = true,
+	immediate = true,
 	property = {
 		"com.liferay.portlet.css-class-wrapper=web-form-portlet",
 		"com.liferay.portlet.display-category=category.tools",
@@ -96,7 +92,7 @@ import org.osgi.service.component.annotations.Reference;
 		"javax.portlet.display-name=Web Form",
 		"javax.portlet.expiration-cache=0",
 		"javax.portlet.init-param.copy-request-parameters=true",
-		"javax.portlet.init-param.template-path=/",
+		"javax.portlet.init-param.template-path=/META-INF/resources/",
 		"javax.portlet.init-param.view-template=/view.jsp",
 		"javax.portlet.name=" + WebFormPortletKeys.WEB_FORM,
 		"javax.portlet.portlet-info.keywords=Web Form",
@@ -204,12 +200,18 @@ public class WebFormPortlet extends MVCPortlet {
 
 		Set<String> validationErrors = null;
 
+		WebFormServiceConfiguration webFormServiceConfiguration =
+			getWebFormServiceConfiguration(themeDisplay.getCompanyId());
+
 		try {
-			validationErrors = validate(fieldsMap, preferences);
+			validationErrors = validate(
+				fieldsMap, webFormServiceConfiguration.validationScriptEnable(),
+				preferences);
 		}
 		catch (Exception e) {
 			SessionErrors.add(
-				actionRequest, "validationScriptError", e.getMessage().trim());
+				actionRequest, "validationScriptError",
+				StringUtil.trim(e.getMessage()));
 
 			return;
 		}
@@ -221,7 +223,7 @@ public class WebFormPortlet extends MVCPortlet {
 
 			if (sendAsEmail) {
 				emailSuccess = sendEmail(
-					themeDisplay.getCompanyId(), fieldsMap, preferences);
+					fieldsMap, preferences, webFormServiceConfiguration);
 			}
 
 			if (saveToDatabase) {
@@ -243,9 +245,11 @@ public class WebFormPortlet extends MVCPortlet {
 			if (saveToFile) {
 				String fileName = WebFormUtil.getFileName(
 					themeDisplay, portletId,
-					_webFormGroupServiceConfiguration.dataRootDir());
+					webFormServiceConfiguration.dataRootDir());
 
-				fileSuccess = saveFile(fieldsMap, fileName);
+				fileSuccess = saveFile(
+					fieldsMap, webFormServiceConfiguration.csvSeparator(),
+					fileName);
 			}
 
 			if (emailSuccess && databaseSuccess && fileSuccess) {
@@ -296,19 +300,12 @@ public class WebFormPortlet extends MVCPortlet {
 		}
 	}
 
-	@Activate
-	@Modified
-	protected void activate(Map<String, Object> properties) {
-		_webFormGroupServiceConfiguration = ConfigurableUtil.createConfigurable(
-			WebFormGroupServiceConfiguration.class, properties);
-	}
-
 	protected void appendFieldLabels(
-		Map<String, String> fieldsMap, StringBundler sb) {
+		Map<String, String> fieldsMap, String csvSeparator, StringBundler sb) {
 
 		for (String fieldLabel : fieldsMap.keySet()) {
 			sb.append(getCSVFormattedValue(fieldLabel));
-			sb.append(_webFormGroupServiceConfiguration.csvSeparator());
+			sb.append(csvSeparator);
 		}
 
 		sb.setIndex(sb.index() - 1);
@@ -317,14 +314,11 @@ public class WebFormPortlet extends MVCPortlet {
 	}
 
 	protected void appendFieldValues(
-		Map<String, String> fieldsMap, StringBundler sb) {
+		Map<String, String> fieldsMap, String csvSeparator, StringBundler sb) {
 
-		for (String fieldLabel : fieldsMap.keySet()) {
-			String fieldValue = fieldsMap.get(fieldLabel);
-
-			sb.append(getCSVFormattedValue(fieldValue));
-
-			sb.append(_webFormGroupServiceConfiguration.csvSeparator());
+		for (Map.Entry<String, String> entry : fieldsMap.entrySet()) {
+			sb.append(getCSVFormattedValue(entry.getValue()));
+			sb.append(csvSeparator);
 		}
 
 		sb.setIndex(sb.index() - 1);
@@ -356,6 +350,11 @@ public class WebFormPortlet extends MVCPortlet {
 
 		List<String> fieldLabels = new ArrayList<>();
 
+		WebFormServiceConfiguration webFormServiceConfiguration =
+			getWebFormServiceConfiguration(themeDisplay.getCompanyId());
+
+		String csvSeparator = webFormServiceConfiguration.csvSeparator();
+
 		for (int i = 1; true; i++) {
 			String fieldLabel = preferences.getValue(
 				"fieldLabel" + i, StringPool.BLANK);
@@ -370,7 +369,7 @@ public class WebFormPortlet extends MVCPortlet {
 			fieldLabels.add(fieldLabel);
 
 			sb.append(getCSVFormattedValue(localizedfieldLabel));
-			sb.append(_webFormGroupServiceConfiguration.csvSeparator());
+			sb.append(csvSeparator);
 		}
 
 		sb.setIndex(sb.index() - 1);
@@ -391,7 +390,7 @@ public class WebFormPortlet extends MVCPortlet {
 
 					sb.append(getCSVFormattedValue(data));
 
-					sb.append(_webFormGroupServiceConfiguration.csvSeparator());
+					sb.append(csvSeparator);
 				}
 
 				sb.setIndex(sb.index() - 1);
@@ -401,7 +400,11 @@ public class WebFormPortlet extends MVCPortlet {
 		}
 
 		String fileName = title + ".csv";
-		byte[] bytes = sb.toString().getBytes();
+
+		String s = sb.toString();
+
+		byte[] bytes = s.getBytes();
+
 		String contentType = ContentTypes.APPLICATION_TEXT;
 
 		PortletResponseUtil.sendFile(
@@ -422,16 +425,22 @@ public class WebFormPortlet extends MVCPortlet {
 	protected String getMailBody(Map<String, String> fieldsMap) {
 		StringBundler sb = new StringBundler();
 
-		for (String fieldLabel : fieldsMap.keySet()) {
-			String fieldValue = fieldsMap.get(fieldLabel);
-
-			sb.append(fieldLabel);
+		for (Map.Entry<String, String> entry : fieldsMap.entrySet()) {
+			sb.append(entry.getKey());
 			sb.append(" : ");
-			sb.append(fieldValue);
+			sb.append(entry.getValue());
 			sb.append(CharPool.NEW_LINE);
 		}
 
 		return sb.toString();
+	}
+
+	protected WebFormServiceConfiguration getWebFormServiceConfiguration(
+			long companyId)
+		throws PortalException {
+
+		return _configurationProvider.getCompanyConfiguration(
+			WebFormServiceConfiguration.class, companyId);
 	}
 
 	protected boolean saveDatabase(
@@ -445,12 +454,10 @@ public class WebFormPortlet extends MVCPortlet {
 			WebFormUtil.class.getName());
 
 		try {
-			for (String fieldLabel : fieldsMap.keySet()) {
-				String fieldValue = fieldsMap.get(fieldLabel);
-
+			for (Map.Entry<String, String> entry : fieldsMap.entrySet()) {
 				_expandoValueLocalService.addValue(
 					companyId, WebFormUtil.class.getName(), databaseTableName,
-					fieldLabel, classPK, fieldValue);
+					entry.getKey(), classPK, entry.getValue());
 			}
 
 			return true;
@@ -463,16 +470,17 @@ public class WebFormPortlet extends MVCPortlet {
 		}
 	}
 
-	protected boolean saveFile(Map<String, String> fieldsMap, String fileName)
+	protected boolean saveFile(
+			Map<String, String> fieldsMap, String csvSeparator, String fileName)
 		throws PortalException {
 
 		StringBundler sb = new StringBundler();
 
 		if (!FileUtil.exists(fileName)) {
-			appendFieldLabels(fieldsMap, sb);
+			appendFieldLabels(fieldsMap, csvSeparator, sb);
 		}
 
-		appendFieldValues(fieldsMap, sb);
+		appendFieldValues(fieldsMap, csvSeparator, sb);
 
 		try {
 			FileUtil.write(fileName, sb.toString(), false, true);
@@ -487,8 +495,8 @@ public class WebFormPortlet extends MVCPortlet {
 	}
 
 	protected boolean sendEmail(
-		long companyId, Map<String, String> fieldsMap,
-		PortletPreferences preferences) {
+		Map<String, String> fieldsMap, PortletPreferences preferences,
+		WebFormServiceConfiguration webFormServiceConfiguration) {
 
 		try {
 			String emailAddresses = preferences.getValue(
@@ -502,9 +510,16 @@ public class WebFormPortlet extends MVCPortlet {
 				return false;
 			}
 
+			String emailFromAddress = preferences.getValue(
+				"emailFromAddress",
+				webFormServiceConfiguration.emailFromAddress());
+
+			String emailFromName = preferences.getValue(
+				"emailFromName", webFormServiceConfiguration.emailFromName());
+
 			InternetAddress fromAddress = new InternetAddress(
-				_webFormGroupServiceConfiguration.emailFromAddress(),
-				_webFormGroupServiceConfiguration.emailFromName());
+				emailFromAddress, emailFromName);
+
 			String subject = preferences.getValue("subject", StringPool.BLANK);
 			String body = getMailBody(fieldsMap);
 
@@ -568,7 +583,8 @@ public class WebFormPortlet extends MVCPortlet {
 	}
 
 	protected Set<String> validate(
-			Map<String, String> fieldsMap, PortletPreferences preferences)
+			Map<String, String> fieldsMap, boolean validationScriptEnable,
+			PortletPreferences preferences)
 		throws Exception {
 
 		Set<String> validationErrors = new HashSet<>();
@@ -598,7 +614,7 @@ public class WebFormPortlet extends MVCPortlet {
 				continue;
 			}
 
-			if (!_webFormGroupServiceConfiguration.validationScriptEnable()) {
+			if (!validationScriptEnable) {
 				continue;
 			}
 
@@ -628,8 +644,9 @@ public class WebFormPortlet extends MVCPortlet {
 	private static MailService _mailService;
 
 	@Reference
-	private Portal _portal;
+	private ConfigurationProvider _configurationProvider;
 
-	private WebFormGroupServiceConfiguration _webFormGroupServiceConfiguration;
+	@Reference
+	private Portal _portal;
 
 }

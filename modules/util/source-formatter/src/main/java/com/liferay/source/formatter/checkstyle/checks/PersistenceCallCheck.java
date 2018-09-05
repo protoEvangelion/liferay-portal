@@ -14,50 +14,45 @@
 
 package com.liferay.source.formatter.checkstyle.checks;
 
-import com.liferay.portal.kernel.io.unsync.UnsyncStringReader;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.source.formatter.checks.util.JavaSourceUtil;
 import com.liferay.source.formatter.checkstyle.util.DetailASTUtil;
-import com.liferay.source.formatter.util.ThreadSafeClassLibrary;
+import com.liferay.source.formatter.parser.JavaClass;
+import com.liferay.source.formatter.parser.JavaClassParser;
+import com.liferay.source.formatter.parser.JavaTerm;
+import com.liferay.source.formatter.util.FileUtil;
 
-import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.FileContents;
 import com.puppycrawl.tools.checkstyle.api.FileText;
-import com.puppycrawl.tools.checkstyle.api.FullIdent;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
-
-import com.thoughtworks.qdox.JavaDocBuilder;
-import com.thoughtworks.qdox.model.DefaultDocletTagFactory;
-import com.thoughtworks.qdox.model.JavaClass;
-import com.thoughtworks.qdox.model.JavaField;
-import com.thoughtworks.qdox.model.Type;
-import com.thoughtworks.qdox.parser.ParseException;
 
 import java.io.File;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Hugo Huijser
  */
-public class PersistenceCallCheck extends AbstractCheck {
-
-	public static final String MSG_ILLEGAL_PERSISTENCE_CALL =
-		"persistence.call.illegal";
+public class PersistenceCallCheck extends BaseCheck {
 
 	@Override
 	public int[] getDefaultTokens() {
-		return new int[] {TokenTypes.CLASS_DEF};
+		return new int[] {
+			TokenTypes.CLASS_DEF, TokenTypes.ENUM_DEF, TokenTypes.INTERFACE_DEF
+		};
 	}
 
 	@Override
-	public void visitToken(DetailAST detailAST) {
-		DetailAST parent = detailAST.getParent();
+	protected void doVisitToken(DetailAST detailAST) {
+		DetailAST parentAST = detailAST.getParent();
 
-		if (parent != null) {
+		if (parentAST != null) {
 			return;
 		}
 
@@ -74,58 +69,28 @@ public class PersistenceCallCheck extends AbstractCheck {
 
 		String content = (String)fileText.getFullText();
 
-		JavaDocBuilder javaDocBuilder = new JavaDocBuilder(
-			new DefaultDocletTagFactory(), new ThreadSafeClassLibrary());
+		JavaClass javaClass = null;
 
 		try {
-			javaDocBuilder.addSource(new UnsyncStringReader(content));
+			javaClass = JavaClassParser.parseJavaClass(fileName, content);
 		}
-		catch (ParseException pe) {
+		catch (Exception e) {
 			return;
 		}
 
-		JavaClass javaClass = _getJavaClass(javaDocBuilder, fileName);
+		Map<String, String> variablesMap = _getVariablesMap(javaClass);
 
-		javaDocBuilder = _addExtendedClassSource(
-			javaDocBuilder, javaClass, fileName);
-
-		List<String> importNames = _getImportNames(detailAST);
-		Map<String, String> variablesMap = _getVariablesMap(javaDocBuilder);
+		variablesMap.putAll(
+			_getVariablesMap(_getExtendedJavaClass(fileName, content)));
 
 		List<DetailAST> methodCallASTList = DetailASTUtil.getAllChildTokens(
 			detailAST, true, TokenTypes.METHOD_CALL);
 
 		for (DetailAST methodCallAST : methodCallASTList) {
 			_checkMethodCall(
-				methodCallAST, importNames, variablesMap,
+				methodCallAST, javaClass.getImports(), variablesMap,
 				javaClass.getPackageName());
 		}
-	}
-
-	private JavaDocBuilder _addExtendedClassSource(
-		JavaDocBuilder javaDocBuilder, JavaClass javaClass, String fileName) {
-
-		Type superClassType = javaClass.getSuperClass();
-
-		String fullyQualifiedName = superClassType.getFullyQualifiedName();
-
-		if (!fullyQualifiedName.startsWith("com.liferay")) {
-			return javaDocBuilder;
-		}
-
-		int pos = fileName.lastIndexOf("/com/liferay/");
-
-		String extendedClassFileName =
-			fileName.substring(0, pos + 1) +
-				StringUtil.replace(fullyQualifiedName, '.', '/') + ".java";
-
-		try {
-			javaDocBuilder.addSource(new File(extendedClassFileName));
-		}
-		catch (Exception e) {
-		}
-
-		return javaDocBuilder;
 	}
 
 	private void _checkClass(
@@ -144,7 +109,7 @@ public class PersistenceCallCheck extends AbstractCheck {
 			}
 
 			if (!packageName.startsWith(importName.substring(0, pos))) {
-				log(lineNo, MSG_ILLEGAL_PERSISTENCE_CALL, importName);
+				log(lineNo, _MSG_ILLEGAL_PERSISTENCE_CALL, importName);
 			}
 		}
 	}
@@ -207,66 +172,104 @@ public class PersistenceCallCheck extends AbstractCheck {
 		}
 
 		if (!packageName.startsWith(fullyQualifiedTypeName.substring(0, pos))) {
-			log(lineNo, MSG_ILLEGAL_PERSISTENCE_CALL, fullyQualifiedTypeName);
+			log(lineNo, _MSG_ILLEGAL_PERSISTENCE_CALL, fullyQualifiedTypeName);
 		}
 	}
 
-	private List<String> _getImportNames(DetailAST detailAST) {
-		List<String> importASTList = new ArrayList<>();
+	private JavaClass _getExtendedJavaClass(String fileName, String content) {
+		Matcher matcher = _extendedClassPattern.matcher(content);
 
-		DetailAST sibling = detailAST.getPreviousSibling();
-
-		while (true) {
-			if (sibling.getType() == TokenTypes.IMPORT) {
-				FullIdent importIdent = FullIdent.createFullIdentBelow(sibling);
-
-				importASTList.add(importIdent.getText());
-			}
-			else {
-				break;
-			}
-
-			sibling = sibling.getPreviousSibling();
+		if (!matcher.find()) {
+			return null;
 		}
 
-		return importASTList;
-	}
+		String extendedClassName = matcher.group(1);
 
-	private JavaClass _getJavaClass(
-		JavaDocBuilder javaDocBuilder, String fileName) {
+		Pattern pattern = Pattern.compile(
+			"\nimport (.*\\." + extendedClassName + ");");
 
-		int pos = fileName.lastIndexOf("/");
+		matcher = pattern.matcher(content);
 
-		String className = fileName.substring(pos + 1, fileName.length() - 5);
+		if (matcher.find()) {
+			extendedClassName = matcher.group(1);
 
-		for (JavaClass javaClass : javaDocBuilder.getClasses()) {
-			if (className.equals(javaClass.getName())) {
-				return javaClass;
+			if (!extendedClassName.startsWith("com.liferay.")) {
+				return null;
 			}
 		}
 
-		return null;
+		if (!extendedClassName.contains(StringPool.PERIOD)) {
+			extendedClassName =
+				JavaSourceUtil.getPackageName(content) + StringPool.PERIOD +
+					extendedClassName;
+		}
+
+		int pos = fileName.lastIndexOf("/com/liferay/");
+
+		String extendedClassFileName =
+			fileName.substring(0, pos + 1) +
+				StringUtil.replace(extendedClassName, '.', '/') + ".java";
+
+		try {
+			return JavaClassParser.parseJavaClass(
+				extendedClassFileName,
+				FileUtil.read(new File(extendedClassFileName)));
+		}
+		catch (Exception e) {
+			return null;
+		}
 	}
 
-	private Map<String, String> _getVariablesMap(
-		JavaDocBuilder javaDocBuilder) {
+	private String _getFullyQualifiedName(
+		String className, JavaClass javaClass) {
 
+		for (String importName : javaClass.getImports()) {
+			if (importName.endsWith(StringPool.PERIOD + className)) {
+				return importName;
+			}
+		}
+
+		return javaClass.getPackageName() + StringPool.PERIOD + className;
+	}
+
+	private Map<String, String> _getVariablesMap(JavaClass javaClass) {
 		Map<String, String> variablesMap = new HashMap<>();
 
-		for (JavaClass javaClass : javaDocBuilder.getClasses()) {
-			for (JavaField javaField : javaClass.getFields()) {
-				String fieldName = javaField.getName();
+		if (javaClass == null) {
+			return variablesMap;
+		}
 
-				Type fieldType = javaField.getType();
-
-				String fullyQualifiedTypeName =
-					fieldType.getFullyQualifiedName();
-
-				variablesMap.put(fieldName, fullyQualifiedTypeName);
+		for (JavaTerm javaTerm : javaClass.getChildJavaTerms()) {
+			if (!javaTerm.isJavaVariable()) {
+				continue;
 			}
+
+			Pattern pattern = Pattern.compile(
+				"\\s(\\S+)\\s+(\\S+\\.)?" + javaTerm.getName());
+
+			Matcher matcher = pattern.matcher(javaTerm.getContent());
+
+			if (!matcher.find()) {
+				continue;
+			}
+
+			String fieldTypeClassName = matcher.group(1);
+
+			if (!fieldTypeClassName.contains(StringPool.PERIOD)) {
+				fieldTypeClassName = _getFullyQualifiedName(
+					fieldTypeClassName, javaClass);
+			}
+
+			variablesMap.put(javaTerm.getName(), fieldTypeClassName);
 		}
 
 		return variablesMap;
 	}
+
+	private static final String _MSG_ILLEGAL_PERSISTENCE_CALL =
+		"persistence.call.illegal";
+
+	private final Pattern _extendedClassPattern = Pattern.compile(
+		"\\sextends\\s+(\\w+)\\W");
 
 }

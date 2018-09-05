@@ -29,8 +29,7 @@ public class JavaDeserializationSecurityCheck extends BaseFileCheck {
 		String fileName, String absolutePath, String content) {
 
 		if (fileName.contains("/test/") ||
-			fileName.contains("/testIntegration/") ||
-			isExcludedPath(_SECURE_DESERIALIZATION_EXCLUDES, absolutePath)) {
+			fileName.contains("/testIntegration/")) {
 
 			return content;
 		}
@@ -68,15 +67,11 @@ public class JavaDeserializationSecurityCheck extends BaseFileCheck {
 		}
 	}
 
-	private static final String _SECURE_DESERIALIZATION_EXCLUDES =
-		"secure.deserialization.excludes";
-
-	private final Pattern[] _javaSerializationVulnerabilityPatterns =
-		new Pattern[] {
-			Pattern.compile(
-				".*(new [a-z\\.\\s]*ObjectInputStream).*", Pattern.DOTALL),
-			Pattern.compile(
-				".*(extends [a-z\\.\\s]*ObjectInputStream).*", Pattern.DOTALL)
-		};
+	private final Pattern[] _javaSerializationVulnerabilityPatterns = {
+		Pattern.compile(
+			".*(new [a-z\\.\\s]*ObjectInputStream).*", Pattern.DOTALL),
+		Pattern.compile(
+			".*(extends [a-z\\.\\s]*ObjectInputStream).*", Pattern.DOTALL)
+	};
 
 }

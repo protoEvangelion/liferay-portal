@@ -32,8 +32,6 @@ import com.liferay.portal.kernel.security.RandomUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
-import com.liferay.portal.kernel.test.rule.Sync;
-import com.liferay.portal.kernel.test.rule.SynchronousDestinationTestRule;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.SearchContextTestUtil;
@@ -73,15 +71,12 @@ import org.junit.Test;
 /**
  * @author Eudaldo Alonso
  */
-@Sync
 public abstract class BaseAssetSearchTestCase {
 
 	@ClassRule
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
-		new AggregateTestRule(
-			new LiferayIntegrationTestRule(),
-			SynchronousDestinationTestRule.INSTANCE);
+		new LiferayIntegrationTestRule();
 
 	@Before
 	public void setUp() throws Exception {
@@ -140,8 +135,7 @@ public abstract class BaseAssetSearchTestCase {
 
 		_group2 = GroupTestUtil.addGroup();
 
-		long[] groupIds =
-			new long[] {_group1.getGroupId(), _group2.getGroupId()};
+		long[] groupIds = {_group1.getGroupId(), _group2.getGroupId()};
 
 		for (long groupId : groupIds) {
 			serviceContext = ServiceContextTestUtil.getServiceContext(groupId);
@@ -914,9 +908,8 @@ public abstract class BaseAssetSearchTestCase {
 			AssetEntryQueryTestUtil.createAssetEntryQuery(
 				_group1.getGroupId(), new String[] {getBaseModelClassName()});
 
-		String[] titles = {
-			"open", "liferay", "social", "osgi", "content", "life"
-		};
+		String[] titles =
+			{"open", "liferay", "social", "osgi", "content", "life"};
 
 		testOrderByCreateDate(assetEntryQuery, "asc", titles, titles);
 	}
@@ -927,13 +920,11 @@ public abstract class BaseAssetSearchTestCase {
 			AssetEntryQueryTestUtil.createAssetEntryQuery(
 				_group1.getGroupId(), new String[] {getBaseModelClassName()});
 
-		String[] titles = {
-			"open", "liferay", "social", "osgi", "content", "life"
-		};
+		String[] titles =
+			{"open", "liferay", "social", "osgi", "content", "life"};
 
-		String[] orderedTitles = {
-			"life", "content", "osgi", "social", "liferay", "open"
-		};
+		String[] orderedTitles =
+			{"life", "content", "osgi", "social", "liferay", "open"};
 
 		testOrderByCreateDate(assetEntryQuery, "desc", titles, orderedTitles);
 	}
@@ -966,13 +957,11 @@ public abstract class BaseAssetSearchTestCase {
 			AssetEntryQueryTestUtil.createAssetEntryQuery(
 				_group1.getGroupId(), new String[] {getBaseModelClassName()});
 
-		String[] defaultTitles = {
-			"open", "liferay", "content", "social", "osgi", "life"
-		};
+		String[] defaultTitles =
+			{"open", "liferay", "content", "social", "osgi", "life"};
 
-		String[] frenchTitles = {
-			"ouvert", "liferay", "content", "social", "osgi", "vie"
-		};
+		String[] frenchTitles =
+			{"ouvert", "liferay", "content", "social", "osgi", "vie"};
 
 		List<Map<Locale, String>> titleMaps = new ArrayList<>();
 
@@ -985,13 +974,11 @@ public abstract class BaseAssetSearchTestCase {
 			titleMaps.add(titleMap);
 		}
 
-		String[] defaultOrderedTitles = {
-			"content", "life", "liferay", "open", "osgi", "social"
-		};
+		String[] defaultOrderedTitles =
+			{"content", "life", "liferay", "open", "osgi", "social"};
 
-		String[] frenchOrderedTitles = {
-			"content", "liferay", "osgi", "ouvert", "social", "vie"
-		};
+		String[] frenchOrderedTitles =
+			{"content", "liferay", "osgi", "ouvert", "social", "vie"};
 
 		List<Map<Locale, String>> orderedTitleMaps = new ArrayList<>();
 
@@ -1022,13 +1009,11 @@ public abstract class BaseAssetSearchTestCase {
 			AssetEntryQueryTestUtil.createAssetEntryQuery(
 				_group1.getGroupId(), new String[] {getBaseModelClassName()});
 
-		String[] defaultTitles = {
-			"open", "liferay", "content", "social", "osgi", "life"
-		};
+		String[] defaultTitles =
+			{"open", "liferay", "content", "social", "osgi", "life"};
 
-		String[] frenchTitles = {
-			"ouvert", "liferay", "content", "social", "osgi", "vie"
-		};
+		String[] frenchTitles =
+			{"ouvert", "liferay", "content", "social", "osgi", "vie"};
 
 		List<Map<Locale, String>> titleMaps = new ArrayList<>();
 
@@ -1041,13 +1026,11 @@ public abstract class BaseAssetSearchTestCase {
 			titleMaps.add(titleMap);
 		}
 
-		String[] defaultOrderedTitles = {
-			"social", "osgi", "open", "liferay", "life", "content"
-		};
+		String[] defaultOrderedTitles =
+			{"social", "osgi", "open", "liferay", "life", "content"};
 
-		String[] frenchOrderedTitles = {
-			"vie", "social", "ouvert", "osgi", "liferay", "content"
-		};
+		String[] frenchOrderedTitles =
+			{"vie", "social", "ouvert", "osgi", "liferay", "content"};
 
 		List<Map<Locale, String>> orderedTitleMaps = new ArrayList<>();
 

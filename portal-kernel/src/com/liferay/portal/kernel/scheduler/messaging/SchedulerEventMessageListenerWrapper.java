@@ -30,6 +30,7 @@ import com.liferay.portal.kernel.scheduler.StorageType;
 import com.liferay.portal.kernel.scheduler.Trigger;
 import com.liferay.portal.kernel.scheduler.TriggerState;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 
 import java.util.Date;
 
@@ -97,8 +98,9 @@ public class SchedulerEventMessageListenerWrapper
 				catch (SchedulerException se) {
 					if (_log.isInfoEnabled()) {
 						_log.info(
-							"Unable to delete job " + jobName + " in group " +
-								groupName,
+							StringBundler.concat(
+								"Unable to delete job ", jobName, " in group ",
+								groupName),
 							se);
 					}
 				}
@@ -120,7 +122,7 @@ public class SchedulerEventMessageListenerWrapper
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Wilberforce (7.0.x)
 	 */
 	@Deprecated
 	public void setGroupName(String groupName) {
@@ -128,7 +130,7 @@ public class SchedulerEventMessageListenerWrapper
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Wilberforce (7.0.x)
 	 */
 	@Deprecated
 	public void setJobName(String jobName) {
@@ -155,14 +157,14 @@ public class SchedulerEventMessageListenerWrapper
 		SchedulerEventMessageListenerWrapper.class);
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Wilberforce (7.0.x)
 	 */
 	@Deprecated
 	@SuppressWarnings("unused")
 	private String _groupName;
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Wilberforce (7.0.x)
 	 */
 	@Deprecated
 	@SuppressWarnings("unused")

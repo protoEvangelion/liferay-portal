@@ -16,7 +16,8 @@ package com.liferay.knowledge.base.service;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.osgi.util.ServiceTrackerFactory;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -54,7 +55,7 @@ public class KBTemplateLocalServiceUtil {
 	}
 
 	public static com.liferay.knowledge.base.model.KBTemplate addKBTemplate(
-		long userId, java.lang.String title, java.lang.String content,
+		long userId, String title, String content,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().addKBTemplate(userId, title, content, serviceContext);
@@ -69,6 +70,11 @@ public class KBTemplateLocalServiceUtil {
 	public static com.liferay.knowledge.base.model.KBTemplate createKBTemplate(
 		long kbTemplateId) {
 		return getService().createKBTemplate(kbTemplateId);
+	}
+
+	public static void deleteGroupKBTemplates(long groupId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		getService().deleteGroupKBTemplates(groupId);
 	}
 
 	/**
@@ -97,85 +103,9 @@ public class KBTemplateLocalServiceUtil {
 		return getService().deleteKBTemplate(kbTemplateId);
 	}
 
-	public static com.liferay.knowledge.base.model.KBTemplate fetchKBTemplate(
-		long kbTemplateId) {
-		return getService().fetchKBTemplate(kbTemplateId);
-	}
-
-	/**
-	* Returns the kb template matching the UUID and group.
-	*
-	* @param uuid the kb template's UUID
-	* @param groupId the primary key of the group
-	* @return the matching kb template, or <code>null</code> if a matching kb template could not be found
-	*/
-	public static com.liferay.knowledge.base.model.KBTemplate fetchKBTemplateByUuidAndGroupId(
-		java.lang.String uuid, long groupId) {
-		return getService().fetchKBTemplateByUuidAndGroupId(uuid, groupId);
-	}
-
-	/**
-	* Returns the kb template with the primary key.
-	*
-	* @param kbTemplateId the primary key of the kb template
-	* @return the kb template
-	* @throws PortalException if a kb template with the primary key could not be found
-	*/
-	public static com.liferay.knowledge.base.model.KBTemplate getKBTemplate(
-		long kbTemplateId)
+	public static void deleteKBTemplates(long[] kbTemplateIds)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getKBTemplate(kbTemplateId);
-	}
-
-	/**
-	* Returns the kb template matching the UUID and group.
-	*
-	* @param uuid the kb template's UUID
-	* @param groupId the primary key of the group
-	* @return the matching kb template
-	* @throws PortalException if a matching kb template could not be found
-	*/
-	public static com.liferay.knowledge.base.model.KBTemplate getKBTemplateByUuidAndGroupId(
-		java.lang.String uuid, long groupId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getKBTemplateByUuidAndGroupId(uuid, groupId);
-	}
-
-	/**
-	* Updates the kb template in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param kbTemplate the kb template
-	* @return the kb template that was updated
-	*/
-	public static com.liferay.knowledge.base.model.KBTemplate updateKBTemplate(
-		com.liferay.knowledge.base.model.KBTemplate kbTemplate) {
-		return getService().updateKBTemplate(kbTemplate);
-	}
-
-	public static com.liferay.knowledge.base.model.KBTemplate updateKBTemplate(
-		long kbTemplateId, java.lang.String title, java.lang.String content,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService()
-				   .updateKBTemplate(kbTemplateId, title, content,
-			serviceContext);
-	}
-
-	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
-		return getService().getActionableDynamicQuery();
-	}
-
-	public static com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
-		return getService().dynamicQuery();
-	}
-
-	public static com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery getExportActionableDynamicQuery(
-		com.liferay.exportimport.kernel.lar.PortletDataContext portletDataContext) {
-		return getService().getExportActionableDynamicQuery(portletDataContext);
-	}
-
-	public static com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
-		return getService().getIndexableActionableDynamicQuery();
+		getService().deleteKBTemplates(kbTemplateIds);
 	}
 
 	/**
@@ -187,32 +117,8 @@ public class KBTemplateLocalServiceUtil {
 		return getService().deletePersistedModel(persistedModel);
 	}
 
-	public static com.liferay.portal.kernel.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getPersistedModel(primaryKeyObj);
-	}
-
-	public static int getGroupKBTemplatesCount(long groupId) {
-		return getService().getGroupKBTemplatesCount(groupId);
-	}
-
-	/**
-	* Returns the number of kb templates.
-	*
-	* @return the number of kb templates
-	*/
-	public static int getKBTemplatesCount() {
-		return getService().getKBTemplatesCount();
-	}
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	public static java.lang.String getOSGiServiceIdentifier() {
-		return getService().getOSGiServiceIdentifier();
+	public static com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
+		return getService().dynamicQuery();
 	}
 
 	/**
@@ -265,11 +171,96 @@ public class KBTemplateLocalServiceUtil {
 				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
 	}
 
+	/**
+	* Returns the number of rows matching the dynamic query.
+	*
+	* @param dynamicQuery the dynamic query
+	* @return the number of rows matching the dynamic query
+	*/
+	public static long dynamicQueryCount(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+		return getService().dynamicQueryCount(dynamicQuery);
+	}
+
+	/**
+	* Returns the number of rows matching the dynamic query.
+	*
+	* @param dynamicQuery the dynamic query
+	* @param projection the projection to apply to the query
+	* @return the number of rows matching the dynamic query
+	*/
+	public static long dynamicQueryCount(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
+		com.liferay.portal.kernel.dao.orm.Projection projection) {
+		return getService().dynamicQueryCount(dynamicQuery, projection);
+	}
+
+	public static com.liferay.knowledge.base.model.KBTemplate fetchKBTemplate(
+		long kbTemplateId) {
+		return getService().fetchKBTemplate(kbTemplateId);
+	}
+
+	/**
+	* Returns the kb template matching the UUID and group.
+	*
+	* @param uuid the kb template's UUID
+	* @param groupId the primary key of the group
+	* @return the matching kb template, or <code>null</code> if a matching kb template could not be found
+	*/
+	public static com.liferay.knowledge.base.model.KBTemplate fetchKBTemplateByUuidAndGroupId(
+		String uuid, long groupId) {
+		return getService().fetchKBTemplateByUuidAndGroupId(uuid, groupId);
+	}
+
+	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
+		return getService().getActionableDynamicQuery();
+	}
+
+	public static com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery getExportActionableDynamicQuery(
+		com.liferay.exportimport.kernel.lar.PortletDataContext portletDataContext) {
+		return getService().getExportActionableDynamicQuery(portletDataContext);
+	}
+
 	public static java.util.List<com.liferay.knowledge.base.model.KBTemplate> getGroupKBTemplates(
 		long groupId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.knowledge.base.model.KBTemplate> orderByComparator) {
 		return getService()
 				   .getGroupKBTemplates(groupId, start, end, orderByComparator);
+	}
+
+	public static int getGroupKBTemplatesCount(long groupId) {
+		return getService().getGroupKBTemplatesCount(groupId);
+	}
+
+	public static com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
+		return getService().getIndexableActionableDynamicQuery();
+	}
+
+	/**
+	* Returns the kb template with the primary key.
+	*
+	* @param kbTemplateId the primary key of the kb template
+	* @return the kb template
+	* @throws PortalException if a kb template with the primary key could not be found
+	*/
+	public static com.liferay.knowledge.base.model.KBTemplate getKBTemplate(
+		long kbTemplateId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getKBTemplate(kbTemplateId);
+	}
+
+	/**
+	* Returns the kb template matching the UUID and group.
+	*
+	* @param uuid the kb template's UUID
+	* @param groupId the primary key of the group
+	* @return the matching kb template
+	* @throws PortalException if a matching kb template could not be found
+	*/
+	public static com.liferay.knowledge.base.model.KBTemplate getKBTemplateByUuidAndGroupId(
+		String uuid, long groupId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getKBTemplateByUuidAndGroupId(uuid, groupId);
 	}
 
 	/**
@@ -296,7 +287,7 @@ public class KBTemplateLocalServiceUtil {
 	* @return the matching kb templates, or an empty list if no matches were found
 	*/
 	public static java.util.List<com.liferay.knowledge.base.model.KBTemplate> getKBTemplatesByUuidAndCompanyId(
-		java.lang.String uuid, long companyId) {
+		String uuid, long companyId) {
 		return getService().getKBTemplatesByUuidAndCompanyId(uuid, companyId);
 	}
 
@@ -311,17 +302,40 @@ public class KBTemplateLocalServiceUtil {
 	* @return the range of matching kb templates, or an empty list if no matches were found
 	*/
 	public static java.util.List<com.liferay.knowledge.base.model.KBTemplate> getKBTemplatesByUuidAndCompanyId(
-		java.lang.String uuid, long companyId, int start, int end,
+		String uuid, long companyId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.knowledge.base.model.KBTemplate> orderByComparator) {
 		return getService()
 				   .getKBTemplatesByUuidAndCompanyId(uuid, companyId, start,
 			end, orderByComparator);
 	}
 
+	/**
+	* Returns the number of kb templates.
+	*
+	* @return the number of kb templates
+	*/
+	public static int getKBTemplatesCount() {
+		return getService().getKBTemplatesCount();
+	}
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	public static String getOSGiServiceIdentifier() {
+		return getService().getOSGiServiceIdentifier();
+	}
+
+	public static com.liferay.portal.kernel.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getPersistedModel(primaryKeyObj);
+	}
+
 	public static java.util.List<com.liferay.knowledge.base.model.KBTemplate> search(
-		long groupId, java.lang.String title, java.lang.String content,
-		java.util.Date startDate, java.util.Date endDate, boolean andOperator,
-		int start, int end,
+		long groupId, String title, String content, java.util.Date startDate,
+		java.util.Date endDate, boolean andOperator, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.knowledge.base.model.KBTemplate> orderByComparator) {
 		return getService()
 				   .search(groupId, title, content, startDate, endDate,
@@ -329,42 +343,28 @@ public class KBTemplateLocalServiceUtil {
 	}
 
 	/**
-	* Returns the number of rows matching the dynamic query.
+	* Updates the kb template in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
-	* @param dynamicQuery the dynamic query
-	* @return the number of rows matching the dynamic query
+	* @param kbTemplate the kb template
+	* @return the kb template that was updated
 	*/
-	public static long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
-		return getService().dynamicQueryCount(dynamicQuery);
+	public static com.liferay.knowledge.base.model.KBTemplate updateKBTemplate(
+		com.liferay.knowledge.base.model.KBTemplate kbTemplate) {
+		return getService().updateKBTemplate(kbTemplate);
 	}
 
-	/**
-	* Returns the number of rows matching the dynamic query.
-	*
-	* @param dynamicQuery the dynamic query
-	* @param projection the projection to apply to the query
-	* @return the number of rows matching the dynamic query
-	*/
-	public static long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
-		com.liferay.portal.kernel.dao.orm.Projection projection) {
-		return getService().dynamicQueryCount(dynamicQuery, projection);
-	}
-
-	public static void deleteGroupKBTemplates(long groupId)
+	public static com.liferay.knowledge.base.model.KBTemplate updateKBTemplate(
+		long kbTemplateId, String title, String content,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().deleteGroupKBTemplates(groupId);
-	}
-
-	public static void deleteKBTemplates(long[] kbTemplateIds)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().deleteKBTemplates(kbTemplateIds);
+		return getService()
+				   .updateKBTemplate(kbTemplateId, title, content,
+			serviceContext);
 	}
 
 	public static void updateKBTemplateResources(
 		com.liferay.knowledge.base.model.KBTemplate kbTemplate,
-		java.lang.String[] groupPermissions, java.lang.String[] guestPermissions)
+		String[] groupPermissions, String[] guestPermissions)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		getService()
 			.updateKBTemplateResources(kbTemplate, groupPermissions,
@@ -375,6 +375,17 @@ public class KBTemplateLocalServiceUtil {
 		return _serviceTracker.getService();
 	}
 
-	private static ServiceTracker<KBTemplateLocalService, KBTemplateLocalService> _serviceTracker =
-		ServiceTrackerFactory.open(KBTemplateLocalService.class);
+	private static ServiceTracker<KBTemplateLocalService, KBTemplateLocalService> _serviceTracker;
+
+	static {
+		Bundle bundle = FrameworkUtil.getBundle(KBTemplateLocalService.class);
+
+		ServiceTracker<KBTemplateLocalService, KBTemplateLocalService> serviceTracker =
+			new ServiceTracker<KBTemplateLocalService, KBTemplateLocalService>(bundle.getBundleContext(),
+				KBTemplateLocalService.class, null);
+
+		serviceTracker.open();
+
+		_serviceTracker = serviceTracker;
+	}
 }

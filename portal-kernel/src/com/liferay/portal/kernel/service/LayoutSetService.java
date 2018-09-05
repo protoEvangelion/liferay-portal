@@ -49,22 +49,13 @@ public interface LayoutSetService extends BaseService {
 	 *
 	 * Never modify or reference this interface directly. Always use {@link LayoutSetServiceUtil} to access the layout set remote service. Add custom service methods to {@link com.liferay.portal.service.impl.LayoutSetServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public LayoutSet updateLookAndFeel(long groupId, boolean privateLayout,
-		java.lang.String themeId, java.lang.String colorSchemeId,
-		java.lang.String css) throws PortalException;
-
-	public LayoutSet updateSettings(long groupId, boolean privateLayout,
-		java.lang.String settings) throws PortalException;
-
-	public LayoutSet updateVirtualHost(long groupId, boolean privateLayout,
-		java.lang.String virtualHost) throws PortalException;
 
 	/**
 	* Returns the OSGi service identifier.
 	*
 	* @return the OSGi service identifier
 	*/
-	public java.lang.String getOSGiServiceIdentifier();
+	public String getOSGiServiceIdentifier();
 
 	/**
 	* Updates the state of the layout set prototype link.
@@ -86,7 +77,7 @@ public interface LayoutSetService extends BaseService {
 	*/
 	public void updateLayoutSetPrototypeLinkEnabled(long groupId,
 		boolean privateLayout, boolean layoutSetPrototypeLinkEnabled,
-		java.lang.String layoutSetPrototypeUuid) throws PortalException;
+		String layoutSetPrototypeUuid) throws PortalException;
 
 	public void updateLogo(long groupId, boolean privateLayout, boolean logo,
 		byte[] bytes) throws PortalException;
@@ -100,4 +91,14 @@ public interface LayoutSetService extends BaseService {
 	public void updateLogo(long groupId, boolean privateLayout, boolean logo,
 		InputStream inputStream, boolean cleanUpStream)
 		throws PortalException;
+
+	public LayoutSet updateLookAndFeel(long groupId, boolean privateLayout,
+		String themeId, String colorSchemeId, String css)
+		throws PortalException;
+
+	public LayoutSet updateSettings(long groupId, boolean privateLayout,
+		String settings) throws PortalException;
+
+	public LayoutSet updateVirtualHost(long groupId, boolean privateLayout,
+		String virtualHost) throws PortalException;
 }

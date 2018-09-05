@@ -19,6 +19,7 @@ import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
 import com.liferay.document.library.kernel.service.DLAppServiceUtil;
 import com.liferay.opensocial.shindig.util.SerializerUtil;
 import com.liferay.opensocial.shindig.util.ShindigUtil;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -34,7 +35,6 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.MimeTypesUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.social.kernel.model.SocialRelationConstants;
 
 import java.util.ArrayList;
@@ -52,7 +52,6 @@ import org.apache.shindig.protocol.ProtocolException;
 import org.apache.shindig.protocol.RestfulCollection;
 import org.apache.shindig.social.core.model.MediaItemImpl;
 import org.apache.shindig.social.opensocial.model.MediaItem;
-import org.apache.shindig.social.opensocial.model.MediaItem.Type;
 import org.apache.shindig.social.opensocial.spi.CollectionOptions;
 import org.apache.shindig.social.opensocial.spi.GroupId;
 import org.apache.shindig.social.opensocial.spi.MediaItemService;
@@ -492,9 +491,8 @@ public class LiferayMediaItemService implements MediaItemService {
 		if (fileNameMatcher.find()) {
 			return fileNameMatcher.group(1);
 		}
-		else {
-			return mediaItem.getTitle();
-		}
+
+		return mediaItem.getTitle();
 	}
 
 	protected MediaItem toMediaItem(
@@ -535,17 +533,16 @@ public class LiferayMediaItemService implements MediaItemService {
 		String contentType = MimeTypesUtil.getContentType(fileName);
 
 		if (contentType.startsWith("audio")) {
-			return Type.AUDIO;
+			return MediaItem.Type.AUDIO;
 		}
 		else if (contentType.startsWith("image")) {
-			return Type.IMAGE;
+			return MediaItem.Type.IMAGE;
 		}
 		else if (contentType.startsWith("video")) {
-			return Type.VIDEO;
+			return MediaItem.Type.VIDEO;
 		}
-		else {
-			return null;
-		}
+
+		return null;
 	}
 
 	private static final MediaItem.Field[] _MEDIA_ITEM_FIELDS = {

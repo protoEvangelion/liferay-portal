@@ -55,14 +55,14 @@ public interface SchedulerEngine {
 	public static final String MESSAGE = "MESSAGE";
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Wilberforce (7.0.x)
 	 */
 	@Deprecated
 	public static final String MESSAGE_LISTENER_CLASS_NAME =
 		"MESSAGE_LISTENER_CLASS_NAME";
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Wilberforce (7.0.x)
 	 */
 	@Deprecated
 	public static final String MESSAGE_LISTENER_UUID = "MESSAGE_LISTENER_UUID";
@@ -70,7 +70,7 @@ public interface SchedulerEngine {
 	public static final String NEXT_FIRE_TIME = "NEXT_FIRE_TIME";
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Wilberforce (7.0.x)
 	 */
 	@Deprecated
 	public static final String PORTLET_ID = "PORTLET_ID";
@@ -78,12 +78,15 @@ public interface SchedulerEngine {
 	public static final String PREVIOUS_FIRE_TIME = "PREVIOUS_FIRE_TIME";
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Wilberforce (7.0.x)
 	 */
 	@Deprecated
 	public static final String RECEIVER_KEY = "RECEIVER_KEY";
 
 	public static final String SCHEDULER = "SCHEDULER";
+
+	public static final String SCHEDULER_CLUSTER_INVOKING =
+		"scheduler.cluster.invoking";
 
 	public static final String SCRIPT = "SCRIPT";
 
@@ -153,6 +156,10 @@ public interface SchedulerEngine {
 		throws SchedulerException;
 
 	public void update(Trigger trigger, StorageType storageType)
+		throws SchedulerException;
+
+	@MessagingProxy(mode = ProxyMode.SYNC)
+	public void validateTrigger(Trigger trigger, StorageType storageType)
 		throws SchedulerException;
 
 }

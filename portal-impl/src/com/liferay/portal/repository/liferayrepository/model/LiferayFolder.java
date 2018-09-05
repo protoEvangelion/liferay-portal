@@ -22,7 +22,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.repository.model.RepositoryModelOperation;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
-import com.liferay.portlet.documentlibrary.service.permission.DLFolderPermission;
+import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
+import com.liferay.portal.kernel.util.ServiceProxyFactory;
 import com.liferay.portlet.documentlibrary.util.RepositoryModelUtil;
 
 import java.io.Serializable;
@@ -63,7 +64,7 @@ public class LiferayFolder extends LiferayModel implements Folder {
 			PermissionChecker permissionChecker, String actionId)
 		throws PortalException {
 
-		return DLFolderPermission.contains(
+		return _dlFolderModelResourcePermission.contains(
 			permissionChecker, _dlFolder, actionId);
 	}
 
@@ -182,9 +183,8 @@ public class LiferayFolder extends LiferayModel implements Folder {
 		if (dlParentFolder == null) {
 			return null;
 		}
-		else {
-			return new LiferayFolder(dlParentFolder);
-		}
+
+		return new LiferayFolder(dlParentFolder);
 	}
 
 	@Override
@@ -252,9 +252,8 @@ public class LiferayFolder extends LiferayModel implements Folder {
 		if (_dlFolder.getGroupId() == _dlFolder.getRepositoryId()) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	@Override
@@ -282,9 +281,8 @@ public class LiferayFolder extends LiferayModel implements Folder {
 		if (isMountPoint()) {
 			return false;
 		}
-		else {
-			return true;
-		}
+
+		return true;
 	}
 
 	@Override
@@ -292,9 +290,8 @@ public class LiferayFolder extends LiferayModel implements Folder {
 		if (isMountPoint()) {
 			return false;
 		}
-		else {
-			return true;
-		}
+
+		return true;
 	}
 
 	@Override
@@ -302,9 +299,8 @@ public class LiferayFolder extends LiferayModel implements Folder {
 		if (isMountPoint()) {
 			return false;
 		}
-		else {
-			return true;
-		}
+
+		return true;
 	}
 
 	@Override
@@ -312,9 +308,8 @@ public class LiferayFolder extends LiferayModel implements Folder {
 		if (isMountPoint()) {
 			return false;
 		}
-		else {
-			return true;
-		}
+
+		return true;
 	}
 
 	@Override
@@ -322,9 +317,8 @@ public class LiferayFolder extends LiferayModel implements Folder {
 		if (isMountPoint()) {
 			return false;
 		}
-		else {
-			return true;
-		}
+
+		return true;
 	}
 
 	@Override
@@ -332,9 +326,8 @@ public class LiferayFolder extends LiferayModel implements Folder {
 		if (isMountPoint()) {
 			return false;
 		}
-		else {
-			return true;
-		}
+
+		return true;
 	}
 
 	@Override
@@ -396,9 +389,8 @@ public class LiferayFolder extends LiferayModel implements Folder {
 		if (isEscapedModel()) {
 			return this;
 		}
-		else {
-			return new LiferayFolder(_dlFolder.toEscapedModel(), true);
-		}
+
+		return new LiferayFolder(_dlFolder.toEscapedModel(), true);
 	}
 
 	@Override
@@ -411,10 +403,16 @@ public class LiferayFolder extends LiferayModel implements Folder {
 		if (isEscapedModel()) {
 			return new LiferayFolder(_dlFolder.toUnescapedModel(), true);
 		}
-		else {
-			return this;
-		}
+
+		return this;
 	}
+
+	private static volatile ModelResourcePermission<DLFolder>
+		_dlFolderModelResourcePermission =
+			ServiceProxyFactory.newServiceTrackedInstance(
+				ModelResourcePermission.class, LiferayFolder.class,
+				"_dlFolderModelResourcePermission",
+				"(model.class.name=" + DLFolder.class.getName() + ")", true);
 
 	private final DLFolder _dlFolder;
 	private final boolean _escapedModel;

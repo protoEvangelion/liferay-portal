@@ -14,7 +14,8 @@
 
 package com.liferay.portal.resiliency.spi.agent;
 
-import com.liferay.portal.kernel.io.AutoDeleteFileInputStream;
+import com.liferay.petra.io.AutoDeleteFileInputStream;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.resiliency.spi.SPIUtil;
 import com.liferay.portal.kernel.resiliency.spi.agent.annotation.Direction;
@@ -30,7 +31,6 @@ import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.upload.UploadServletRequestImpl;
@@ -386,9 +386,8 @@ public class SPIAgentRequest extends SPIAgentSerializable {
 			if (ArrayUtil.isNotEmpty(values)) {
 				return values[0];
 			}
-			else {
-				return null;
-			}
+
+			return null;
 		}
 
 		@Override

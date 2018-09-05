@@ -113,108 +113,13 @@ public class UserIdMapperWrapper implements UserIdMapper,
 	}
 
 	@Override
-	public CacheModel<UserIdMapper> toCacheModel() {
-		return _userIdMapper.toCacheModel();
-	}
-
-	@Override
-	public UserIdMapper toEscapedModel() {
-		return new UserIdMapperWrapper(_userIdMapper.toEscapedModel());
-	}
-
-	@Override
-	public UserIdMapper toUnescapedModel() {
-		return new UserIdMapperWrapper(_userIdMapper.toUnescapedModel());
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _userIdMapper.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _userIdMapper.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _userIdMapper.isNew();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _userIdMapper.getExpandoBridge();
+	public Object clone() {
+		return new UserIdMapperWrapper((UserIdMapper)_userIdMapper.clone());
 	}
 
 	@Override
 	public int compareTo(UserIdMapper userIdMapper) {
 		return _userIdMapper.compareTo(userIdMapper);
-	}
-
-	@Override
-	public int hashCode() {
-		return _userIdMapper.hashCode();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _userIdMapper.getPrimaryKeyObj();
-	}
-
-	@Override
-	public java.lang.Object clone() {
-		return new UserIdMapperWrapper((UserIdMapper)_userIdMapper.clone());
-	}
-
-	/**
-	* Returns the description of this user ID mapper.
-	*
-	* @return the description of this user ID mapper
-	*/
-	@Override
-	public java.lang.String getDescription() {
-		return _userIdMapper.getDescription();
-	}
-
-	/**
-	* Returns the external user ID of this user ID mapper.
-	*
-	* @return the external user ID of this user ID mapper
-	*/
-	@Override
-	public java.lang.String getExternalUserId() {
-		return _userIdMapper.getExternalUserId();
-	}
-
-	/**
-	* Returns the type of this user ID mapper.
-	*
-	* @return the type of this user ID mapper
-	*/
-	@Override
-	public java.lang.String getType() {
-		return _userIdMapper.getType();
-	}
-
-	/**
-	* Returns the user uuid of this user ID mapper.
-	*
-	* @return the user uuid of this user ID mapper
-	*/
-	@Override
-	public java.lang.String getUserUuid() {
-		return _userIdMapper.getUserUuid();
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _userIdMapper.toString();
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _userIdMapper.toXmlString();
 	}
 
 	/**
@@ -225,6 +130,31 @@ public class UserIdMapperWrapper implements UserIdMapper,
 	@Override
 	public long getCompanyId() {
 		return _userIdMapper.getCompanyId();
+	}
+
+	/**
+	* Returns the description of this user ID mapper.
+	*
+	* @return the description of this user ID mapper
+	*/
+	@Override
+	public String getDescription() {
+		return _userIdMapper.getDescription();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _userIdMapper.getExpandoBridge();
+	}
+
+	/**
+	* Returns the external user ID of this user ID mapper.
+	*
+	* @return the external user ID of this user ID mapper
+	*/
+	@Override
+	public String getExternalUserId() {
+		return _userIdMapper.getExternalUserId();
 	}
 
 	/**
@@ -247,6 +177,21 @@ public class UserIdMapperWrapper implements UserIdMapper,
 		return _userIdMapper.getPrimaryKey();
 	}
 
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _userIdMapper.getPrimaryKeyObj();
+	}
+
+	/**
+	* Returns the type of this user ID mapper.
+	*
+	* @return the type of this user ID mapper
+	*/
+	@Override
+	public String getType() {
+		return _userIdMapper.getType();
+	}
+
 	/**
 	* Returns the user ID of this user ID mapper.
 	*
@@ -265,6 +210,36 @@ public class UserIdMapperWrapper implements UserIdMapper,
 	@Override
 	public long getUserIdMapperId() {
 		return _userIdMapper.getUserIdMapperId();
+	}
+
+	/**
+	* Returns the user uuid of this user ID mapper.
+	*
+	* @return the user uuid of this user ID mapper
+	*/
+	@Override
+	public String getUserUuid() {
+		return _userIdMapper.getUserUuid();
+	}
+
+	@Override
+	public int hashCode() {
+		return _userIdMapper.hashCode();
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _userIdMapper.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _userIdMapper.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _userIdMapper.isNew();
 	}
 
 	@Override
@@ -293,7 +268,7 @@ public class UserIdMapperWrapper implements UserIdMapper,
 	* @param description the description of this user ID mapper
 	*/
 	@Override
-	public void setDescription(java.lang.String description) {
+	public void setDescription(String description) {
 		_userIdMapper.setDescription(description);
 	}
 
@@ -318,7 +293,7 @@ public class UserIdMapperWrapper implements UserIdMapper,
 	* @param externalUserId the external user ID of this user ID mapper
 	*/
 	@Override
-	public void setExternalUserId(java.lang.String externalUserId) {
+	public void setExternalUserId(String externalUserId) {
 		_userIdMapper.setExternalUserId(externalUserId);
 	}
 
@@ -358,7 +333,7 @@ public class UserIdMapperWrapper implements UserIdMapper,
 	* @param type the type of this user ID mapper
 	*/
 	@Override
-	public void setType(java.lang.String type) {
+	public void setType(String type) {
 		_userIdMapper.setType(type);
 	}
 
@@ -388,8 +363,33 @@ public class UserIdMapperWrapper implements UserIdMapper,
 	* @param userUuid the user uuid of this user ID mapper
 	*/
 	@Override
-	public void setUserUuid(java.lang.String userUuid) {
+	public void setUserUuid(String userUuid) {
 		_userIdMapper.setUserUuid(userUuid);
+	}
+
+	@Override
+	public CacheModel<UserIdMapper> toCacheModel() {
+		return _userIdMapper.toCacheModel();
+	}
+
+	@Override
+	public UserIdMapper toEscapedModel() {
+		return new UserIdMapperWrapper(_userIdMapper.toEscapedModel());
+	}
+
+	@Override
+	public String toString() {
+		return _userIdMapper.toString();
+	}
+
+	@Override
+	public UserIdMapper toUnescapedModel() {
+		return new UserIdMapperWrapper(_userIdMapper.toUnescapedModel());
+	}
+
+	@Override
+	public String toXmlString() {
+		return _userIdMapper.toXmlString();
 	}
 
 	@Override

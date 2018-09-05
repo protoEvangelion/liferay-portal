@@ -15,6 +15,7 @@
 package com.liferay.asset.kernel.util.comparator;
 
 import com.liferay.asset.kernel.model.AssetRendererFactory;
+import com.liferay.portal.kernel.util.CollatorUtil;
 
 import java.io.Serializable;
 
@@ -24,15 +25,18 @@ import java.util.Comparator;
 import java.util.Locale;
 
 /**
- * @author Eduardo Garcia
+ * @author     Eduardo Garcia
+ * @deprecated As of Judson (7.1.x), replaced by {@link
+ *             com.liferay.asset.util.comparator.AssetRendererFactoryTypeNameComparator}
  */
+@Deprecated
 public class AssetRendererFactoryTypeNameComparator
 	implements Comparator<AssetRendererFactory<?>>, Serializable {
 
 	public AssetRendererFactoryTypeNameComparator(Locale locale) {
 		_locale = locale;
 
-		_collator = Collator.getInstance(_locale);
+		_collator = CollatorUtil.getInstance(_locale);
 	}
 
 	@Override

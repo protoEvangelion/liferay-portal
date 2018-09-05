@@ -21,6 +21,8 @@ import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 
 import com.liferay.exportimport.kernel.lar.StagedModelType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSON;
@@ -28,6 +30,7 @@ import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.EmailAddress;
 import com.liferay.portal.kernel.model.EmailAddressModel;
 import com.liferay.portal.kernel.model.EmailAddressSoap;
+import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -36,8 +39,6 @@ import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
@@ -155,7 +156,7 @@ public class EmailAddressModelImpl extends BaseModelImpl<EmailAddress>
 		model.setClassPK(soapModel.getClassPK());
 		model.setAddress(soapModel.getAddress());
 		model.setTypeId(soapModel.getTypeId());
-		model.setPrimary(soapModel.getPrimary());
+		model.setPrimary(soapModel.isPrimary());
 
 		return model;
 	}
@@ -232,7 +233,7 @@ public class EmailAddressModelImpl extends BaseModelImpl<EmailAddress>
 		attributes.put("classPK", getClassPK());
 		attributes.put("address", getAddress());
 		attributes.put("typeId", getTypeId());
-		attributes.put("primary", getPrimary());
+		attributes.put("primary", isPrimary());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -336,7 +337,7 @@ public class EmailAddressModelImpl extends BaseModelImpl<EmailAddress>
 	@Override
 	public String getUuid() {
 		if (_uuid == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _uuid;
@@ -417,7 +418,7 @@ public class EmailAddressModelImpl extends BaseModelImpl<EmailAddress>
 			return user.getUuid();
 		}
 		catch (PortalException pe) {
-			return StringPool.BLANK;
+			return "";
 		}
 	}
 
@@ -433,7 +434,7 @@ public class EmailAddressModelImpl extends BaseModelImpl<EmailAddress>
 	@Override
 	public String getUserName() {
 		if (_userName == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _userName;
@@ -478,7 +479,7 @@ public class EmailAddressModelImpl extends BaseModelImpl<EmailAddress>
 	@Override
 	public String getClassName() {
 		if (getClassNameId() <= 0) {
-			return StringPool.BLANK;
+			return "";
 		}
 
 		return PortalUtil.getClassName(getClassNameId());
@@ -545,7 +546,7 @@ public class EmailAddressModelImpl extends BaseModelImpl<EmailAddress>
 	@Override
 	public String getAddress() {
 		if (_address == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _address;
@@ -646,7 +647,7 @@ public class EmailAddressModelImpl extends BaseModelImpl<EmailAddress>
 		emailAddressImpl.setClassPK(getClassPK());
 		emailAddressImpl.setAddress(getAddress());
 		emailAddressImpl.setTypeId(getTypeId());
-		emailAddressImpl.setPrimary(getPrimary());
+		emailAddressImpl.setPrimary(isPrimary());
 
 		emailAddressImpl.resetOriginalValues();
 
@@ -794,7 +795,7 @@ public class EmailAddressModelImpl extends BaseModelImpl<EmailAddress>
 
 		emailAddressCacheModel.typeId = getTypeId();
 
-		emailAddressCacheModel.primary = getPrimary();
+		emailAddressCacheModel.primary = isPrimary();
 
 		return emailAddressCacheModel;
 	}
@@ -828,7 +829,7 @@ public class EmailAddressModelImpl extends BaseModelImpl<EmailAddress>
 		sb.append(", typeId=");
 		sb.append(getTypeId());
 		sb.append(", primary=");
-		sb.append(getPrimary());
+		sb.append(isPrimary());
 		sb.append("}");
 
 		return sb.toString();
@@ -892,7 +893,7 @@ public class EmailAddressModelImpl extends BaseModelImpl<EmailAddress>
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>primary</column-name><column-value><![CDATA[");
-		sb.append(getPrimary());
+		sb.append(isPrimary());
 		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
@@ -902,7 +903,7 @@ public class EmailAddressModelImpl extends BaseModelImpl<EmailAddress>
 
 	private static final ClassLoader _classLoader = EmailAddress.class.getClassLoader();
 	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
-			EmailAddress.class
+			EmailAddress.class, ModelWrapper.class
 		};
 	private long _mvccVersion;
 	private String _uuid;

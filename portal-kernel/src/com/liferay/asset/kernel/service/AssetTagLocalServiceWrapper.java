@@ -34,27 +34,25 @@ public class AssetTagLocalServiceWrapper implements AssetTagLocalService,
 	}
 
 	@Override
-	public boolean hasAssetEntryAssetTag(long entryId, long tagId) {
-		return _assetTagLocalService.hasAssetEntryAssetTag(entryId, tagId);
+	public void addAssetEntryAssetTag(long entryId,
+		com.liferay.asset.kernel.model.AssetTag assetTag) {
+		_assetTagLocalService.addAssetEntryAssetTag(entryId, assetTag);
 	}
 
 	@Override
-	public boolean hasAssetEntryAssetTags(long entryId) {
-		return _assetTagLocalService.hasAssetEntryAssetTags(entryId);
+	public void addAssetEntryAssetTag(long entryId, long tagId) {
+		_assetTagLocalService.addAssetEntryAssetTag(entryId, tagId);
 	}
 
-	/**
-	* Returns <code>true</code> if the group contains an asset tag with the
-	* name.
-	*
-	* @param groupId the primary key of the group
-	* @param name the name of the asset tag
-	* @return <code>true</code> if the group contains an asset tag with the
-	name; <code>false</code> otherwise.
-	*/
 	@Override
-	public boolean hasTag(long groupId, java.lang.String name) {
-		return _assetTagLocalService.hasTag(groupId, name);
+	public void addAssetEntryAssetTags(long entryId,
+		java.util.List<com.liferay.asset.kernel.model.AssetTag> assetTags) {
+		_assetTagLocalService.addAssetEntryAssetTags(entryId, assetTags);
+	}
+
+	@Override
+	public void addAssetEntryAssetTags(long entryId, long[] tagIds) {
+		_assetTagLocalService.addAssetEntryAssetTags(entryId, tagIds);
 	}
 
 	/**
@@ -81,11 +79,56 @@ public class AssetTagLocalServiceWrapper implements AssetTagLocalService,
 	*/
 	@Override
 	public com.liferay.asset.kernel.model.AssetTag addTag(long userId,
-		long groupId, java.lang.String name,
+		long groupId, String name,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _assetTagLocalService.addTag(userId, groupId, name,
 			serviceContext);
+	}
+
+	/**
+	* Returns the asset tags matching the group and names, creating new asset
+	* tags matching the names if the group doesn't already have them.
+	*
+	* <p>
+	* For each name, if an asset tag with the name doesn't already exist in the
+	* group, this method creates a new asset tag with the name in the group.
+	* </p>
+	*
+	* @param userId the primary key of the user checking the asset tags
+	* @param group the group in which to check the asset tags
+	* @param names the asset tag names
+	* @return the asset tags matching the group and names and new asset tags
+	matching the names that don't already exist in the group
+	*/
+	@Override
+	public java.util.List<com.liferay.asset.kernel.model.AssetTag> checkTags(
+		long userId, com.liferay.portal.kernel.model.Group group, String[] names)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _assetTagLocalService.checkTags(userId, group, names);
+	}
+
+	/**
+	* Returns the asset tags matching the group and names, creating new asset
+	* tags matching the names if the group doesn't already have them.
+	*
+	* @param userId the primary key of the user checking the asset tags
+	* @param groupId the primary key of the group in which check the asset
+	tags
+	* @param names the asset tag names
+	* @return the asset tags matching the group and names and new asset tags
+	matching the names that don't already exist in the group
+	*/
+	@Override
+	public java.util.List<com.liferay.asset.kernel.model.AssetTag> checkTags(
+		long userId, long groupId, String[] names)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _assetTagLocalService.checkTags(userId, groupId, names);
+	}
+
+	@Override
+	public void clearAssetEntryAssetTags(long entryId) {
+		_assetTagLocalService.clearAssetEntryAssetTags(entryId);
 	}
 
 	/**
@@ -114,6 +157,28 @@ public class AssetTagLocalServiceWrapper implements AssetTagLocalService,
 		return _assetTagLocalService.decrementAssetCount(tagId, classNameId);
 	}
 
+	@Override
+	public void deleteAssetEntryAssetTag(long entryId,
+		com.liferay.asset.kernel.model.AssetTag assetTag) {
+		_assetTagLocalService.deleteAssetEntryAssetTag(entryId, assetTag);
+	}
+
+	@Override
+	public void deleteAssetEntryAssetTag(long entryId, long tagId) {
+		_assetTagLocalService.deleteAssetEntryAssetTag(entryId, tagId);
+	}
+
+	@Override
+	public void deleteAssetEntryAssetTags(long entryId,
+		java.util.List<com.liferay.asset.kernel.model.AssetTag> assetTags) {
+		_assetTagLocalService.deleteAssetEntryAssetTags(entryId, assetTags);
+	}
+
+	@Override
+	public void deleteAssetEntryAssetTags(long entryId, long[] tagIds) {
+		_assetTagLocalService.deleteAssetEntryAssetTags(entryId, tagIds);
+	}
+
 	/**
 	* Deletes the asset tag from the database. Also notifies the appropriate model listeners.
 	*
@@ -139,147 +204,16 @@ public class AssetTagLocalServiceWrapper implements AssetTagLocalService,
 		return _assetTagLocalService.deleteAssetTag(tagId);
 	}
 
-	@Override
-	public com.liferay.asset.kernel.model.AssetTag fetchAssetTag(long tagId) {
-		return _assetTagLocalService.fetchAssetTag(tagId);
-	}
-
 	/**
-	* Returns the asset tag matching the UUID and group.
+	* Deletes all asset tags in the group.
 	*
-	* @param uuid the asset tag's UUID
-	* @param groupId the primary key of the group
-	* @return the matching asset tag, or <code>null</code> if a matching asset tag could not be found
+	* @param groupId the primary key of the group in which to delete all asset
+	tags
 	*/
 	@Override
-	public com.liferay.asset.kernel.model.AssetTag fetchAssetTagByUuidAndGroupId(
-		java.lang.String uuid, long groupId) {
-		return _assetTagLocalService.fetchAssetTagByUuidAndGroupId(uuid, groupId);
-	}
-
-	/**
-	* Returns the asset tag with the name in the group.
-	*
-	* @param groupId the primary key of the group
-	* @param name the asset tag's name
-	* @return the asset tag with the name in the group or <code>null</code> if
-	it could not be found
-	*/
-	@Override
-	public com.liferay.asset.kernel.model.AssetTag fetchTag(long groupId,
-		java.lang.String name) {
-		return _assetTagLocalService.fetchTag(groupId, name);
-	}
-
-	/**
-	* Returns the asset tag with the primary key.
-	*
-	* @param tagId the primary key of the asset tag
-	* @return the asset tag
-	* @throws PortalException if a asset tag with the primary key could not be found
-	*/
-	@Override
-	public com.liferay.asset.kernel.model.AssetTag getAssetTag(long tagId)
+	public void deleteGroupTags(long groupId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _assetTagLocalService.getAssetTag(tagId);
-	}
-
-	/**
-	* Returns the asset tag matching the UUID and group.
-	*
-	* @param uuid the asset tag's UUID
-	* @param groupId the primary key of the group
-	* @return the matching asset tag
-	* @throws PortalException if a matching asset tag could not be found
-	*/
-	@Override
-	public com.liferay.asset.kernel.model.AssetTag getAssetTagByUuidAndGroupId(
-		java.lang.String uuid, long groupId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _assetTagLocalService.getAssetTagByUuidAndGroupId(uuid, groupId);
-	}
-
-	/**
-	* Returns the asset tag with the name in the group.
-	*
-	* @param groupId the primary key of the group
-	* @param name the name of the asset tag
-	* @return the asset tag with the name in the group
-	*/
-	@Override
-	public com.liferay.asset.kernel.model.AssetTag getTag(long groupId,
-		java.lang.String name)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _assetTagLocalService.getTag(groupId, name);
-	}
-
-	/**
-	* Returns the asset tag with the primary key.
-	*
-	* @param tagId the primary key of the asset tag
-	* @return the asset tag with the primary key
-	*/
-	@Override
-	public com.liferay.asset.kernel.model.AssetTag getTag(long tagId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _assetTagLocalService.getTag(tagId);
-	}
-
-	/**
-	* Increments the number of assets to which the asset tag has been applied.
-	*
-	* @param tagId the primary key of the asset tag
-	* @param classNameId the class name ID of the entity to which the asset
-	tag is being applied
-	* @return the asset tag
-	*/
-	@Override
-	public com.liferay.asset.kernel.model.AssetTag incrementAssetCount(
-		long tagId, long classNameId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _assetTagLocalService.incrementAssetCount(tagId, classNameId);
-	}
-
-	/**
-	* Updates the asset tag in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param assetTag the asset tag
-	* @return the asset tag that was updated
-	*/
-	@Override
-	public com.liferay.asset.kernel.model.AssetTag updateAssetTag(
-		com.liferay.asset.kernel.model.AssetTag assetTag) {
-		return _assetTagLocalService.updateAssetTag(assetTag);
-	}
-
-	@Override
-	public com.liferay.asset.kernel.model.AssetTag updateTag(long userId,
-		long tagId, java.lang.String name,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _assetTagLocalService.updateTag(userId, tagId, name,
-			serviceContext);
-	}
-
-	@Override
-	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
-		return _assetTagLocalService.getActionableDynamicQuery();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
-		return _assetTagLocalService.dynamicQuery();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery getExportActionableDynamicQuery(
-		com.liferay.exportimport.kernel.lar.PortletDataContext portletDataContext) {
-		return _assetTagLocalService.getExportActionableDynamicQuery(portletDataContext);
-	}
-
-	@Override
-	public com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
-		return _assetTagLocalService.getIndexableActionableDynamicQuery();
+		_assetTagLocalService.deleteGroupTags(groupId);
 	}
 
 	/**
@@ -292,136 +226,31 @@ public class AssetTagLocalServiceWrapper implements AssetTagLocalService,
 		return _assetTagLocalService.deletePersistedModel(persistedModel);
 	}
 
+	/**
+	* Deletes the asset tag.
+	*
+	* @param tag the asset tag to be deleted
+	*/
 	@Override
-	public com.liferay.portal.kernel.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
+	public void deleteTag(com.liferay.asset.kernel.model.AssetTag tag)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _assetTagLocalService.getPersistedModel(primaryKeyObj);
+		_assetTagLocalService.deleteTag(tag);
 	}
 
+	/**
+	* Deletes the asset tag.
+	*
+	* @param tagId the primary key of the asset tag
+	*/
 	@Override
-	public com.liferay.portal.kernel.search.BaseModelSearchResult<com.liferay.asset.kernel.model.AssetTag> searchTags(
-		long[] groupIds, java.lang.String name, int start, int end,
-		com.liferay.portal.kernel.search.Sort sort)
+	public void deleteTag(long tagId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _assetTagLocalService.searchTags(groupIds, name, start, end, sort);
+		_assetTagLocalService.deleteTag(tagId);
 	}
 
 	@Override
-	public int getAssetEntryAssetTagsCount(long entryId) {
-		return _assetTagLocalService.getAssetEntryAssetTagsCount(entryId);
-	}
-
-	/**
-	* Returns the number of asset tags.
-	*
-	* @return the number of asset tags
-	*/
-	@Override
-	public int getAssetTagsCount() {
-		return _assetTagLocalService.getAssetTagsCount();
-	}
-
-	/**
-	* Returns the number of asset tags in the group.
-	*
-	* @param groupId the primary key of the group
-	* @return the number of asset tags in the group
-	*/
-	@Override
-	public int getGroupTagsCount(long groupId) {
-		return _assetTagLocalService.getGroupTagsCount(groupId);
-	}
-
-	@Override
-	public int getTagsSize(long groupId, long classNameId, java.lang.String name) {
-		return _assetTagLocalService.getTagsSize(groupId, classNameId, name);
-	}
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	@Override
-	public java.lang.String getOSGiServiceIdentifier() {
-		return _assetTagLocalService.getOSGiServiceIdentifier();
-	}
-
-	/**
-	* Returns the names of all the asset tags.
-	*
-	* @return the names of all the asset tags
-	*/
-	@Override
-	public java.lang.String[] getTagNames() {
-		return _assetTagLocalService.getTagNames();
-	}
-
-	/**
-	* Returns the names of the asset tags of the entity
-	*
-	* @param className the class name of the entity
-	* @param classPK the primary key of the entity
-	* @return the names of the asset tags of the entity
-	*/
-	@Override
-	public java.lang.String[] getTagNames(java.lang.String className,
-		long classPK) {
-		return _assetTagLocalService.getTagNames(className, classPK);
-	}
-
-	/**
-	* Returns the names of the asset tags of the entity.
-	*
-	* @param classNameId the class name ID of the entity
-	* @param classPK the primary key of the entity
-	* @return the names of the asset tags of the entity
-	*/
-	@Override
-	public java.lang.String[] getTagNames(long classNameId, long classPK) {
-		return _assetTagLocalService.getTagNames(classNameId, classPK);
-	}
-
-	/**
-	* Returns the asset tags matching the group and names, creating new asset
-	* tags matching the names if the group doesn't already have them.
-	*
-	* <p>
-	* For each name, if an asset tag with the name doesn't already exist in the
-	* group, this method creates a new asset tag with the name in the group.
-	* </p>
-	*
-	* @param userId the primary key of the user checking the asset tags
-	* @param group the group in which to check the asset tags
-	* @param names the asset tag names
-	* @return the asset tags matching the group and names and new asset tags
-	matching the names that don't already exist in the group
-	*/
-	@Override
-	public java.util.List<com.liferay.asset.kernel.model.AssetTag> checkTags(
-		long userId, com.liferay.portal.kernel.model.Group group,
-		java.lang.String[] names)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _assetTagLocalService.checkTags(userId, group, names);
-	}
-
-	/**
-	* Returns the asset tags matching the group and names, creating new asset
-	* tags matching the names if the group doesn't already have them.
-	*
-	* @param userId the primary key of the user checking the asset tags
-	* @param groupId the primary key of the group in which check the asset
-	tags
-	* @param names the asset tag names
-	* @return the asset tags matching the group and names and new asset tags
-	matching the names that don't already exist in the group
-	*/
-	@Override
-	public java.util.List<com.liferay.asset.kernel.model.AssetTag> checkTags(
-		long userId, long groupId, java.lang.String[] names)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _assetTagLocalService.checkTags(userId, groupId, names);
+	public com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
+		return _assetTagLocalService.dynamicQuery();
 	}
 
 	/**
@@ -477,6 +306,69 @@ public class AssetTagLocalServiceWrapper implements AssetTagLocalService,
 			orderByComparator);
 	}
 
+	/**
+	* Returns the number of rows matching the dynamic query.
+	*
+	* @param dynamicQuery the dynamic query
+	* @return the number of rows matching the dynamic query
+	*/
+	@Override
+	public long dynamicQueryCount(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+		return _assetTagLocalService.dynamicQueryCount(dynamicQuery);
+	}
+
+	/**
+	* Returns the number of rows matching the dynamic query.
+	*
+	* @param dynamicQuery the dynamic query
+	* @param projection the projection to apply to the query
+	* @return the number of rows matching the dynamic query
+	*/
+	@Override
+	public long dynamicQueryCount(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
+		com.liferay.portal.kernel.dao.orm.Projection projection) {
+		return _assetTagLocalService.dynamicQueryCount(dynamicQuery, projection);
+	}
+
+	@Override
+	public com.liferay.asset.kernel.model.AssetTag fetchAssetTag(long tagId) {
+		return _assetTagLocalService.fetchAssetTag(tagId);
+	}
+
+	/**
+	* Returns the asset tag matching the UUID and group.
+	*
+	* @param uuid the asset tag's UUID
+	* @param groupId the primary key of the group
+	* @return the matching asset tag, or <code>null</code> if a matching asset tag could not be found
+	*/
+	@Override
+	public com.liferay.asset.kernel.model.AssetTag fetchAssetTagByUuidAndGroupId(
+		String uuid, long groupId) {
+		return _assetTagLocalService.fetchAssetTagByUuidAndGroupId(uuid, groupId);
+	}
+
+	/**
+	* Returns the asset tag with the name in the group.
+	*
+	* @param groupId the primary key of the group
+	* @param name the asset tag's name
+	* @return the asset tag with the name in the group or <code>null</code> if
+	it could not be found
+	*/
+	@Override
+	public com.liferay.asset.kernel.model.AssetTag fetchTag(long groupId,
+		String name) {
+		return _assetTagLocalService.fetchTag(groupId, name);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
+		return _assetTagLocalService.getActionableDynamicQuery();
+	}
+
 	@Override
 	public java.util.List<com.liferay.asset.kernel.model.AssetTag> getAssetEntryAssetTags(
 		long entryId) {
@@ -495,6 +387,50 @@ public class AssetTagLocalServiceWrapper implements AssetTagLocalService,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.asset.kernel.model.AssetTag> orderByComparator) {
 		return _assetTagLocalService.getAssetEntryAssetTags(entryId, start,
 			end, orderByComparator);
+	}
+
+	@Override
+	public int getAssetEntryAssetTagsCount(long entryId) {
+		return _assetTagLocalService.getAssetEntryAssetTagsCount(entryId);
+	}
+
+	/**
+	* Returns the entryIds of the asset entries associated with the asset tag.
+	*
+	* @param tagId the tagId of the asset tag
+	* @return long[] the entryIds of asset entries associated with the asset tag
+	*/
+	@Override
+	public long[] getAssetEntryPrimaryKeys(long tagId) {
+		return _assetTagLocalService.getAssetEntryPrimaryKeys(tagId);
+	}
+
+	/**
+	* Returns the asset tag with the primary key.
+	*
+	* @param tagId the primary key of the asset tag
+	* @return the asset tag
+	* @throws PortalException if a asset tag with the primary key could not be found
+	*/
+	@Override
+	public com.liferay.asset.kernel.model.AssetTag getAssetTag(long tagId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _assetTagLocalService.getAssetTag(tagId);
+	}
+
+	/**
+	* Returns the asset tag matching the UUID and group.
+	*
+	* @param uuid the asset tag's UUID
+	* @param groupId the primary key of the group
+	* @return the matching asset tag
+	* @throws PortalException if a matching asset tag could not be found
+	*/
+	@Override
+	public com.liferay.asset.kernel.model.AssetTag getAssetTagByUuidAndGroupId(
+		String uuid, long groupId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _assetTagLocalService.getAssetTagByUuidAndGroupId(uuid, groupId);
 	}
 
 	/**
@@ -523,7 +459,7 @@ public class AssetTagLocalServiceWrapper implements AssetTagLocalService,
 	*/
 	@Override
 	public java.util.List<com.liferay.asset.kernel.model.AssetTag> getAssetTagsByUuidAndCompanyId(
-		java.lang.String uuid, long companyId) {
+		String uuid, long companyId) {
 		return _assetTagLocalService.getAssetTagsByUuidAndCompanyId(uuid,
 			companyId);
 	}
@@ -540,10 +476,20 @@ public class AssetTagLocalServiceWrapper implements AssetTagLocalService,
 	*/
 	@Override
 	public java.util.List<com.liferay.asset.kernel.model.AssetTag> getAssetTagsByUuidAndCompanyId(
-		java.lang.String uuid, long companyId, int start, int end,
+		String uuid, long companyId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.asset.kernel.model.AssetTag> orderByComparator) {
 		return _assetTagLocalService.getAssetTagsByUuidAndCompanyId(uuid,
 			companyId, start, end, orderByComparator);
+	}
+
+	/**
+	* Returns the number of asset tags.
+	*
+	* @return the number of asset tags
+	*/
+	@Override
+	public int getAssetTagsCount() {
+		return _assetTagLocalService.getAssetTagsCount();
 	}
 
 	/**
@@ -556,6 +502,24 @@ public class AssetTagLocalServiceWrapper implements AssetTagLocalService,
 	public java.util.List<com.liferay.asset.kernel.model.AssetTag> getEntryTags(
 		long entryId) {
 		return _assetTagLocalService.getEntryTags(entryId);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery getExportActionableDynamicQuery(
+		com.liferay.exportimport.kernel.lar.PortletDataContext portletDataContext) {
+		return _assetTagLocalService.getExportActionableDynamicQuery(portletDataContext);
+	}
+
+	/**
+	* Returns the asset tags in the groups.
+	*
+	* @param groupIds the primary keys of the groups
+	* @return the asset tags in the groups
+	*/
+	@Override
+	public java.util.List<com.liferay.asset.kernel.model.AssetTag> getGroupsTags(
+		long[] groupIds) {
+		return _assetTagLocalService.getGroupsTags(groupIds);
 	}
 
 	/**
@@ -585,31 +549,158 @@ public class AssetTagLocalServiceWrapper implements AssetTagLocalService,
 	}
 
 	/**
-	* Returns the asset tags in the groups.
+	* Returns the number of asset tags in the group.
 	*
-	* @param groupIds the primary keys of the groups
-	* @return the asset tags in the groups
+	* @param groupId the primary key of the group
+	* @return the number of asset tags in the group
 	*/
 	@Override
-	public java.util.List<com.liferay.asset.kernel.model.AssetTag> getGroupsTags(
-		long[] groupIds) {
-		return _assetTagLocalService.getGroupsTags(groupIds);
+	public int getGroupTagsCount(long groupId) {
+		return _assetTagLocalService.getGroupTagsCount(groupId);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
+		return _assetTagLocalService.getIndexableActionableDynamicQuery();
+	}
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	@Override
+	public String getOSGiServiceIdentifier() {
+		return _assetTagLocalService.getOSGiServiceIdentifier();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _assetTagLocalService.getPersistedModel(primaryKeyObj);
 	}
 
 	@Override
 	public java.util.List<com.liferay.asset.kernel.model.AssetTag> getSocialActivityCounterOffsetTags(
-		long groupId, java.lang.String socialActivityCounterName,
-		int startOffset, int endOffset) {
+		long groupId, String socialActivityCounterName, int startOffset,
+		int endOffset) {
 		return _assetTagLocalService.getSocialActivityCounterOffsetTags(groupId,
 			socialActivityCounterName, startOffset, endOffset);
 	}
 
 	@Override
 	public java.util.List<com.liferay.asset.kernel.model.AssetTag> getSocialActivityCounterPeriodTags(
-		long groupId, java.lang.String socialActivityCounterName,
-		int startPeriod, int endPeriod) {
+		long groupId, String socialActivityCounterName, int startPeriod,
+		int endPeriod) {
 		return _assetTagLocalService.getSocialActivityCounterPeriodTags(groupId,
 			socialActivityCounterName, startPeriod, endPeriod);
+	}
+
+	/**
+	* Returns the asset tag with the primary key.
+	*
+	* @param tagId the primary key of the asset tag
+	* @return the asset tag with the primary key
+	*/
+	@Override
+	public com.liferay.asset.kernel.model.AssetTag getTag(long tagId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _assetTagLocalService.getTag(tagId);
+	}
+
+	/**
+	* Returns the asset tag with the name in the group.
+	*
+	* @param groupId the primary key of the group
+	* @param name the name of the asset tag
+	* @return the asset tag with the name in the group
+	*/
+	@Override
+	public com.liferay.asset.kernel.model.AssetTag getTag(long groupId,
+		String name) throws com.liferay.portal.kernel.exception.PortalException {
+		return _assetTagLocalService.getTag(groupId, name);
+	}
+
+	/**
+	* Returns the primary keys of the asset tags with the names in the group.
+	*
+	* @param groupId the primary key of the group
+	* @param names the names of the asset tags
+	* @return the primary keys of the asset tags with the names in the group
+	*/
+	@Override
+	public long[] getTagIds(long groupId, String[] names) {
+		return _assetTagLocalService.getTagIds(groupId, names);
+	}
+
+	/**
+	* Returns the primary keys of the asset tags with the name in the groups.
+	*
+	* @param groupIds the primary keys of the groups
+	* @param name the name of the asset tags
+	* @return the primary keys of the asset tags with the name in the groups
+	*/
+	@Override
+	public long[] getTagIds(long[] groupIds, String name) {
+		return _assetTagLocalService.getTagIds(groupIds, name);
+	}
+
+	/**
+	* Returns the primary keys of the asset tags with the names in the groups.
+	*
+	* @param groupIds the primary keys of the groups
+	* @param names the names of the asset tags
+	* @return the primary keys of the asset tags with the names in the groups
+	*/
+	@Override
+	public long[] getTagIds(long[] groupIds, String[] names) {
+		return _assetTagLocalService.getTagIds(groupIds, names);
+	}
+
+	/**
+	* Returns the primary keys of the asset tags with the names.
+	*
+	* @param name the name of the asset tags
+	* @return the primary keys of the asset tags with the names
+	*/
+	@Override
+	public long[] getTagIds(String name) {
+		return _assetTagLocalService.getTagIds(name);
+	}
+
+	/**
+	* Returns the names of all the asset tags.
+	*
+	* @return the names of all the asset tags
+	*/
+	@Override
+	public String[] getTagNames() {
+		return _assetTagLocalService.getTagNames();
+	}
+
+	/**
+	* Returns the names of the asset tags of the entity.
+	*
+	* @param classNameId the class name ID of the entity
+	* @param classPK the primary key of the entity
+	* @return the names of the asset tags of the entity
+	*/
+	@Override
+	public String[] getTagNames(long classNameId, long classPK) {
+		return _assetTagLocalService.getTagNames(classNameId, classPK);
+	}
+
+	/**
+	* Returns the names of the asset tags of the entity
+	*
+	* @param className the class name of the entity
+	* @param classPK the primary key of the entity
+	* @return the names of the asset tags of the entity
+	*/
+	@Override
+	public String[] getTagNames(String className, long classPK) {
+		return _assetTagLocalService.getTagNames(className, classPK);
 	}
 
 	/**
@@ -620,19 +711,6 @@ public class AssetTagLocalServiceWrapper implements AssetTagLocalService,
 	@Override
 	public java.util.List<com.liferay.asset.kernel.model.AssetTag> getTags() {
 		return _assetTagLocalService.getTags();
-	}
-
-	/**
-	* Returns the asset tags of the entity.
-	*
-	* @param className the class name of the entity
-	* @param classPK the primary key of the entity
-	* @return the asset tags of the entity
-	*/
-	@Override
-	public java.util.List<com.liferay.asset.kernel.model.AssetTag> getTags(
-		java.lang.String className, long classPK) {
-		return _assetTagLocalService.getTags(className, classPK);
 	}
 
 	/**
@@ -650,202 +728,77 @@ public class AssetTagLocalServiceWrapper implements AssetTagLocalService,
 
 	@Override
 	public java.util.List<com.liferay.asset.kernel.model.AssetTag> getTags(
-		long groupId, long classNameId, java.lang.String name) {
+		long groupId, long classNameId, String name) {
 		return _assetTagLocalService.getTags(groupId, classNameId, name);
 	}
 
 	@Override
 	public java.util.List<com.liferay.asset.kernel.model.AssetTag> getTags(
-		long groupId, long classNameId, java.lang.String name, int start,
-		int end) {
+		long groupId, long classNameId, String name, int start, int end) {
 		return _assetTagLocalService.getTags(groupId, classNameId, name, start,
 			end);
 	}
 
 	/**
-	* Returns the asset tags in the group whose names match the pattern.
+	* Returns the asset tags of the entity.
+	*
+	* @param className the class name of the entity
+	* @param classPK the primary key of the entity
+	* @return the asset tags of the entity
+	*/
+	@Override
+	public java.util.List<com.liferay.asset.kernel.model.AssetTag> getTags(
+		String className, long classPK) {
+		return _assetTagLocalService.getTags(className, classPK);
+	}
+
+	@Override
+	public int getTagsSize(long groupId, long classNameId, String name) {
+		return _assetTagLocalService.getTagsSize(groupId, classNameId, name);
+	}
+
+	@Override
+	public int getTagsSize(long groupId, String name) {
+		return _assetTagLocalService.getTagsSize(groupId, name);
+	}
+
+	@Override
+	public boolean hasAssetEntryAssetTag(long entryId, long tagId) {
+		return _assetTagLocalService.hasAssetEntryAssetTag(entryId, tagId);
+	}
+
+	@Override
+	public boolean hasAssetEntryAssetTags(long entryId) {
+		return _assetTagLocalService.hasAssetEntryAssetTags(entryId);
+	}
+
+	/**
+	* Returns <code>true</code> if the group contains an asset tag with the
+	* name.
 	*
 	* @param groupId the primary key of the group
-	* @param name the pattern to match
-	* @param start the lower bound of the range of asset tags
-	* @param end the upper bound of the range of asset tags (not inclusive)
-	* @return the asset tags in the group whose names match the pattern
+	* @param name the name of the asset tag
+	* @return <code>true</code> if the group contains an asset tag with the
+	name; <code>false</code> otherwise.
 	*/
 	@Override
-	public java.util.List<com.liferay.asset.kernel.model.AssetTag> search(
-		long groupId, java.lang.String name, int start, int end) {
-		return _assetTagLocalService.search(groupId, name, start, end);
+	public boolean hasTag(long groupId, String name) {
+		return _assetTagLocalService.hasTag(groupId, name);
 	}
 
 	/**
-	* Returns the asset tags in the groups whose names match the pattern.
-	*
-	* @param groupIds the primary keys of the groups
-	* @param name the pattern to match
-	* @param start the lower bound of the range of asset tags
-	* @param end the upper bound of the range of asset tags (not inclusive)
-	* @return the asset tags in the groups whose names match the pattern
-	*/
-	@Override
-	public java.util.List<com.liferay.asset.kernel.model.AssetTag> search(
-		long[] groupIds, java.lang.String name, int start, int end) {
-		return _assetTagLocalService.search(groupIds, name, start, end);
-	}
-
-	/**
-	* Returns the number of rows matching the dynamic query.
-	*
-	* @param dynamicQuery the dynamic query
-	* @return the number of rows matching the dynamic query
-	*/
-	@Override
-	public long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
-		return _assetTagLocalService.dynamicQueryCount(dynamicQuery);
-	}
-
-	/**
-	* Returns the number of rows matching the dynamic query.
-	*
-	* @param dynamicQuery the dynamic query
-	* @param projection the projection to apply to the query
-	* @return the number of rows matching the dynamic query
-	*/
-	@Override
-	public long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
-		com.liferay.portal.kernel.dao.orm.Projection projection) {
-		return _assetTagLocalService.dynamicQueryCount(dynamicQuery, projection);
-	}
-
-	/**
-	* Returns the entryIds of the asset entries associated with the asset tag.
-	*
-	* @param tagId the tagId of the asset tag
-	* @return long[] the entryIds of asset entries associated with the asset tag
-	*/
-	@Override
-	public long[] getAssetEntryPrimaryKeys(long tagId) {
-		return _assetTagLocalService.getAssetEntryPrimaryKeys(tagId);
-	}
-
-	/**
-	* Returns the primary keys of the asset tags with the names in the group.
-	*
-	* @param groupId the primary key of the group
-	* @param names the names of the asset tags
-	* @return the primary keys of the asset tags with the names in the group
-	*/
-	@Override
-	public long[] getTagIds(long groupId, java.lang.String[] names) {
-		return _assetTagLocalService.getTagIds(groupId, names);
-	}
-
-	/**
-	* Returns the primary keys of the asset tags with the name in the groups.
-	*
-	* @param groupIds the primary keys of the groups
-	* @param name the name of the asset tags
-	* @return the primary keys of the asset tags with the name in the groups
-	*/
-	@Override
-	public long[] getTagIds(long[] groupIds, java.lang.String name) {
-		return _assetTagLocalService.getTagIds(groupIds, name);
-	}
-
-	/**
-	* Returns the primary keys of the asset tags with the names in the groups.
-	*
-	* @param groupIds the primary keys of the groups
-	* @param names the names of the asset tags
-	* @return the primary keys of the asset tags with the names in the groups
-	*/
-	@Override
-	public long[] getTagIds(long[] groupIds, java.lang.String[] names) {
-		return _assetTagLocalService.getTagIds(groupIds, names);
-	}
-
-	@Override
-	public void addAssetEntryAssetTag(long entryId,
-		com.liferay.asset.kernel.model.AssetTag assetTag) {
-		_assetTagLocalService.addAssetEntryAssetTag(entryId, assetTag);
-	}
-
-	@Override
-	public void addAssetEntryAssetTag(long entryId, long tagId) {
-		_assetTagLocalService.addAssetEntryAssetTag(entryId, tagId);
-	}
-
-	@Override
-	public void addAssetEntryAssetTags(long entryId,
-		java.util.List<com.liferay.asset.kernel.model.AssetTag> assetTags) {
-		_assetTagLocalService.addAssetEntryAssetTags(entryId, assetTags);
-	}
-
-	@Override
-	public void addAssetEntryAssetTags(long entryId, long[] tagIds) {
-		_assetTagLocalService.addAssetEntryAssetTags(entryId, tagIds);
-	}
-
-	@Override
-	public void clearAssetEntryAssetTags(long entryId) {
-		_assetTagLocalService.clearAssetEntryAssetTags(entryId);
-	}
-
-	@Override
-	public void deleteAssetEntryAssetTag(long entryId,
-		com.liferay.asset.kernel.model.AssetTag assetTag) {
-		_assetTagLocalService.deleteAssetEntryAssetTag(entryId, assetTag);
-	}
-
-	@Override
-	public void deleteAssetEntryAssetTag(long entryId, long tagId) {
-		_assetTagLocalService.deleteAssetEntryAssetTag(entryId, tagId);
-	}
-
-	@Override
-	public void deleteAssetEntryAssetTags(long entryId,
-		java.util.List<com.liferay.asset.kernel.model.AssetTag> assetTags) {
-		_assetTagLocalService.deleteAssetEntryAssetTags(entryId, assetTags);
-	}
-
-	@Override
-	public void deleteAssetEntryAssetTags(long entryId, long[] tagIds) {
-		_assetTagLocalService.deleteAssetEntryAssetTags(entryId, tagIds);
-	}
-
-	/**
-	* Deletes all asset tags in the group.
-	*
-	* @param groupId the primary key of the group in which to delete all asset
-	tags
-	*/
-	@Override
-	public void deleteGroupTags(long groupId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_assetTagLocalService.deleteGroupTags(groupId);
-	}
-
-	/**
-	* Deletes the asset tag.
-	*
-	* @param tag the asset tag to be deleted
-	*/
-	@Override
-	public void deleteTag(com.liferay.asset.kernel.model.AssetTag tag)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_assetTagLocalService.deleteTag(tag);
-	}
-
-	/**
-	* Deletes the asset tag.
+	* Increments the number of assets to which the asset tag has been applied.
 	*
 	* @param tagId the primary key of the asset tag
+	* @param classNameId the class name ID of the entity to which the asset
+	tag is being applied
+	* @return the asset tag
 	*/
 	@Override
-	public void deleteTag(long tagId)
+	public com.liferay.asset.kernel.model.AssetTag incrementAssetCount(
+		long tagId, long classNameId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		_assetTagLocalService.deleteTag(tagId);
+		return _assetTagLocalService.incrementAssetCount(tagId, classNameId);
 	}
 
 	/**
@@ -862,9 +815,68 @@ public class AssetTagLocalServiceWrapper implements AssetTagLocalService,
 		_assetTagLocalService.mergeTags(fromTagId, toTagId);
 	}
 
+	/**
+	* Returns the asset tags in the group whose names match the pattern.
+	*
+	* @param groupId the primary key of the group
+	* @param name the pattern to match
+	* @param start the lower bound of the range of asset tags
+	* @param end the upper bound of the range of asset tags (not inclusive)
+	* @return the asset tags in the group whose names match the pattern
+	*/
+	@Override
+	public java.util.List<com.liferay.asset.kernel.model.AssetTag> search(
+		long groupId, String name, int start, int end) {
+		return _assetTagLocalService.search(groupId, name, start, end);
+	}
+
+	/**
+	* Returns the asset tags in the groups whose names match the pattern.
+	*
+	* @param groupIds the primary keys of the groups
+	* @param name the pattern to match
+	* @param start the lower bound of the range of asset tags
+	* @param end the upper bound of the range of asset tags (not inclusive)
+	* @return the asset tags in the groups whose names match the pattern
+	*/
+	@Override
+	public java.util.List<com.liferay.asset.kernel.model.AssetTag> search(
+		long[] groupIds, String name, int start, int end) {
+		return _assetTagLocalService.search(groupIds, name, start, end);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.search.BaseModelSearchResult<com.liferay.asset.kernel.model.AssetTag> searchTags(
+		long[] groupIds, String name, int start, int end,
+		com.liferay.portal.kernel.search.Sort sort)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _assetTagLocalService.searchTags(groupIds, name, start, end, sort);
+	}
+
 	@Override
 	public void setAssetEntryAssetTags(long entryId, long[] tagIds) {
 		_assetTagLocalService.setAssetEntryAssetTags(entryId, tagIds);
+	}
+
+	/**
+	* Updates the asset tag in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param assetTag the asset tag
+	* @return the asset tag that was updated
+	*/
+	@Override
+	public com.liferay.asset.kernel.model.AssetTag updateAssetTag(
+		com.liferay.asset.kernel.model.AssetTag assetTag) {
+		return _assetTagLocalService.updateAssetTag(assetTag);
+	}
+
+	@Override
+	public com.liferay.asset.kernel.model.AssetTag updateTag(long userId,
+		long tagId, String name,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _assetTagLocalService.updateTag(userId, tagId, name,
+			serviceContext);
 	}
 
 	@Override

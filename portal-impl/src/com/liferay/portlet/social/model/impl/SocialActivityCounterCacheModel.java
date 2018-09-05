@@ -16,10 +16,10 @@ package com.liferay.portlet.social.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import com.liferay.social.kernel.model.SocialActivityCounter;
 
@@ -108,7 +108,7 @@ public class SocialActivityCounterCacheModel implements CacheModel<SocialActivit
 		socialActivityCounterImpl.setClassPK(classPK);
 
 		if (name == null) {
-			socialActivityCounterImpl.setName(StringPool.BLANK);
+			socialActivityCounterImpl.setName("");
 		}
 		else {
 			socialActivityCounterImpl.setName(name);
@@ -169,7 +169,7 @@ public class SocialActivityCounterCacheModel implements CacheModel<SocialActivit
 		objectOutput.writeLong(classPK);
 
 		if (name == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(name);

@@ -74,11 +74,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>MARVEL</td>
-	<td>//iframe[contains(@id,'elasticsearch_marvel_web_portlet')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>METADATA_SETS_IFRAME</td>
 	<td>//iframe[contains(@class,'dialog-iframe-node ')]</td>
 	<td></td>
@@ -86,6 +81,11 @@
 <tr>
 	<td>PAGE_VARIATION_IFRAME</td>
 	<td>//iframe[contains(@id,'pagesVariationsDialog_iframe_')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PUBLISH_LATEST_CHANGES_DIALOG</td>
+	<td>//div[contains(@id,'publishLatestChangesDialog')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -120,7 +120,7 @@
 </tr>
 <tr>
 	<td>SELECT_TAG</td>
-	<td>//iframe[contains(@id,'AssetTagsSelectorPortlet')]</td>
+	<td>//iframe[contains(@id,'selectTag_iframe')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -135,7 +135,7 @@
 </tr>
 <tr>
 	<td>RECAPTCHA</td>
-	<td>//iframe[contains(@title,'recaptcha')]</td>
+	<td>//iframe[contains(@src,'recaptcha')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -167,7 +167,7 @@
  	<td>SELECT_USER_SITES</td>
  	<td>//iframe[contains(@id,'selectSite_iframe_')]</td>
  	<td></td>
- </tr>
+</tr>
 <tr>
 	<td>SELECT_STRUCTURE_FIELD</td>
 	<td>//div[contains(@class,'dialog-iframe-bd')]/iframe[contains(@src,'select_structure_field')]</td>
@@ -191,6 +191,11 @@
 <tr>
 	<td>UPLOAD_IMAGE</td>
 	<td>//iframe[contains(@id,'changeLogo_iframe')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>XPACK_MONITORING</td>
+	<td>//iframe[contains(@id,'XPackMonitoringPortlet')]</td>
 	<td></td>
 </tr>
 </tbody>

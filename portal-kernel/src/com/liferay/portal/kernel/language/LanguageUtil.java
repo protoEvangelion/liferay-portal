@@ -16,16 +16,16 @@ package com.liferay.portal.kernel.language;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.portlet.PortletRequest;
 
@@ -218,9 +218,11 @@ public class LanguageUtil {
 		return getLanguage().getBCP47LanguageId(portletRequest);
 	}
 
-	public static Language getLanguage() {
-		PortalRuntimePermission.checkGetBeanProperty(LanguageUtil.class);
+	public static Set<Locale> getCompanyAvailableLocales(long companyId) {
+		return getLanguage().getCompanyAvailableLocales(companyId);
+	}
 
+	public static Language getLanguage() {
 		return _language;
 	}
 
@@ -324,16 +326,32 @@ public class LanguageUtil {
 		return getLanguage().isInheritLocales(groupId);
 	}
 
+	public static boolean isSameLanguage(Locale locale1, Locale locale2) {
+		return getLanguage().isSameLanguage(locale1, locale2);
+	}
+
 	public static boolean isValidLanguageKey(Locale locale, String key) {
 		String value = getLanguage().get(locale, key, StringPool.BLANK);
 
 		return Validator.isNotNull(value);
 	}
 
+	/**
+	 * @deprecated As of Judson (7.1.x), replaced by {@link #process(
+	 *            Supplier, Locale, String)}
+	 */
+	@Deprecated
 	public static String process(
 		ResourceBundle resourceBundle, Locale locale, String content) {
 
 		return getLanguage().process(resourceBundle, locale, content);
+	}
+
+	public static String process(
+		Supplier<ResourceBundle> resourceBundleSupplier, Locale locale,
+		String content) {
+
+		return getLanguage().process(resourceBundleSupplier, locale, content);
 	}
 
 	public static void resetAvailableGroupLocales(long groupId) {
@@ -352,8 +370,6 @@ public class LanguageUtil {
 	}
 
 	public void setLanguage(Language language) {
-		PortalRuntimePermission.checkSetBeanProperty(getClass());
-
 		_language = language;
 	}
 

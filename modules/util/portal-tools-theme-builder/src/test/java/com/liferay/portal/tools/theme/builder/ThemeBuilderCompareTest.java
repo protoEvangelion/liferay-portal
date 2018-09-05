@@ -53,7 +53,6 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -65,7 +64,7 @@ import org.w3c.dom.NodeList;
 @RunWith(Parameterized.class)
 public class ThemeBuilderCompareTest {
 
-	@Parameters(name = "{1}")
+	@Parameterized.Parameters(name = "{1}")
 	public static Iterable<Object[]> getTestThemes() throws Exception {
 		Properties properties = new Properties();
 
@@ -106,7 +105,7 @@ public class ThemeBuilderCompareTest {
 					_styledJarFile = jarFile;
 				}
 				else if (line.contains(
-							"com.liferay.frontend.theme.unstyled-")) {
+							 "com.liferay.frontend.theme.unstyled-")) {
 
 					_unstyledJarFile = jarFile;
 				}
@@ -120,10 +119,11 @@ public class ThemeBuilderCompareTest {
 
 		_diffsDir = diffsDir;
 		_name = name;
-		_parentDir = _getParentDir(parentName);
 		_parentName = parentName;
 		_templateExtension = templateExtension;
 		_warFile = warFile;
+
+		_parentDir = _getParentDir(parentName);
 	}
 
 	@Test
@@ -283,6 +283,10 @@ public class ThemeBuilderCompareTest {
 			throw new IllegalArgumentException(
 				"Unsupported base theme " + parentName);
 		}
+
+		documentBuilderFactory.setFeature(
+			"http://apache.org/xml/features/nonvalidating/load-external-dtd",
+			false);
 
 		DocumentBuilder documentBuilder =
 			documentBuilderFactory.newDocumentBuilder();

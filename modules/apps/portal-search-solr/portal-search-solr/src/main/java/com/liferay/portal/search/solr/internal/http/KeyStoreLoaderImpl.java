@@ -14,11 +14,10 @@
 
 package com.liferay.portal.search.solr.internal.http;
 
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.log.SanitizerLogWrapper;
-import com.liferay.portal.kernel.util.StreamUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.search.solr.http.KeyStoreLoader;
 
 import java.io.FileInputStream;
@@ -52,17 +51,12 @@ public class KeyStoreLoaderImpl implements KeyStoreLoader {
 
 		KeyStore keyStore = KeyStore.getInstance(keyStoreType);
 
-		InputStream inputStream = loadFile(keyStoreLocation);
-
-		try {
+		try (InputStream inputStream = loadFile(keyStoreLocation)) {
 			keyStore.load(inputStream, keyStorePassword);
 
 			if (_log.isDebugEnabled()) {
 				dumpKeyStore(keyStore);
 			}
-		}
-		finally {
-			StreamUtil.cleanUp(inputStream);
 		}
 
 		return keyStore;

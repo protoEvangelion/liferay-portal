@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.registry.Registry;
 import com.liferay.registry.RegistryUtil;
@@ -34,6 +35,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Ivica Cardic
@@ -104,6 +107,12 @@ public class AutoDeployDir {
 					break;
 				}
 			}
+
+			Matcher matcher = _versionPattern.matcher(fileName);
+
+			if (matcher.find()) {
+				fileName = matcher.replaceFirst(".war");
+			}
 		}
 		else {
 			for (String curDirName : dirNames) {
@@ -126,6 +135,7 @@ public class AutoDeployDir {
 		_deployDir = deployDir;
 		_destDir = destDir;
 		_interval = interval;
+
 		_autoDeployListeners = new CopyOnWriteArrayList<>(autoDeployListeners);
 		_blacklistFileTimestamps = new HashMap<>();
 	}
@@ -171,8 +181,6 @@ public class AutoDeployDir {
 			((_autoDeployScanner == null) || !_autoDeployScanner.isAlive())) {
 
 			try {
-				scanDirectory();
-
 				Thread currentThread = Thread.currentThread();
 
 				_autoDeployScanner = new AutoDeployScanner(
@@ -241,8 +249,9 @@ public class AutoDeployDir {
 
 			if (_log.isDebugEnabled()) {
 				_log.debug(
-					"Skip processing of " + fileName + " because it is " +
-						"blacklisted");
+					StringBundler.concat(
+						"Skip processing of ", fileName, " because it is ",
+						"blacklisted"));
 			}
 
 			return;
@@ -326,6 +335,8 @@ public class AutoDeployDir {
 	private static AutoDeployScanner _autoDeployScanner;
 	private static final ServiceTracker<AutoDeployListener, AutoDeployListener>
 		_serviceTracker;
+	private static final Pattern _versionPattern = Pattern.compile(
+		"-[\\d]+((\\.[\\d]+)+(-.+)*)\\.war$");
 
 	static {
 		Registry registry = RegistryUtil.getRegistry();

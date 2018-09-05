@@ -14,25 +14,28 @@
 
 package com.liferay.portal.servlet;
 
+import com.liferay.petra.string.CharPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.security.pacl.DoPrivileged;
 import com.liferay.portal.kernel.servlet.DirectRequestDispatcherFactory;
 import com.liferay.portal.kernel.servlet.DirectServletRegistryUtil;
-import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.util.PropsValues;
+
+import java.io.IOException;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequestWrapper;
 
 /**
  * @author Raymond Augé
  * @author Shuyang Zhou
  */
-@DoPrivileged
 public class DirectRequestDispatcherFactoryImpl
 	implements DirectRequestDispatcherFactory {
 
@@ -61,6 +64,10 @@ public class DirectRequestDispatcherFactoryImpl
 		return getRequestDispatcher(servletContext, path);
 	}
 
+	/**
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
+	 */
+	@Deprecated
 	public interface PACL {
 
 		public RequestDispatcher getRequestDispatcher(
@@ -72,7 +79,8 @@ public class DirectRequestDispatcherFactoryImpl
 		ServletContext servletContext, String path) {
 
 		if (!PropsValues.DIRECT_SERVLET_CONTEXT_ENABLED) {
-			return servletContext.getRequestDispatcher(path);
+			return new IndirectRequestDispatcher(
+				servletContext.getRequestDispatcher(path));
 		}
 
 		if ((path == null) || (path.length() == 0)) {
@@ -109,35 +117,68 @@ public class DirectRequestDispatcherFactoryImpl
 
 			requestDispatcher = servletContext.getRequestDispatcher(path);
 
-			requestDispatcher = new DirectServletPathRegisterDispatcher(
+			return new DirectServletPathRegisterDispatcher(
 				path, requestDispatcher);
 		}
-		else {
-			if (_log.isDebugEnabled()) {
-				_log.debug("Servlet found for " + fullPath);
-			}
 
-			requestDispatcher = new DirectRequestDispatcher(
-				servlet, path, queryString);
+		if (_log.isDebugEnabled()) {
+			_log.debug("Servlet found for " + fullPath);
 		}
 
-		return _pacl.getRequestDispatcher(servletContext, requestDispatcher);
+		return new DirectRequestDispatcher(servlet, path, queryString);
 	}
+
+	private static final String _EQUINOX_REQUEST_CLASS_NAME =
+		"org.eclipse.equinox.http.servlet.internal.servlet." +
+			"HttpServletRequestWrapperImpl";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		DirectRequestDispatcherFactoryImpl.class);
 
-	private static final PACL _pacl = new NoPACL();
+	/**
+	 * See LPS-79937. We need to protect against redispatch from the module
+	 * framework back to the portal, which means we have to unwrap the request.
+	 */
+	private static class IndirectRequestDispatcher
+		implements RequestDispatcher {
 
-	private static class NoPACL implements PACL {
+		public IndirectRequestDispatcher(RequestDispatcher requestDispatcher) {
+			_requestDispatcher = requestDispatcher;
+		}
 
 		@Override
-		public RequestDispatcher getRequestDispatcher(
-			ServletContext servletContext,
-			RequestDispatcher requestDispatcher) {
+		public void forward(ServletRequest request, ServletResponse response)
+			throws IOException, ServletException {
 
-			return requestDispatcher;
+			Class<?> clazz = request.getClass();
+
+			if (_EQUINOX_REQUEST_CLASS_NAME.equals(clazz.getName())) {
+				HttpServletRequestWrapper wrapper =
+					(HttpServletRequestWrapper)request;
+
+				request = wrapper.getRequest();
+			}
+
+			_requestDispatcher.forward(request, response);
 		}
+
+		@Override
+		public void include(ServletRequest request, ServletResponse response)
+			throws IOException, ServletException {
+
+			Class<?> clazz = request.getClass();
+
+			if (_EQUINOX_REQUEST_CLASS_NAME.equals(clazz.getName())) {
+				HttpServletRequestWrapper wrapper =
+					(HttpServletRequestWrapper)request;
+
+				request = wrapper.getRequest();
+			}
+
+			_requestDispatcher.include(request, response);
+		}
+
+		private final RequestDispatcher _requestDispatcher;
 
 	}
 

@@ -128,148 +128,18 @@ public class UserTrackerWrapper implements UserTracker,
 	}
 
 	@Override
-	public CacheModel<UserTracker> toCacheModel() {
-		return _userTracker.toCacheModel();
+	public void addPath(UserTrackerPath path) {
+		_userTracker.addPath(path);
 	}
 
 	@Override
-	public UserTracker toEscapedModel() {
-		return new UserTrackerWrapper(_userTracker.toEscapedModel());
-	}
-
-	@Override
-	public UserTracker toUnescapedModel() {
-		return new UserTrackerWrapper(_userTracker.toUnescapedModel());
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _userTracker.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _userTracker.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _userTracker.isNew();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _userTracker.getExpandoBridge();
+	public Object clone() {
+		return new UserTrackerWrapper((UserTracker)_userTracker.clone());
 	}
 
 	@Override
 	public int compareTo(UserTracker userTracker) {
 		return _userTracker.compareTo(userTracker);
-	}
-
-	@Override
-	public int getHits() {
-		return _userTracker.getHits();
-	}
-
-	@Override
-	public int hashCode() {
-		return _userTracker.hashCode();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _userTracker.getPrimaryKeyObj();
-	}
-
-	@Override
-	public java.lang.Object clone() {
-		return new UserTrackerWrapper((UserTracker)_userTracker.clone());
-	}
-
-	@Override
-	public java.lang.String getEmailAddress() {
-		return _userTracker.getEmailAddress();
-	}
-
-	@Override
-	public java.lang.String getFullName() {
-		return _userTracker.getFullName();
-	}
-
-	/**
-	* Returns the remote addr of this user tracker.
-	*
-	* @return the remote addr of this user tracker
-	*/
-	@Override
-	public java.lang.String getRemoteAddr() {
-		return _userTracker.getRemoteAddr();
-	}
-
-	/**
-	* Returns the remote host of this user tracker.
-	*
-	* @return the remote host of this user tracker
-	*/
-	@Override
-	public java.lang.String getRemoteHost() {
-		return _userTracker.getRemoteHost();
-	}
-
-	/**
-	* Returns the session ID of this user tracker.
-	*
-	* @return the session ID of this user tracker
-	*/
-	@Override
-	public java.lang.String getSessionId() {
-		return _userTracker.getSessionId();
-	}
-
-	/**
-	* Returns the user agent of this user tracker.
-	*
-	* @return the user agent of this user tracker
-	*/
-	@Override
-	public java.lang.String getUserAgent() {
-		return _userTracker.getUserAgent();
-	}
-
-	/**
-	* Returns the user uuid of this user tracker.
-	*
-	* @return the user uuid of this user tracker
-	*/
-	@Override
-	public java.lang.String getUserUuid() {
-		return _userTracker.getUserUuid();
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _userTracker.toString();
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _userTracker.toXmlString();
-	}
-
-	/**
-	* Returns the modified date of this user tracker.
-	*
-	* @return the modified date of this user tracker
-	*/
-	@Override
-	public Date getModifiedDate() {
-		return _userTracker.getModifiedDate();
-	}
-
-	@Override
-	public java.util.List<UserTrackerPath> getPaths() {
-		return _userTracker.getPaths();
 	}
 
 	/**
@@ -282,6 +152,36 @@ public class UserTrackerWrapper implements UserTracker,
 		return _userTracker.getCompanyId();
 	}
 
+	@Override
+	public String getEmailAddress() {
+		return _userTracker.getEmailAddress();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _userTracker.getExpandoBridge();
+	}
+
+	@Override
+	public String getFullName() {
+		return _userTracker.getFullName();
+	}
+
+	@Override
+	public int getHits() {
+		return _userTracker.getHits();
+	}
+
+	/**
+	* Returns the modified date of this user tracker.
+	*
+	* @return the modified date of this user tracker
+	*/
+	@Override
+	public Date getModifiedDate() {
+		return _userTracker.getModifiedDate();
+	}
+
 	/**
 	* Returns the mvcc version of this user tracker.
 	*
@@ -292,6 +192,11 @@ public class UserTrackerWrapper implements UserTracker,
 		return _userTracker.getMvccVersion();
 	}
 
+	@Override
+	public java.util.List<UserTrackerPath> getPaths() {
+		return _userTracker.getPaths();
+	}
+
 	/**
 	* Returns the primary key of this user tracker.
 	*
@@ -300,6 +205,51 @@ public class UserTrackerWrapper implements UserTracker,
 	@Override
 	public long getPrimaryKey() {
 		return _userTracker.getPrimaryKey();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _userTracker.getPrimaryKeyObj();
+	}
+
+	/**
+	* Returns the remote addr of this user tracker.
+	*
+	* @return the remote addr of this user tracker
+	*/
+	@Override
+	public String getRemoteAddr() {
+		return _userTracker.getRemoteAddr();
+	}
+
+	/**
+	* Returns the remote host of this user tracker.
+	*
+	* @return the remote host of this user tracker
+	*/
+	@Override
+	public String getRemoteHost() {
+		return _userTracker.getRemoteHost();
+	}
+
+	/**
+	* Returns the session ID of this user tracker.
+	*
+	* @return the session ID of this user tracker
+	*/
+	@Override
+	public String getSessionId() {
+		return _userTracker.getSessionId();
+	}
+
+	/**
+	* Returns the user agent of this user tracker.
+	*
+	* @return the user agent of this user tracker
+	*/
+	@Override
+	public String getUserAgent() {
+		return _userTracker.getUserAgent();
 	}
 
 	/**
@@ -322,9 +272,34 @@ public class UserTrackerWrapper implements UserTracker,
 		return _userTracker.getUserTrackerId();
 	}
 
+	/**
+	* Returns the user uuid of this user tracker.
+	*
+	* @return the user uuid of this user tracker
+	*/
 	@Override
-	public void addPath(UserTrackerPath path) {
-		_userTracker.addPath(path);
+	public String getUserUuid() {
+		return _userTracker.getUserUuid();
+	}
+
+	@Override
+	public int hashCode() {
+		return _userTracker.hashCode();
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _userTracker.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _userTracker.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _userTracker.isNew();
 	}
 
 	@Override
@@ -408,7 +383,7 @@ public class UserTrackerWrapper implements UserTracker,
 	* @param remoteAddr the remote addr of this user tracker
 	*/
 	@Override
-	public void setRemoteAddr(java.lang.String remoteAddr) {
+	public void setRemoteAddr(String remoteAddr) {
 		_userTracker.setRemoteAddr(remoteAddr);
 	}
 
@@ -418,7 +393,7 @@ public class UserTrackerWrapper implements UserTracker,
 	* @param remoteHost the remote host of this user tracker
 	*/
 	@Override
-	public void setRemoteHost(java.lang.String remoteHost) {
+	public void setRemoteHost(String remoteHost) {
 		_userTracker.setRemoteHost(remoteHost);
 	}
 
@@ -428,7 +403,7 @@ public class UserTrackerWrapper implements UserTracker,
 	* @param sessionId the session ID of this user tracker
 	*/
 	@Override
-	public void setSessionId(java.lang.String sessionId) {
+	public void setSessionId(String sessionId) {
 		_userTracker.setSessionId(sessionId);
 	}
 
@@ -438,7 +413,7 @@ public class UserTrackerWrapper implements UserTracker,
 	* @param userAgent the user agent of this user tracker
 	*/
 	@Override
-	public void setUserAgent(java.lang.String userAgent) {
+	public void setUserAgent(String userAgent) {
 		_userTracker.setUserAgent(userAgent);
 	}
 
@@ -468,8 +443,33 @@ public class UserTrackerWrapper implements UserTracker,
 	* @param userUuid the user uuid of this user tracker
 	*/
 	@Override
-	public void setUserUuid(java.lang.String userUuid) {
+	public void setUserUuid(String userUuid) {
 		_userTracker.setUserUuid(userUuid);
+	}
+
+	@Override
+	public CacheModel<UserTracker> toCacheModel() {
+		return _userTracker.toCacheModel();
+	}
+
+	@Override
+	public UserTracker toEscapedModel() {
+		return new UserTrackerWrapper(_userTracker.toEscapedModel());
+	}
+
+	@Override
+	public String toString() {
+		return _userTracker.toString();
+	}
+
+	@Override
+	public UserTracker toUnescapedModel() {
+		return new UserTrackerWrapper(_userTracker.toUnescapedModel());
+	}
+
+	@Override
+	public String toXmlString() {
+		return _userTracker.toXmlString();
 	}
 
 	@Override

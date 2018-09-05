@@ -15,6 +15,8 @@
 package com.liferay.portal.kernel.webdav;
 
 import com.liferay.document.library.kernel.util.DL;
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -22,15 +24,12 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
-import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
@@ -107,9 +106,8 @@ public class WebDAVUtil {
 		if (value.equals("0")) {
 			return 0;
 		}
-		else {
-			return -1;
-		}
+
+		return -1;
 	}
 
 	public static String getDestination(
@@ -228,8 +226,6 @@ public class WebDAVUtil {
 	}
 
 	public static WebDAVUtil getInstance() {
-		PortalRuntimePermission.checkGetBeanProperty(WebDAVUtil.class);
-
 		return _instance;
 	}
 
@@ -281,9 +277,8 @@ public class WebDAVUtil {
 		if (pathArray.length <= 2) {
 			return StringPool.BLANK;
 		}
-		else {
-			return pathArray[pathArray.length - 1];
-		}
+
+		return pathArray[pathArray.length - 1];
 	}
 
 	public static WebDAVStorage getStorage(String token) {
@@ -440,9 +435,8 @@ public class WebDAVUtil {
 
 			return false;
 		}
-		else {
-			return true;
-		}
+
+		return true;
 	}
 
 	private static final String _TIME_PREFIX = "Second-";

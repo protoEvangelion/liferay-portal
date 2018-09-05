@@ -31,8 +31,11 @@ import com.liferay.trash.kernel.model.TrashVersion;
  * @author Brian Wing Shun Chan
  * @see com.liferay.portlet.trash.service.persistence.impl.TrashVersionPersistenceImpl
  * @see TrashVersionUtil
+ * @deprecated As of Judson (7.1.x), replaced by {@link
+com.liferay.trash.model.impl.TrashVersionImpl}
  * @generated
  */
+@Deprecated
 @ProviderType
 public interface TrashVersionPersistence extends BasePersistence<TrashVersion> {
 	/*

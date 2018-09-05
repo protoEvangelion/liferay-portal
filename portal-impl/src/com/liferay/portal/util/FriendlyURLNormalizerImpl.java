@@ -14,12 +14,11 @@
 
 package com.liferay.portal.util;
 
-import com.liferay.portal.kernel.nio.charset.CharsetEncoderUtil;
-import com.liferay.portal.kernel.security.pacl.DoPrivileged;
+import com.liferay.petra.nio.CharsetEncoderUtil;
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
-import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.FriendlyURLNormalizer;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.util.Normalizer;
@@ -36,8 +35,7 @@ import java.util.regex.Pattern;
  * @author Brian Wing Shun Chan
  * @author Shuyang Zhou
  */
-@DoPrivileged
-@OSGiBeanProperties(property = {"service.ranking:Integer=100"})
+@OSGiBeanProperties(property = "service.ranking:Integer=100")
 public class FriendlyURLNormalizerImpl implements FriendlyURLNormalizer {
 
 	@Override
@@ -46,7 +44,7 @@ public class FriendlyURLNormalizerImpl implements FriendlyURLNormalizer {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Wilberforce (7.0.x), with no direct replacement
 	 */
 	@Deprecated
 	@Override
@@ -256,7 +254,7 @@ public class FriendlyURLNormalizerImpl implements FriendlyURLNormalizer {
 	private static final char[] _REPLACE_CHARS;
 
 	static {
-		char[] replaceChars = new char[] {
+		char[] replaceChars = {
 			'-', ' ', ',', '\\', '\'', '\"', '(', ')', '[', ']', '{', '}', '?',
 			'#', '@', '+', '~', ';', '$', '!', '=', ':', '&', '\u00a3',
 			'\u2013', '\u2014', '\u2018', '\u2019', '\u201c', '\u201d'

@@ -31,41 +31,39 @@ public class PermissionServiceWrapper implements PermissionService,
 	}
 
 	/**
+	* Checks to see if the group has permission to the service.
+	*
+	* @param groupId the primary key of the group
+	* @param name the service name
+	* @param primKey the primary key of the service
+	*/
+	@Override
+	public void checkPermission(long groupId, String name, long primKey)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_permissionService.checkPermission(groupId, name, primKey);
+	}
+
+	/**
+	* Checks to see if the group has permission to the service.
+	*
+	* @param groupId the primary key of the group
+	* @param name the service name
+	* @param primKey the primary key of the service
+	*/
+	@Override
+	public void checkPermission(long groupId, String name, String primKey)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_permissionService.checkPermission(groupId, name, primKey);
+	}
+
+	/**
 	* Returns the OSGi service identifier.
 	*
 	* @return the OSGi service identifier
 	*/
 	@Override
-	public java.lang.String getOSGiServiceIdentifier() {
+	public String getOSGiServiceIdentifier() {
 		return _permissionService.getOSGiServiceIdentifier();
-	}
-
-	/**
-	* Checks to see if the group has permission to the service.
-	*
-	* @param groupId the primary key of the group
-	* @param name the service name
-	* @param primKey the primary key of the service
-	*/
-	@Override
-	public void checkPermission(long groupId, java.lang.String name,
-		java.lang.String primKey)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_permissionService.checkPermission(groupId, name, primKey);
-	}
-
-	/**
-	* Checks to see if the group has permission to the service.
-	*
-	* @param groupId the primary key of the group
-	* @param name the service name
-	* @param primKey the primary key of the service
-	*/
-	@Override
-	public void checkPermission(long groupId, java.lang.String name,
-		long primKey)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_permissionService.checkPermission(groupId, name, primKey);
 	}
 
 	@Override

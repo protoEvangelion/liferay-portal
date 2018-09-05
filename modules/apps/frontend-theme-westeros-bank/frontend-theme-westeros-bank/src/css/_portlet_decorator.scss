@@ -1,6 +1,9 @@
 .portlet-decorate .portlet-content {
-	background: $portlet-topper-color;
 	border: 1px solid #DEEEEE;
+}
+
+.portlet-solid .portlet-content {
+	background-color: #FFF;
 }
 
 .portlet-barebone .portlet-content {

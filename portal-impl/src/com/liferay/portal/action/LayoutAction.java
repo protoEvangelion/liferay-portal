@@ -14,20 +14,24 @@
 
 package com.liferay.portal.action;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.audit.AuditMessage;
 import com.liferay.portal.kernel.audit.AuditRouterUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
+import com.liferay.portal.kernel.model.LayoutTypePortlet;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.PortletContainerUtil;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.PortletLocalServiceUtil;
-import com.liferay.portal.kernel.servlet.MetaInfoCacheServletResponse;
+import com.liferay.portal.kernel.servlet.BufferCacheServletResponse;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -39,8 +43,16 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.security.sso.SSOUtil;
 import com.liferay.portal.struts.ActionConstants;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portlet.PortletRequestImpl;
+import com.liferay.portlet.LiferayPortletUtil;
 import com.liferay.portlet.RenderParametersPool;
+import com.liferay.portlet.internal.RenderData;
+import com.liferay.portlet.internal.RenderStateUtil;
+
+import java.io.PrintWriter;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.portlet.PortletMode;
 import javax.portlet.PortletRequest;
@@ -59,29 +71,12 @@ import org.apache.struts.action.ActionMapping;
 /**
  * @author Brian Wing Shun Chan
  * @author Shuyang Zhou
+ * @author Neil Griffin
  */
 public class LayoutAction extends Action {
 
 	@Override
 	public ActionForward execute(
-			ActionMapping actionMapping, ActionForm actionForm,
-			HttpServletRequest request, HttpServletResponse response)
-		throws Exception {
-
-		MetaInfoCacheServletResponse metaInfoCacheServletResponse =
-			new MetaInfoCacheServletResponse(response);
-
-		try {
-			return doExecute(
-				actionMapping, actionForm, request,
-				metaInfoCacheServletResponse);
-		}
-		finally {
-			metaInfoCacheServletResponse.finishResponse(false);
-		}
-	}
-
-	protected ActionForward doExecute(
 			ActionMapping actionMapping, ActionForm actionForm,
 			HttpServletRequest request, HttpServletResponse response)
 		throws Exception {
@@ -236,6 +231,42 @@ public class LayoutAction extends Action {
 		request.setAttribute(WebKeys.FORWARD_URL, forwardURL);
 	}
 
+	protected String getRenderStateJSON(
+			HttpServletRequest request, HttpServletResponse response,
+			ThemeDisplay themeDisplay, String portletId,
+			LayoutTypePortlet layoutTypePortlet)
+		throws Exception {
+
+		Map<String, RenderData> renderDataMap = new HashMap<>();
+
+		List<Portlet> allPortlets = layoutTypePortlet.getAllPortlets();
+
+		for (Portlet curPortlet : allPortlets) {
+			String curPortletId = curPortlet.getPortletId();
+
+			if (curPortletId.equals(portletId) ||
+				curPortlet.isPartialActionServeResource()) {
+
+				BufferCacheServletResponse bufferCacheServletResponse =
+					new BufferCacheServletResponse(response);
+
+				PortletContainerUtil.preparePortlet(request, curPortlet);
+
+				PortletContainerUtil.serveResource(
+					request, bufferCacheServletResponse, curPortlet);
+
+				RenderData renderData = new RenderData(
+					bufferCacheServletResponse.getContentType(),
+					bufferCacheServletResponse.getString());
+
+				renderDataMap.put(curPortletId, renderData);
+			}
+		}
+
+		return RenderStateUtil.generateJSON(
+			request, themeDisplay, renderDataMap);
+	}
+
 	protected ActionForward processLayout(
 			ActionMapping actionMapping, HttpServletRequest request,
 			HttpServletResponse response, long plid)
@@ -317,6 +348,36 @@ public class LayoutAction extends Action {
 					if (response.isCommitted()) {
 						return null;
 					}
+
+					String renderStateJSON = StringPool.BLANK;
+
+					if (themeDisplay.isHubAction()) {
+						renderStateJSON = RenderStateUtil.generateJSON(
+							request, themeDisplay);
+					}
+					else if (themeDisplay.isHubPartialAction()) {
+						LayoutTypePortlet layoutTypePortlet =
+							themeDisplay.getLayoutTypePortlet();
+
+						if (layoutTypePortlet != null) {
+							renderStateJSON = getRenderStateJSON(
+								request, response, themeDisplay,
+								portlet.getPortletId(), layoutTypePortlet);
+						}
+					}
+
+					if (themeDisplay.isHubAction() ||
+						themeDisplay.isHubPartialAction()) {
+
+						response.setContentLength(renderStateJSON.length());
+						response.setContentType(ContentTypes.APPLICATION_JSON);
+
+						PrintWriter printWriter = response.getWriter();
+
+						printWriter.write(renderStateJSON);
+
+						return null;
+					}
 				}
 				else if (themeDisplay.isLifecycleResource()) {
 					PortletContainerUtil.serveResource(
@@ -328,6 +389,9 @@ public class LayoutAction extends Action {
 
 			if (layout != null) {
 				if (themeDisplay.isStateExclusive()) {
+					PortletContainerUtil.renderHeaders(
+						request, response, portlet);
+
 					PortletContainerUtil.render(request, response, portlet);
 
 					return null;
@@ -335,6 +399,9 @@ public class LayoutAction extends Action {
 
 				// Include layout content before the page loads because portlets
 				// on the page can set the page title and page subtitle
+
+				PortletContainerUtil.processPublicRenderParameters(
+					request, layout, portlet);
 
 				if (layout.includeLayoutContent(request, response)) {
 					return null;
@@ -355,11 +422,11 @@ public class LayoutAction extends Action {
 						JavaConstants.JAVAX_PORTLET_REQUEST);
 
 				if (portletRequest != null) {
-					PortletRequestImpl portletRequestImpl =
-						PortletRequestImpl.getPortletRequestImpl(
+					LiferayPortletRequest liferayPortletRequest =
+						LiferayPortletUtil.getLiferayPortletRequest(
 							portletRequest);
 
-					portletRequestImpl.cleanUp();
+					liferayPortletRequest.cleanUp();
 				}
 			}
 		}

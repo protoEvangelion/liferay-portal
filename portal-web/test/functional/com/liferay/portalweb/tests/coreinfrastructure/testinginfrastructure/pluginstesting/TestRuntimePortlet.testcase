@@ -7,16 +7,24 @@
 	<set-up>
 		<execute macro="User#firstLoginPG" />
 
-		<execute macro="Page#add">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Build" />
+			<var name="panel" value="Site Administration" />
+			<var name="portlet" value="Pages" />
+		</execute>
+
+		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Test Runtime Page" />
 		</execute>
 	</set-up>
 
 	<tear-down>
-		<execute macro="Page#tearDownPG" />
+		<execute macro="Page#tearDownCP" />
 	</tear-down>
 
-	<command description="This is a test case for LPS-56769." name="Smoke" priority="5">
+	<command name="Smoke" priority="5">
+		<description message="This is a test case for LPS-56769." />
+
 		<property name="portal.acceptance" value="true" />
 
 		<execute macro="Navigator#gotoPage">

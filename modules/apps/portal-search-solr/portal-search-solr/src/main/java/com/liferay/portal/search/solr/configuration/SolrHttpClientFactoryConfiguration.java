@@ -21,11 +21,11 @@ import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClass
 /**
  * @author Michael C. Han
  */
-@ExtendedObjectClassDefinition(category = "foundation")
+@ExtendedObjectClassDefinition(category = "search")
 @Meta.OCD(
 	id = "com.liferay.portal.search.solr.configuration.SolrHttpClientFactoryConfiguration",
 	localization = "content/Language",
-	name = "solr.http.client.factory.configuration.name"
+	name = "solr-http-client-factory-configuration-name"
 )
 public interface SolrHttpClientFactoryConfiguration {
 

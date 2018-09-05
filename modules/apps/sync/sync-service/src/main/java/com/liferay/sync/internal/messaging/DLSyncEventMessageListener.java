@@ -17,10 +17,10 @@ package com.liferay.sync.internal.messaging;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.model.DLFileVersion;
 import com.liferay.document.library.kernel.model.DLFolder;
-import com.liferay.document.library.kernel.model.DLSyncEvent;
 import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
 import com.liferay.document.library.kernel.service.DLFolderLocalService;
-import com.liferay.document.library.kernel.service.DLSyncEventLocalService;
+import com.liferay.document.library.sync.model.DLSyncEvent;
+import com.liferay.document.library.sync.service.DLSyncEventLocalService;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
@@ -40,7 +40,7 @@ import com.liferay.sync.constants.SyncDLObjectConstants;
 import com.liferay.sync.model.SyncDLObject;
 import com.liferay.sync.model.impl.SyncDLObjectImpl;
 import com.liferay.sync.service.SyncDLObjectLocalService;
-import com.liferay.sync.util.SyncUtil;
+import com.liferay.sync.util.SyncHelper;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -51,7 +51,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	immediate = true,
-	property = {"destination.name=" + DestinationNames.DOCUMENT_LIBRARY_SYNC_EVENT_PROCESSOR},
+	property = "destination.name=" + DestinationNames.DOCUMENT_LIBRARY_SYNC_EVENT_PROCESSOR,
 	service = MessageListener.class
 )
 public class DLSyncEventMessageListener extends BaseMessageListener {
@@ -130,6 +130,7 @@ public class DLSyncEventMessageListener extends BaseMessageListener {
 
 			setUser(syncDLObject);
 
+			syncDLObject.setModifiedTime(System.currentTimeMillis());
 			syncDLObject.setEvent(event);
 			syncDLObject.setType(type);
 			syncDLObject.setTypePK(typePK);
@@ -150,14 +151,16 @@ public class DLSyncEventMessageListener extends BaseMessageListener {
 
 			boolean calculateChecksum = false;
 
-			String checksum = SyncUtil.getChecksum(modifiedTime, typePK);
+			String checksum = _syncHelper.getChecksum(modifiedTime, typePK);
 
 			if ((checksum == null) && !dlFileEntry.isInTrash()) {
 				calculateChecksum = true;
 			}
 
-			syncDLObject = SyncUtil.toSyncDLObject(
+			syncDLObject = _syncHelper.toSyncDLObject(
 				dlFileEntry, event, calculateChecksum);
+
+			syncDLObject.setModifiedTime(modifiedTime);
 
 			if (checksum != null) {
 				syncDLObject.setChecksum(checksum);
@@ -168,21 +171,23 @@ public class DLSyncEventMessageListener extends BaseMessageListener {
 			}
 
 			syncDLObject.setLanTokenKey(
-				SyncUtil.getLanTokenKey(modifiedTime, typePK, false));
+				_syncHelper.getLanTokenKey(modifiedTime, typePK, false));
 		}
 		else {
 			DLFolder dlFolder = _dlFolderLocalService.fetchDLFolder(typePK);
 
-			if ((dlFolder == null) || !SyncUtil.isSupportedFolder(dlFolder)) {
+			if ((dlFolder == null) ||
+				!_syncHelper.isSupportedFolder(dlFolder)) {
+
 				return;
 			}
 
-			syncDLObject = SyncUtil.toSyncDLObject(dlFolder, event);
+			syncDLObject = _syncHelper.toSyncDLObject(dlFolder, event);
+
+			syncDLObject.setModifiedTime(modifiedTime);
 		}
 
-		syncDLObject.setModifiedTime(modifiedTime);
-
-		SyncUtil.addSyncDLObject(syncDLObject);
+		_syncHelper.addSyncDLObject(syncDLObject, _syncDLObjectLocalService);
 	}
 
 	@Reference(unbind = "-")
@@ -237,5 +242,8 @@ public class DLSyncEventMessageListener extends BaseMessageListener {
 	private DLFolderLocalService _dlFolderLocalService;
 	private DLSyncEventLocalService _dlSyncEventLocalService;
 	private SyncDLObjectLocalService _syncDLObjectLocalService;
+
+	@Reference
+	private SyncHelper _syncHelper;
 
 }

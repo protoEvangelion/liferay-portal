@@ -12,16 +12,22 @@
 
 		<execute macro="User#firstLoginPG" />
 
-		<execute macro="Page#add">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Build" />
+			<var name="panel" value="Site Administration" />
+			<var name="portlet" value="Pages" />
+		</execute>
+
+		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Message Boards Page" />
+			<var name="sitePageType" value="Widget Page" />
 		</execute>
 
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="Page#editPageLayoutColumn">
+		<execute macro="SitePages#configurePage">
 			<var name="columnName" value="1 Column" />
+			<var name="pageName" value="Message Boards Page" />
+			<var name="privacy" value="Public Pages" />
+			<var name="sitePageType" value="Widget Page" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
@@ -38,7 +44,7 @@
 	</set-up>
 
 	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
 
 		<if>
 			<equals arg1="${testPortalInstance}" arg2="true" />
@@ -50,7 +56,7 @@
 
 				<execute macro="MessageboardsThread#tearDownCP" />
 
-				<execute macro="Page#tearDownPG" />
+				<execute macro="Page#tearDownCP" />
 
 				<execute macro="ServerAdministration#tearDownDMFileUploadSettings" />
 			</else>
@@ -58,9 +64,7 @@
 	</tear-down>
 
 	<command name="AddMBCategories" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<for list="MB Category1 Name,MB Category2 Name,MB Category3 Name" param="categoryName" >
+		<for list="MB Category1 Name,MB Category2 Name,MB Category3 Name" param="categoryName">
 			<execute macro="Navigator#gotoPage">
 				<var name="pageName" value="Message Boards Page" />
 			</execute>
@@ -182,7 +186,9 @@
 		</execute>
 	</command>
 
-	<command name="AddMBCategorySubcategoryThread" priority="4">
+	<command name="AddMBCategorySubcategoryThread" priority="5">
+		<property name="testray.component.names" value="Training" />
+
 		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Message Boards Page" />
 		</execute>
@@ -228,7 +234,7 @@
 
 		<execute macro="MessageboardsThread#gotoPG">
 			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
+			<var name="replyCount" value="0" />
 			<var name="threadBody" value="MB Thread Message Body" />
 			<var name="threadSubject" value="MB Thread Message Subject" />
 		</execute>
@@ -257,6 +263,7 @@
 		</execute>
 
 		<execute macro="MessageboardsThread#addPGAsQuestion">
+			<var name="breadcrumbName" value="MB Category Name" />
 			<var name="threadBody" value="MB Thread Message Body" />
 			<var name="threadSubject" value="MB Thread Message Subject" />
 		</execute>
@@ -271,7 +278,7 @@
 
 		<execute macro="MessageboardsThread#gotoPG">
 			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
+			<var name="replyCount" value="0" />
 			<var name="threadBody" value="MB Thread Message Body" />
 			<var name="threadSubject" value="MB Thread Message Subject" />
 		</execute>
@@ -314,7 +321,7 @@
 
 		<execute macro="MessageboardsThread#gotoPG">
 			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
+			<var name="replyCount" value="0" />
 			<var name="threadBody" value="MB Thrèad Mèssagè Body" />
 			<var name="threadSubject" value="MB Thrèad Mèssagè Subjèct" />
 		</execute>
@@ -341,7 +348,7 @@
 
 		<execute macro="MessageboardsThread#gotoPG">
 			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
+			<var name="replyCount" value="0" />
 			<var name="threadBody" value="MB Thread Message Body" />
 			<var name="threadSubject" value="MB Thread Message Subject" />
 		</execute>
@@ -368,13 +375,13 @@
 
 		<execute macro="MessageboardsThread#gotoPG">
 			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
+			<var name="replyCount" value="0" />
 			<var name="threadBody" value="MB Thread Message Body" />
 			<var name="threadSubject" value="MB Thread Message Subject" />
 		</execute>
 
 		<execute macro="MessageboardsThread#viewPG">
-			<var name="postCount" value="1" />
+			<var name="replyCount" value="0" />
 			<var name="threadBody" value="MB Thread Message Body" />
 			<var name="threadSubject" value="MB Thread Message Subject" />
 		</execute>
@@ -383,7 +390,9 @@
 			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
-		<execute macro="MessageboardsPermissions#checkReplyToMessageForGuestPG" />
+		<execute macro="MessageboardsPermissions#checkReplyToMessageForGuestPG">
+			<var name="threadSubject" value="MB Thread Message Subject" />
+		</execute>
 
 		<execute macro="User#logoutPG" />
 
@@ -404,7 +413,7 @@
 		<execute macro="MessageboardsThread#viewReplyPG">
 			<var name="guestReply" value="true" />
 			<var name="loggedOut" value="true" />
-			<var name="postCount" value="2" />
+			<var name="replyCount" value="1" />
 			<var name="threadBody" value="MB Thread Message Body" />
 			<var name="threadReplyBody" value="MB Thread Reply Body As Guest" />
 			<var name="threadSubject" value="MB Thread Message Subject" />
@@ -428,7 +437,7 @@
 
 		<execute macro="MessageboardsThread#gotoPG">
 			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
+			<var name="replyCount" value="0" />
 			<var name="threadBody" value="" />
 			<var name="threadSubject" value="MB Thread Message Subject" />
 		</execute>
@@ -464,7 +473,7 @@
 		</execute>
 
 		<execute macro="MessageboardsThread#viewReplyPG">
-			<var name="postCount" value="2" />
+			<var name="replyCount" value="1" />
 			<var name="threadBody" value="MB Thread Message Body" />
 			<var name="threadReplyBody" value="MB Thread Reply Body" />
 			<var name="threadSubject" value="MB Thread Message Subject" />
@@ -478,8 +487,16 @@
 			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Server Administration" />
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
+			<var name="portlet" value="System Settings" />
+		</execute>
+
+		<execute macro="SystemSettings#gotoConfiguration">
+			<var name="configurationCategory" value="Infrastructure" />
+			<var name="configurationName" value="Upload Servlet Request" />
+			<var name="configurationScope" value="System Scope" />
 		</execute>
 
 		<execute macro="ServerAdministration#configureFileUploadOverallMaximumFileSize">
@@ -499,6 +516,54 @@
 		</execute>
 	</command>
 
+	<command name="AddMBThreadWithMultipleAttachments" priority="4">
+		<execute macro="Navigator#gotoPage">
+			<var name="pageName" value="Message Boards Page" />
+		</execute>
+
+		<execute function="AssertClick" locator1="Button#NEW_THREAD" value1="New Thread" />
+
+		<execute function="Type" locator1="TextInput#SUBJECT" value1="MB Thread Message Subject" />
+
+		<execute macro="AlloyEditor#typeEditor">
+			<var name="content" value="MB Thread Message Body" />
+			<var name="editor" value="body" />
+		</execute>
+
+		<execute macro="Panel#expandPanel">
+			<var name="panel" value="Attachments" />
+		</execute>
+
+		<for list="Document_1.doc,Document_1.jpg,Document_1.pdf,Document_1.png,Document_1.pptx,Document_1.mp4" param="mbThreadAttachment">
+			<execute function="AssertClick" locator1="Button#SELECT_FILES" value1="Select Files" />
+
+			<execute function="SikuliUploadCommonFile" locator1="OS#FILE_DIALOG_BOX_FILE_NAME_FIELD_PNG" value1="${mbThreadAttachment}" />
+
+			<execute function="AssertTextEquals" locator1="MessageBoardsEditMessage#ATTACHMENTS_SELECTED_FILE" value1="${mbThreadAttachment}">
+				<var name="key_attachmentName" value="${mbThreadAttachment}" />
+			</execute>
+		</for>
+
+		<execute macro="PortletEntry#publish" />
+
+		<for list="Document_1.doc,Document_1.jpg,Document_1.pdf,Document_1.png,Document_1.pptx,Document_1.mp4" param="mbThreadAttachment">
+			<execute function="AssertTextEquals#assertPartialText" locator1="MessageBoardsThread#MESSAGE_ATTACHMENT_IMAGE" value1="${mbThreadAttachment}">
+				<var name="key_mbThreadAttachment" value="${mbThreadAttachment}" />
+			</execute>
+		</for>
+
+		<execute macro="MessageboardsThread#editPG">
+			<var name="threadSubject" value="MB Thread Message Subject" />
+			<var name="threadSubjectEdit" value="MB Thread Message Subject Edit" />
+		</execute>
+
+		<for list="Document_1.doc,Document_1.jpg,Document_1.pdf,Document_1.png,Document_1.pptx,Document_1.mp4" param="mbThreadAttachment">
+			<execute function="AssertTextEquals#assertPartialText" locator1="MessageBoardsThread#MESSAGE_ATTACHMENT_IMAGE" value1="${mbThreadAttachment}">
+				<var name="key_mbThreadAttachment" value="${mbThreadAttachment}" />
+			</execute>
+		</for>
+	</command>
+
 	<command name="CancelEditOnThread" priority="5">
 		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Message Boards Page" />
@@ -515,13 +580,14 @@
 
 		<execute macro="MessageboardsThread#gotoPG">
 			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
+			<var name="replyCount" value="0" />
 			<var name="threadBody" value="Message Boards Thread Body" />
 			<var name="threadSubject" value="Message Boards Thread Subject" />
 		</execute>
 
 		<execute macro="MessageboardsThread#cancelEdit">
 			<var name="threadBodyEdit" value="Message Boards Thread Body Edit" />
+			<var name="threadSubject" value="Message Boards Thread Subject" />
 			<var name="threadSubjectEdit" value="Message Boards Thread Subject Edit" />
 		</execute>
 
@@ -570,7 +636,7 @@
 	</command>
 
 	<command name="DeleteMBThread" priority="5">
-		<property name="portal.acceptance" value="quarantine" />
+		<property name="portal.acceptance" value="true" />
 
 		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Message Boards Page" />
@@ -627,13 +693,14 @@
 
 		<execute macro="MessageboardsThread#gotoPG">
 			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
+			<var name="replyCount" value="0" />
 			<var name="threadBody" value="MB Thread Message Body" />
 			<var name="threadSubject" value="MB Thread Message Subject" />
 		</execute>
 
 		<execute macro="MessageboardsThread#editPG">
 			<var name="threadBodyEdit" value="MB Thread Message Body Edit" />
+			<var name="threadSubject" value="MB Thread Message Subject" />
 		</execute>
 
 		<execute macro="MessageboardsThread#viewPG">
@@ -658,12 +725,13 @@
 
 		<execute macro="MessageboardsThread#gotoPG">
 			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
+			<var name="replyCount" value="0" />
 			<var name="threadBody" value="MB Thread Message Body" />
 			<var name="threadSubject" value="MB Thread Message Subject" />
 		</execute>
 
 		<execute macro="MessageboardsThread#editPG">
+			<var name="threadSubject" value="MB Thread Message Subject" />
 			<var name="threadSubjectEdit" value="MB Thread Message Subject Edit" />
 		</execute>
 
@@ -691,13 +759,14 @@
 
 		<execute macro="MessageboardsThread#gotoPG">
 			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
+			<var name="replyCount" value="0" />
 			<var name="threadBody" value="MB Thread Message Body" />
 			<var name="threadSubject" value="MB Thread Message Subject" />
 		</execute>
 
 		<execute macro="MessageboardsThread#editPG">
 			<var name="threadBodyEdit" value="MB Thread Message Body Edit" />
+			<var name="threadSubject" value="MB Thread Message Subject" />
 			<var name="threadSubjectEdit" value="MB Thread Message Subject Edit" />
 		</execute>
 
@@ -760,7 +829,7 @@
 
 		<execute macro="MessageboardsThread#gotoPG">
 			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
+			<var name="replyCount" value="0" />
 			<var name="threadBody" value="MB Thread Message Body" />
 			<var name="threadSubject" value="MB Thread Message Subject" />
 		</execute>
@@ -826,7 +895,7 @@
 
 		<execute macro="MessageboardsThread#gotoPG">
 			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="2" />
+			<var name="replyCount" value="1" />
 			<var name="threadBody" value="MB Thread Message Body" />
 			<var name="threadSubject" value="MB Thread Message Subject" />
 		</execute>
@@ -866,7 +935,9 @@
 
 		<execute macro="MessageboardsThread#downloadAttachmentPG" />
 
-		<execute function="Click" locator1="MessageBoardsThread#THREAD_CONTROLS_BACK" />
+		<execute function="Click" locator1="Breadcrumb#BREADCRUMB_ENTRY_LINK">
+			<var name="key_breadcrumbName" value="Home" />
+		</execute>
 
 		<execute macro="MessageboardsThread#replyPG">
 			<var name="threadReplyBody" value="MB Thread Reply Body" />
@@ -905,22 +976,20 @@
 		<property name="test.smtp.server.enabled" value="true" />
 
 		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
+			<return name="siteName" />
 			<var name="siteName" value="${siteName}" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
+		<execute macro="JSONUser#addUser">
 			<var name="userEmailAddress" value="userea@liferay.com" />
 			<var name="userFirstName" value="userfn" />
 			<var name="userLastName" value="userln" />
 			<var name="userScreenName" value="usersn" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoControlPanelUsers">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Users" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
@@ -929,7 +998,9 @@
 			<var name="userScreenName" value="usersn" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoControlPanelUsers">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Users" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
@@ -1031,7 +1102,7 @@
 
 		<execute macro="MessageboardsThread#gotoPG">
 			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="8" />
+			<var name="replyCount" value="7" />
 			<var name="threadSubject" value="Message Boards Thread Subject" />
 		</execute>
 
@@ -1046,7 +1117,7 @@
 		<for list="5,6,7" param="replyNotVisible">
 			<var name="key_threadBody" value="Message Boards Thread Reply ${replyNotVisible}" />
 
-			<execute function="AssertElementNotPresent" locator1="MessageBoardsThread#THREAD_BODY" value1="Message Boards Thread Reply ${replyNotVisible}" />
+			<execute function="AssertElementNotPresent" locator1="MessageBoardsThread#THREAD_BODY" />
 		</for>
 
 		<execute function="AssertClick" locator1="Button#MORE_MESSAGES" value1="More Messages" />

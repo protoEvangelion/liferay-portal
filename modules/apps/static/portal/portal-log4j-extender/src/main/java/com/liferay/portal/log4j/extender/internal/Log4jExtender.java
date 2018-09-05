@@ -14,6 +14,7 @@
 
 package com.liferay.portal.log4j.extender.internal;
 
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.util.PropsValues;
 
 import java.io.File;
@@ -42,8 +43,7 @@ public class Log4jExtender implements BundleActivator {
 
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
-		_tracker = new BundleTracker<Void>(
-			bundleContext, Bundle.STARTING, null) {
+		_tracker = new BundleTracker<Void>(bundleContext, Bundle.ACTIVE, null) {
 
 			@Override
 			public Void addingBundle(Bundle bundle, BundleEvent bundleEvent) {
@@ -92,8 +92,9 @@ public class Log4jExtender implements BundleActivator {
 		throws MalformedURLException {
 
 		File configFile = new File(
-			PropsValues.MODULE_FRAMEWORK_BASE_DIR + "/log4j/" + symbolicName +
-				"-log4j-ext.xml");
+			StringBundler.concat(
+				PropsValues.MODULE_FRAMEWORK_BASE_DIR, "/log4j/", symbolicName,
+				"-log4j-ext.xml"));
 
 		if (!configFile.exists()) {
 			return;

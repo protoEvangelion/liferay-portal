@@ -14,6 +14,7 @@
 
 package com.liferay.portal.xml;
 
+import com.liferay.petra.xml.Dom4jUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.xml.Attribute;
 import com.liferay.portal.kernel.xml.CDATA;
@@ -24,7 +25,6 @@ import com.liferay.portal.kernel.xml.Node;
 import com.liferay.portal.kernel.xml.QName;
 import com.liferay.portal.kernel.xml.Text;
 import com.liferay.portal.kernel.xml.Visitor;
-import com.liferay.util.xml.Dom4jUtil;
 
 import java.io.IOException;
 
@@ -155,9 +155,8 @@ public class ElementImpl extends BranchImpl implements Element {
 		if (attribute == null) {
 			return null;
 		}
-		else {
-			return new AttributeImpl(attribute);
-		}
+
+		return new AttributeImpl(attribute);
 	}
 
 	@Override
@@ -170,9 +169,8 @@ public class ElementImpl extends BranchImpl implements Element {
 		if (attribute == null) {
 			return null;
 		}
-		else {
-			return new AttributeImpl(attribute);
-		}
+
+		return new AttributeImpl(attribute);
 	}
 
 	@Override
@@ -182,9 +180,8 @@ public class ElementImpl extends BranchImpl implements Element {
 		if (attribute == null) {
 			return null;
 		}
-		else {
-			return new AttributeImpl(attribute);
-		}
+
+		return new AttributeImpl(attribute);
 	}
 
 	@Override
@@ -260,9 +257,8 @@ public class ElementImpl extends BranchImpl implements Element {
 		if (element == null) {
 			return null;
 		}
-		else {
-			return new ElementImpl(element);
-		}
+
+		return new ElementImpl(element);
 	}
 
 	@Override
@@ -272,9 +268,8 @@ public class ElementImpl extends BranchImpl implements Element {
 		if (element == null) {
 			return null;
 		}
-		else {
-			return new ElementImpl(element);
-		}
+
+		return new ElementImpl(element);
 	}
 
 	@Override
@@ -389,9 +384,8 @@ public class ElementImpl extends BranchImpl implements Element {
 		if (namespace == null) {
 			return null;
 		}
-		else {
-			return new NamespaceImpl(namespace);
-		}
+
+		return new NamespaceImpl(namespace);
 	}
 
 	@Override
@@ -401,9 +395,8 @@ public class ElementImpl extends BranchImpl implements Element {
 		if (namespace == null) {
 			return null;
 		}
-		else {
-			return new NamespaceImpl(namespace);
-		}
+
+		return new NamespaceImpl(namespace);
 	}
 
 	@Override
@@ -413,9 +406,8 @@ public class ElementImpl extends BranchImpl implements Element {
 		if (namespace == null) {
 			return null;
 		}
-		else {
-			return new NamespaceImpl(namespace);
-		}
+
+		return new NamespaceImpl(namespace);
 	}
 
 	@Override
@@ -440,9 +432,8 @@ public class ElementImpl extends BranchImpl implements Element {
 		if (qName == null) {
 			return null;
 		}
-		else {
-			return new QNameImpl(qName);
-		}
+
+		return new QNameImpl(qName);
 	}
 
 	@Override
@@ -452,9 +443,8 @@ public class ElementImpl extends BranchImpl implements Element {
 		if (qName == null) {
 			return null;
 		}
-		else {
-			return new QNameImpl(qName);
-		}
+
+		return new QNameImpl(qName);
 	}
 
 	@Override
@@ -478,9 +468,8 @@ public class ElementImpl extends BranchImpl implements Element {
 		if (node == null) {
 			return null;
 		}
-		else {
-			return new NodeImpl(node);
-		}
+
+		return new NodeImpl(node);
 	}
 
 	@Override

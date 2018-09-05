@@ -21,8 +21,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author Michael C. Han
+ * @author     Michael C. Han
+ * @deprecated As of Judson (7.1.x), with no direct replacement
  */
+@Deprecated
 public class CollatorUtil {
 
 	public static String collate(

@@ -37,6 +37,10 @@ public class TestIntegrationTomcatExtension {
 		return GradleUtil.toFile(_project, _dir);
 	}
 
+	public String getHostName() {
+		return GradleUtil.toString(_hostName);
+	}
+
 	public int getJmxRemotePort() {
 		return GradleUtil.toInteger(_jmxRemotePort);
 	}
@@ -67,12 +71,20 @@ public class TestIntegrationTomcatExtension {
 		return GradleUtil.toInteger(_portNumber);
 	}
 
+	public boolean isOverwriteCopyTestModules() {
+		return _overwriteCopyTestModules;
+	}
+
 	public void setCheckPath(Object checkPath) {
 		_checkPath = checkPath;
 	}
 
 	public void setDir(Object dir) {
 		_dir = dir;
+	}
+
+	public void setHostName(Object hostName) {
+		_hostName = hostName;
 	}
 
 	public void setJmxRemotePort(Object jmxRemotePort) {
@@ -91,16 +103,22 @@ public class TestIntegrationTomcatExtension {
 		_managerUserName = managerUserName;
 	}
 
+	public void setOverwriteCopyTestModules(boolean overwriteCopyTestModules) {
+		_overwriteCopyTestModules = overwriteCopyTestModules;
+	}
+
 	public void setPortNumber(Object portNumber) {
 		_portNumber = portNumber;
 	}
 
 	private Object _checkPath = "/web/guest";
 	private Object _dir;
+	private Object _hostName = "localhost";
 	private Object _jmxRemotePort = 8099;
 	private Object _liferayHome;
 	private Object _managerPassword = "tomcat";
 	private Object _managerUserName = "tomcat";
+	private boolean _overwriteCopyTestModules = true;
 	private Object _portNumber = 8080;
 	private final Project _project;
 

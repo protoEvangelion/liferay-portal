@@ -14,6 +14,7 @@
 
 package com.liferay.portlet;
 
+import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.servlet.ServletOutputStreamAdapter;
 import com.liferay.portal.kernel.util.UnsyncPrintWriterPool;
 import com.liferay.util.servlet.NullServletOutputStream;
@@ -49,10 +50,10 @@ public class PortletServletResponse extends HttpServletResponseWrapper {
 		_portletResponse = portletResponse;
 		_include = include;
 
-		PortletResponseImpl portletResponseImpl =
-			PortletResponseImpl.getPortletResponseImpl(portletResponse);
+		LiferayPortletResponse liferayPortletResponse =
+			LiferayPortletUtil.getLiferayPortletResponse(portletResponse);
 
-		_lifecycle = portletResponseImpl.getLifecycle();
+		_lifecycle = liferayPortletResponse.getLifecycle();
 	}
 
 	@Override
@@ -70,7 +71,8 @@ public class PortletServletResponse extends HttpServletResponseWrapper {
 	@Override
 	public void addHeader(String name, String value) {
 		if (!_include) {
-			if (_lifecycle.equals(PortletRequest.RENDER_PHASE) ||
+			if (_lifecycle.equals(PortletRequest.HEADER_PHASE) ||
+				_lifecycle.equals(PortletRequest.RENDER_PHASE) ||
 				_lifecycle.equals(PortletRequest.RESOURCE_PHASE)) {
 
 				MimeResponse mimeResponse = _getMimeResponse();
@@ -91,7 +93,7 @@ public class PortletServletResponse extends HttpServletResponseWrapper {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Wilberforce (7.0.x)
 	 */
 	@Deprecated
 	@Override
@@ -105,7 +107,7 @@ public class PortletServletResponse extends HttpServletResponseWrapper {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Wilberforce (7.0.x)
 	 */
 	@Deprecated
 	@Override
@@ -120,7 +122,8 @@ public class PortletServletResponse extends HttpServletResponseWrapper {
 
 	@Override
 	public void flushBuffer() throws IOException {
-		if (_lifecycle.equals(PortletRequest.RENDER_PHASE) ||
+		if (_lifecycle.equals(PortletRequest.HEADER_PHASE) ||
+			_lifecycle.equals(PortletRequest.RENDER_PHASE) ||
 			_lifecycle.equals(PortletRequest.RESOURCE_PHASE)) {
 
 			MimeResponse mimeResponse = _getMimeResponse();
@@ -131,63 +134,64 @@ public class PortletServletResponse extends HttpServletResponseWrapper {
 
 	@Override
 	public int getBufferSize() {
-		if (_lifecycle.equals(PortletRequest.RENDER_PHASE) ||
+		if (_lifecycle.equals(PortletRequest.HEADER_PHASE) ||
+			_lifecycle.equals(PortletRequest.RENDER_PHASE) ||
 			_lifecycle.equals(PortletRequest.RESOURCE_PHASE)) {
 
 			MimeResponse mimeResponse = _getMimeResponse();
 
 			return mimeResponse.getBufferSize();
 		}
-		else {
-			return 0;
-		}
+
+		return 0;
 	}
 
 	@Override
 	public String getCharacterEncoding() {
-		if (_lifecycle.equals(PortletRequest.RENDER_PHASE) ||
+		if (_lifecycle.equals(PortletRequest.HEADER_PHASE) ||
+			_lifecycle.equals(PortletRequest.RENDER_PHASE) ||
 			_lifecycle.equals(PortletRequest.RESOURCE_PHASE)) {
 
 			MimeResponse mimeResponse = _getMimeResponse();
 
 			return mimeResponse.getCharacterEncoding();
 		}
-		else {
-			return null;
-		}
+
+		return null;
 	}
 
 	@Override
 	public String getContentType() {
-		if (_lifecycle.equals(PortletRequest.RENDER_PHASE) ||
+		if (_lifecycle.equals(PortletRequest.HEADER_PHASE) ||
+			_lifecycle.equals(PortletRequest.RENDER_PHASE) ||
 			_lifecycle.equals(PortletRequest.RESOURCE_PHASE)) {
 
 			MimeResponse mimeResponse = _getMimeResponse();
 
 			return mimeResponse.getContentType();
 		}
-		else {
-			return null;
-		}
+
+		return null;
 	}
 
 	@Override
 	public Locale getLocale() {
-		if (_lifecycle.equals(PortletRequest.RENDER_PHASE) ||
+		if (_lifecycle.equals(PortletRequest.HEADER_PHASE) ||
+			_lifecycle.equals(PortletRequest.RENDER_PHASE) ||
 			_lifecycle.equals(PortletRequest.RESOURCE_PHASE)) {
 
 			MimeResponse mimeResponse = _getMimeResponse();
 
 			return mimeResponse.getLocale();
 		}
-		else {
-			return null;
-		}
+
+		return null;
 	}
 
 	@Override
 	public ServletOutputStream getOutputStream() throws IOException {
-		if (_lifecycle.equals(PortletRequest.RENDER_PHASE) ||
+		if (_lifecycle.equals(PortletRequest.HEADER_PHASE) ||
+			_lifecycle.equals(PortletRequest.RENDER_PHASE) ||
 			_lifecycle.equals(PortletRequest.RESOURCE_PHASE)) {
 
 			MimeResponse mimeResponse = _getMimeResponse();
@@ -200,29 +204,29 @@ public class PortletServletResponse extends HttpServletResponseWrapper {
 
 			return servletOutputStream;
 		}
-		else {
-			return new NullServletOutputStream();
-		}
+
+		return new NullServletOutputStream();
 	}
 
 	@Override
 	public PrintWriter getWriter() throws IOException {
-		if (_lifecycle.equals(PortletRequest.RENDER_PHASE) ||
+		if (_lifecycle.equals(PortletRequest.HEADER_PHASE) ||
+			_lifecycle.equals(PortletRequest.RENDER_PHASE) ||
 			_lifecycle.equals(PortletRequest.RESOURCE_PHASE)) {
 
 			MimeResponse mimeResponse = _getMimeResponse();
 
 			return mimeResponse.getWriter();
 		}
-		else {
-			return UnsyncPrintWriterPool.borrow(
-				new NullServletOutputStream(), getCharacterEncoding());
-		}
+
+		return UnsyncPrintWriterPool.borrow(
+			new NullServletOutputStream(), getCharacterEncoding());
 	}
 
 	@Override
 	public boolean isCommitted() {
-		if (_lifecycle.equals(PortletRequest.RENDER_PHASE) ||
+		if (_lifecycle.equals(PortletRequest.HEADER_PHASE) ||
+			_lifecycle.equals(PortletRequest.RENDER_PHASE) ||
 			_lifecycle.equals(PortletRequest.RESOURCE_PHASE)) {
 
 			MimeResponse mimeResponse = _getMimeResponse();
@@ -232,14 +236,14 @@ public class PortletServletResponse extends HttpServletResponseWrapper {
 		else if (!_include) {
 			return false;
 		}
-		else {
-			return true;
-		}
+
+		return true;
 	}
 
 	@Override
 	public void reset() {
-		if (_lifecycle.equals(PortletRequest.RENDER_PHASE) ||
+		if (_lifecycle.equals(PortletRequest.HEADER_PHASE) ||
+			_lifecycle.equals(PortletRequest.RENDER_PHASE) ||
 			_lifecycle.equals(PortletRequest.RESOURCE_PHASE)) {
 
 			MimeResponse mimeResponse = _getMimeResponse();
@@ -250,7 +254,8 @@ public class PortletServletResponse extends HttpServletResponseWrapper {
 
 	@Override
 	public void resetBuffer() {
-		if (_lifecycle.equals(PortletRequest.RENDER_PHASE) ||
+		if (_lifecycle.equals(PortletRequest.HEADER_PHASE) ||
+			_lifecycle.equals(PortletRequest.RENDER_PHASE) ||
 			_lifecycle.equals(PortletRequest.RESOURCE_PHASE)) {
 
 			MimeResponse mimeResponse = _getMimeResponse();
@@ -280,7 +285,8 @@ public class PortletServletResponse extends HttpServletResponseWrapper {
 
 	@Override
 	public void setBufferSize(int bufferSize) {
-		if (_lifecycle.equals(PortletRequest.RENDER_PHASE) ||
+		if (_lifecycle.equals(PortletRequest.HEADER_PHASE) ||
+			_lifecycle.equals(PortletRequest.RENDER_PHASE) ||
 			_lifecycle.equals(PortletRequest.RESOURCE_PHASE)) {
 
 			MimeResponse mimeResponse = _getMimeResponse();
@@ -311,10 +317,17 @@ public class PortletServletResponse extends HttpServletResponseWrapper {
 		}
 	}
 
+	public void setContentLengthLong(long contentLengthLong) {
+		int contentLength = Math.toIntExact(contentLengthLong);
+
+		setContentLength(contentLength);
+	}
+
 	@Override
 	public void setContentType(String contentType) {
 		if (!_include) {
-			if (_lifecycle.equals(PortletRequest.RENDER_PHASE) ||
+			if (_lifecycle.equals(PortletRequest.HEADER_PHASE) ||
+				_lifecycle.equals(PortletRequest.RENDER_PHASE) ||
 				_lifecycle.equals(PortletRequest.RESOURCE_PHASE)) {
 
 				MimeResponse mimeResponse = _getMimeResponse();
@@ -332,7 +345,8 @@ public class PortletServletResponse extends HttpServletResponseWrapper {
 	@Override
 	public void setHeader(String name, String value) {
 		if (!_include) {
-			if (_lifecycle.equals(PortletRequest.RENDER_PHASE) ||
+			if (_lifecycle.equals(PortletRequest.HEADER_PHASE) ||
+				_lifecycle.equals(PortletRequest.RENDER_PHASE) ||
 				_lifecycle.equals(PortletRequest.RESOURCE_PHASE)) {
 
 				MimeResponse mimeResponse = _getMimeResponse();
@@ -371,7 +385,7 @@ public class PortletServletResponse extends HttpServletResponseWrapper {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of Wilberforce (7.0.x)
 	 */
 	@Deprecated
 	@Override

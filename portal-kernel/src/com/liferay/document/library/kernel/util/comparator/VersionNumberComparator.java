@@ -15,7 +15,7 @@
 package com.liferay.document.library.kernel.util.comparator;
 
 import com.liferay.document.library.kernel.model.DLFileEntryConstants;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import java.util.Comparator;
@@ -77,9 +77,8 @@ public class VersionNumberComparator implements Comparator<String> {
 		if (_ascending) {
 			return value;
 		}
-		else {
-			return -value;
-		}
+
+		return -value;
 	}
 
 	public boolean isAscending() {

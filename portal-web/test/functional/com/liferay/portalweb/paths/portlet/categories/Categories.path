@@ -70,16 +70,16 @@
 	<td></td>
 </tr>
 <tr>
+	<td>CATEGORY_ENTRY_PATH</td>
+	<td>//*[@data-qa-id='row'][td[contains(@class,'category')][contains(.,'${key_categoryName}')]]//td[contains(@class,'lfr-path-column')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td></td>
 	<td></td>
 	<td></td>
 </tr>
 <!--CATEGORY_ENTRY_MENULIST-->
-<tr>
-	<td>CATEGORY_ENTRY_MENULIST_ADD_SUBCATEGORY</td>
-	<td>//ul[contains(@class,'dropdown-menu')]/li/a[contains(.,'Add Subcategory')]</td>
-	<td></td>
-</tr>
 <tr>
 	<td>CATEGORY_ENTRY_MENULIST_ARROW</td>
 	<td>//tr[contains(.,'${key_categoryName}')]//a[contains(@id,'assetCategories')]</td>

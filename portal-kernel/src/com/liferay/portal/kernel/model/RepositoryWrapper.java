@@ -178,63 +178,13 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	}
 
 	@Override
-	public CacheModel<Repository> toCacheModel() {
-		return _repository.toCacheModel();
-	}
-
-	@Override
-	public Repository toEscapedModel() {
-		return new RepositoryWrapper(_repository.toEscapedModel());
-	}
-
-	@Override
-	public Repository toUnescapedModel() {
-		return new RepositoryWrapper(_repository.toUnescapedModel());
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _repository.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _repository.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _repository.isNew();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _repository.getExpandoBridge();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.util.UnicodeProperties getTypeSettingsProperties() {
-		return _repository.getTypeSettingsProperties();
+	public Object clone() {
+		return new RepositoryWrapper((Repository)_repository.clone());
 	}
 
 	@Override
 	public int compareTo(Repository repository) {
 		return _repository.compareTo(repository);
-	}
-
-	@Override
-	public int hashCode() {
-		return _repository.hashCode();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _repository.getPrimaryKeyObj();
-	}
-
-	@Override
-	public java.lang.Object clone() {
-		return new RepositoryWrapper((Repository)_repository.clone());
 	}
 
 	/**
@@ -243,118 +193,8 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	* @return the fully qualified class name of this repository
 	*/
 	@Override
-	public java.lang.String getClassName() {
+	public String getClassName() {
 		return _repository.getClassName();
-	}
-
-	/**
-	* Returns the description of this repository.
-	*
-	* @return the description of this repository
-	*/
-	@Override
-	public java.lang.String getDescription() {
-		return _repository.getDescription();
-	}
-
-	/**
-	* Returns the name of this repository.
-	*
-	* @return the name of this repository
-	*/
-	@Override
-	public java.lang.String getName() {
-		return _repository.getName();
-	}
-
-	/**
-	* Returns the portlet ID of this repository.
-	*
-	* @return the portlet ID of this repository
-	*/
-	@Override
-	public java.lang.String getPortletId() {
-		return _repository.getPortletId();
-	}
-
-	/**
-	* Returns the type settings of this repository.
-	*
-	* @return the type settings of this repository
-	*/
-	@Override
-	public java.lang.String getTypeSettings() {
-		return _repository.getTypeSettings();
-	}
-
-	/**
-	* Returns the user name of this repository.
-	*
-	* @return the user name of this repository
-	*/
-	@Override
-	public java.lang.String getUserName() {
-		return _repository.getUserName();
-	}
-
-	/**
-	* Returns the user uuid of this repository.
-	*
-	* @return the user uuid of this repository
-	*/
-	@Override
-	public java.lang.String getUserUuid() {
-		return _repository.getUserUuid();
-	}
-
-	/**
-	* Returns the uuid of this repository.
-	*
-	* @return the uuid of this repository
-	*/
-	@Override
-	public java.lang.String getUuid() {
-		return _repository.getUuid();
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _repository.toString();
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _repository.toXmlString();
-	}
-
-	/**
-	* Returns the create date of this repository.
-	*
-	* @return the create date of this repository
-	*/
-	@Override
-	public Date getCreateDate() {
-		return _repository.getCreateDate();
-	}
-
-	/**
-	* Returns the last publish date of this repository.
-	*
-	* @return the last publish date of this repository
-	*/
-	@Override
-	public Date getLastPublishDate() {
-		return _repository.getLastPublishDate();
-	}
-
-	/**
-	* Returns the modified date of this repository.
-	*
-	* @return the modified date of this repository
-	*/
-	@Override
-	public Date getModifiedDate() {
-		return _repository.getModifiedDate();
 	}
 
 	/**
@@ -378,6 +218,26 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	}
 
 	/**
+	* Returns the create date of this repository.
+	*
+	* @return the create date of this repository
+	*/
+	@Override
+	public Date getCreateDate() {
+		return _repository.getCreateDate();
+	}
+
+	/**
+	* Returns the description of this repository.
+	*
+	* @return the description of this repository
+	*/
+	@Override
+	public String getDescription() {
+		return _repository.getDescription();
+	}
+
+	/**
 	* Returns the dl folder ID of this repository.
 	*
 	* @return the dl folder ID of this repository
@@ -385,6 +245,11 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	@Override
 	public long getDlFolderId() {
 		return _repository.getDlFolderId();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _repository.getExpandoBridge();
 	}
 
 	/**
@@ -398,6 +263,26 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	}
 
 	/**
+	* Returns the last publish date of this repository.
+	*
+	* @return the last publish date of this repository
+	*/
+	@Override
+	public Date getLastPublishDate() {
+		return _repository.getLastPublishDate();
+	}
+
+	/**
+	* Returns the modified date of this repository.
+	*
+	* @return the modified date of this repository
+	*/
+	@Override
+	public Date getModifiedDate() {
+		return _repository.getModifiedDate();
+	}
+
+	/**
 	* Returns the mvcc version of this repository.
 	*
 	* @return the mvcc version of this repository
@@ -408,6 +293,26 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	}
 
 	/**
+	* Returns the name of this repository.
+	*
+	* @return the name of this repository
+	*/
+	@Override
+	public String getName() {
+		return _repository.getName();
+	}
+
+	/**
+	* Returns the portlet ID of this repository.
+	*
+	* @return the portlet ID of this repository
+	*/
+	@Override
+	public String getPortletId() {
+		return _repository.getPortletId();
+	}
+
+	/**
 	* Returns the primary key of this repository.
 	*
 	* @return the primary key of this repository
@@ -415,6 +320,11 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	@Override
 	public long getPrimaryKey() {
 		return _repository.getPrimaryKey();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _repository.getPrimaryKeyObj();
 	}
 
 	/**
@@ -428,6 +338,21 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	}
 
 	/**
+	* Returns the type settings of this repository.
+	*
+	* @return the type settings of this repository
+	*/
+	@Override
+	public String getTypeSettings() {
+		return _repository.getTypeSettings();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.util.UnicodeProperties getTypeSettingsProperties() {
+		return _repository.getTypeSettingsProperties();
+	}
+
+	/**
 	* Returns the user ID of this repository.
 	*
 	* @return the user ID of this repository
@@ -435,6 +360,56 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	@Override
 	public long getUserId() {
 		return _repository.getUserId();
+	}
+
+	/**
+	* Returns the user name of this repository.
+	*
+	* @return the user name of this repository
+	*/
+	@Override
+	public String getUserName() {
+		return _repository.getUserName();
+	}
+
+	/**
+	* Returns the user uuid of this repository.
+	*
+	* @return the user uuid of this repository
+	*/
+	@Override
+	public String getUserUuid() {
+		return _repository.getUserUuid();
+	}
+
+	/**
+	* Returns the uuid of this repository.
+	*
+	* @return the uuid of this repository
+	*/
+	@Override
+	public String getUuid() {
+		return _repository.getUuid();
+	}
+
+	@Override
+	public int hashCode() {
+		return _repository.hashCode();
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _repository.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _repository.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _repository.isNew();
 	}
 
 	@Override
@@ -448,7 +423,7 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	}
 
 	@Override
-	public void setClassName(java.lang.String className) {
+	public void setClassName(String className) {
 		_repository.setClassName(className);
 	}
 
@@ -488,7 +463,7 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	* @param description the description of this repository
 	*/
 	@Override
-	public void setDescription(java.lang.String description) {
+	public void setDescription(String description) {
 		_repository.setDescription(description);
 	}
 
@@ -563,7 +538,7 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	* @param name the name of this repository
 	*/
 	@Override
-	public void setName(java.lang.String name) {
+	public void setName(String name) {
 		_repository.setName(name);
 	}
 
@@ -578,7 +553,7 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	* @param portletId the portlet ID of this repository
 	*/
 	@Override
-	public void setPortletId(java.lang.String portletId) {
+	public void setPortletId(String portletId) {
 		_repository.setPortletId(portletId);
 	}
 
@@ -613,7 +588,7 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	* @param typeSettings the type settings of this repository
 	*/
 	@Override
-	public void setTypeSettings(java.lang.String typeSettings) {
+	public void setTypeSettings(String typeSettings) {
 		_repository.setTypeSettings(typeSettings);
 	}
 
@@ -639,7 +614,7 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	* @param userName the user name of this repository
 	*/
 	@Override
-	public void setUserName(java.lang.String userName) {
+	public void setUserName(String userName) {
 		_repository.setUserName(userName);
 	}
 
@@ -649,7 +624,7 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	* @param userUuid the user uuid of this repository
 	*/
 	@Override
-	public void setUserUuid(java.lang.String userUuid) {
+	public void setUserUuid(String userUuid) {
 		_repository.setUserUuid(userUuid);
 	}
 
@@ -659,8 +634,33 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	* @param uuid the uuid of this repository
 	*/
 	@Override
-	public void setUuid(java.lang.String uuid) {
+	public void setUuid(String uuid) {
 		_repository.setUuid(uuid);
+	}
+
+	@Override
+	public CacheModel<Repository> toCacheModel() {
+		return _repository.toCacheModel();
+	}
+
+	@Override
+	public Repository toEscapedModel() {
+		return new RepositoryWrapper(_repository.toEscapedModel());
+	}
+
+	@Override
+	public String toString() {
+		return _repository.toString();
+	}
+
+	@Override
+	public Repository toUnescapedModel() {
+		return new RepositoryWrapper(_repository.toUnescapedModel());
+	}
+
+	@Override
+	public String toXmlString() {
+		return _repository.toXmlString();
 	}
 
 	@Override

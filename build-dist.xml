@@ -3,17 +3,7 @@
 <project basedir="." default="dist" name="portal-dist" xmlns:antelope="antlib:ise.antelope.tasks">
 	<import file="build.xml" />
 
-	<if>
-		<isset property="java.security" />
-		<then>
-			<property name="java.security.manager.option" value="-Djava.security.manager" />
-		</then>
-		<else>
-			<property name="java.security.manager.option" value="" />
-		</else>
-	</if>
-
-	<macrodef name="build-dist-tomcat-bare" >
+	<macrodef name="build-dist-tomcat-bare">
 		<sequential>
 			<if>
 				<equals arg1="${tomcat.keep.app.server.properties}" arg2="true" />
@@ -37,16 +27,22 @@
 		</sequential>
 	</macrodef>
 
-	<macrodef name="download-dynamic-jars">
-		<attribute name="app.server.lib.portal.dir" />
-
+	<macrodef name="replace-multilines">
+		<attribute name="file" />
+		<element name="replace-elements" />
 		<sequential>
-			<property file="${project.dir}/portal-impl/src/portal.properties" prefix="portal" />
+			<if>
+				<os family="windows" />
+				<then>
+					<fixcrlf eol="dos" file="@{file}" fixlast="false" />
+				</then>
+			</if>
 
-			<mirrors-get
-				dest="@{app.server.lib.portal.dir}/${portal.setup.liferay.pool.provider.jar.name[hikaricp]}"
-				src="${portal.setup.liferay.pool.provider.jar.url[hikaricp]}"
-			/>
+			<replace
+				file="@{file}"
+			>
+				<replace-elements />
+			</replace>
 		</sequential>
 	</macrodef>
 
@@ -209,15 +205,23 @@
 	<language-properties>content/Language-ext_${locale.current}.properties</language-properties>
 </hook>]]></echo>
 
-		<copy file="portal-impl/src/content/Language_${locale.current}.properties" tofile="${lp.plugins.dir}/hooks/liferay-language-${locale.current}-hook/docroot/WEB-INF/src/content/Language-ext_${locale.current}.properties" />
+		<copy
+			file="portal-impl/src/content/Language_${locale.current}.properties"
+			tofile="${lp.plugins.dir}/hooks/liferay-language-${locale.current}-hook/docroot/WEB-INF/src/content/Language-ext_${locale.current}.properties"
+		/>
 
 		<if>
 			<not>
 				<equals arg1="${lp.plugins.minor.version}" arg2="1" />
 			</not>
 			<then>
-				<replace file="${lp.plugins.dir}/hooks/liferay-language-${locale.current}-hook/docroot/WEB-INF/liferay-plugin-package.properties">
-					<replacefilter token="module-incremental-version=1" value="module-incremental-version=${lp.plugins.minor.version}" />
+				<replace
+					file="${lp.plugins.dir}/hooks/liferay-language-${locale.current}-hook/docroot/WEB-INF/liferay-plugin-package.properties"
+				>
+					<replacefilter
+						token="module-incremental-version=1"
+						value="module-incremental-version=${lp.plugins.minor.version}"
+					/>
 				</replace>
 			</then>
 		</if>
@@ -230,7 +234,10 @@
 			<arg line="/c dir /b ${project.dir}\portal-impl\src\content\ > ${project.dir}\output.txt" />
 		</exec>
 
-		<loadfile property="output.txt.content" srcFile="${project.dir}\output.txt" />
+		<loadfile
+			property="output.txt.content"
+			srcFile="${project.dir}\output.txt"
+		/>
 
 		<delete file="output.txt" />
 
@@ -299,7 +306,10 @@
 		<ant dir="sql" inheritAll="false" target="rebuild-oracle" />
 		<ant dir="sql" inheritAll="false" target="export-oracle" />
 
-		<move file="sql/lportal.dmp" tofile="dist/liferay-portal-sql-oracle-${lp.version}.dmp" />
+		<move
+			file="sql/lportal.dmp"
+			tofile="dist/liferay-portal-sql-oracle-${lp.version}.dmp"
+		/>
 	</target>
 
 	<target name="build-dist-tcat">
@@ -366,7 +376,10 @@
 	</target>
 
 	<target name="build-dist-tcat-admin">
-		<copy file="tools/servers/tcat/tcat-init.groovy" todir="${app.server.tcat.dir}/admin" />
+		<copy
+			file="tools/servers/tcat/tcat-init.groovy"
+			todir="${app.server.tcat.dir}/admin"
+		/>
 
 		<unzip
 			dest="${app.server.tcat.dir}/admin/webapps"
@@ -378,20 +391,40 @@
 			<flattenmapper />
 		</unzip>
 
-		<replace file="${app.server.tcat.dir}/admin/conf/server.xml">
-			<replacefilter token="8005" value="8105" />
-			<replacefilter token="8009" value="8109" />
-			<replacefilter token="8080" value="8180" />
-			<replacefilter token="8443" value="81443" />
+		<replace
+			file="${app.server.tcat.dir}/admin/conf/server.xml"
+		>
+			<replacefilter
+				token="8005"
+				value="8105"
+			/>
+			<replacefilter
+				token="8009"
+				value="8109"
+			/>
+			<replacefilter
+				token="8080"
+				value="8180"
+			/>
+			<replacefilter
+				token="8443"
+				value="81443"
+			/>
 		</replace>
 
 		<mkdir dir="${app.server.tcat.dir}/admin/tcat_init/profiles" />
 
-		<copy file="dist/liferay-portal-tcat-profile-${lp.version}.zip" todir="${app.server.tcat.dir}/admin/tcat_init/profiles" />
+		<copy
+			file="dist/liferay-portal-tcat-profile-${lp.version}.zip"
+			todir="${app.server.tcat.dir}/admin/tcat_init/profiles"
+		/>
 
 		<mkdir dir="${app.server.tcat.dir}/admin/tcat_init/scripts" />
 
-		<copy file="tools/servers/tcat/LiferayDeployerFactory.groovy" todir="${app.server.tcat.dir}/admin/tcat_init/scripts" />
+		<copy
+			file="tools/servers/tcat/LiferayDeployerFactory.groovy"
+			todir="${app.server.tcat.dir}/admin/tcat_init/scripts"
+		/>
 
 		<antcall target="build-dist-tcat-admin-webapps-plugins">
 			<param name="app.server.tcat.dir" value="${app.server.tcat.dir}" />
@@ -409,8 +442,13 @@
 
 		<ant dir="${lp.plugins.dir}" inheritAll="false" target="all" />
 
-		<copy todir="${app.server.tcat.dir}/admin/tcat_init/webapps/${lp.version.tcat}">
-			<fileset dir="${lp.plugins.dir}/dist" includes="*.war" />
+		<copy
+			todir="${app.server.tcat.dir}/admin/tcat_init/webapps/${lp.version.tcat}"
+		>
+			<fileset
+				dir="${lp.plugins.dir}/dist"
+				includes="*.war"
+			/>
 		</copy>
 	</target>
 
@@ -424,17 +462,20 @@
 		<echo file="${tstamp.value}/META-INF/context.xml"><![CDATA[<?xml version="1.0"?>
 			<Context crossContext="true" path="">
 				<Realm
-					className="org.apache.catalina.realm.JAASRealm"
 					appName="PortalRealm"
-					userClassNames="com.liferay.portal.kernel.security.jaas.PortalPrincipal"
+					className="org.apache.catalina.realm.JAASRealm"
 					roleClassNames="com.liferay.portal.kernel.security.jaas.PortalRole"
+					userClassNames="com.liferay.portal.kernel.security.jaas.PortalPrincipal"
 				/>
 			</Context>]]>
 		</echo>
 
 		<mkdir dir="${app.server.tcat.dir}/admin/tcat_init/webapps/${lp.version.tcat}" />
 
-		<copy file="dist/liferay-portal-${lp.version}.war" tofile="${app.server.tcat.dir}/admin/tcat_init/webapps/${lp.version.tcat}/ROOT.war" />
+		<copy
+			file="dist/liferay-portal-${lp.version}.war"
+			tofile="${app.server.tcat.dir}/admin/tcat_init/webapps/${lp.version.tcat}/ROOT.war"
+		/>
 
 		<zip
 			basedir="${tstamp.value}"
@@ -464,21 +505,30 @@
 	<target name="build-dist-tcat-profile">
 		<mkdir dir="${app.server.tcat.dir}/profile/files/lib/ext" />
 
-		<copy file="tools/servers/tcat/profile.xml" todir="${app.server.tcat.dir}/profile">
+		<copy
+			file="tools/servers/tcat/profile.xml"
+			todir="${app.server.tcat.dir}/profile"
+		>
 			<filterset>
 				<filter token="lp.version" value="${lp.version}" />
 			</filterset>
 		</copy>
 
-		<copy todir="${app.server.tcat.dir}/profile/files/lib/ext">
-			<fileset dir="${app.server.tomcat.dir}/lib/ext" />
+		<copy
+			todir="${app.server.tcat.dir}/profile/files/lib/ext"
+		>
+			<fileset
+				dir="${app.server.tomcat.dir}/lib/ext"
+			/>
 		</copy>
 
 		<echo file="${app.server.tcat.dir}/profile/files/lib/ext/portal-bundle.properties">auto.deploy.deploy.dir=${catalina.base}/deploy</echo>
 
 		<delete failonerror="false" file="dist/liferay-portal-tcat-profile-${lp.version}.zip" />
 
-		<zip destfile="dist/liferay-portal-tcat-profile-${lp.version}.zip">
+		<zip
+			destfile="dist/liferay-portal-tcat-profile-${lp.version}.zip"
+		>
 			<zipfileset
 				dir="${app.server.tcat.dir}/profile"
 			/>
@@ -488,7 +538,9 @@
 	<target name="build-dist-tcat-tomcat">
 		<mkdir dir="${app.server.tcat.dir}/tomcat" />
 
-		<copy todir="${app.server.tcat.dir}/tomcat">
+		<copy
+			todir="${app.server.tcat.dir}/tomcat"
+		>
 			<fileset
 				dir="${app.server.tomcat.dir}"
 				excludes="**/ROOT.xml,logs/**,temp/**,webapps/**,work/**"
@@ -497,15 +549,24 @@
 
 		<mkdir dir="${app.server.tcat.dir}/tomcat/temp" />
 
-		<replace file="${app.server.tcat.dir}/tomcat/conf/server.xml">
+		<replace
+			file="${app.server.tcat.dir}/tomcat/conf/server.xml"
+		>
 			<replacetoken><![CDATA[xmlValidation="false" deployXML="false" xmlNamespaceAware="false">]]></replacetoken>
 			<replacevalue><![CDATA[xmlValidation="false" xmlNamespaceAware="false">]]></replacevalue>
 		</replace>
 
-		<move file="${app.server.tcat.dir}/tomcat" tofile="${app.server.tcat.dir}/admin" />
+		<move
+			file="${app.server.tcat.dir}/tomcat"
+			tofile="${app.server.tcat.dir}/admin"
+		/>
 
-		<copy todir="${app.server.tcat.dir}/agent">
-			<fileset dir="${app.server.tcat.dir}/admin" />
+		<copy
+			todir="${app.server.tcat.dir}/agent"
+		>
+			<fileset
+				dir="${app.server.tcat.dir}/admin"
+			/>
 		</copy>
 	</target>
 
@@ -856,9 +917,18 @@
 
 		<remake-dir dir="tools/zip_tmpl/license" />
 
-		<copy file="copyright.txt" todir="tools/zip_tmpl/license" />
-		<copy file="lib/versions.html" todir="tools/zip_tmpl/license" />
-		<copy file="readme.markdown" todir="tools/zip_tmpl" />
+		<copy
+			file="copyright.txt"
+			todir="tools/zip_tmpl/license"
+		/>
+		<copy
+			file="lib/versions.html"
+			todir="tools/zip_tmpl/license"
+		/>
+		<copy
+			file="readme.markdown"
+			todir="tools/zip_tmpl"
+		/>
 
 		<antcall target="zip-portal-war" />
 
@@ -893,7 +963,10 @@
 
 		<ant dir="${lp.plugins.dir}" inheritAll="false" target="extract-plugins-sdk" />
 
-		<move file="${lp.plugins.dir}/dist/liferay-plugins-sdk-${lp.version}.zip" tofile="dist/liferay-plugins-sdk-${lp.version}.zip" />
+		<move
+			file="${lp.plugins.dir}/dist/liferay-plugins-sdk-${lp.version}.zip"
+			tofile="dist/liferay-plugins-sdk-${lp.version}.zip"
+		/>
 
 		<antcall target="update-plugins-includes">
 			<param name="plugins.includes.marketplace.required" value="true" />
@@ -905,7 +978,9 @@
 			<isset property="dist.username" />
 			<then>
 				<scp todir="${dist.username}:${dist.password}@${dist.host}:/home/${dist.username}" trust="yes">
-					<fileset dir="dist" />
+					<fileset
+						dir="dist"
+					/>
 				</scp>
 			</then>
 		</if>
@@ -928,6 +1003,15 @@ release was successful.</echo>
 				</exec>
 			</else>
 		</if>
+	</target>
+
+	<target name="generate-startup-files">
+
+		<!--
+		Remove this target the reference to this target is removed from the
+		release tool
+		-->
+
 	</target>
 
 	<target name="prepare-generated-files">
@@ -953,7 +1037,10 @@ release was successful.</echo>
 		</ant>
 
 		<delete>
-			<fileset dir="${lp.plugins.dir}" includes="**/javadocs-all.xml,**/javadocs-rt.xml" />
+			<fileset
+				dir="${lp.plugins.dir}"
+				includes="**/javadocs-all.xml,**/javadocs-rt.xml"
+			/>
 		</delete>
 
 		<antcall target="deploy" />
@@ -1008,7 +1095,10 @@ release was successful.</echo>
 		<record action="stop" name="prepare-generated-files.txt" />
 
 		<if>
-			<resourcecontains resource="prepare-generated-files.txt" substring="java.lang.RuntimeException" />
+			<resourcecontains
+				resource="prepare-generated-files.txt"
+				substring="java.lang.RuntimeException"
+			/>
 			<then>
 				<delete file="prepare-generated-files.txt" />
 
@@ -1035,10 +1125,6 @@ release was successful.</echo>
 						src="${app.server.glassfish.deploy.dir}/liferay-portal.war"
 					/>
 
-					<download-dynamic-jars
-						app.server.lib.portal.dir="${app.server.glassfish.deploy.dir}/${tstamp.value}/WEB-INF/lib"
-					/>
-
 					<zip
 						basedir="${app.server.glassfish.deploy.dir}/${tstamp.value}"
 						destfile="${app.server.glassfish.deploy.dir}/liferay-portal.war"
@@ -1046,11 +1132,6 @@ release was successful.</echo>
 
 					<delete dir="${app.server.glassfish.deploy.dir}/${tstamp.value}" />
 				</then>
-				<else>
-					<download-dynamic-jars
-						app.server.lib.portal.dir="${app.server.lib.portal.dir}"
-					/>
-				</else>
 			</if>
 		</sequential>
 	</target>
@@ -1074,16 +1155,16 @@ release was successful.</echo>
 		</if>
 
 		<unzip
-			 dest="${app.server.parent.dir}"
-			 src="${app.server.parent.dir}/${app.server.glassfish.zip.name}"
+			dest="${app.server.parent.dir}"
+			src="${app.server.parent.dir}/${app.server.glassfish.zip.name}"
 		>
 			<patternset
 				includes="glassfish3/glassfish/**,glassfishv3/glassfish/**"
 			/>
 			<mapper
-				type="regexp"
 				from="glassfishv?3/glassfish/(.*)"
 				to="${app.server.glassfish.dir}/\1"
+				type="regexp"
 			/>
 		</unzip>
 
@@ -1101,53 +1182,34 @@ release was successful.</echo>
 			</then>
 		</if>
 
-		<if>
-			<equals arg1="${java.security.manager.option}" arg2="" />
-			<then>
-				<replace file="${app.server.glassfish.instance.dir}/config/domain.xml">
-					<replacetoken><![CDATA[<jvm-options>-Xmx512m</jvm-options>]]></replacetoken>
-					<replacevalue>
-						<![CDATA[
-							<jvm-options>-Dfile.encoding=UTF8</jvm-options>
-							<jvm-options>-Djava.net.preferIPv4Stack=true</jvm-options>
-							<jvm-options>-Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false</jvm-options>
-							<jvm-options>-Duser.timezone=GMT</jvm-options>
-							<jvm-options>-Xmx1024m</jvm-options>
-						]]>
-					</replacevalue>
-				</replace>
-			</then>
-			<else>
-				<replace file="${app.server.glassfish.instance.dir}/config/domain.xml">
-					<replacefilter token="@java.security.manager.option@" value="${java.security.manager.option}" />
-					<replacetoken><![CDATA[<jvm-options>-Xmx512m</jvm-options>]]></replacetoken>
-					<replacevalue>
-						<![CDATA[
-							<jvm-options>-Dfile.encoding=UTF8</jvm-options>
-							<jvm-options>-Djava.net.preferIPv4Stack=true</jvm-options>
-							<jvm-options>@java.security.manager.option@</jvm-options>
-							<jvm-options>-Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false</jvm-options>
-							<jvm-options>-Duser.timezone=GMT</jvm-options>
-							<jvm-options>-Xmx1024m</jvm-options>
-						]]>
-					</replacevalue>
-				</replace>
-			</else>
-		</if>
+		<replace
+			file="${app.server.glassfish.instance.dir}/config/domain.xml"
+		>
+			<replacetoken><![CDATA[<jvm-options>-Xmx512m</jvm-options>]]></replacetoken>
+			<replacevalue>
+				<![CDATA[
+					<jvm-options>-Dfile.encoding=UTF8</jvm-options>
+					<jvm-options>-Djava.net.preferIPv4Stack=true</jvm-options>
+					<jvm-options>-Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false</jvm-options>
+					<jvm-options>-Duser.timezone=GMT</jvm-options>
+					<jvm-options>-Xmx1024m</jvm-options>
+				]]>
+			</replacevalue>
+		</replace>
 
-		<replace file="${app.server.glassfish.instance.dir}/config/domain.xml">
+		<replace
+			file="${app.server.glassfish.instance.dir}/config/domain.xml"
+		>
 			<replacetoken><![CDATA[<jvm-options>-XX:MaxPermSize=192m</jvm-options>]]></replacetoken>
 			<replacevalue><![CDATA[<jvm-options>-XX:MaxPermSize=512m</jvm-options>]]></replacevalue>
 		</replace>
 
-		<echo file="${app.server.glassfish.instance.dir}/config/server.policy">
-			grant {
-				permission java.security.AllPermission;
-			};
-		</echo>
-
-		<chmod perm="a+x">
-			<fileset dir="${app.server.glassfish.bin.dir}">
+		<chmod
+			perm="a+x"
+		>
+			<fileset
+				dir="${app.server.glassfish.bin.dir}"
+			>
 				<exclude name="*.bat" />
 			</fileset>
 		</chmod>
@@ -1192,12 +1254,14 @@ this task.
 				from="(jboss-eap-)\d\.\d[\.]?[\d]?(/.*)"
 				to="\1${app.server.jboss.version}\2"
 				type="regexp"
-			 />
+			/>
 		</unzip>
 
 		<property name="app.server.jboss.module.file" value="${app.server.jboss.dir}/modules/system/layers/base/sun/jdk/main/module.xml" />
 
-		<replace file="${app.server.jboss.module.file}">
+		<replace
+			file="${app.server.jboss.module.file}"
+		>
 			<replacetoken><![CDATA[<paths>]]></replacetoken>
 			<replacevalue>
 				<![CDATA[
@@ -1211,12 +1275,9 @@ this task.
 			</replacevalue>
 		</replace>
 
-		<replace file="${app.server.jboss.dir}/standalone/configuration/standalone.xml">
-			<replacetoken><![CDATA[enable-welcome-root="true"]]></replacetoken>
-			<replacevalue><![CDATA[enable-welcome-root="false"]]></replacevalue>
-		</replace>
-
-		<replace file="${app.server.jboss.dir}/standalone/configuration/standalone.xml">
+		<replace
+			file="${app.server.jboss.dir}/standalone/configuration/standalone.xml"
+		>
 			<replacetoken><![CDATA[</extensions>]]></replacetoken>
 			<replacevalue>
 				<![CDATA[
@@ -1229,105 +1290,153 @@ this task.
 			</replacevalue>
 		</replace>
 
-		<replace file="${app.server.jboss.dir}/standalone/configuration/standalone.xml">
+		<replace
+			file="${app.server.jboss.dir}/standalone/configuration/standalone.xml"
+		>
 			<replacetoken><![CDATA[<deployment-scanner ]]></replacetoken>
 			<replacevalue><![CDATA[<deployment-scanner deployment-timeout="360" ]]></replacevalue>
 		</replace>
 
-		<replace file="${app.server.jboss.dir}/standalone/configuration/standalone.xml">
-			<replacetoken><![CDATA[<security-domains>]]></replacetoken>
-			<replacevalue>
-				<![CDATA[
-					<security-domains>
-						<security-domain name="PortalRealm">
-							<authentication>
-								<login-module code="com.liferay.portal.security.jaas.PortalLoginModule" flag="required" />
-							</authentication>
-						</security-domain>
-				]]>
-			</replacevalue>
-		</replace>
-
-		<replace file="${app.server.jboss.dir}/standalone/configuration/standalone.xml">
-			<replacetoken><![CDATA[<formatter>
-                    <named-formatter name="COLOR-PATTERN" />
-                </formatter>]]></replacetoken>
-			<replacevalue><![CDATA[<filter-spec value="not(any(match(&quot;WFLYSRV0059&quot;),match(&quot;WFLYEE0007&quot;)))" />
+		<replace-multilines
+			file="${app.server.jboss.dir}/standalone/configuration/standalone.xml"
+		>
+			<replace-elements>
+				<replacetoken><![CDATA[<formatter>
+                    <named-formatter name="COLOR-PATTERN"]]></replacetoken>
+				<replacevalue><![CDATA[<filter-spec value="not(any(match(&quot;WFLYSRV0059&quot;),match(&quot;WFLYEE0007&quot;)))" />
                 <formatter>
-                    <named-formatter name="COLOR-PATTERN" />
-                </formatter>]]></replacevalue>
-		</replace>
-
-		<echo file="${app.server.jboss.bin.dir}/server.policy">
-			grant {
-				permission java.security.AllPermission;
-			};
-		</echo>
-
-		<if>
-			<equals arg1="${java.security.manager.option}" arg2="" />
-			<then>
-				<var name="java.security.config" value="" />
-			</then>
-			<else>
-				<var name="java.security.config" value="${java.security.manager.option} -Djava.security.policy==${app.server.jboss.dir}/bin/server.policy -Djboss.home.dir=${app.server.jboss.dir}" />
-			</else>
-		</if>
+                    <named-formatter name="COLOR-PATTERN"]]></replacevalue>
+			</replace-elements>
+		</replace-multilines>
 
 		<if>
 			<equals arg1="${app.server.jboss.version}" arg2="6.4.0" />
 			<then>
-				<replace file="${app.server.jboss.bin.dir}/standalone.conf">
+				<replace
+					file="${app.server.jboss.bin.dir}/standalone.conf"
+				>
 					<replacetoken><![CDATA[JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=256m ]]></replacetoken>
 					<replacevalue><![CDATA[JAVA_OPTS="]]></replacevalue>
 				</replace>
 
-				<echo append="true" file="${app.server.jboss.bin.dir}/standalone.conf">${line.separator}<![CDATA[JAVA_OPTS="$JAVA_OPTS -Dfile.encoding=UTF-8 -Djava.net.preferIPv4Stack=true ${java.security.config} -Djboss.as.management.blocking.timeout=480 -Duser.timezone=GMT -Xmx1024m -XX:MaxMetaspaceSize=384m"]]></echo>
+				<echo append="true" file="${app.server.jboss.bin.dir}/standalone.conf">${line.separator}<![CDATA[JAVA_OPTS="$JAVA_OPTS -Dfile.encoding=UTF-8 -Djava.net.preferIPv4Stack=true -Djboss.as.management.blocking.timeout=480 -Duser.timezone=GMT -Xmx1024m -XX:MaxMetaspaceSize=512m"]]></echo>
+
+				<replace
+					file="${app.server.jboss.dir}/standalone/configuration/standalone.xml"
+				>
+					<replacetoken><![CDATA[<security-domains>]]></replacetoken>
+					<replacevalue>
+						<![CDATA[
+							<security-domains>
+								<security-domain name="PortalRealm">
+									<authentication>
+										<login-module code="com.liferay.portal.security.jaas.PortalLoginModule" flag="required" />
+									</authentication>
+								</security-domain>
+						]]>
+					</replacevalue>
+				</replace>
+
+				<replace
+					file="${app.server.jboss.dir}/standalone/configuration/standalone.xml"
+				>
+					<replacetoken><![CDATA[enable-welcome-root="true"]]></replacetoken>
+					<replacevalue><![CDATA[enable-welcome-root="false"]]></replacevalue>
+				</replace>
+
+				<replace
+					file="${app.server.jboss.instance.dir}/configuration/standalone.xml"
+				>
+					<replacetoken><![CDATA[<subsystem xmlns="urn:jboss:domain:web:2.2" default-virtual-server="default-host" native="false">]]></replacetoken>
+					<replacevalue>
+						<![CDATA[
+							<subsystem xmlns="urn:jboss:domain:web:2.2" default-virtual-server="default-host" native="false">
+								<configuration>
+									<jsp-configuration development="true" source-vm="1.8" target-vm="1.8" />
+								</configuration>
+						]]>
+					</replacevalue>
+				</replace>
 			</then>
 			<elseif>
-				<equals arg1="${app.server.jboss.version}" arg2="7.0.0" />
+				<equals arg1="${app.server.jboss.version}" arg2="7.1.0" />
 				<then>
-					<replace file="${app.server.jboss.bin.dir}/standalone.conf">
+					<replace
+						file="${app.server.jboss.bin.dir}/standalone.conf"
+					>
 						<replacetoken><![CDATA[JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=256m ]]></replacetoken>
 						<replacevalue><![CDATA[JAVA_OPTS="]]></replacevalue>
 					</replace>
 
-					<echo append="true" file="${app.server.jboss.bin.dir}/standalone.conf">${line.separator}<![CDATA[JAVA_OPTS="$JAVA_OPTS -Dfile.encoding=UTF-8 -Djava.net.preferIPv4Stack=true ${java.security.config} -Djboss.as.management.blocking.timeout=480 -Duser.timezone=GMT -Xmx1024m -XX:MaxMetaspaceSize=512m"]]></echo>
+					<echo append="true" file="${app.server.jboss.bin.dir}/standalone.conf">${line.separator}<![CDATA[JAVA_OPTS="$JAVA_OPTS -Dfile.encoding=UTF-8 -Djava.net.preferIPv4Stack=true -Djboss.as.management.blocking.timeout=480 -Duser.timezone=GMT -Xmx1024m -XX:MaxMetaspaceSize=512m"]]></echo>
+
+					<replace
+						file="${app.server.jboss.instance.dir}/configuration/standalone.xml"
+					>
+						<replacetoken><![CDATA[<subsystem xmlns="urn:jboss:domain:security:2.0">
+            <security-domains>]]></replacetoken>
+						<replacevalue><![CDATA[<subsystem xmlns="urn:jboss:domain:security:2.0">
+            <security-domains>
+							<security-domain name="PortalRealm">
+								<authentication>
+									<login-module code="com.liferay.portal.security.jaas.PortalLoginModule" flag="required" />
+								</authentication>
+							</security-domain>]]>
+						</replacevalue>
+					</replace>
+
+					<replace
+						file="${app.server.jboss.dir}/standalone/configuration/standalone.xml"
+					>
+						<replacetoken><![CDATA[<location name="/" handler="welcome-content"/>]]></replacetoken>
+						<replacevalue><![CDATA[<!--<location name="/" handler="welcome-content"/>-->]]></replacevalue>
+					</replace>
+
+					<replace
+						file="${app.server.jboss.dir}/standalone/configuration/standalone.xml"
+					>
+						<replacetoken><![CDATA[<file name="welcome-content" path="${jboss.home.dir}/welcome-content"/>]]></replacetoken>
+						<replacevalue><![CDATA[<!--<file name="welcome-content" path="${jboss.home.dir}/welcome-content"/>-->]]></replacevalue>
+					</replace>
+
+					<replace
+						file="${app.server.jboss.dir}/standalone/configuration/standalone.xml"
+					>
+						<replacetoken><![CDATA[<jsp-config/>]]></replacetoken>
+						<replacevalue>
+							<![CDATA[<jsp-config development="true" source-vm="1.8" target-vm="1.8" />]]>
+						</replacevalue>
+					</replace>
 				</then>
 			</elseif>
 		</if>
 
-		<replace file="${app.server.jboss.bin.dir}/standalone.conf.bat">
+		<replace
+			file="${app.server.jboss.bin.dir}/standalone.conf.bat"
+		>
 			<replacetoken><![CDATA[set "JAVA_OPTS=-Xms1G -Xmx1G -XX:MaxPermSize=256M"]]></replacetoken>
 			<replacevalue></replacevalue>
 		</replace>
 
-		<replace file="${app.server.jboss.bin.dir}/standalone.conf.bat">
-			<replacefilter token="@java.security.config@" value="${java.security.config}" />
+		<replace
+			file="${app.server.jboss.bin.dir}/standalone.conf.bat"
+		>
 			<replacetoken><![CDATA[:JAVA_OPTS_SET]]></replacetoken>
 			<replacevalue>
 				<![CDATA[
-					set "JAVA_OPTS=%JAVA_OPTS% -Dfile.encoding=UTF-8 -Djava.net.preferIPv4Stack=true @java.security.config@ -Djboss.as.management.blocking.timeout=480 -Duser.timezone=GMT -Xmx1024m -XX:MaxMetaspaceSize=384m"
+					set "JAVA_OPTS=%JAVA_OPTS% -Dfile.encoding=UTF-8 -Djava.net.preferIPv4Stack=true -Djboss.as.management.blocking.timeout=480 -Duser.timezone=GMT -Xmx1024m -XX:MaxMetaspaceSize=384m"
 
 					:JAVA_OPTS_SET
 				]]>
 			</replacevalue>
 		</replace>
 
-		<replace file="${app.server.jboss.instance.dir}/configuration/standalone.xml">
-			<replacetoken><![CDATA[<subsystem xmlns="urn:jboss:domain:web:2.2" default-virtual-server="default-host" native="false">]]></replacetoken>
-			<replacevalue>
-				<![CDATA[
-					<subsystem xmlns="urn:jboss:domain:web:2.2" default-virtual-server="default-host" native="false">
-						<configuration>
-							<jsp-configuration development="true" source-vm="1.8" target-vm="1.8" />
-						</configuration>
-				]]>
-			</replacevalue>
-		</replace>
-
-		<chmod perm="a+x">
-			<fileset dir="${app.server.jboss.bin.dir}">
+		<chmod
+			perm="a+x"
+		>
+			<fileset
+				dir="${app.server.jboss.bin.dir}"
+			>
 				<include name="*.sh" />
 			</fileset>
 		</chmod>
@@ -1365,9 +1474,9 @@ this task.
 					jetty-distribution-${app.server.jetty.version}.v${app.server.jetty.version.date}/webapps/**"
 			/>
 			<mapper
-				type="glob"
 				from="jetty-distribution-${app.server.jetty.version}.v${app.server.jetty.version.date}/*"
 				to="jetty-${app.server.jetty.version}/*"
+				type="glob"
 			/>
 		</unzip>
 
@@ -1376,37 +1485,22 @@ this task.
 		<mkdir dir="${app.server.jetty.dir}/temp" />
 		<mkdir dir="${app.server.jetty.dir}/webapps" />
 
-		<echo file="${app.server.jetty.dir}/lib/policy/server.policy">
-			grant {
-				permission java.security.AllPermission;
-			};
-		</echo>
-
-		<if>
-			<equals arg1="${java.security.manager.option}" arg2="" />
-			<then>
-				<var name="java.security.config" value="" />
-			</then>
-			<else>
-				<var name="java.security.config" value="${java.security.manager.option} -Djava.security.policy==${app.server.jetty.dir}/lib/policy/server.policy -Djetty.home=${app.server.jetty.dir}" />
-			</else>
-		</if>
-
 		<copy
 			file="tools/servers/jetty/bin/run.bat"
 			tofile="${app.server.jetty.bin.dir}/run.bat"
-		>
-			<filterset>
-				<filter token="java.security.config" value="${java.security.config}" />
-			</filterset>
-		</copy>
+		/>
 
-		<replace file="${app.server.jetty.bin.dir}/run.bat">
+		<replace
+			file="${app.server.jetty.bin.dir}/run.bat"
+		>
 			<replacetoken>set "JAVA_OPTS=-D</replacetoken>
 			<replacevalue>set "JAVA_OPTS=-Dapp.server.jetty.version=${app.server.jetty.version} -Dapp.server.jetty.version.date=${app.server.jetty.version.date} -Djava.io.tmpdir=${app.server.jetty.dir}/temp -D</replacevalue>
 		</replace>
 
-		<loadfile property="run.bat.content" srcfile="${app.server.jetty.bin.dir}/run.bat">
+		<loadfile
+			property="run.bat.content"
+			srcfile="${app.server.jetty.bin.dir}/run.bat"
+		>
 			<filterchain>
 				<expandproperties />
 			</filterchain>
@@ -1417,18 +1511,19 @@ this task.
 		<copy
 			file="tools/servers/jetty/bin/run.sh"
 			tofile="${app.server.jetty.bin.dir}/run.sh"
-		>
-			<filterset>
-				<filter token="java.security.config" value="${java.security.config}" />
-			</filterset>
-		</copy>
+		/>
 
-		<replace file="${app.server.jetty.bin.dir}/run.sh">
+		<replace
+			file="${app.server.jetty.bin.dir}/run.sh"
+		>
 			<replacetoken>export JAVA_OPTS="-D</replacetoken>
 			<replacevalue>export JAVA_OPTS="-Dapp.server.jetty.version=${app.server.jetty.version} -Dapp.server.jetty.version.date=${app.server.jetty.version.date} -D</replacevalue>
 		</replace>
 
-		<loadfile property="run.sh.content" srcfile="${app.server.jetty.bin.dir}/run.sh">
+		<loadfile
+			property="run.sh.content"
+			srcfile="${app.server.jetty.bin.dir}/run.sh"
+		>
 			<filterchain>
 				<expandproperties />
 			</filterchain>
@@ -1441,8 +1536,12 @@ this task.
 			tofile="${app.server.jetty.bin.dir}/start.ini"
 		/>
 
-		<chmod perm="a+x">
-			<fileset dir="${app.server.jetty.bin.dir}">
+		<chmod
+			perm="a+x"
+		>
+			<fileset
+				dir="${app.server.jetty.bin.dir}"
+			>
 				<include name="*.sh" />
 			</fileset>
 		</chmod>
@@ -1474,9 +1573,9 @@ this task.
 				excludes="jonas-full-${app.server.jonas.version}/examples/**,jonas-full-${app.server.jonas.version}/tutorial/**"
 			/>
 			<mapper
-				type="glob"
 				from="jonas-full-${app.server.jonas.version}/*"
 				to="jonas-${app.server.jonas.version}/*"
+				type="glob"
 			/>
 		</unzip>
 
@@ -1495,7 +1594,9 @@ this task.
 			/>
 		</delete>
 
-		<replace file="${app.server.jonas.dir}/conf/classloader-default-filtering.xml">
+		<replace
+			file="${app.server.jonas.dir}/conf/classloader-default-filtering.xml"
+		>
 			<replacetoken><![CDATA[<filter-name>org.apache.commons.digester.*</filter-name>]]></replacetoken>
 			<replacevalue>
 				<![CDATA[
@@ -1516,7 +1617,10 @@ this task.
 			</replacevalue>
 		</replace>
 
-		<unjar dest="${app.server.jonas.dir}/conf" src="${app.server.jonas.dir}/lib/bootstrap/felix-launcher.jar">
+		<unjar
+			dest="${app.server.jonas.dir}/conf"
+			src="${app.server.jonas.dir}/lib/bootstrap/felix-launcher.jar"
+		>
 			<patternset>
 				<include name="**/default.properties" />
 			</patternset>
@@ -1529,86 +1633,103 @@ this task.
 			</chainedmapper>
 		</unjar>
 
-		<replace file="${app.server.jonas.dir}/conf/felix-config.properties">
+		<replace
+			file="${app.server.jonas.dir}/conf/felix-config.properties"
+		>
 			<replacetoken>org.osgi.framework.system.packages=org.osgi.framework;</replacetoken>
 			<replacevalue>org.osgi.framework.system.packages=com.sun.crypto.provider; com.sun.image.codec.jpeg; com.sun.jmx.interceptor; com.sun.jmx.mbeanserver; org.apache.xerces.parsers; org.apache.xerces.util; org.apache.xerces.xni; org.apache.xerces.xni.parser; org.osgi.framework;</replacevalue>
 		</replace>
 
-		<replace file="${app.server.jonas.dir}/conf/jonas.properties">
-			<replacefilter token="HSQL1" value="" />
-			<replacefilter token="jtm,db,resource,ejb3,jaxws,web,ear,depmonitor" value="jtm,resource,ejb3,jaxws,web,ear,validation,depmonitor" />
+		<replace
+			file="${app.server.jonas.dir}/conf/jonas.properties"
+		>
+			<replacefilter
+				token="HSQL1"
+				value=""
+			/>
+			<replacefilter
+				token="jtm,db,resource,ejb3,jaxws,web,ear,depmonitor"
+				value="jtm,resource,ejb3,jaxws,web,ear,validation,depmonitor"
+			/>
 		</replace>
 
-		<replace file="${app.server.jonas.dir}/conf/tomcat6-server.xml">
+		<replace
+			file="${app.server.jonas.dir}/conf/tomcat6-server.xml"
+		>
 			<replacetoken><![CDATA[autoDeploy="false"]]></replacetoken>
 			<replacevalue><![CDATA[autoDeploy="true"]]></replacevalue>
 		</replace>
 
-		<replace file="${app.server.jonas.dir}/conf/tomcat6-server.xml">
-			<replacefilter token="9000" value="8080" />
-			<replacefilter token="9009" value="8009" />
-			<replacefilter token="9043" value="8443" />
+		<replace
+			file="${app.server.jonas.dir}/conf/tomcat6-server.xml"
+		>
+			<replacefilter
+				token="9000"
+				value="8080"
+			/>
+			<replacefilter
+				token="9009"
+				value="8009"
+			/>
+			<replacefilter
+				token="9043"
+				value="8443"
+			/>
 		</replace>
 
-		<replace file="${app.server.jonas.dir}/conf/tomcat6-server.xml">
+		<replace
+			file="${app.server.jonas.dir}/conf/tomcat6-server.xml"
+		>
 			<replacetoken><![CDATA[redirectPort="8443" />]]></replacetoken>
 			<replacevalue><![CDATA[redirectPort="8443" URIEncoding="UTF-8" />]]></replacevalue>
 		</replace>
 
-		<replace file="${app.server.jonas.dir}/conf/tomcat6-server.xml">
+		<replace
+			file="${app.server.jonas.dir}/conf/tomcat6-server.xml"
+		>
 			<replacetoken><![CDATA[redirectPort="9043" />]]></replacetoken>
 			<replacevalue><![CDATA[redirectPort="9043" URIEncoding="UTF-8" />]]></replacevalue>
 		</replace>
 
-		<replace file="${app.server.jonas.dir}/conf/osgi/defaults.properties">
+		<replace
+			file="${app.server.jonas.dir}/conf/osgi/defaults.properties"
+		>
 			<replacetoken><![CDATA[javase-packages ${javase-${javase.version}}]]></replacetoken>
 			<replacevalue><![CDATA[javase-packages ${javase-${javase.version}}, com.sun.crypto.provider, com.sun.jmx.interceptor, com.sun.jmx.mbeanserver, org.apache.felix.framework]]></replacevalue>
 		</replace>
 
-		<if>
-			<equals arg1="${java.security.manager.option}" arg2="" />
-			<then>
-				<var name="java.security.config" value="" />
-			</then>
-			<else>
-				<if>
-					<os family="windows" />
-					<then>
-						<var name="java.security.config" value="${java.security.manager.option} -Djava.security.policy==%JONAS_ROOT%/conf/java.policy" />
-					</then>
-					<else>
-						<var name="java.security.config" value="${java.security.manager.option} -Djava.security.policy==$JONAS_ROOT/conf/java.policy" />
-					</else>
-				</if>
-			</else>
-		</if>
-
-		<replace file="${app.server.jonas.bin.dir}/setenv">
-			<replacefilter token="@java.security.config@" value="${java.security.config}" />
+		<replace
+			file="${app.server.jonas.bin.dir}/setenv"
+		>
 			<replacetoken><![CDATA[export JAVA_OPTS]]></replacetoken>
 			<replacevalue>
 				<![CDATA[
-					JAVA_OPTS="-Dfile.encoding=UTF8 -Djava.net.preferIPv4Stack=true @java.security.config@ -Djonas.felix.configuration.file=\"$JONAS_ROOT/conf/felix-config.properties\" -Duser.timezone=GMT -Xmx1024m -XX:MaxPermSize=384m"
+					JAVA_OPTS="-Dfile.encoding=UTF8 -Djava.net.preferIPv4Stack=true -Djonas.felix.configuration.file=\"$JONAS_ROOT/conf/felix-config.properties\" -Duser.timezone=GMT -Xmx1024m -XX:MaxPermSize=384m"
 
 					export JAVA_OPTS
 				]]>
 			</replacevalue>
 		</replace>
 
-		<replace file="${app.server.jonas.bin.dir}/setenv.bat">
-			<replacefilter token="@java.security.config@" value="${java.security.config}" />
+		<replace
+			file="${app.server.jonas.bin.dir}/setenv.bat"
+		>
 			<replacetoken><![CDATA[set JONAS_CLASSPATH=%JONAS_BASE%\conf;%JONAS_CLASSPATH%]]></replacetoken>
 			<replacevalue>
 				<![CDATA[
 					set JONAS_CLASSPATH=%JONAS_BASE%\conf;%JONAS_CLASSPATH%
 
-					set "JAVA_OPTS=-Dfile.encoding=UTF8 -Djava.net.preferIPv4Stack=true @java.security.config@ -Djonas.felix.configuration.file=%JONAS_ROOT%/conf/felix-config.properties -Duser.timezone=GMT -Xmx1024m -XX:MaxPermSize=384m"
+					set "JAVA_OPTS=-Dfile.encoding=UTF8 -Djava.net.preferIPv4Stack=true -Djonas.felix.configuration.file=%JONAS_ROOT%/conf/felix-config.properties -Duser.timezone=GMT -Xmx1024m -XX:MaxPermSize=384m"
 				]]>
 			</replacevalue>
 		</replace>
 
-		<chmod perm="a+x">
-			<fileset dir="${app.server.jonas.bin.dir}">
+		<chmod
+			perm="a+x"
+		>
+			<fileset
+				dir="${app.server.jonas.bin.dir}"
+			>
 				<exclude name="*.bat" />
 			</fileset>
 		</chmod>
@@ -1643,29 +1764,16 @@ this task.
 
 		<mkdir dir="${app.server.resin.dir}/webapps" />
 
-		<echo file="${app.server.resin.dir}/conf/server.policy">
-			grant {
-				permission java.security.AllPermission;
-			};
-		</echo>
-
-		<if>
-			<equals arg1="${java.security.manager.option}" arg2="" />
-			<then>
-				<var name="java.security.config" value="" />
-			</then>
-			<else>
-				<var name="java.security.config" value="${java.security.manager.option} -Djava.security.policy==${app.server.resin.dir}/conf/server.policy" />
-			</else>
-		</if>
-
-		<replace file="${app.server.resin.dir}/conf/resin.properties">
-			<replacefilter token="@java.security.config@" value="${java.security.config}" />
+		<replace
+			file="${app.server.resin.dir}/conf/resin.properties"
+		>
 			<replacetoken><![CDATA[# jvm_args  : -Xmx2048m -XX:MaxPermSize=256m]]></replacetoken>
-			<replacevalue><![CDATA[jvm_args  : -Dfile.encoding=UTF-8 -Dcaucho.environment.class.loader=com.liferay.support.resin.EnvironmentClassLoader -Djava.net.preferIPv4Stack=true @java.security.config@ -Duser.timezone=GMT -Xmx1024m -XX:MaxPermSize=384m]]></replacevalue>
+			<replacevalue><![CDATA[jvm_args  : -Dfile.encoding=UTF-8 -Dcaucho.environment.class.loader=com.liferay.support.resin.EnvironmentClassLoader -Djava.net.preferIPv4Stack=true -Duser.timezone=GMT -Xmx1024m -XX:MaxPermSize=384m]]></replacevalue>
 		</replace>
 
-		<replace file="${app.server.resin.dir}/conf/resin.xml">
+		<replace
+			file="${app.server.resin.dir}/conf/resin.xml"
+		>
 			<replacetoken><![CDATA[xmlns:resin="urn:java:com.caucho.resin">]]></replacetoken>
 			<replacevalue>
 				<![CDATA[
@@ -1677,7 +1785,7 @@ this task.
 						<tree-loader path="cloud:/resin-inf" />
 					</class-loader>
 				 ]]>
-				</replacevalue>
+			</replacevalue>
 		</replace>
 
 		<copy
@@ -1690,8 +1798,12 @@ this task.
 			tofile="${app.server.resin.bin.dir}/run.sh"
 		/>
 
-		<chmod perm="a+x">
-			<fileset dir="${app.server.resin.bin.dir}">
+		<chmod
+			perm="a+x"
+		>
+			<fileset
+				dir="${app.server.resin.bin.dir}"
+			>
 				<include name="*.sh" />
 			</fileset>
 		</chmod>
@@ -1720,14 +1832,23 @@ this task.
 			src="${app.server.parent.dir}/${app.server.tcserver.zip.name}"
 		>
 			<mapper
-				from="pivotal-tc-server-developer-${app.server.tcserver.version}.RELEASE/*"
+				from="pivotal-tc-server/*"
 				to="tc-server-${app.server.tcserver.version}/*"
 				type="glob"
 			/>
 		</unzip>
 
-		<chmod perm="a+x">
-			<fileset dir="${app.server.tcserver.dir}">
+		<move
+			file="${app.server.tcserver.developer.dir}/tcserver"
+			tofile="${app.server.tcserver.developer.dir}/tcserver.sh"
+		/>
+
+		<chmod
+			perm="a+x"
+		>
+			<fileset
+				dir="${app.server.tcserver.dir}"
+			>
 				<include name="**/*.sh" />
 			</fileset>
 		</chmod>
@@ -1735,12 +1856,12 @@ this task.
 		<if>
 			<os family="windows" />
 			<then>
-				<exec dir="${app.server.tcserver.dir}" executable="cmd">
-					<arg line="/c set JAVA_OPTS= &amp; tcruntime-instance.bat create liferay -v ${app.server.tcserver.tomcat.version}" />
+				<exec dir="${app.server.tcserver.developer.dir}" executable="cmd">
+					<arg line="/c set JAVA_OPTS= &amp; tcserver.bat create liferay -v ${app.server.tcserver.tomcat.version}" />
 				</exec>
 			</then>
 			<else>
-				<exec dir="${app.server.tcserver.dir}" executable="${app.server.tcserver.dir}/tcruntime-instance.sh">
+				<exec dir="${app.server.tcserver.developer.dir}" executable="${app.server.tcserver.developer.dir}/tcserver.sh">
 					<arg line="create liferay -v ${app.server.tcserver.tomcat.version}" />
 				</exec>
 			</else>
@@ -1749,30 +1870,40 @@ this task.
 		<if>
 			<os family="windows" />
 			<then>
-				<replace file="${app.server.tcserver.bin.dir}/setenv.bat">
+				<replace
+					file="${app.server.tcserver.bin.dir}/setenv.bat"
+				>
 					<replacetoken><![CDATA[set JVM_OPTS=-Xmx512M -Xss256K]]></replacetoken>
-					<replacevalue><![CDATA[set JVM_OPTS=-Dfile.encoding=UTF-8 -Xmx1024M -Xss512K -XX:MaxMetaspaceSize=512m]]></replacevalue>
+					<replacevalue><![CDATA[set JVM_OPTS=-Dfile.encoding=UTF-8 -Duser.timezone=GMT -Xmx1024M -Xss512K -XX:MaxMetaspaceSize=512m]]></replacevalue>
 				</replace>
 			</then>
 			<else>
-				<replace file="${app.server.tcserver.bin.dir}/setenv.sh">
+				<replace
+					file="${app.server.tcserver.bin.dir}/setenv.sh"
+				>
 					<replacetoken><![CDATA[JVM_OPTS="-Xmx512M -Xss256K"]]></replacetoken>
-					<replacevalue><![CDATA[JVM_OPTS="-Dfile.encoding=UTF-8 -Xmx1024M -Xss512K -XX:MaxPermSize=512m"]]></replacevalue>
+					<replacevalue><![CDATA[JVM_OPTS="-Dfile.encoding=UTF-8 -Duser.timezone=GMT -Xmx1024M -Xss512K -XX:MaxMetaspaceSize=512m"]]></replacevalue>
 				</replace>
 			</else>
 		</if>
 
-		<replace file="${app.server.tcserver.dir}/liferay/conf/catalina.properties">
+		<replace
+			file="${app.server.tcserver.conf.dir}/catalina.properties"
+		>
 			<replacetoken><![CDATA[common.loader=${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/lib,${catalina.home}/lib/*.jar]]></replacetoken>
 			<replacevalue><![CDATA[common.loader=${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/lib,${catalina.home}/lib/*.jar,${catalina.home}/lib/ext/global,${catalina.home}/lib/ext/global/*.jar,${catalina.home}/lib/ext,${catalina.home}/lib/ext/*.jar]]></replacevalue>
 		</replace>
 
-		<replace file="${app.server.tcserver.dir}/liferay/conf/server.xml">
-			<replacetoken><![CDATA[redirectPort="${bio.https.port}"/>]]></replacetoken>
-			<replacevalue><![CDATA[redirectPort="${bio.https.port}" URIEncoding="UTF-8"/>]]></replacevalue>
+		<replace
+			file="${app.server.tcserver.conf.dir}/server.xml"
+		>
+			<replacetoken><![CDATA[redirectPort="${nio.https.port}"/>]]></replacetoken>
+			<replacevalue><![CDATA[redirectPort="${nio.https.port}" URIEncoding="UTF-8"/>]]></replacevalue>
 		</replace>
 
-		<replace file="${app.server.tcserver.dir}/liferay/conf/web.xml">
+		<replace
+			file="${app.server.tcserver.conf.dir}/web.xml"
+		>
 			<replacetoken><![CDATA[<load-on-startup>3</load-on-startup>]]></replacetoken>
 			<replacevalue>
 				<![CDATA[
@@ -1792,15 +1923,19 @@ this task.
 		<if>
 			<os family="windows" />
 			<then>
-				<replace file="${app.server.tcserver.dir}/liferay/conf/wrapper.conf">
+				<replace
+					file="${app.server.tcserver.conf.dir}/wrapper.conf"
+				>
 					<replacetoken><![CDATA[wrapper.java.additional.8=-Xmx512M]]></replacetoken>
 					<replacevalue><![CDATA[wrapper.java.additional.8="-Xmx1024M"]]></replacevalue>
 				</replace>
 
-				<replace file="${app.server.tcserver.dir}/liferay/conf/wrapper.conf">
+				<replace
+					file="${app.server.tcserver.conf.dir}/wrapper.conf"
+				>
 					<replacetoken><![CDATA[wrapper.java.additional.9=-Xss256K]]></replacetoken>
 					<replacevalue><![CDATA[wrapper.java.additional.9="-Xss512K"
-wrapper.java.additional.10="-XX:MaxPermSize=256M"
+wrapper.java.additional.10="-XX:MaxMetaspaceSize=256M"
 wrapper.java.additional.11="-Dfile.encoding=UTF-8"]]></replacevalue>
 				</replace>
 			</then>
@@ -1808,6 +1943,19 @@ wrapper.java.additional.11="-Dfile.encoding=UTF-8"]]></replacevalue>
 	</target>
 
 	<target name="unzip-tomcat">
+		<for list="${app.server.tomcat.legacy.versions}" param="app.server.tomcat.legacy.version">
+			<sequential>
+				<var name="app.server.tomcat.legacy.dir" value="${app.server.parent.dir}/tomcat-@{app.server.tomcat.legacy.version}" />
+
+				<if>
+					<available file="${app.server.tomcat.legacy.dir}" type="dir" />
+					<then>
+						<delete dir="${app.server.tomcat.legacy.dir}" />
+					</then>
+				</if>
+			</sequential>
+		</for>
+
 		<delete dir="${app.server.tomcat.dir}" />
 
 		<if>
@@ -1832,39 +1980,60 @@ wrapper.java.additional.11="-Dfile.encoding=UTF-8"]]></replacevalue>
 			src="${app.server.parent.dir}/${app.server.tomcat.zip.name}"
 		>
 			<patternset
-				excludes="apache-tomcat-${app.server.tomcat.version}/webapps/**"
+				excludes="apache-tomcat-${app.server.tomcat.version}/temp/**,apache-tomcat-${app.server.tomcat.version}/webapps/**"
 			/>
 			<mapper
-				type="glob"
 				from="apache-tomcat-${app.server.tomcat.version}/*"
 				to="${app.server.tomcat.dir.name}/*"
+				type="glob"
 			/>
 		</unzip>
 
 		<mkdir dir="${app.server.tomcat.dir}/webapps" />
 
-		<echo file="${app.server.tomcat.dir}/conf/catalina.policy">
-			grant {
-				permission java.security.AllPermission;
-			};
-		</echo>
-
-		<replace file="${app.server.tomcat.dir}/conf/catalina.properties">
+		<replace
+			file="${app.server.tomcat.dir}/conf/catalina.properties"
+		>
 			<replacetoken><![CDATA[common.loader="${catalina.base}/lib","${catalina.base}/lib/*.jar","${catalina.home}/lib","${catalina.home}/lib/*.jar"]]></replacetoken>
 			<replacevalue><![CDATA[common.loader="${catalina.base}/lib","${catalina.base}/lib/*.jar","${catalina.home}/lib","${catalina.home}/lib/*.jar","${catalina.home}/lib/ext/global","${catalina.home}/lib/ext/global/*.jar","${catalina.home}/lib/ext","${catalina.home}/lib/ext/*.jar"]]></replacevalue>
 		</replace>
 
-		<replace file="${app.server.tomcat.dir}/conf/server.xml">
+		<echo append="true" file="${app.server.tomcat.dir}/conf/logging.properties">
+			<![CDATA[
+org.apache.catalina.startup.ClassLoaderFactory.level=SEVERE]]>
+		</echo>
+
+		<replace
+			file="${app.server.tomcat.dir}/conf/server.xml"
+		>
 			<replacetoken><![CDATA[redirectPort="8443" />]]></replacetoken>
 			<replacevalue><![CDATA[redirectPort="8443" URIEncoding="UTF-8" />]]></replacevalue>
 		</replace>
 
-		<!--<replace file="${app.server.tomcat.dir}/conf/server.xml">
-			<replacetoken><![CDATA[xmlValidation="false" xmlNamespaceAware="false">]]></replacetoken>
-			<replacevalue><![CDATA[xmlValidation="false" deployXML="false" xmlNamespaceAware="false">]]></replacevalue>
-		</replace>-->
+		<replace
+			file="${app.server.tomcat.dir}/conf/server.xml"
+		>
+			<replacetoken><![CDATA[<Valve className="org.apache.catalina.valves.AccessLogValve"]]></replacetoken>
+			<replacevalue><![CDATA[<!-- <Valve className="org.apache.catalina.valves.AccessLogValve"]]></replacevalue>
+		</replace>
 
-		<replace file="${app.server.tomcat.dir}/conf/web.xml">
+		<replace
+			file="${app.server.tomcat.dir}/conf/server.xml"
+		>
+			<replacetoken><![CDATA[pattern="%h %l %u %t &quot;%r&quot; %s %b" />]]></replacetoken>
+			<replacevalue><![CDATA[pattern="%h %l %u %t &quot;%r&quot; %s %b" /> -->]]></replacevalue>
+		</replace>
+
+		<replace
+			file="${app.server.tomcat.dir}/conf/web.xml"
+		>
+			<replacetoken><![CDATA[<web-app]]></replacetoken>
+			<replacevalue><![CDATA[<web-app metadata-complete="true"]]></replacevalue>
+		</replace>
+
+		<replace
+			file="${app.server.tomcat.dir}/conf/web.xml"
+		>
 			<replacetoken><![CDATA[<load-on-startup>3</load-on-startup>]]></replacetoken>
 			<replacevalue>
 				<![CDATA[
@@ -1876,6 +2045,10 @@ wrapper.java.additional.11="-Dfile.encoding=UTF-8"]]></replacevalue>
 						<param-name>compilerTargetVM</param-name>
 						<param-value>1.8</param-value>
 					</init-param>
+					<init-param>
+						<param-name>tagpoolClassName</param-name>
+						<param-value>com.liferay.support.tomcat.jasper.runtime.TagHandlerPool</param-value>
+					</init-param>
 					<load-on-startup>3</load-on-startup>
 				]]>
 			</replacevalue>
@@ -1884,8 +2057,12 @@ wrapper.java.additional.11="-Dfile.encoding=UTF-8"]]></replacevalue>
 		<if>
 			<available file="${jdk.windows.home}/jre/bin/java.exe" />
 			<then>
-				<copy todir="${app.server.tomcat.dir}/jre${jdk.windows.version}/win">
-					<fileset dir="${jdk.windows.home}/jre" />
+				<copy
+					todir="${app.server.tomcat.dir}/jre${jdk.windows.version}/win"
+				>
+					<fileset
+						dir="${jdk.windows.home}/jre"
+					/>
 				</copy>
 			</then>
 		</if>
@@ -1906,13 +2083,15 @@ wrapper.java.additional.11="-Dfile.encoding=UTF-8"]]></replacevalue>
 			tofile="${app.server.tomcat.bin.dir}/setenv.sh"
 		/>
 
-		<chmod perm="a+x">
-			<fileset dir="${app.server.tomcat.bin.dir}">
+		<chmod
+			perm="a+x"
+		>
+			<fileset
+				dir="${app.server.tomcat.bin.dir}"
+			>
 				<include name="*.sh" />
 			</fileset>
 		</chmod>
-
-		<antcall target="update-java-security-tomcat" />
 	</target>
 
 	<target name="unzip-weblogic">
@@ -1950,7 +2129,7 @@ rerun this task.
 		<delete dir="${app.server.weblogic.dir}" />
 
 		<if>
-			<equals arg1="${app.server.weblogic.version.build}" arg2="1221" />
+			<equals arg1="${app.server.weblogic.version.build}" arg2="12213" />
 			<then>
 				<unzip
 					dest="${app.server.weblogic.dir}-temp"
@@ -1966,9 +2145,12 @@ rerun this task.
 		</if>
 
 		<if>
-			<equals arg1="${app.server.weblogic.version.build}" arg2="1221" />
+			<equals arg1="${app.server.weblogic.version.build}" arg2="12213" />
 			<then>
-				<java fork="true" jar="${app.server.weblogic.dir}-temp/${app.server.weblogic.jar.name}">
+				<java
+					fork="true"
+					jar="${app.server.weblogic.dir}-temp/${app.server.weblogic.jar.name}"
+				>
 					<arg line="ORACLE_HOME=${app.server.weblogic.dir}" />
 				</java>
 
@@ -1980,8 +2162,12 @@ rerun this task.
 			<elseif>
 				<equals arg1="${app.server.weblogic.version.build}" arg2="1213" />
 				<then>
-					<move todir="${app.server.weblogic.dir}">
-						<fileset dir="${app.server.weblogic.dir}/wls${app.server.weblogic.version.build}0" />
+					<move
+						todir="${app.server.weblogic.dir}"
+					>
+						<fileset
+							dir="${app.server.weblogic.dir}/wls${app.server.weblogic.version.build}0"
+						/>
 					</move>
 
 					<property name="app.server.weblogic.configure.silent" value="-silent" />
@@ -2031,7 +2217,7 @@ closeTemplate()
 				</pathconvert>
 
 				<if>
-					<equals arg1="${app.server.weblogic.version.build}" arg2="1221" />
+					<equals arg1="${app.server.weblogic.version.build}" arg2="12213" />
 					<then>
 						<exec dir="${app.server.weblogic.dir}/wlserver/server/bin" executable="cmd">
 							<env key="MW_HOME" value="${app.server.weblogic.dir.windows}" />
@@ -2083,23 +2269,29 @@ closeTemplate()
 					<arg value="create-weblogic-domain.bat" />
 				</exec>
 
-				<replace file="${app.server.weblogic.instance.dir}/startWebLogic.cmd">
-					<replacefilter token="@java.security.manager.option@" value="${java.security.manager.option}" />
+				<replace
+					file="${app.server.weblogic.instance.dir}/startWebLogic.cmd"
+				>
 					<replacetoken><![CDATA[SETLOCAL]]></replacetoken>
 					<replacevalue>
 						<![CDATA[
 							SETLOCAL
 
 							set DERBY_FLAG="false"
-							set "JAVA_OPTIONS=%JAVA_OPTIONS% -Dfile.encoding=UTF-8 @java.security.manager.option@ -da:org.apache.lucene... -da:org.aspectj..."
+							set "JAVA_OPTIONS=%JAVA_OPTIONS% -Dfile.encoding=UTF-8 -Duser.timezone=GMT -da:org.apache.lucene... -da:org.aspectj..."
 							set "MW_HOME=${app.server.weblogic.dir.windows}"
 							set "USER_MEM_ARGS=-Xmx1024m -XX:PermSize=512m"
 						]]>
 					</replacevalue>
 				</replace>
 
-				<replace file="${app.server.weblogic.instance.dir}/startWebLogic.cmd">
-					<replacefilter token="$${app.server.weblogic.dir.windows}" value="${app.server.weblogic.dir.windows}" />
+				<replace
+					file="${app.server.weblogic.instance.dir}/startWebLogic.cmd"
+				>
+					<replacefilter
+						token="$${app.server.weblogic.dir.windows}"
+						value="${app.server.weblogic.dir.windows}"
+					/>
 				</replace>
 
 				<copy
@@ -2107,8 +2299,13 @@ closeTemplate()
 					tofile="${app.server.weblogic.instance.dir}/stopWebLogic.cmd"
 				/>
 
-				<replace file="${app.server.weblogic.instance.dir}/stopWebLogic.cmd">
-					<replacefilter token="startWebLogic" value="stopWebLogic" />
+				<replace
+					file="${app.server.weblogic.instance.dir}/stopWebLogic.cmd"
+				>
+					<replacefilter
+						token="startWebLogic"
+						value="stopWebLogic"
+					/>
 				</replace>
 			</then>
 			<else>
@@ -2118,17 +2315,27 @@ closeTemplate()
 					<os family="unix" />
 					<then>
 						<if>
-							<equals arg1="${app.server.weblogic.version.build}" arg2="1221" />
+							<equals arg1="${app.server.weblogic.version.build}" arg2="12213" />
 							<then>
-								<replace file="${app.server.weblogic.dir}/wlserver/server/bin/setWLSEnv.sh">
-									<replacefilter token="#!/bin/sh" value="#!/bin/bash" />
+								<replace
+									file="${app.server.weblogic.dir}/wlserver/server/bin/setWLSEnv.sh"
+								>
+									<replacefilter
+										token="#!/bin/sh"
+										value="#!/bin/bash"
+									/>
 								</replace>
 
 								<var name="source.command" value="." />
 							</then>
 							<else>
-								<replace file="${app.server.weblogic.dir}/configure.sh">
-									<replacefilter token="#!/bin/sh" value="#!/bin/bash" />
+								<replace
+									file="${app.server.weblogic.dir}/configure.sh"
+								>
+									<replacefilter
+										token="#!/bin/sh"
+										value="#!/bin/bash"
+									/>
 								</replace>
 
 								<var name="source.command" value="." />
@@ -2138,7 +2345,7 @@ closeTemplate()
 				</if>
 
 				<if>
-					<equals arg1="${app.server.weblogic.version.build}" arg2="1221" />
+					<equals arg1="${app.server.weblogic.version.build}" arg2="12213" />
 					<then>
 						<chmod
 							dir="${app.server.weblogic.dir}/wlserver/server/bin"
@@ -2159,7 +2366,7 @@ closeTemplate()
 					<os family="unix" />
 					<then>
 						<if>
-							<equals arg1="${app.server.weblogic.version.build}" arg2="1221" />
+							<equals arg1="${app.server.weblogic.version.build}" arg2="12213" />
 							<then>
 								<exec dir="${app.server.weblogic.dir}/wlserver/server/bin" executable="./setWLSEnv.sh">
 									<env file="${app.server.weblogic.dir}" key="MW_HOME" />
@@ -2176,7 +2383,7 @@ closeTemplate()
 					</then>
 					<else>
 						<if>
-							<equals arg1="${app.server.weblogic.version.build}" arg2="1221" />
+							<equals arg1="${app.server.weblogic.version.build}" arg2="12213" />
 							<then>
 								<exec dir="${app.server.weblogic.dir}/wlserver/server/bin" executable="sh">
 									<env file="${app.server.weblogic.dir}" key="MW_HOME" />
@@ -2194,7 +2401,7 @@ closeTemplate()
 				</if>
 
 				<if>
-					<equals arg1="${app.server.weblogic.version.build}" arg2="1221" />
+					<equals arg1="${app.server.weblogic.version.build}" arg2="12213" />
 					<then>
 						<echo file="${tstamp.value}/create-weblogic-domain.sh">
 							#!/bin/sh
@@ -2236,23 +2443,29 @@ closeTemplate()
 					<arg value="create-weblogic-domain.sh" />
 				</exec>
 
-				<replace file="${app.server.weblogic.instance.dir}/startWebLogic.sh">
-					<replacefilter token="@java.security.manager.option@" value="${java.security.manager.option}" />
+				<replace
+					file="${app.server.weblogic.instance.dir}/startWebLogic.sh"
+				>
 					<replacetoken><![CDATA[# Any changes to this script may be lost when adding extensions to this configuration.]]></replacetoken>
 					<replacevalue>
 						<![CDATA[
 							# Any changes to this script may be lost when adding extensions to this configuration.
 
 							export DERBY_FLAG="false"
-							export JAVA_OPTIONS="${JAVA_OPTIONS} @java.security.manager.option@ -da:org.apache.lucene... -da:org.aspectj..."
+							export JAVA_OPTIONS="${JAVA_OPTIONS} -Dfile.encoding=UTF-8 -Duser.timezone=GMT -da:org.apache.lucene... -da:org.aspectj... "
 							export MW_HOME="${app.server.weblogic.dir}"
 							export USER_MEM_ARGS="-Xmx1024m -XX:MetaspaceSize=512m"
 						]]>
 					</replacevalue>
 				</replace>
 
-				<replace file="${app.server.weblogic.instance.dir}/startWebLogic.sh">
-					<replacefilter token="$${app.server.weblogic.dir}" value="${app.server.weblogic.dir}" />
+				<replace
+					file="${app.server.weblogic.instance.dir}/startWebLogic.sh"
+				>
+					<replacefilter
+						token="$${app.server.weblogic.dir}"
+						value="${app.server.weblogic.dir}"
+					/>
 				</replace>
 
 				<copy
@@ -2260,11 +2473,18 @@ closeTemplate()
 					tofile="${app.server.weblogic.instance.dir}/stopWebLogic.sh"
 				/>
 
-				<replace file="${app.server.weblogic.instance.dir}/stopWebLogic.sh">
-					<replacefilter token="startWebLogic" value="stopWebLogic" />
+				<replace
+					file="${app.server.weblogic.instance.dir}/stopWebLogic.sh"
+				>
+					<replacefilter
+						token="startWebLogic"
+						value="stopWebLogic"
+					/>
 				</replace>
 
-				<replace file="${app.server.weblogic.instance.dir}/bin/setDomainEnv.sh">
+				<replace
+					file="${app.server.weblogic.instance.dir}/bin/setDomainEnv.sh"
+				>
 					<replacetoken><![CDATA[JAVA_PROPERTIES="${JAVA_PROPERTIES} ${CLUSTER_PROPERTIES}"]]></replacetoken>
 					<replacevalue><![CDATA[JAVA_PROPERTIES="-Dfile.encoding=utf8 ${JAVA_PROPERTIES} ${CLUSTER_PROPERTIES}"]]></replacevalue>
 				</replace>
@@ -2276,12 +2496,6 @@ closeTemplate()
 				/>
 			</else>
 		</if>
-
-		<echo file="${app.server.weblogic.dir}/wlserver/server/lib/weblogic.policy">
-			grant {
-				permission java.security.AllPermission;
-			};
-		</echo>
 
 		<delete dir="${tstamp.value}" />
 	</target>
@@ -2330,7 +2544,10 @@ this task.
 					dir="${app.server.weblogic.dir}"
 					includes="**/*.cmd,**/*.domains,**/*.properties,**/*.sh,**/*.xml"
 				>
-					<replacefilter token="@env.JAVA_HOME@" value="${env.JAVA_HOME}" />
+					<replacefilter
+						token="@env.JAVA_HOME@"
+						value="${env.JAVA_HOME}"
+					/>
 				</replace>
 			</then>
 			<elseif>
@@ -2354,12 +2571,30 @@ this task.
 						dir="${app.server.weblogic.dir}"
 						includes="**/*.cmd,**/*.domains,**/*.properties,**/*.sh,**/*.xml"
 					>
-						<replacefilter token="@app.server.weblogic.dir@" value="${app.server.weblogic.dir}" />
-						<replacefilter token="@app.server.weblogic.dir.windows@" value="${app.server.weblogic.dir.windows}" />
-						<replacefilter token="@app.server.weblogic.dir.windows.double.slash@" value="${app.server.weblogic.dir.windows.double.slash}" />
-						<replacefilter token="@app.server.weblogic.dir.windows.escaped@" value="${app.server.weblogic.dir.windows.escaped}" />
-						<replacefilter token="@env.COMPUTERNAME@" value="${env.COMPUTERNAME}" />
-						<replacefilter token="@env.JAVA_HOME@" value="${env.JAVA_HOME}" />
+						<replacefilter
+							token="@app.server.weblogic.dir@"
+							value="${app.server.weblogic.dir}"
+						/>
+						<replacefilter
+							token="@app.server.weblogic.dir.windows@"
+							value="${app.server.weblogic.dir.windows}"
+						/>
+						<replacefilter
+							token="@app.server.weblogic.dir.windows.double.slash@"
+							value="${app.server.weblogic.dir.windows.double.slash}"
+						/>
+						<replacefilter
+							token="@app.server.weblogic.dir.windows.escaped@"
+							value="${app.server.weblogic.dir.windows.escaped}"
+						/>
+						<replacefilter
+							token="@env.COMPUTERNAME@"
+							value="${env.COMPUTERNAME}"
+						/>
+						<replacefilter
+							token="@env.JAVA_HOME@"
+							value="${env.JAVA_HOME}"
+						/>
 					</replace>
 				</then>
 			</elseif>
@@ -2424,25 +2659,51 @@ and put it in ${app.server.parent.dir}. Then rerun this task.
 			</sequential>
 		</for>
 
-		<for list="${app.server.websphere.fix.pack.jdk.zip.names}" param="app.server.websphere.fix.pack.jdk.zip.name">
-			<sequential>
-				<if>
-					<not>
-						<available file="${app.server.parent.dir}/@{app.server.websphere.fix.pack.jdk.zip.name}" />
-					</not>
-					<then>
-						<mkdir dir="${app.server.parent.dir}" />
+		<if>
+			<equals arg1="${app.server.websphere.version}" arg2="8.5.5.0" />
+			<then>
+				<for list="${app.server.websphere.fix.pack.jdk.zip.names}" param="app.server.websphere.fix.pack.jdk.zip.name">
+					<sequential>
+						<if>
+							<not>
+								<available file="${app.server.parent.dir}/@{app.server.websphere.fix.pack.jdk.zip.name}" />
+							</not>
+							<then>
+								<mkdir dir="${app.server.parent.dir}" />
 
-						<fail>
+								<fail>
 .
 
 Please download @{app.server.websphere.fix.pack.jdk.zip.name} from ${app.server.websphere.fix.pack.zip.url}
 and put it in ${app.server.parent.dir}. Then rerun this task.
-						</fail>
-					</then>
-				</if>
-			</sequential>
-		</for>
+								</fail>
+							</then>
+						</if>
+					</sequential>
+				</for>
+			</then>
+			<else>
+				<for list="${app.server.websphere.jdk.zip.names}" param="app.server.websphere.jdk.zip.name">
+					<sequential>
+						<if>
+							<not>
+								<available file="${app.server.parent.dir}/@{app.server.websphere.jdk.zip.name}" />
+							</not>
+							<then>
+								<mkdir dir="${app.server.parent.dir}" />
+
+								<fail>
+.
+
+Please download @{app.server.websphere.jdk.zip.name} from ${app.server.websphere.jdk.zip.url}
+and put it in ${app.server.parent.dir}. Then rerun this task.
+								</fail>
+							</then>
+						</if>
+					</sequential>
+				</for>
+			</else>
+		</if>
 
 		<for list="${app.server.websphere.fix.pack.was.zip.names}" param="app.server.websphere.fix.pack.was.zip.name">
 			<sequential>
@@ -2480,8 +2741,12 @@ and put it in ${app.server.parent.dir}. Then rerun this task.
 					src="${app.server.parent.dir}/${app.server.websphere.installation.manager.zip.name.linux}"
 				/>
 
-				<chmod perm="a+x">
-					<fileset dir="${tstamp.value}/was_im">
+				<chmod
+					perm="a+x"
+				>
+					<fileset
+						dir="${tstamp.value}/was_im"
+					>
 						<include name="installc" />
 						<include name="**/jre/bin/java" />
 					</fileset>
@@ -2525,32 +2790,79 @@ and put it in ${app.server.parent.dir}. Then rerun this task.
 			</sequential>
 		</for>
 
-		<echoxml file="${tstamp.value}/was/liferay-responseFile.xml">
-			<agent-input clean="true" temporary="false">
+		<if>
+			<equals arg1="${app.server.websphere.version}" arg2="8.5.5.0" />
+			<then>
+				<echoxml file="${tstamp.value}/was/liferay-responseFile.xml">
+					<agent-input clean="true" temporary="false">
+						<install modify="false">
+							<offering
+								id="com.ibm.websphere.DEVELOPERSILAN.v85"
+								profile="IBM Websphere 8.5.5.0"
+							>
+							</offering>
+						</install>
 
-			<install modify="false">
-			 	<offering
-			  		id='com.ibm.websphere.DEVELOPERSILAN.v85'
-			  		profile='IBM Websphere 8.5.5.0'>
-			  	</offering>
-			</install>
+						<profile
+							id="IBM Websphere 8.5.5.0"
+							installLocation="${app.server.websphere.dir}"
+						>
+						</profile>
 
-			<profile
-				id='IBM Websphere 8.5.5.0'
-				installLocation='${app.server.websphere.dir}'>
-			</profile>
+						<server>
+							<repository location="${project.dir}/${tstamp.value}/was/repository.config" />
+						</server>
+					</agent-input>
+				</echoxml>
+			</then>
+			<else>
+				<for list="${app.server.websphere.jdk.zip.names}" param="app.server.websphere.jdk.zip.name">
+					<sequential>
+						<unzip
+							dest="${tstamp.value}/was_jdk"
+							src="${app.server.parent.dir}/@{app.server.websphere.jdk.zip.name}"
+						/>
+					</sequential>
+				</for>
 
-			<server>
-				<repository location="${project.dir}/${tstamp.value}/was/repository.config" />
-			</server>
+				<echoxml file="${tstamp.value}/was/liferay-responseFile.xml">
+					<agent-input clean="true" temporary="false">
+						<install modify="false">
+							<offering
+								id="com.ibm.websphere.BASE.v90"
+								profile="IBM Websphere 9.0.0.0"
+							>
+							</offering>
 
-			</agent-input>
-		</echoxml>
+							<offering
+								id="com.ibm.java.jdk.v8"
+								profile="IBM Websphere 9.0.0.0"
+							>
+							</offering>
+						</install>
+
+						<profile
+							id="IBM Websphere 9.0.0.0"
+							installLocation="${app.server.websphere.dir}"
+						>
+						</profile>
+
+						<server>
+							<repository location="${project.dir}/${tstamp.value}/was/repository.config" />
+							<repository location="${project.dir}/${tstamp.value}/was_jdk/repository.config" />
+						</server>
+					</agent-input>
+				</echoxml>
+			</else>
+		</if>
 
 		<if>
 			<os family="unix" />
 			<then>
-				<chmod file="/opt/IBM/InstallationManager/eclipse/tools/imcl" perm="a+x" />
+				<chmod
+					file="/opt/IBM/InstallationManager/eclipse/tools/imcl"
+					perm="a+x"
+				/>
 
 				<exec dir="/opt/IBM/InstallationManager/eclipse/tools" executable="sh">
 					<arg value="-c" />
@@ -2595,7 +2907,10 @@ and put it in ${app.server.parent.dir}. Then rerun this task.
 		<if>
 			<os family="unix" />
 			<then>
-				<chmod file="${app.server.websphere.dir}/bin/manageprofiles.sh" perm="a+x" />
+				<chmod
+					file="${app.server.websphere.dir}/bin/manageprofiles.sh"
+					perm="a+x"
+				/>
 
 				<exec dir="${app.server.websphere.dir}/bin" executable="sh">
 					<arg value="-c" />
@@ -2616,17 +2931,21 @@ and put it in ${app.server.parent.dir}. Then rerun this task.
 		<delete failonerror="false" file="${app.server.websphere.dir}/liferay-portdef.props" />
 		<delete failonerror="false" file="${app.server.websphere.dir}/liferay-responsefile.txt" />
 
-		<replace file="${app.server.websphere.instance.dir}/config/cells/liferay-cell/nodes/liferay-node/servers/server1/server.xml">
+		<replace
+			file="${app.server.websphere.instance.dir}/config/cells/liferay-cell/nodes/liferay-node/servers/server1/server.xml"
+		>
 			<replacetoken><![CDATA[disableJIT="false">]]></replacetoken>
 			<replacevalue><![CDATA[disableJIT="false" maximumHeapSize="1024">]]></replacevalue>
 		</replace>
 
-		<replace file="${app.server.websphere.instance.dir}/config/cells/liferay-cell/nodes/liferay-node/servers/server1/server.xml">
+		<replace
+			file="${app.server.websphere.instance.dir}/config/cells/liferay-cell/nodes/liferay-node/servers/server1/server.xml"
+		>
 			<replacetoken><![CDATA[genericJvmArguments="-Xquickstart"]]></replacetoken>
-			<replacevalue><![CDATA[genericJvmArguments="-Xquickstart -Dfile.encoding=UTF-8"]]></replacevalue>
+			<replacevalue><![CDATA[genericJvmArguments="-Xquickstart -Dfile.encoding=UTF-8 -Duser.timezone=GMT"]]></replacevalue>
 		</replace>
 
-		<echo>Installing fix pack. This may take a few minutes</echo>
+		<echo>Installing fix pack. This may take a few minutes.</echo>
 
 		<tstamp>
 			<format pattern="yyyyMMddkkmmssSSS" property="tstamp.value" />
@@ -2641,59 +2960,99 @@ and put it in ${app.server.parent.dir}. Then rerun this task.
 			</sequential>
 		</for>
 
-		<for list="${app.server.websphere.fix.pack.jdk.zip.names}" param="app.server.websphere.fix.pack.jdk.zip.name">
-			<sequential>
-				<unzip
-					dest="${tstamp.value}/was_fixpack_jdk"
-					src="${app.server.parent.dir}/@{app.server.websphere.fix.pack.jdk.zip.name}"
-				/>
-			</sequential>
-		</for>
+		<if>
+			<equals arg1="${app.server.websphere.version}" arg2="8.5.5.0" />
+			<then>
+				<for list="${app.server.websphere.fix.pack.jdk.zip.names}" param="app.server.websphere.fix.pack.jdk.zip.name">
+					<sequential>
+						<unzip
+							dest="${tstamp.value}/was_fixpack_jdk"
+							src="${app.server.parent.dir}/@{app.server.websphere.fix.pack.jdk.zip.name}"
+						/>
+					</sequential>
+				</for>
 
-		<echoxml file="${tstamp.value}/was_fixpack/liferay-responseFile.xml">
-			<agent-input clean="true" temporary="false">
+				<echoxml file="${tstamp.value}/was_fixpack/liferay-responseFile.xml">
+					<agent-input clean="true" temporary="false">
+						<install modify="false">
+							<offering
+								id="com.ibm.websphere.DEVELOPERSILAN.v85"
+								profile="IBM Websphere 8.5.5.0"
+							>
+							</offering>
 
-			<install modify="false">
-			 	<offering
-			  		id='com.ibm.websphere.DEVELOPERSILAN.v85'
-			  		profile='IBM Websphere 8.5.5.0'>
-			  	</offering>
+							<offering
+								id="com.ibm.websphere.IBMJAVA.v80"
+								profile="IBM Websphere 8.5.5.0"
+							>
+							</offering>
+						</install>
 
-			 	<offering
-			  		id='com.ibm.websphere.IBMJAVA.v80'
-			  		profile='IBM Websphere 8.5.5.0'>
-			  	</offering>
-			</install>
+						<profile
+							id="IBM Websphere 8.5.5.0"
+							installLocation="${app.server.websphere.dir}"
+						>
+						</profile>
 
-			<profile
-				id='IBM Websphere 8.5.5.0'
-				installLocation='${app.server.websphere.dir}'>
-			</profile>
+						<server>
+							<repository location="${project.dir}/${tstamp.value}/was_fixpack/repository.config" />
+							<repository location="${project.dir}/${tstamp.value}/was_fixpack_jdk/repository.config" />
+						</server>
+					</agent-input>
+				</echoxml>
+			</then>
+			<else>
+				<echoxml file="${tstamp.value}/was_fixpack/liferay-responseFile.xml">
+					<agent-input clean="true" temporary="false">
+						<install modify="false">
+							<offering
+								id="com.ibm.websphere.BASE.v90"
+								profile="IBM Websphere 9.0.0.0"
+							>
+							</offering>
+						</install>
 
-			<server>
-				<repository location="${project.dir}/${tstamp.value}/was_fixpack/repository.config" />
-				<repository location="${project.dir}/${tstamp.value}/was_fixpack_jdk/repository.config" />
-			</server>
+						<profile
+							id="IBM Websphere 9.0.0.0"
+							installLocation="${app.server.websphere.dir}"
+						>
+						</profile>
 
-			</agent-input>
-		</echoxml>
+						<server>
+							<repository location="${project.dir}/${tstamp.value}/was_fixpack/repository.config" />
+						</server>
+					</agent-input>
+				</echoxml>
+			</else>
+		</if>
 
 		<if>
 			<os family="unix" />
 			<then>
-				<chmod file="/opt/IBM/InstallationManager/eclipse/tools/imcl" perm="a+x" />
+				<chmod
+					file="/opt/IBM/InstallationManager/eclipse/tools/imcl"
+					perm="a+x"
+				/>
 
 				<exec dir="/opt/IBM/InstallationManager/eclipse/tools" executable="sh">
 					<arg value="-c" />
 					<arg value="./imcl input ${project.dir}/${tstamp.value}/was_fixpack/liferay-responseFile.xml -acceptLicense" />
 				</exec>
 
-				<chmod file="${app.server.websphere.dir}/bin/managesdk.sh" perm="a+x" />
+				<if>
+					<equals arg1="${app.server.websphere.version}" arg2="8.5.5.0" />
+					<then>
+						<chmod
+							file="${app.server.websphere.dir}/bin/managesdk.sh"
+							perm="a+x"
+						/>
 
-				<exec dir="${app.server.websphere.dir}/bin" executable="sh">
-					<arg value="-c" />
-					<arg value="./managesdk.sh -enableProfileAll -sdkName 1.8_64 -enableServers" />
-				</exec>
+						<exec dir="${app.server.websphere.dir}/bin" executable="sh">
+							<arg value="-c" />
+							<arg value="./managesdk.sh -enableProfileAll -sdkName 1.8_64 -enableServers" />
+						</exec>
+					</then>
+				</if>
 			</then>
 			<elseif>
 				<os family="windows" />
@@ -2703,17 +3062,57 @@ and put it in ${app.server.parent.dir}. Then rerun this task.
 						<arg value="imcl input ${project.dir}/${tstamp.value}/was_fixpack/liferay-responseFile.xml -acceptLicense" />
 					</exec>
 
-					<exec dir="${app.server.websphere.dir}/bin" executable="cmd.exe">
-						<arg value="/c" />
-						<arg value="managesdk.bat -enableProfileAll -sdkName 1.8_64 -enableServers" />
-					</exec>
+					<if>
+						<equals arg1="${app.server.websphere.version}" arg2="8.5.5.0" />
+						<then>
+							<exec dir="${app.server.websphere.dir}/bin" executable="cmd.exe">
+								<arg value="/c" />
+								<arg value="managesdk.bat -enableProfileAll -sdkName 1.8_64 -enableServers" />
+							</exec>
+						</then>
+					</if>
 				</then>
 			</elseif>
 		</if>
 
 		<delete dir="${tstamp.value}" />
 
-		<replace file="${app.server.websphere.instance.dir}/config/cells/liferay-cell/cell.xml">
+		<if>
+			<not>
+				<equals arg1="${app.server.websphere.version}" arg2="8.5.5.0" />
+			</not>
+			<then>
+				<echo>Enabling JDK. This may take a few minutes.</echo>
+
+				<if>
+					<os family="unix" />
+					<then>
+						<chmod
+							file="${app.server.websphere.dir}/bin/managesdk.sh"
+							perm="a+x"
+						/>
+
+						<exec dir="${app.server.websphere.dir}/bin" executable="sh">
+							<arg value="-c" />
+							<arg value="./managesdk.sh -enableProfileAll -sdkName 8.0_64 -enableServers" />
+						</exec>
+					</then>
+					<elseif>
+						<os family="windows" />
+						<then>
+							<exec dir="${app.server.websphere.dir}/bin" executable="cmd.exe">
+								<arg value="/c" />
+								<arg value="managesdk.bat -enableProfileAll -sdkName 8.0_64 -enableServers" />
+							</exec>
+						</then>
+					</elseif>
+				</if>
+			</then>
+		</if>
+
+		<replace
+			file="${app.server.websphere.instance.dir}/config/cells/liferay-cell/cell.xml"
+		>
 			<replacetoken><![CDATA[<secureSessionCookie xmi:id="SecureSessionCookie_1" cookieDomain="*" cookieName="JSESSIONID" cookiePath="/"/>]]></replacetoken>
 			<replacevalue><![CDATA[]]></replacevalue>
 		</replace>
@@ -2729,9 +3128,17 @@ and put it in ${app.server.parent.dir}. Then rerun this task.
 					<try>
 						<mkdir dir="${app.server.parent.dir}" />
 
+						<propertyregex
+							input="${app.server.websphere.version}"
+							override="true"
+							property="app.server.websphere.major.version"
+							regexp="(.*)\.\d+"
+							replace="\1"
+						/>
+
 						<mirrors-get
 							dest="${app.server.parent.dir}/${app.server.websphere.custom.zip.name}"
-							src="http://files.liferay.com/private/apps/ibm/websphere/8.5.5/${app.server.websphere.custom.zip.name}"
+							src="http://files.liferay.com/private/apps/ibm/websphere/${app.server.websphere.major.version}/${app.server.websphere.custom.zip.name}"
 							verbose="true"
 						/>
 					</try>
@@ -2740,7 +3147,7 @@ and put it in ${app.server.parent.dir}. Then rerun this task.
 .
 
 Please download the Websphere custom zip file from
-http://mirrors/files.liferay.com/private/apps/ibm/websphere/8.5.5 and
+http://mirrors/files.liferay.com/private/apps/ibm/websphere/${app.server.websphere.major.version} and
 place it here: ${app.server.parent.dir}/${app.server.websphere.custom.zip.name}. Then rerun
 this task.
 						</fail>
@@ -2777,9 +3184,18 @@ this task.
 					dir="${app.server.websphere.dir}"
 					includes="**/*.bat,**/*.js,**/*.metadata,**/*.properties,**/*.props,**/*.txt,**/*.xml"
 				>
-					<replacefilter token="@app.server.websphere.dir@" value="${app.server.websphere.dir}" />
-					<replacefilter token="@app.server.websphere.dir.windows@" value="${app.server.websphere.dir.windows}" />
-					<replacefilter token="@app.server.websphere.dir.windows.escaped@" value="${app.server.websphere.dir.windows.escaped}" />
+					<replacefilter
+						token="@app.server.websphere.dir@"
+						value="${app.server.websphere.dir}"
+					/>
+					<replacefilter
+						token="@app.server.websphere.dir.windows@"
+						value="${app.server.websphere.dir.windows}"
+					/>
+					<replacefilter
+						token="@app.server.websphere.dir.windows.escaped@"
+						value="${app.server.websphere.dir.windows.escaped}"
+					/>
 				</replace>
 			</then>
 		</if>
@@ -2808,15 +3224,17 @@ this task.
 			src="${app.server.parent.dir}/${app.server.wildfly.zip.name}"
 		>
 			<mapper
-				type="glob"
 				from="wildfly-${app.server.wildfly.version}.Final/*"
 				to="wildfly-${app.server.wildfly.version}/*"
+				type="glob"
 			/>
 		</unzip>
 
 		<property name="app.server.wildfly.module.file" value="${app.server.wildfly.dir}/modules/system/layers/base/sun/jdk/main/module.xml" />
 
-		<replace file="${app.server.wildfly.module.file}">
+		<replace
+			file="${app.server.wildfly.module.file}"
+		>
 			<replacetoken><![CDATA[<paths>]]></replacetoken>
 			<replacevalue>
 				<![CDATA[
@@ -2830,22 +3248,23 @@ this task.
 			</replacevalue>
 		</replace>
 
-		<replace file="${app.server.wildfly.dir}/standalone/configuration/standalone.xml">
+		<replace
+			file="${app.server.wildfly.dir}/standalone/configuration/standalone.xml"
+		>
 			<replacetoken><![CDATA[<extension module="org.jboss.as.weld"/>]]></replacetoken>
 			<replacevalue></replacevalue>
 		</replace>
 
-		<replace file="${app.server.wildfly.dir}/standalone/configuration/standalone.xml">
-			<replacetoken><![CDATA[<subsystem xmlns="urn:jboss:domain:weld:2.0"/>]]></replacetoken>
-			<replacevalue></replacevalue>
-		</replace>
+		<replaceregexp
+			file="${app.server.wildfly.dir}/standalone/configuration/standalone.xml"
+			flags="g"
+			match="&lt;subsystem xmlns=&quot;urn:jboss:domain:weld:\d\.\d&quot;\/&gt;"
+			replace=""
+		/>
 
-		<replace file="${app.server.wildfly.dir}/standalone/configuration/standalone.xml">
-			<replacetoken><![CDATA[<subsystem xmlns="urn:jboss:domain:weld:3.0"/>]]></replacetoken>
-			<replacevalue></replacevalue>
-		</replace>
-
-		<replace file="${app.server.wildfly.dir}/standalone/configuration/standalone.xml">
+		<replace
+			file="${app.server.wildfly.dir}/standalone/configuration/standalone.xml"
+		>
 			<replacetoken><![CDATA[</extensions>]]></replacetoken>
 			<replacevalue>
 				<![CDATA[
@@ -2858,26 +3277,32 @@ this task.
 			</replacevalue>
 		</replace>
 
-		<replace file="${app.server.wildfly.dir}/standalone/configuration/standalone.xml">
+		<replace
+			file="${app.server.wildfly.dir}/standalone/configuration/standalone.xml"
+		>
 			<replacetoken><![CDATA[<deployment-scanner ]]></replacetoken>
 			<replacevalue><![CDATA[<deployment-scanner deployment-timeout="360" ]]></replacevalue>
 		</replace>
 
-		<replace file="${app.server.wildfly.dir}/standalone/configuration/standalone.xml">
-			<replacetoken><![CDATA[<security-domains>]]></replacetoken>
-			<replacevalue>
-				<![CDATA[
-					<security-domains>
-						<security-domain name="PortalRealm">
-							<authentication>
-								<login-module code="com.liferay.portal.security.jaas.PortalLoginModule" flag="required" />
-							</authentication>
-						</security-domain>
-				]]>
-			</replacevalue>
-		</replace>
+		<replace-multilines
+			file="${app.server.wildfly.dir}/standalone/configuration/standalone.xml"
+		>
+			<replace-elements>
+				<replacetoken><![CDATA[">
+            <security-domains>]]></replacetoken>
+				<replacevalue><![CDATA[">
+            <security-domains>
+				<security-domain name="PortalRealm">
+					<authentication>
+						<login-module code="com.liferay.portal.security.jaas.PortalLoginModule" flag="required" />
+					</authentication>
+				</security-domain>]]></replacevalue>
+			</replace-elements>
+		</replace-multilines>
 
-		<replace file="${app.server.wildfly.dir}/standalone/configuration/standalone.xml">
+		<replace
+			file="${app.server.wildfly.dir}/standalone/configuration/standalone.xml"
+		>
 			<replacetoken><![CDATA[<location name="/" handler="welcome-content"/>]]></replacetoken>
 			<replacevalue></replacevalue>
 		</replace>
@@ -2888,117 +3313,69 @@ this task.
 			replace=""
 		/>
 
-		<replace file="${app.server.wildfly.dir}/standalone/configuration/standalone.xml">
-			<replacetoken><![CDATA[<formatter>
-                    <named-formatter name="COLOR-PATTERN" />
-                </formatter>]]></replacetoken>
-			<replacevalue><![CDATA[<filter-spec value="not(any(match(&quot;WFLYSRV0059&quot;),match(&quot;WFLYEE0007&quot;)))" />
+		<replace-multilines
+			file="${app.server.wildfly.dir}/standalone/configuration/standalone.xml"
+		>
+			<replace-elements>
+				<replacetoken><![CDATA[<formatter>
+                    <named-formatter name="COLOR-PATTERN"]]></replacetoken>
+				<replacevalue><![CDATA[<filter-spec value="not(any(match(&quot;WFLYSRV0059&quot;),match(&quot;WFLYEE0007&quot;)))" />
                 <formatter>
-                    <named-formatter name="COLOR-PATTERN" />
-                </formatter>]]></replacevalue>
-		</replace>
+                    <named-formatter name="COLOR-PATTERN"]]></replacevalue>
+			</replace-elements>
+		</replace-multilines>
 
-		<echo file="${app.server.wildfly.bin.dir}/server.policy">
-			grant {
-				permission java.security.AllPermission;
-			};
-		</echo>
-
-		<replace file="${app.server.wildfly.bin.dir}/standalone.conf">
+		<replace
+			file="${app.server.wildfly.bin.dir}/standalone.conf"
+		>
 			<replacetoken><![CDATA[JAVA_OPTS="-Xms64m -Xmx512m -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=256m ]]></replacetoken>
 			<replacevalue><![CDATA[JAVA_OPTS="]]></replacevalue>
 		</replace>
 
-		<if>
-			<equals arg1="${java.security.manager.option}" arg2="" />
-			<then>
-				<var name="java.security.config" value="" />
-			</then>
-			<else>
-				<var name="java.security.config" value="${java.security.manager.option} -Djava.security.policy==${app.server.wildfly.dir}/bin/server.policy -Dwildfly.home.dir=${app.server.wildfly.dir}" />
-			</else>
-		</if>
-
 		<echo append="true" file="${app.server.wildfly.bin.dir}/standalone.conf">
 			<![CDATA[
-				JAVA_OPTS="$JAVA_OPTS -Dfile.encoding=UTF-8 -Djava.net.preferIPv4Stack=true ${java.security.config} -Djboss.as.management.blocking.timeout=480 -Duser.timezone=GMT -Xmx1024m -XX:MaxMetaspaceSize=384m -XX:MetaspaceSize=200m"
+				JAVA_OPTS="$JAVA_OPTS -Dfile.encoding=UTF-8 -Djava.net.preferIPv4Stack=true -Djboss.as.management.blocking.timeout=480 -Duser.timezone=GMT -Xmx1024m -XX:MaxMetaspaceSize=512m -XX:MetaspaceSize=200m"
 			]]>
 		</echo>
 
-		<replace file="${app.server.wildfly.bin.dir}/standalone.conf.bat">
+		<replace
+			file="${app.server.wildfly.bin.dir}/standalone.conf.bat"
+		>
 			<replacetoken><![CDATA[set "JAVA_OPTS=-Xms64M ]]></replacetoken>
 			<replacevalue><![CDATA[rem set "JAVA_OPTS=-Xms64M ]]></replacevalue>
 		</replace>
 
-		<replace file="${app.server.wildfly.bin.dir}/standalone.conf.bat">
-			<replacefilter token="@java.security.config@" value="${java.security.config}" />
+		<replace
+			file="${app.server.wildfly.bin.dir}/standalone.conf.bat"
+		>
 			<replacetoken><![CDATA[:JAVA_OPTS_SET]]></replacetoken>
 			<replacevalue>
 				<![CDATA[
-					set "JAVA_OPTS=%JAVA_OPTS% -Dfile.encoding=UTF-8 -Djava.net.preferIPv4Stack=true @java.security.config@ -Djboss.as.management.blocking.timeout=480 -Duser.timezone=GMT -Xmx1024m -XX:MaxMetaspaceSize=384m -XX:MetaspaceSize=200m"
+					set "JAVA_OPTS=%JAVA_OPTS% -Dfile.encoding=UTF-8 -Djava.net.preferIPv4Stack=true -Djboss.as.management.blocking.timeout=480 -Duser.timezone=GMT -Xmx1024m -XX:MaxMetaspaceSize=512m -XX:MetaspaceSize=200m"
 
 					:JAVA_OPTS_SET
 				]]>
 			</replacevalue>
 		</replace>
 
-		<replace file="${app.server.wildfly.instance.dir}/configuration/standalone.xml">
+		<replace
+			file="${app.server.wildfly.instance.dir}/configuration/standalone.xml"
+		>
 			<replacetoken><![CDATA[<jsp-config/>]]></replacetoken>
 			<replacevalue>
-				<![CDATA[<jsp-config development="true" />]]>
+				<![CDATA[<jsp-config development="true" source-vm="1.8" target-vm="1.8" />]]>
 			</replacevalue>
 		</replace>
 
-		<chmod perm="a+x">
-			<fileset dir="${app.server.wildfly.bin.dir}">
+		<chmod
+			perm="a+x"
+		>
+			<fileset
+				dir="${app.server.wildfly.bin.dir}"
+			>
 				<include name="*.sh" />
 			</fileset>
 		</chmod>
-	</target>
-
-	<target name="update-java-security-tomcat">
-		<if>
-			<not>
-				<equals arg1="${java.security.manager.option}" arg2="" />
-			</not>
-			<then>
-				<if>
-					<os family="windows" />
-					<then>
-						<var name="java.security.config" value="${java.security.manager.option} -Djava.security.policy==%CATALINA_BASE%/conf/catalina.policy" />
-					</then>
-					<else>
-						<var name="java.security.config" value="${java.security.manager.option} -Djava.security.policy==$CATALINA_BASE/conf/catalina.policy" />
-					</else>
-				</if>
-
-				<if>
-					<not>
-						<resourcecontains resource="${app.server.tomcat.bin.dir}/setenv.bat" substring="${java.security.config}" />
-					</not>
-					<then>
-						<echo append="true" file="${app.server.tomcat.bin.dir}/setenv.bat">
-							<![CDATA[
-								set "CATALINA_OPTS=%CATALINA_OPTS% ${java.security.config}"
-							]]>
-						</echo>
-					</then>
-				</if>
-
-				<if>
-					<not>
-						<resourcecontains resource="${app.server.tomcat.bin.dir}/setenv.sh" substring="${java.security.config}" />
-					</not>
-					<then>
-						<echo append="true" file="${app.server.tomcat.bin.dir}/setenv.sh">
-							<![CDATA[
-								CATALINA_OPTS="${CATALINA_OPTS} ${java.security.config}"
-							]]>
-						</echo>
-					</then>
-				</if>
-			</then>
-		</if>
 	</target>
 
 	<target name="update-plugins-includes">
@@ -3028,6 +3405,14 @@ plugins.includes=</echo>
 
 	<target name="zip-executable">
 		<delete failonerror="false" file="dist/${zip.executable.file}-${lp.version}.zip" />
+
+		<exec dir="${project.dir}" executable="git" outputproperty="githash.rev.parse">
+			<arg line="rev-parse HEAD" />
+		</exec>
+
+		<echo>Recording ${zip.executable.dir}/.githash with ${githash.rev.parse}.</echo>
+
+		<echo file="${zip.executable.dir}/.githash">${githash.rev.parse}</echo>
 
 		<antelope:stringutil property="zip.executable.dir.beginindex" string="${zip.executable.dir}">
 			<lastindexof string="/" />
@@ -3063,6 +3448,11 @@ plugins.includes=</echo>
 						filemode="744"
 						includes="**/*.sh"
 						prefix="liferay-portal-${lp.version}/${zip.executable.dir.name}"
+					/>
+					<zipfileset
+						dir="${zip.executable.dir}"
+						includes=".githash"
+						prefix="liferay-portal-${lp.version}"
 					/>
 					<zipfileset
 						dir="${zip.executable.dir}/.."
@@ -3114,7 +3504,10 @@ plugins.includes=</echo>
 				<if>
 					<available file="${patching.tool.zip}" />
 					<then>
-						<unzip dest="${zip.executable.dir}/.." src="${patching.tool.zip}" />
+						<unzip
+							dest="${zip.executable.dir}/.."
+							src="${patching.tool.zip}"
+						/>
 
 						<if>
 							<contains string="${zip.executable.dir}" substring="glassfish" />
@@ -3135,7 +3528,9 @@ plugins.includes=</echo>
 						</if>
 
 						<delete>
-							<fileset dir="${zip.executable.dir}/../patching-tool/logs" />
+							<fileset
+								dir="${zip.executable.dir}/../patching-tool/logs"
+							/>
 						</delete>
 
 						<replace
@@ -3258,7 +3653,9 @@ plugins.includes=</echo>
 				<mkdir dir="${tstamp.value}/logs" />
 				<mkdir dir="${tstamp.value}/patches" />
 
-				<copy todir="${tstamp.value}/lib">
+				<copy
+					todir="${tstamp.value}/lib"
+				>
 					<fileset
 						dir="${patching.tool.source.dir}/lib"
 					/>
@@ -3268,13 +3665,17 @@ plugins.includes=</echo>
 					/>
 				</copy>
 
-				<copy todir="${tstamp.value}">
+				<copy
+					todir="${tstamp.value}"
+				>
 					<fileset
 						dir="${patching.tool.source.dir}/scripts"
 					/>
 				</copy>
 
-				<zip destfile="dist/liferay-portal-patching-tool-${lp.version}.zip">
+				<zip
+					destfile="dist/liferay-portal-patching-tool-${lp.version}.zip"
+				>
 					<zipfileset
 						dir="${tstamp.value}"
 						excludes="patching-tool.sh"
@@ -3296,7 +3697,9 @@ plugins.includes=</echo>
 	<target name="zip-portal-client">
 		<delete failonerror="false" file="dist/liferay-portal-client-${lp.version}.zip" />
 
-		<zip destfile="dist/liferay-portal-client-${lp.version}.zip">
+		<zip
+			destfile="dist/liferay-portal-client-${lp.version}.zip"
+		>
 			<zipfileset
 				dir="lib/development"
 				includes="activation.jar,mail.jar"
@@ -3313,10 +3716,18 @@ plugins.includes=</echo>
 	<target name="zip-portal-dependencies">
 		<delete failonerror="false" file="dist/liferay-portal-dependencies-${lp.version}.zip" />
 
-		<zip destfile="dist/liferay-portal-dependencies-${lp.version}.zip">
+		<zip
+			destfile="dist/liferay-portal-dependencies-${lp.version}.zip"
+		>
 			<mappedresources>
-				<fileset dir="tools/sdk/dist" includes="com.liferay.registry.api-*.jar" />
-				<globmapper from="*" to="liferay-portal-dependencies-${lp.version}/com.liferay.registry.api.jar" />
+				<fileset
+					dir="tools/sdk/dist"
+					includes="com.liferay.registry.api-*.jar"
+				/>
+				<globmapper
+					from="*"
+					to="liferay-portal-dependencies-${lp.version}/com.liferay.registry.api.jar"
+				/>
 			</mappedresources>
 			<zipfileset
 				dir="lib/development"
@@ -3343,13 +3754,17 @@ plugins.includes=</echo>
 
 		<mkdir dir="${tstamp.value}" />
 
-		<copy todir="${tstamp.value}">
+		<copy
+			todir="${tstamp.value}"
+		>
 			<fileset
 				dir="${liferay.home}/tools"
 			/>
 		</copy>
 
-		<zip destfile="dist/liferay-portal-tools-${lp.version}.zip">
+		<zip
+			destfile="dist/liferay-portal-tools-${lp.version}.zip"
+		>
 			<zipfileset
 				dir="${tstamp.value}"
 				prefix="liferay-portal-tools-${lp.version}"
@@ -3388,8 +3803,8 @@ plugins.includes=</echo>
 
 		<copy
 			file="dist/liferay-portal-${lp.version}.war"
-			tofile="dist/liferay-portal-${lp.version}-servlet23.war"
 			overwrite="true"
+			tofile="dist/liferay-portal-${lp.version}-servlet23.war"
 		/>
 
 		<zip
@@ -3406,7 +3821,9 @@ plugins.includes=</echo>
 			<format pattern="yyyyMMddkkmmssSSS" property="tstamp.value" />
 		</tstamp>
 
-		<copy todir="${tstamp.value}/WEB-INF/lib">
+		<copy
+			todir="${tstamp.value}/WEB-INF/lib"
+		>
 			<fileset
 				dir="${app.server.lib.global.dir}"
 				includes="annotations.jar,portal-kernel.jar,portlet.jar"
@@ -3417,8 +3834,8 @@ plugins.includes=</echo>
 
 		<copy
 			file="dist/liferay-portal-${lp.version}-servlet23.war"
-			tofile="dist/liferay-portal-${lp.version}-servlet23-with-dependencies.war"
 			overwrite="true"
+			tofile="dist/liferay-portal-${lp.version}-servlet23-with-dependencies.war"
 		/>
 
 		<zip
@@ -3446,7 +3863,9 @@ plugins.includes=</echo>
 		LPS-3408
 		-->
 
-		<copy todir="${tstamp.value}/WEB-INF/lib">
+		<copy
+			todir="${tstamp.value}/WEB-INF/lib"
+		>
 			<fileset
 				dir="lib/portal"
 				includes="ccpp.jar"
@@ -3467,7 +3886,9 @@ plugins.includes=</echo>
 			<format pattern="yyyyMMddkkmmssSSS" property="tstamp.value" />
 		</tstamp>
 
-		<copy todir="${tstamp.value}/WEB-INF/lib">
+		<copy
+			todir="${tstamp.value}/WEB-INF/lib"
+		>
 			<fileset
 				dir="${app.server.lib.global.dir}"
 				includes="annotations.jar,portal-kernel.jar,portlet.jar"
@@ -3478,8 +3899,8 @@ plugins.includes=</echo>
 
 		<copy
 			file="dist/liferay-portal-${lp.version}.war"
-			tofile="dist/liferay-portal-${lp.version}-with-dependencies.war"
 			overwrite="true"
+			tofile="dist/liferay-portal-${lp.version}-with-dependencies.war"
 		/>
 
 		<zip
@@ -3501,7 +3922,9 @@ plugins.includes=</echo>
 	<target name="zip-sql">
 		<delete failonerror="false" file="dist/liferay-portal-sql-${lp.version}.zip" />
 
-		<zip destfile="dist/liferay-portal-sql-${lp.version}.zip">
+		<zip
+			destfile="dist/liferay-portal-sql-${lp.version}.zip"
+		>
 			<zipfileset
 				dir="sql"
 				includes="**/*.sql"
@@ -3513,7 +3936,9 @@ plugins.includes=</echo>
 	<target name="zip-src">
 		<delete failonerror="false" file="dist/liferay-portal-src-${lp.version}.zip" />
 
-		<zip destfile="dist/liferay-portal-src-${lp.version}.zip">
+		<zip
+			destfile="dist/liferay-portal-src-${lp.version}.zip"
+		>
 			<zipfileset
 				dir="${lp.source.dir}"
 				excludes=".gradle/**,portal-web/test/com/**,portal-web/test-ant-templates/**"
@@ -3539,12 +3964,83 @@ plugins.includes=</echo>
 			<param name="zip.executable.file" value="liferay-portal-tomcat" />
 			<param name="zip.executable.dir" value="${app.server.tomcat.dir}" />
 		</antcall>
+
+		<tstamp>
+			<format pattern="yyyyMMddkkmmssSSS" property="tstamp.value" />
+		</tstamp>
+
+		<unzip
+			dest="${tstamp.value}"
+			src="dist/liferay-portal-tomcat-${lp.version}.zip"
+		>
+			<patternset
+				excludes="
+					liferay-portal-${lp.version}/data/hypersonic/**,
+					liferay-portal-${lp.version}/osgi/state/**"
+			/>
+		</unzip>
+
+		<chmod
+			perm="744"
+		>
+			<fileset
+				dir="${tstamp.value}/liferay-portal-${lp.version}/tomcat-${app.server.tomcat.version}/bin"
+				includes="*.sh"
+			/>
+		</chmod>
+
+		<parallel>
+			<exec dir="${tstamp.value}/liferay-portal-${lp.version}/tomcat-${app.server.tomcat.version}/bin" executable="sh">
+				<arg value="catalina.sh" />
+				<arg value="run" />
+			</exec>
+
+			<sequential>
+				<waitfor>
+					<http url="http://localhost:8080" />
+				</waitfor>
+
+				<sleep seconds="5" />
+
+				<exec dir="${tstamp.value}/liferay-portal-${lp.version}/tomcat-${app.server.tomcat.version}/bin" executable="sh">
+					<arg value="shutdown.sh" />
+				</exec>
+
+				<sleep seconds="20" />
+
+				<delete dir="${tstamp.value}/liferay-portal-${lp.version}">
+					<patternset
+						includes="**/logs/**"
+					/>
+				</delete>
+			</sequential>
+		</parallel>
+
+		<echo>Calling 7-Zip, this will take a few minutes...</echo>
+
+		<exec dir="${tstamp.value}" executable="sh">
+			<arg line="7z a -md1024m ${project.dir}/dist/liferay-portal-tomcat-${lp.version}.7z liferay-portal-${lp.version}/osgi" />
+		</exec>
+
+		<delete dir="${tstamp.value}/liferay-portal-${lp.version}/osgi" />
+
+		<exec dir="${tstamp.value}" executable="sh">
+			<arg line="7z a -md1024m ${project.dir}/dist/liferay-portal-tomcat-${lp.version}.7z liferay-portal-${lp.version}" />
+		</exec>
+
+		<delete dir="${tstamp.value}" />
 	</target>
 
 	<target name="zip-weblogic-custom">
 		<delete>
-			<fileset dir="${app.server.weblogic.dir}/cfgtoollogs" includes="opatchauto/**" />
-			<fileset dir="${app.server.weblogic.dir}/cfgtoollogs" includes="oui/**" />
+			<fileset
+				dir="${app.server.weblogic.dir}/cfgtoollogs"
+				includes="opatchauto/**"
+			/>
+			<fileset
+				dir="${app.server.weblogic.dir}/cfgtoollogs"
+				includes="oui/**"
+			/>
 		</delete>
 
 		<if>
@@ -3554,7 +4050,10 @@ plugins.includes=</echo>
 					dir="${app.server.weblogic.dir}"
 					includes="**/*.cmd,**/*.domains,**/*.properties,**/*.sh,**/*.xml"
 				>
-					<replacefilter token="${env.JAVA_HOME}" value="@env.JAVA_HOME@" />
+					<replacefilter
+						token="${env.JAVA_HOME}"
+						value="@env.JAVA_HOME@"
+					/>
 				</replace>
 			</then>
 			<elseif>
@@ -3604,19 +4103,58 @@ plugins.includes=</echo>
 						dir="${app.server.weblogic.dir}"
 						includes="**/*.cmd,**/*.domains,**/*.properties,**/*.sh,**/*.xml"
 					>
-						<replacefilter token="${app.server.parent.dir}/WEBLOG~1.1" value="@app.server.weblogic.dir@" />
-						<replacefilter token="${app.server.parent.dir}/WEBLOG~1.6" value="@app.server.weblogic.dir@" />
-						<replacefilter token="${app.server.parent.dir.windows}\WEBLOG~1.1" value="@app.server.weblogic.dir.windows@" />
-						<replacefilter token="${app.server.parent.dir.windows}\WEBLOG~1.6" value="@app.server.weblogic.dir.windows@" />
-						<replacefilter token="${app.server.parent.dir.windows.double.slash}\\WEBLOG~1.1" value="@app.server.weblogic.dir.windows.double.slash@" />
-						<replacefilter token="${app.server.parent.dir.windows.double.slash}\\WEBLOG~1.6" value="@app.server.weblogic.dir.windows.double.slash@" />
-						<replacefilter token="${app.server.parent.dir.windows.escaped}\\WEBLOG~1.1" value="@app.server.weblogic.dir.windows.escaped@" />
-						<replacefilter token="${app.server.parent.dir.windows.escaped}\\WEBLOG~1.6" value="@app.server.weblogic.dir.windows.escaped@" />
-						<replacefilter token="${app.server.weblogic.dir}" value="@app.server.weblogic.dir@" />
-						<replacefilter token="${app.server.weblogic.dir.windows}" value="@app.server.weblogic.dir.windows@" />
-						<replacefilter token="${app.server.weblogic.dir.windows.escaped}" value="@app.server.weblogic.dir.windows.escaped@" />
-						<replacefilter token="${env.COMPUTERNAME.lowercase}" value="@env.COMPUTERNAME@" />
-						<replacefilter token="${env.JAVA_HOME}" value="@env.JAVA_HOME@" />
+						<replacefilter
+							token="${app.server.parent.dir}/WEBLOG~1.1"
+							value="@app.server.weblogic.dir@"
+						/>
+						<replacefilter
+							token="${app.server.parent.dir}/WEBLOG~1.6"
+							value="@app.server.weblogic.dir@"
+						/>
+						<replacefilter
+							token="${app.server.parent.dir.windows}\WEBLOG~1.1"
+							value="@app.server.weblogic.dir.windows@"
+						/>
+						<replacefilter
+							token="${app.server.parent.dir.windows}\WEBLOG~1.6"
+							value="@app.server.weblogic.dir.windows@"
+						/>
+						<replacefilter
+							token="${app.server.parent.dir.windows.double.slash}\\WEBLOG~1.1"
+							value="@app.server.weblogic.dir.windows.double.slash@"
+						/>
+						<replacefilter
+							token="${app.server.parent.dir.windows.double.slash}\\WEBLOG~1.6"
+							value="@app.server.weblogic.dir.windows.double.slash@"
+						/>
+						<replacefilter
+							token="${app.server.parent.dir.windows.escaped}\\WEBLOG~1.1"
+							value="@app.server.weblogic.dir.windows.escaped@"
+						/>
+						<replacefilter
+							token="${app.server.parent.dir.windows.escaped}\\WEBLOG~1.6"
+							value="@app.server.weblogic.dir.windows.escaped@"
+						/>
+						<replacefilter
+							token="${app.server.weblogic.dir}"
+							value="@app.server.weblogic.dir@"
+						/>
+						<replacefilter
+							token="${app.server.weblogic.dir.windows}"
+							value="@app.server.weblogic.dir.windows@"
+						/>
+						<replacefilter
+							token="${app.server.weblogic.dir.windows.escaped}"
+							value="@app.server.weblogic.dir.windows.escaped@"
+						/>
+						<replacefilter
+							token="${env.COMPUTERNAME.lowercase}"
+							value="@env.COMPUTERNAME@"
+						/>
+						<replacefilter
+							token="${env.JAVA_HOME}"
+							value="@env.JAVA_HOME@"
+						/>
 					</replace>
 				</then>
 			</elseif>
@@ -3633,7 +4171,10 @@ plugins.includes=</echo>
 
 	<target name="zip-websphere-custom">
 		<delete>
-			<fileset dir="${app.server.websphere.dir}" includes="logs/**" />
+			<fileset
+				dir="${app.server.websphere.dir}"
+				includes="logs/**"
+			/>
 		</delete>
 
 		<if>
@@ -3661,9 +4202,18 @@ plugins.includes=</echo>
 					dir="${app.server.websphere.dir}"
 					includes="**/*.bat,**/*.js,**/*.metadata,**/*.properties,**/*.props,**/*.txt,**/*.xml"
 				>
-					<replacefilter token="${app.server.websphere.dir}" value="@app.server.websphere.dir@" />
-					<replacefilter token="${app.server.websphere.dir.windows}" value="@app.server.websphere.dir.windows@" />
-					<replacefilter token="${app.server.websphere.dir.windows.escaped}" value="@app.server.websphere.dir.windows.escaped@" />
+					<replacefilter
+						token="${app.server.websphere.dir}"
+						value="@app.server.websphere.dir@"
+					/>
+					<replacefilter
+						token="${app.server.websphere.dir.windows}"
+						value="@app.server.websphere.dir.windows@"
+					/>
+					<replacefilter
+						token="${app.server.websphere.dir.windows.escaped}"
+						value="@app.server.websphere.dir.windows.escaped@"
+					/>
 				</replace>
 			</then>
 		</if>

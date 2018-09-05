@@ -14,6 +14,10 @@
 
 package com.liferay.source.formatter;
 
+import com.liferay.source.formatter.checks.util.XMLSourceUtil;
+
+import java.io.IOException;
+
 import java.util.List;
 
 /**
@@ -22,8 +26,8 @@ import java.util.List;
 public class XMLSourceProcessor extends BaseSourceProcessor {
 
 	@Override
-	protected List<String> doGetFileNames() throws Exception {
-		String[] excludes = new String[] {
+	protected List<String> doGetFileNames() throws IOException {
+		String[] excludes = {
 			"**/.bnd/**", "**/.idea/**", "**/.ivy/**", "**/bin/**",
 			"**/javadocs-*.xml", "**/logs/**", "**/portal-impl/**/*.action",
 			"**/portal-impl/**/*.function", "**/portal-impl/**/*.macro",
@@ -40,9 +44,31 @@ public class XMLSourceProcessor extends BaseSourceProcessor {
 		return _INCLUDES;
 	}
 
-	private static final String[] _INCLUDES = new String[] {
-		"**/*.action", "**/*.function", "**/*.jrxml", "**/*.macro",
-		"**/*.testcase", "**/*.toggle", "**/*.xml"
+	@Override
+	protected boolean hasGeneratedTag(String content) {
+		if (!content.contains("@generated")) {
+			return false;
+		}
+
+		int pos = -1;
+
+		while (true) {
+			pos = content.indexOf("@generated", pos + 1);
+
+			if (pos == -1) {
+				return false;
+			}
+
+			if (!XMLSourceUtil.isInsideCDATAMarkup(content, pos)) {
+				return true;
+			}
+		}
+	}
+
+	private static final String[] _INCLUDES = {
+		"**/*.action", "**/*.function", "**/*.jrxml", "**/*.macro", "**/*.pom",
+		"**/*.testcase", "**/*.toggle", "**/*.xml",
+		"**/definitions/liferay-*.xsd"
 	};
 
 }

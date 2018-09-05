@@ -14,8 +14,8 @@
 
 package com.liferay.portal.kernel.model;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import java.util.Locale;
@@ -64,17 +64,14 @@ public class RoleConstants {
 
 	public static final String SITE_OWNER = "Site Owner";
 
-	public static final String[] SYSTEM_ORGANIZATION_ROLES = {
-		ORGANIZATION_ADMINISTRATOR, ORGANIZATION_OWNER, ORGANIZATION_USER
-	};
+	public static final String[] SYSTEM_ORGANIZATION_ROLES =
+		{ORGANIZATION_ADMINISTRATOR, ORGANIZATION_OWNER, ORGANIZATION_USER};
 
-	public static final String[] SYSTEM_ROLES = {
-		ADMINISTRATOR, GUEST, OWNER, POWER_USER, RoleConstants.USER
-	};
+	public static final String[] SYSTEM_ROLES =
+		{ADMINISTRATOR, GUEST, OWNER, POWER_USER, RoleConstants.USER};
 
-	public static final String[] SYSTEM_SITE_ROLES = {
-		SITE_ADMINISTRATOR, SITE_MEMBER, SITE_OWNER
-	};
+	public static final String[] SYSTEM_SITE_ROLES =
+		{SITE_ADMINISTRATOR, SITE_MEMBER, SITE_OWNER};
 
 	public static final int TYPE_ORGANIZATION = 3;
 
@@ -93,9 +90,8 @@ public class RoleConstants {
 	public static final int[] TYPES_ORGANIZATION_AND_REGULAR =
 		{TYPE_REGULAR, TYPE_ORGANIZATION};
 
-	public static final int[] TYPES_ORGANIZATION_AND_REGULAR_AND_SITE = {
-		TYPE_REGULAR, TYPE_ORGANIZATION, TYPE_SITE
-	};
+	public static final int[] TYPES_ORGANIZATION_AND_REGULAR_AND_SITE =
+		{TYPE_REGULAR, TYPE_ORGANIZATION, TYPE_SITE};
 
 	public static final int[] TYPES_REGULAR = {TYPE_REGULAR};
 
@@ -126,9 +122,8 @@ public class RoleConstants {
 		else if (type == TYPE_SITE) {
 			return TYPE_SITE_LABEL;
 		}
-		else {
-			return TYPE_REGULAR_LABEL;
-		}
+
+		return TYPE_REGULAR_LABEL;
 	}
 
 }

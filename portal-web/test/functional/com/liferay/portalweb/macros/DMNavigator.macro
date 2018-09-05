@@ -2,25 +2,33 @@
 	<var name="dmDocumentTypeName" value="Basic Document" />
 
 	<command name="gotoAddDocumentType">
-		<execute function="Click" locator1="Button#PLUS" />
+		<execute macro="LexiconEntry#gotoAdd" />
 
 		<var name="key_dmDocumentTypeName" value="${dmDocumentTypeName}" />
 
-		<execute function="AssertClick" locator1="MenuItem#DOCUMENT_TYPE" value1="${dmDocumentTypeName}" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="${dmDocumentTypeName}" />
+		</execute>
 	</command>
 
 	<command name="gotoAddRepositoryCP">
 		<execute function="AssertVisible" locator1="Button#PLUS" />
 
-		<execute function="Click" locator1="Button#PLUS" />
+		<execute macro="LexiconEntry#gotoAdd" />
 
-		<execute function="AssertClick" locator1="MenuItem#REPOSITORY" value1="Repository" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Repository" />
+		</execute>
 	</command>
 
 	<command name="gotoAddRepositoryPG">
-		<execute function="Click#makeVisibleClickAt" locator1="Portlet#ICON_PLUS_SIGN" />
+		<execute macro="Portlet#clickPortletPlusIconPG">
+			<var name="portletName" value="Documents and Media" />
+		</execute>
 
-		<execute function="AssertClick" locator1="MenuItem#REPOSITORY" value1="Repository" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Repository" />
+		</execute>
 	</command>
 
 	<command name="gotoCheckedOutDocument">
@@ -30,23 +38,24 @@
 	</command>
 
 	<command name="gotoDocumentCP">
-		<var name="key_dmDocumentTitle" value="${dmDocumentTitle}" />
-
-		<if>
-			<condition function="IsElementPresent" locator1="Icon#DISPLAY_STYLE_DESCRIPTIVE_ACTIVE" />
-			<then>
-				<execute function="AssertClick" locator1="DocumentsAndMedia#DESCRIPTIVE_LIST_DOCUMENT_TITLE" value1="${dmDocumentTitle}" />
-			</then>
-			<else>
-				<execute function="AssertClick" locator1="DocumentsAndMedia#ICON_DOCUMENT_TITLE_LINK" value1="${dmDocumentTitle}" />
-			</else>
-		</if>
+		<execute macro="LexiconEntry#gotoEntry">
+			<var name="rowEntry" value="${dmDocumentTitle}" />
+		</execute>
 	</command>
 
 	<command name="gotoDocumentDetails">
 		<execute function="Click" locator1="Button#INFO" />
 
 		<execute function="AssertClick" locator1="NavBar#DETAILS" value1="Details" />
+	</command>
+
+	<command name="gotoDocumentPermissionsCP">
+		<execute macro="LexiconEntry#gotoEntryMenuItem">
+			<var name="menuItem" value="Permissions" />
+			<var name="rowEntry" value="${dmDocumentTitle}" />
+		</execute>
+
+		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 	</command>
 
 	<command name="gotoDocumentPG">
@@ -56,23 +65,15 @@
 	</command>
 
 	<command name="gotoDocumentType">
-		<execute function="Click" locator1="Icon#HEADER_VERTICAL_ELLIPSIS" />
-
-		<execute function="AssertClick" locator1="MenuItem#DOCUMENT_TYPES" value1="Document Types" />
+		<execute function="AssertClick" locator1="NavBar#DOCUMENT_TYPES" value1="Document Types" />
 	</command>
 
 	<command name="gotoDocumentVersion">
 		<execute macro="DMNavigator#gotoDocumentDetails" />
 
-		<execute function="AssertClick" locator1="MenuItem#VERSIONS" value1="Versions" />
-	</command>
-
-	<command name="gotoEditDocument">
-		<var name="key_dmDocumentTitle" value="${dmDocumentTitle}" />
-
-		<execute function="Click" locator1="DocumentsAndMedia#ICON_DOCUMENT_ACTIONS" />
-
-		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Versions" />
+		</execute>
 	</command>
 
 	<command name="gotoFolder">
@@ -83,16 +84,30 @@
 		<execute function="AssertVisible" locator1="DocumentsAndMedia#BREADCRUMB_FOLDER_NAME" />
 	</command>
 
+	<command name="gotoFolderPermissions">
+		<var name="key_dmFolderName" value="${dmFolderName}" />
+
+		<execute function="Click" locator1="DocumentsAndMedia#DESCRIPTIVE_LIST_VERTICAL_ELLIPSIS" />
+
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Permissions" />
+		</execute>
+
+		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
+	</command>
+
+	<command name="gotoFolderViaBreadcrumb">
+		<var name="key_dmFolderName" value="${dmFolderName}" />
+
+		<execute function="AssertClick#assertTextClickAt" locator1="DocumentsAndMedia#BREADCRUMB_FOLDER_NAME" />
+	</command>
+
 	<command name="gotoHomeCP">
-		<execute function="AssertClick#assertTextClickAt" locator1="DocumentsAndMedia#BREADCRUMB_HOME" value1="HOME" />
+		<execute function="AssertClick#assertTextClickAt" locator1="DocumentsAndMedia#BREADCRUMB_HOME" value1="Home" />
 	</command>
 
 	<command name="gotoMetadataSets">
-		<execute function="Click" locator1="Icon#HEADER_VERTICAL_ELLIPSIS" />
-
-		<execute function="AssertElementPresent" locator1="MenuItem#METADATA_SETS" value1="Metadata Sets" />
-
-		<execute function="AssertClick" locator1="MenuItem#METADATA_SETS" value1="Metadata Sets" />
+		<execute function="AssertClick" locator1="NavBar#METADATA_SETS" value1="Metadata Sets" />
 	</command>
 
 	<command name="gotoRelatedAssetPG">
@@ -112,7 +127,7 @@
 	<command name="gotoRepository">
 		<var name="key_dmFolderName" value="${dmRepositoryName}" />
 
-		<execute function="AssertClick" locator1="DocumentsAndMedia#DESCRIPTIVE_LIST_FOLDER_TITLE"  value1="${dmRepositoryName}" />
+		<execute function="AssertClick" locator1="DocumentsAndMedia#DESCRIPTIVE_LIST_FOLDER_TITLE" value1="${dmRepositoryName}" />
 
 		<execute function="AssertVisible" locator1="DocumentsAndMedia#BREADCRUMB_FOLDER_NAME" />
 	</command>

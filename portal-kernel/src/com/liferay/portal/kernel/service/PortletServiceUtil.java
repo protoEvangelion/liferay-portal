@@ -40,24 +40,24 @@ public class PortletServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.portal.service.impl.PortletServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static com.liferay.portal.kernel.json.JSONArray getWARPortlets() {
-		return getService().getWARPortlets();
-	}
-
-	public static com.liferay.portal.kernel.model.Portlet updatePortlet(
-		long companyId, java.lang.String portletId, java.lang.String roles,
-		boolean active)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().updatePortlet(companyId, portletId, roles, active);
-	}
 
 	/**
 	* Returns the OSGi service identifier.
 	*
 	* @return the OSGi service identifier
 	*/
-	public static java.lang.String getOSGiServiceIdentifier() {
+	public static String getOSGiServiceIdentifier() {
 		return getService().getOSGiServiceIdentifier();
+	}
+
+	public static com.liferay.portal.kernel.json.JSONArray getWARPortlets() {
+		return getService().getWARPortlets();
+	}
+
+	public static com.liferay.portal.kernel.model.Portlet updatePortlet(
+		long companyId, String portletId, String roles, boolean active)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().updatePortlet(companyId, portletId, roles, active);
 	}
 
 	public static PortletService getService() {

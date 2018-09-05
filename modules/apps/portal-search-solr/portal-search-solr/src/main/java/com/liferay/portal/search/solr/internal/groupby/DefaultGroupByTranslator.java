@@ -14,14 +14,7 @@
 
 package com.liferay.portal.search.solr.internal.groupby;
 
-import static org.apache.solr.common.params.GroupParams.GROUP;
-import static org.apache.solr.common.params.GroupParams.GROUP_FIELD;
-import static org.apache.solr.common.params.GroupParams.GROUP_FORMAT;
-import static org.apache.solr.common.params.GroupParams.GROUP_LIMIT;
-import static org.apache.solr.common.params.GroupParams.GROUP_OFFSET;
-import static org.apache.solr.common.params.GroupParams.GROUP_TOTAL_COUNT;
-
-import com.liferay.portal.kernel.search.DocumentImpl;
+import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.GroupBy;
 import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
@@ -29,15 +22,12 @@ import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.highlight.HighlightUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.search.solr.groupby.GroupByTranslator;
-import com.liferay.portal.search.solr.internal.pagination.Pagination;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrQuery.ORDER;
-import org.apache.solr.client.solrj.SolrQuery.SortClause;
+import org.apache.solr.common.params.GroupParams;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -61,7 +51,7 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 
 		solrQuery.addHighlightField(fieldName);
 
-		String localizedFieldName = DocumentImpl.getLocalizedName(
+		String localizedFieldName = Field.getLocalizedName(
 			queryConfig.getLocale(), fieldName);
 
 		solrQuery.addHighlightField(localizedFieldName);
@@ -97,8 +87,7 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 				continue;
 			}
 
-			String sortFieldName = DocumentImpl.getSortFieldName(
-				sort, "_score");
+			String sortFieldName = Field.getSortFieldName(sort, "_score");
 
 			if (sortFieldNames.contains(sortFieldName)) {
 				continue;
@@ -106,13 +95,13 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 
 			sortFieldNames.add(sortFieldName);
 
-			ORDER order = ORDER.asc;
+			SolrQuery.ORDER order = SolrQuery.ORDER.asc;
 
 			if (sort.isReverse() || sortFieldName.equals("_score")) {
-				order = ORDER.desc;
+				order = SolrQuery.ORDER.desc;
 			}
 
-			solrQuery.addSort(new SortClause(sortFieldName, order));
+			solrQuery.addSort(new SolrQuery.SortClause(sortFieldName, order));
 		}
 	}
 
@@ -120,38 +109,26 @@ public class DefaultGroupByTranslator implements GroupByTranslator {
 		SolrQuery solrQuery, SearchContext searchContext, int start, int end,
 		GroupBy groupBy) {
 
-		solrQuery.set(GROUP, true);
-		solrQuery.set(GROUP_FIELD, groupBy.getField());
-		solrQuery.set(GROUP_FORMAT, "grouped");
-		solrQuery.set(GROUP_TOTAL_COUNT, true);
-
-		Pagination pagination = new Pagination(start, end);
-
-		Optional<Integer> fromOptional;
+		solrQuery.set(GroupParams.GROUP, true);
+		solrQuery.set(GroupParams.GROUP_FIELD, groupBy.getField());
+		solrQuery.set(GroupParams.GROUP_FORMAT, "grouped");
+		solrQuery.set(GroupParams.GROUP_TOTAL_COUNT, true);
 
 		int groupByStart = groupBy.getStart();
 
-		if (groupByStart != 0) {
-			fromOptional = Optional.of(groupByStart);
-		}
-		else {
-			fromOptional = pagination.getFrom();
+		if (groupByStart == 0) {
+			groupByStart = start;
 		}
 
-		fromOptional.ifPresent(from -> solrQuery.set(GROUP_OFFSET, from));
-
-		Optional<Integer> sizeOptional;
+		solrQuery.set(GroupParams.GROUP_OFFSET, groupByStart);
 
 		int groupBySize = groupBy.getSize();
 
-		if (groupBySize != 0) {
-			sizeOptional = Optional.of(groupBySize);
-		}
-		else {
-			sizeOptional = pagination.getSize();
+		if (groupBySize == 0) {
+			groupBySize = end - start + 1;
 		}
 
-		solrQuery.set(GROUP_LIMIT, sizeOptional.orElse(3));
+		solrQuery.set(GroupParams.GROUP_LIMIT, groupBySize);
 
 		addHighlights(solrQuery, searchContext.getQueryConfig());
 		addSorts(solrQuery, searchContext.getSorts());

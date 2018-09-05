@@ -26,12 +26,12 @@ public class PrimitiveLongListTest {
 
 	@Test
 	public void testAdd() {
-		long[] expected = new long[] {10L, 11L, 12L};
+		long[] expected = {10L, 11L, 12L};
 
 		PrimitiveLongList primitiveLongList = new PrimitiveLongList();
 
-		for (int i = 0; i < expected.length; i++) {
-			primitiveLongList.add(expected[i]);
+		for (long l : expected) {
+			primitiveLongList.add(l);
 		}
 
 		Assert.assertEquals(expected.length, primitiveLongList.size());
@@ -48,7 +48,7 @@ public class PrimitiveLongListTest {
 
 	@Test
 	public void testAddAll() {
-		long[] expected = new long[] {10L, 11L, 12L};
+		long[] expected = {10L, 11L, 12L};
 
 		PrimitiveLongList primitiveLongList = new PrimitiveLongList();
 

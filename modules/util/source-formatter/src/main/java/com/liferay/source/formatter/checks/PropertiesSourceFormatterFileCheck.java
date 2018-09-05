@@ -14,14 +14,15 @@
 
 package com.liferay.source.formatter.checks;
 
-import com.liferay.portal.kernel.util.CharPool;
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.ListUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.tools.ToolsUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import java.util.Enumeration;
@@ -34,15 +35,9 @@ import java.util.Properties;
 public class PropertiesSourceFormatterFileCheck extends BaseFileCheck {
 
 	@Override
-	public void init() throws Exception {
-		_hasPrivateAppsDir = _hasPrivateAppsDir();
-		_projectPathPrefix = getProjectPathPrefix();
-	}
-
-	@Override
 	protected String doProcess(
 			String fileName, String absolutePath, String content)
-		throws Exception {
+		throws IOException {
 
 		if (fileName.endsWith("/source-formatter.properties")) {
 			_checkSourceFormatterProperties(fileName);
@@ -52,7 +47,7 @@ public class PropertiesSourceFormatterFileCheck extends BaseFileCheck {
 	}
 
 	private void _checkSourceFormatterProperties(String fileName)
-		throws Exception {
+		throws IOException {
 
 		int level = ToolsUtil.PLUGINS_MAX_DIR_LEVEL;
 
@@ -88,9 +83,8 @@ public class PropertiesSourceFormatterFileCheck extends BaseFileCheck {
 			for (String propertyFileName : propertyFileNames) {
 				if (propertyFileName.contains(StringPool.STAR) ||
 					propertyFileName.endsWith("-ext.properties") ||
-					(isPortalSource() && !_hasPrivateAppsDir &&
-					 isModulesApp(
-						 propertyFileName, _projectPathPrefix, true))) {
+					(isPortalSource() && !_hasPrivateAppsDir() &&
+					 isModulesApp(propertyFileName, true))) {
 
 					continue;
 				}
@@ -113,22 +107,27 @@ public class PropertiesSourceFormatterFileCheck extends BaseFileCheck {
 		}
 	}
 
-	private boolean _hasPrivateAppsDir() {
+	private synchronized boolean _hasPrivateAppsDir() {
+		if (_hasPrivateAppsDir != null) {
+			return _hasPrivateAppsDir;
+		}
+
+		_hasPrivateAppsDir = false;
+
 		if (isPortalSource()) {
-			return false;
+			return _hasPrivateAppsDir;
 		}
 
 		File privateAppsDir = getFile(
 			"modules/private/apps", ToolsUtil.PORTAL_MAX_DIR_LEVEL);
 
 		if (privateAppsDir != null) {
-			return true;
+			_hasPrivateAppsDir = true;
 		}
 
-		return false;
+		return _hasPrivateAppsDir;
 	}
 
-	private boolean _hasPrivateAppsDir;
-	private String _projectPathPrefix;
+	private Boolean _hasPrivateAppsDir;
 
 }

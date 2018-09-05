@@ -14,13 +14,13 @@
 
 package com.liferay.portal.kernel.messaging.sender;
 
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ServiceProxyFactory;
 
 /**
- * @author Michael C. Han
+ * @author     Michael C. Han
+ * @deprecated As of Judson (7.1.x), with no direct replacement
  */
+@Deprecated
 public class SingleDestinationMessageSenderFactoryUtil {
 
 	public static SingleDestinationMessageSender
@@ -50,10 +50,6 @@ public class SingleDestinationMessageSenderFactoryUtil {
 			getSynchronousMessageSender(mode);
 	}
 
-	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
-	 */
-	@Deprecated
 	protected SingleDestinationMessageSenderFactory
 		getSingleDestinationMessageSenderFactory() {
 
@@ -62,9 +58,6 @@ public class SingleDestinationMessageSenderFactoryUtil {
 
 	private SingleDestinationMessageSenderFactoryUtil() {
 	}
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		SingleDestinationMessageSenderFactoryUtil.class);
 
 	private static volatile SingleDestinationMessageSenderFactory
 		_singleDestinationMessageSenderFactory =

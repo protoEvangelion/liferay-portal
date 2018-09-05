@@ -14,6 +14,7 @@
 
 package com.liferay.portal.osgi.web.wab.extender.internal.adapter;
 
+import com.liferay.portal.kernel.servlet.PortletSessionListenerManager;
 import com.liferay.portal.kernel.util.HashMapDictionary;
 
 import java.lang.reflect.InvocationHandler;
@@ -30,8 +31,12 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.descriptor.JspConfigDescriptor;
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpSessionListener;
 
 import org.eclipse.equinox.http.servlet.HttpServiceServlet;
+import org.eclipse.equinox.http.servlet.HttpSessionTrackerUtil;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -118,10 +123,16 @@ public class HttpAdapter {
 				HttpServiceServlet.class.getName(), HttpServlet.class.getName()
 			},
 			_httpServiceServlet, properties);
+
+		PortletSessionListenerManager.addHttpSessionListener(
+			_INVALIDATEHTTPSESSION_LISTENER);
 	}
 
 	@Deactivate
 	protected void deactivate() {
+		PortletSessionListenerManager.removeHttpSessionListener(
+			_INVALIDATEHTTPSESSION_LISTENER);
+
 		_serviceRegistration.unregister();
 
 		_serviceRegistration = null;
@@ -144,6 +155,22 @@ public class HttpAdapter {
 		ServletContext.class
 	};
 
+	private static final HttpSessionListener _INVALIDATEHTTPSESSION_LISTENER =
+		new HttpSessionListener() {
+
+			@Override
+			public void sessionCreated(HttpSessionEvent httpSessionEvent) {
+			}
+
+			@Override
+			public void sessionDestroyed(HttpSessionEvent httpSessionEvent) {
+				HttpSession httpSession = httpSessionEvent.getSession();
+
+				HttpSessionTrackerUtil.invalidate(httpSession.getId());
+			}
+
+		};
+
 	private HttpServiceServlet _httpServiceServlet;
 	private ServiceRegistration<?> _serviceRegistration;
 	private ServletContext _servletContext;
@@ -158,8 +185,10 @@ public class HttpAdapter {
 		public Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
 
-			if (method.getName().equals("getInitParameter") &&
-				(args != null) && (args.length == 1)) {
+			String methodName = method.getName();
+
+			if (methodName.equals("getInitParameter") && (args != null) &&
+				(args.length == 1)) {
 
 				if ("osgi.http.endpoint".equals(args[0])) {
 					return _servletContext.getInitParameter((String)args[0]);
@@ -167,13 +196,13 @@ public class HttpAdapter {
 
 				return null;
 			}
-			else if (method.getName().equals("getInitParameterNames") &&
+			else if (methodName.equals("getInitParameterNames") &&
 					 (args == null)) {
 
 				return Collections.enumeration(
 					Collections.singleton("osgi.http.endpoint"));
 			}
-			else if (method.getName().equals("getJspConfigDescriptor") &&
+			else if (methodName.equals("getJspConfigDescriptor") &&
 					 JspConfigDescriptor.class.isAssignableFrom(
 						 method.getReturnType())) {
 

@@ -2,9 +2,11 @@
 	<var name="assetType" value="Bookmarks Folder" />
 
 	<command name="addCP">
-		<execute function="Click" locator1="Button#PLUS" />
+		<execute macro="LexiconEntry#gotoAdd" />
 
-		<execute function="AssertClick" locator1="MenuItem#FOLDER" value1="Folder" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Folder" />
+		</execute>
 
 		<execute macro="PortletEntry#inputName">
 			<var name="name" value="${folderName}" />
@@ -23,9 +25,11 @@
 	</command>
 
 	<command name="addNullCP">
-		<execute function="Click" locator1="Button#PLUS" />
+		<execute macro="LexiconEntry#gotoAdd" />
 
-		<execute function="AssertClick" locator1="MenuItem#FOLDER" value1="Folder" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Folder" />
+		</execute>
 
 		<execute macro="Button#clickSave" />
 
@@ -42,9 +46,11 @@
 
 		<execute function="AssertTextEquals" locator1="Portlet#HEADER" value1="${folderName}" />
 
-		<execute function="Click" locator1="Button#PLUS" />
+		<execute macro="LexiconEntry#gotoAdd" />
 
-		<execute function="AssertClick" locator1="MenuItem#SUBFOLDER" value1="Subfolder" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Subfolder" />
+		</execute>
 
 		<execute macro="Button#clickSave" />
 
@@ -54,9 +60,13 @@
 	</command>
 
 	<command name="addPG">
-		<execute function="Click#makeVisibleClickAt" locator1="Portlet#ICON_PLUS_SIGN" />
+		<execute macro="Portlet#clickPortletPlusIconPG">
+			<var name="portletName" value="Bookmarks" />
+		</execute>
 
-		<execute function="AssertClick" locator1="MenuItem#FOLDER" value1="Folder" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Folder" />
+		</execute>
 
 		<execute macro="PortletEntry#inputName">
 			<var name="name" value="${folderName}" />
@@ -81,9 +91,11 @@
 
 		<execute function="AssertTextEquals" locator1="Portlet#HEADER" value1="${folderName}" />
 
-		<execute function="Click" locator1="Button#PLUS" />
+		<execute macro="LexiconEntry#gotoAdd" />
 
-		<execute function="AssertClick" locator1="MenuItem#SUBFOLDER" value1="Subfolder" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Subfolder" />
+		</execute>
 
 		<var name="key_folderName" value="${subfolderName}" />
 
@@ -106,9 +118,13 @@
 	</command>
 
 	<command name="addSubfolderPG">
-		<execute function="Click#makeVisibleClickAt" locator1="Portlet#ICON_PLUS_SIGN" />
+		<execute macro="Portlet#clickPortletPlusIconPG">
+			<var name="portletName" value="Bookmarks" />
+		</execute>
 
-		<execute function="AssertClick" locator1="MenuItem#SUBFOLDER" value1="Subfolder" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Subfolder" />
+		</execute>
 
 		<execute macro="PortletEntry#inputName">
 			<var name="name" value="${folderName}" />
@@ -127,20 +143,23 @@
 	</command>
 
 	<command name="deletePG">
-		<var name="key_assetName" value="${folderName}" />
-		<var name="key_rowEntry" value="${folderName}" />
+		<execute function="AssertTextEquals" locator1="Bookmarks#DESCRIPTIVE_ENTRY_TITLE" value1="${folderName}">
+			<var name="key_assetName" value="${folderName}" />
+		</execute>
 
-		<execute function="AssertTextEquals" locator1="Bookmarks#DESCRIPTIVE_ENTRY_TITLE" value1="${folderName}" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#VERTICAL_ELLIPSIS" />
 
-		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
-
-		<execute macro="PortletEntry#clickMoveToRecycleBin" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Move to Recycle Bin" />
+		</execute>
 
 		<execute function="AssertElementPresent" locator1="Message#SUCCESS" />
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Recycle Bin" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Recycle Bin" />
 		</execute>
 
@@ -148,11 +167,10 @@
 	</command>
 
 	<command name="editCP">
-		<var name="key_rowEntry" value="${folderName}" />
-
-		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
-
-		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
+		<execute macro="LexiconEntry#gotoEntryMenuItem">
+			<var name="menuItem" value="Edit" />
+			<var name="rowEntry" value="${folderName}" />
+		</execute>
 
 		<execute macro="PortletEntry#inputName">
 			<var name="name" value="${folderNameEdit}" />
@@ -171,11 +189,10 @@
 	</command>
 
 	<command name="editPG">
-		<var name="key_rowEntry" value="${folderName}" />
-
-		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
-
-		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
+		<execute macro="LexiconEntry#gotoEntryMenuItem">
+			<var name="menuItem" value="Edit" />
+			<var name="rowEntry" value="${folderName}" />
+		</execute>
 
 		<execute macro="PortletEntry#inputName">
 			<var name="name" value="${folderNameEdit}" />
@@ -194,20 +211,16 @@
 	</command>
 
 	<command name="editSubfolderCP">
-		<var name="key_assetName" value="${folderName}" />
-		<var name="key_rowEntry" value="${folderName}" />
-
-		<execute function="AssertClick" locator1="Bookmarks#DESCRIPTIVE_ENTRY_TITLE" value1="${folderName}" />
+		<execute function="AssertClick" locator1="Bookmarks#DESCRIPTIVE_ENTRY_TITLE" value1="${folderName}">
+			<var name="key_assetName" value="${folderName}" />
+		</execute>
 
 		<execute function="AssertTextEquals" locator1="Portlet#HEADER" value1="${folderName}" />
 
-		<var name="key_rowEntry" value="${subfolderName}" />
-
-		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
-
-		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
-
-		<var name="key_folderName" value="${editSubfolderName}" />
+		<execute macro="LexiconEntry#gotoEntryMenuItem">
+			<var name="menuItem" value="Edit" />
+			<var name="rowEntry" value="${subfolderName}" />
+		</execute>
 
 		<execute macro="PortletEntry#inputName">
 			<var name="name" value="${editSubfolderName}" />
@@ -226,9 +239,9 @@
 	</command>
 
 	<command name="gotoPG">
-		<var name="key_assetName" value="${folderName}" />
-
-		<execute function="AssertClick#assertPartialTextClickAt" locator1="Bookmarks#DESCRIPTIVE_ENTRY_TITLE" value1="${folderName}" />
+		<execute function="AssertClick#assertPartialTextClickAt" locator1="Bookmarks#DESCRIPTIVE_ENTRY_TITLE" value1="${folderName}">
+			<var name="key_assetName" value="${folderName}" />
+		</execute>
 
 		<execute macro="Breadcrumb#viewActiveEntry">
 			<var name="breadcrumbName" value="${folderName}" />
@@ -262,19 +275,16 @@
 	</command>
 
 	<command name="mergeSubfolderToFolderCP">
-		<var name="key_assetName" value="${folderName}" />
-
-		<execute function="AssertClick" locator1="Bookmarks#DESCRIPTIVE_ENTRY_TITLE" value1="${folderName}" />
+		<execute function="AssertClick" locator1="Bookmarks#DESCRIPTIVE_ENTRY_TITLE" value1="${folderName}">
+			<var name="key_assetName" value="${folderName}" />
+		</execute>
 
 		<execute function="AssertTextEquals" locator1="Portlet#HEADER" value1="${folderName}" />
 
-		<var name="key_rowEntry" value="${subfolderName}" />
-
-		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
-
-		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
-
-		<var name="key_folderName" value="${editSubfolderName}" />
+		<execute macro="LexiconEntry#gotoEntryMenuItem">
+			<var name="menuItem" value="Edit" />
+			<var name="rowEntry" value="${subfolderName}" />
+		</execute>
 
 		<execute function="Click" locator1="Bookmarks#PARENT_FOLDER_PANEL" />
 
@@ -282,25 +292,20 @@
 
 		<execute macro="Button#clickSave" />
 
-		<var name="key_bookmarkName" value="${bookmarkName}" />
-
 		<execute macro="Alert#viewSuccessMessage" />
 
 		<execute macro="Bookmark#viewBookmark">
 			<var name="bookmarkName" value="${bookmarkName}" />
 			<var name="bookmarkURL" value="${bookmarkURL}" />
-			<var name="key_assetName" value="${bookmarkName}" />
+			<var name="folderName" value="${bookmarkName}" />
 		</execute>
 	</command>
 
 	<command name="moveSubfolderToRecycleBinPG">
-		<var name="key_rowEntry" value="${subfolderName}" />
-
-		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
-
-		<execute macro="PortletEntry#clickMoveToRecycleBin" />
-
-		<var name="key_assetType" value="Bookmarks Folder" />
+		<execute macro="LexiconEntry#gotoEntryMenuItem">
+			<var name="menuItem" value="Move to Recycle Bin" />
+			<var name="rowEntry" value="${subfolderName}" />
+		</execute>
 
 		<execute function="AssertElementPresent" locator1="Message#SUCCESS" />
 	</command>
@@ -308,27 +313,28 @@
 	<command name="moveToRecycleBinCP">
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Bookmarks" />
 		</execute>
 
-		<var name="key_assetName" value="${folderName}" />
+		<execute function="AssertTextEquals" locator1="Bookmarks#DESCRIPTIVE_ENTRY_TITLE" value1="${folderName}">
+			<var name="key_assetName" value="${folderName}" />
+		</execute>
 
-		<execute function="AssertTextEquals" locator1="Bookmarks#DESCRIPTIVE_ENTRY_TITLE" value1="${folderName}" />
-
-		<var name="key_rowEntry" value="${folderName}" />
-
-		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
-
-		<execute macro="PortletEntry#clickMoveToRecycleBin" />
+		<execute macro="LexiconEntry#gotoEntryMenuItem">
+			<var name="menuItem" value="Move to Recycle Bin" />
+			<var name="rowEntry" value="${folderName}" />
+		</execute>
 
 		<execute function="AssertElementPresent" locator1="Message#SUCCESS" />
 	</command>
 
 	<command name="subscribePG">
-		<var name="key_assetDescription" value="${folderDescription}" />
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="Bookmarks#DESCRIPTIVE_ENTRY_DESCRIPTION" value1="${folderDescription}" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Bookmarks#DESCRIPTIVE_ENTRY_DESCRIPTION" value1="${folderDescription}">
+			<var name="key_assetDescription" value="${folderDescription}" />
+		</execute>
 
 		<execute function="Click#clickAt" locator1="Icon#INFO" />
 
@@ -342,14 +348,16 @@
 	<command name="tearDownCP">
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Bookmarks" />
 		</execute>
 
 		<if>
 			<condition function="IsElementNotPresent" locator1="Message#EMPTY_INFO" />
 			<then>
-				<execute function="Check#checkAll" locator1="Checkbox#SELECT_ALL" />
+				<execute macro="PortletEntry#selectAll" />
 
 				<execute function="Click" locator1="Icon#MOVE_TO_RECYCLE_BIN" />
 
@@ -360,7 +368,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Recycle Bin" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Recycle Bin" />
 		</execute>
 
@@ -368,12 +378,12 @@
 	</command>
 
 	<command name="viewFolder">
-		<var name="key_assetName" value="${folderName}" />
+		<execute function="AssertTextEquals" locator1="Bookmarks#DESCRIPTIVE_ENTRY_TITLE" value1="${folderName}">
+			<var name="key_assetName" value="${folderName}" />
+		</execute>
 
-		<execute function="AssertTextEquals" locator1="Bookmarks#DESCRIPTIVE_ENTRY_TITLE" value1="${folderName}" />
-
-		<var name="key_assetDescription" value="${folderDescription}" />
-
-		<execute function="AssertTextEquals" locator1="Bookmarks#DESCRIPTIVE_ENTRY_DESCRIPTION" value1="${folderDescription}" />
+		<execute function="AssertTextEquals" locator1="Bookmarks#DESCRIPTIVE_ENTRY_DESCRIPTION" value1="${folderDescription}">
+			<var name="key_assetDescription" value="${folderDescription}" />
+		</execute>
 	</command>
 </definition>

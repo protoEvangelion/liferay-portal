@@ -31,44 +31,48 @@
 		<execute function="SelectFrame" value1="relative=top" />
 	</command>
 
-	<command name="gotoConfiguration">
-		<execute function="Click" locator1="Icon#HEADER_VERTICAL_ELLIPSIS" />
-
-		<execute function="AssertClick" locator1="MenuItem#CONFIGURATION" value1="Configuration" />
-	</command>
-
 	<command name="subscribeToNodeCP">
 		<var name="key_wikiNodeName" value="${wikiNodeName}" />
 
-		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
-
-		<execute function="AssertClick" locator1="MenuItem#SUBSCRIBE" value1="Subscribe" />
+		<execute macro="LexiconEntry#gotoEllipsisMenuItem">
+			<var name="menuItem" value="Subscribe" />
+		</execute>
 
 		<execute macro="Alert#viewSuccessMessage" />
 
 		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
 
-		<execute function="AssertTextEquals" locator1="MenuItem#UNSUBSCRIBE" value1="Unsubscribe" />
+		<execute macro="MenuItem#viewPresent">
+			<var name="menuItem" value="Unsubscribe" />
+		</execute>
 	</command>
 
 	<command name="tearDownCP">
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Wiki" />
 		</execute>
 
-		<var name="key_wikiNodeName" value="Main" />
+		<execute macro="LexiconEntry#openEntryMenu">
+			<var name="rowEntry" value="Main" />
+		</execute>
 
-		<execute function="Click" locator1="Wiki#NODE_TABLE_ACTIONS_DROPDOWN" />
-
-		<execute function="AssertClick" locator1="MenuItem#UNSUBSCRIBE" value1="Unsubscribe" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Unsubscribe" />
+		</execute>
 
 		<execute macro="Alert#viewSuccessMessage" />
 
-		<execute function="Click" locator1="Wiki#NODE_TABLE_ACTIONS_DROPDOWN" />
+		<execute macro="LexiconEntry#openEntryMenu">
+			<var name="rowEntry" value="Main" />
+		</execute>
 
-		<execute function="AssertTextEquals" locator1="MenuItem#SUBSCRIBE" value1="Subscribe" />
+		<execute macro="MenuItem#viewPresent">
+			<var name="menuItem" value="Subscribe" />
+		</execute>
 	</command>
 
 	<command name="viewConfigurationTabs">
@@ -91,10 +95,10 @@
 		<if>
 			<equals arg1="${enabled}" arg2="true" />
 			<then>
-				<execute function="AssertChecked#assertCheckedToggleSwitch" locator1="WikiConfiguration#ALLOW_USERS_TO_ADD_WIKI_TO_ANY_WEBSITE_CHECKBOX" />
+				<execute function="AssertChecked#assertCheckedNotVisible" locator1="WikiConfiguration#ALLOW_USERS_TO_ADD_WIKI_TO_ANY_WEBSITE_CHECKBOX" />
 			</then>
 			<else>
-				<execute function="AssertNotChecked#assertNotCheckedToggleSwitch" locator1="WikiConfiguration#ALLOW_USERS_TO_ADD_WIKI_TO_ANY_WEBSITE_CHECKBOX" />
+				<execute function="AssertNotChecked#assertNotCheckedNotVisible" locator1="WikiConfiguration#ALLOW_USERS_TO_ADD_WIKI_TO_ANY_WEBSITE_CHECKBOX" />
 			</else>
 		</if>
 

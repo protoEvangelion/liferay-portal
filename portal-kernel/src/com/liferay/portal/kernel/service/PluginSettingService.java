@@ -46,14 +46,15 @@ public interface PluginSettingService extends BaseService {
 	 *
 	 * Never modify or reference this interface directly. Always use {@link PluginSettingServiceUtil} to access the plugin setting remote service. Add custom service methods to {@link com.liferay.portal.service.impl.PluginSettingServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public PluginSetting updatePluginSetting(long companyId,
-		java.lang.String pluginId, java.lang.String pluginType,
-		java.lang.String roles, boolean active) throws PortalException;
 
 	/**
 	* Returns the OSGi service identifier.
 	*
 	* @return the OSGi service identifier
 	*/
-	public java.lang.String getOSGiServiceIdentifier();
+	public String getOSGiServiceIdentifier();
+
+	public PluginSetting updatePluginSetting(long companyId, String pluginId,
+		String pluginType, String roles, boolean active)
+		throws PortalException;
 }

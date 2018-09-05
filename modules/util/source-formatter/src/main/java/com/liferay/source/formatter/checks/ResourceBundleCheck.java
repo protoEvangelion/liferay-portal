@@ -28,10 +28,7 @@ public class ResourceBundleCheck extends BaseFileCheck {
 	protected String doProcess(
 		String fileName, String absolutePath, String content) {
 
-		if (fileName.endsWith("ResourceBundleCheck.java") ||
-			fileName.endsWith("ResourceBundleUtil.java") ||
-			isExcludedPath(RUN_OUTSIDE_PORTAL_EXCLUDES, absolutePath)) {
-
+		if (isExcludedPath(RUN_OUTSIDE_PORTAL_EXCLUDES, absolutePath)) {
 			return content;
 		}
 
@@ -41,8 +38,8 @@ public class ResourceBundleCheck extends BaseFileCheck {
 			addMessage(
 				fileName,
 				"Use ResourceBundleUtil.getBundle instead of " +
-					"ResourceBundle.getBundle, see LPS-58529",
-				getLineCount(content, pos));
+					"ResourceBundle.getBundle",
+				"resource_bundle.markdown", getLineNumber(content, pos));
 		}
 
 		pos = content.indexOf("resourceBundle.getString(");
@@ -51,8 +48,8 @@ public class ResourceBundleCheck extends BaseFileCheck {
 			addMessage(
 				fileName,
 				"Use ResourceBundleUtil.getString instead of " +
-					"resourceBundle.getString, see LPS-58529",
-				getLineCount(content, pos));
+					"resourceBundle.getString",
+				"resource_bundle.markdown", getLineNumber(content, pos));
 		}
 
 		return content;

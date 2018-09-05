@@ -19,8 +19,11 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.model.Ticket;
 import com.liferay.portal.kernel.model.TicketModel;
 import com.liferay.portal.kernel.model.impl.BaseModelImpl;
@@ -28,8 +31,6 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
@@ -288,7 +289,7 @@ public class TicketModelImpl extends BaseModelImpl<Ticket>
 	@Override
 	public String getClassName() {
 		if (getClassNameId() <= 0) {
-			return StringPool.BLANK;
+			return "";
 		}
 
 		return PortalUtil.getClassName(getClassNameId());
@@ -352,7 +353,7 @@ public class TicketModelImpl extends BaseModelImpl<Ticket>
 	@Override
 	public String getKey() {
 		if (_key == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _key;
@@ -399,7 +400,7 @@ public class TicketModelImpl extends BaseModelImpl<Ticket>
 	@Override
 	public String getExtraInfo() {
 		if (_extraInfo == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _extraInfo;
@@ -689,7 +690,7 @@ public class TicketModelImpl extends BaseModelImpl<Ticket>
 
 	private static final ClassLoader _classLoader = Ticket.class.getClassLoader();
 	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
-			Ticket.class
+			Ticket.class, ModelWrapper.class
 		};
 	private long _mvccVersion;
 	private long _ticketId;

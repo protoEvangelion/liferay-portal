@@ -14,7 +14,7 @@
 
 package com.liferay.source.formatter.dependencies;
 
-import com.liferay.portal.kernel.util.CharPool;
+import com.liferay.petra.string.CharPool;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 
@@ -63,6 +63,15 @@ public class IncorrectLineBreaks2 {
 
 		int i = StringUtil.indexOfAny(
 			stringWithAMediumLongVariableName, stringList);
+	}
+
+	private class TestClass {
+	}
+
+	private enum TestEnum {
+
+		TEST_VALUE
+
 	}
 
 }

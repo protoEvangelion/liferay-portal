@@ -94,11 +94,10 @@ public class KBSuggestionListDisplayContext {
 		if (_kbArticle == null) {
 			return KBCommentServiceUtil.getKBCommentsCount(_groupId, status);
 		}
-		else {
-			return KBCommentServiceUtil.getKBCommentsCount(
-				_groupId, KBArticleConstants.getClassName(),
-				_kbArticle.getResourcePrimKey(), status);
-		}
+
+		return KBCommentServiceUtil.getKBCommentsCount(
+			_groupId, KBArticleConstants.getClassName(),
+			_kbArticle.getResourcePrimKey(), status);
 	}
 
 	public int getNewKBCommentsCount() throws PortalException {
@@ -162,7 +161,8 @@ public class KBSuggestionListDisplayContext {
 	public String getViewSuggestionURL(RenderResponse renderResponse)
 		throws PortalException {
 
-		return getViewSuggestionURL(renderResponse.createRenderURL());
+		return getViewSuggestionURL(
+			(PortletURL)renderResponse.createRenderURL());
 	}
 
 	public boolean isShowKBArticleTitle() {

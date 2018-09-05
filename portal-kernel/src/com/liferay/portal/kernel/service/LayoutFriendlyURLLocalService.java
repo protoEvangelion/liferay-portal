@@ -64,17 +64,6 @@ public interface LayoutFriendlyURLLocalService extends BaseLocalService,
 	 *
 	 * Never modify or reference this interface directly. Always use {@link LayoutFriendlyURLLocalServiceUtil} to access the layout friendly url local service. Add custom service methods to {@link com.liferay.portal.service.impl.LayoutFriendlyURLLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public ActionableDynamicQuery getActionableDynamicQuery();
-
-	public DynamicQuery dynamicQuery();
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
-		PortletDataContext portletDataContext);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
 
 	/**
 	* Adds the layout friendly url to the database. Also notifies the appropriate model listeners.
@@ -87,9 +76,14 @@ public interface LayoutFriendlyURLLocalService extends BaseLocalService,
 		LayoutFriendlyURL layoutFriendlyURL);
 
 	public LayoutFriendlyURL addLayoutFriendlyURL(long userId, long companyId,
-		long groupId, long plid, boolean privateLayout,
-		java.lang.String friendlyURL, java.lang.String languageId,
-		ServiceContext serviceContext) throws PortalException;
+		long groupId, long plid, boolean privateLayout, String friendlyURL,
+		String languageId, ServiceContext serviceContext)
+		throws PortalException;
+
+	public List<LayoutFriendlyURL> addLayoutFriendlyURLs(long userId,
+		long companyId, long groupId, long plid, boolean privateLayout,
+		Map<Locale, String> friendlyURLMap, ServiceContext serviceContext)
+		throws PortalException;
 
 	/**
 	* Creates a new layout friendly url with the primary key. Does not add the layout friendly url to the database.
@@ -97,6 +91,7 @@ public interface LayoutFriendlyURLLocalService extends BaseLocalService,
 	* @param layoutFriendlyURLId the primary key for the new layout friendly url
 	* @return the new layout friendly url
 	*/
+	@Transactional(enabled = false)
 	public LayoutFriendlyURL createLayoutFriendlyURL(long layoutFriendlyURLId);
 
 	/**
@@ -120,83 +115,9 @@ public interface LayoutFriendlyURLLocalService extends BaseLocalService,
 	public LayoutFriendlyURL deleteLayoutFriendlyURL(long layoutFriendlyURLId)
 		throws PortalException;
 
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public LayoutFriendlyURL fetchFirstLayoutFriendlyURL(long groupId,
-		boolean privateLayout, java.lang.String friendlyURL);
+	public void deleteLayoutFriendlyURL(long plid, String languageId);
 
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public LayoutFriendlyURL fetchLayoutFriendlyURL(long groupId,
-		boolean privateLayout, java.lang.String friendlyURL,
-		java.lang.String languageId);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public LayoutFriendlyURL fetchLayoutFriendlyURL(long layoutFriendlyURLId);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public LayoutFriendlyURL fetchLayoutFriendlyURL(long plid,
-		java.lang.String languageId);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public LayoutFriendlyURL fetchLayoutFriendlyURL(long plid,
-		java.lang.String languageId, boolean useDefault);
-
-	/**
-	* Returns the layout friendly url matching the UUID and group.
-	*
-	* @param uuid the layout friendly url's UUID
-	* @param groupId the primary key of the group
-	* @return the matching layout friendly url, or <code>null</code> if a matching layout friendly url could not be found
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public LayoutFriendlyURL fetchLayoutFriendlyURLByUuidAndGroupId(
-		java.lang.String uuid, long groupId);
-
-	/**
-	* Returns the layout friendly url with the primary key.
-	*
-	* @param layoutFriendlyURLId the primary key of the layout friendly url
-	* @return the layout friendly url
-	* @throws PortalException if a layout friendly url with the primary key could not be found
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public LayoutFriendlyURL getLayoutFriendlyURL(long layoutFriendlyURLId)
-		throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public LayoutFriendlyURL getLayoutFriendlyURL(long plid,
-		java.lang.String languageId) throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public LayoutFriendlyURL getLayoutFriendlyURL(long plid,
-		java.lang.String languageId, boolean useDefault)
-		throws PortalException;
-
-	/**
-	* Returns the layout friendly url matching the UUID and group.
-	*
-	* @param uuid the layout friendly url's UUID
-	* @param groupId the primary key of the group
-	* @return the matching layout friendly url
-	* @throws PortalException if a matching layout friendly url could not be found
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public LayoutFriendlyURL getLayoutFriendlyURLByUuidAndGroupId(
-		java.lang.String uuid, long groupId) throws PortalException;
-
-	/**
-	* Updates the layout friendly url in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param layoutFriendlyURL the layout friendly url
-	* @return the layout friendly url that was updated
-	*/
-	@Indexable(type = IndexableType.REINDEX)
-	public LayoutFriendlyURL updateLayoutFriendlyURL(
-		LayoutFriendlyURL layoutFriendlyURL);
-
-	public LayoutFriendlyURL updateLayoutFriendlyURL(long userId,
-		long companyId, long groupId, long plid, boolean privateLayout,
-		java.lang.String friendlyURL, java.lang.String languageId,
-		ServiceContext serviceContext) throws PortalException;
+	public void deleteLayoutFriendlyURLs(long plid);
 
 	/**
 	* @throws PortalException
@@ -205,30 +126,7 @@ public interface LayoutFriendlyURLLocalService extends BaseLocalService,
 	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
 		throws PortalException;
 
-	@Override
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException;
-
-	/**
-	* Returns the number of layout friendly urls.
-	*
-	* @return the number of layout friendly urls
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getLayoutFriendlyURLsCount();
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	public java.lang.String getOSGiServiceIdentifier();
-
-	public List<LayoutFriendlyURL> addLayoutFriendlyURLs(long userId,
-		long companyId, long groupId, long plid, boolean privateLayout,
-		Map<Locale, java.lang.String> friendlyURLMap,
-		ServiceContext serviceContext) throws PortalException;
+	public DynamicQuery dynamicQuery();
 
 	/**
 	* Performs a dynamic query on the database and returns the matching rows.
@@ -270,6 +168,98 @@ public interface LayoutFriendlyURLLocalService extends BaseLocalService,
 		int end, OrderByComparator<T> orderByComparator);
 
 	/**
+	* Returns the number of rows matching the dynamic query.
+	*
+	* @param dynamicQuery the dynamic query
+	* @return the number of rows matching the dynamic query
+	*/
+	public long dynamicQueryCount(DynamicQuery dynamicQuery);
+
+	/**
+	* Returns the number of rows matching the dynamic query.
+	*
+	* @param dynamicQuery the dynamic query
+	* @param projection the projection to apply to the query
+	* @return the number of rows matching the dynamic query
+	*/
+	public long dynamicQueryCount(DynamicQuery dynamicQuery,
+		Projection projection);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public LayoutFriendlyURL fetchFirstLayoutFriendlyURL(long groupId,
+		boolean privateLayout, String friendlyURL);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public LayoutFriendlyURL fetchLayoutFriendlyURL(long layoutFriendlyURLId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public LayoutFriendlyURL fetchLayoutFriendlyURL(long groupId,
+		boolean privateLayout, String friendlyURL, String languageId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public LayoutFriendlyURL fetchLayoutFriendlyURL(long plid, String languageId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public LayoutFriendlyURL fetchLayoutFriendlyURL(long plid,
+		String languageId, boolean useDefault);
+
+	/**
+	* Returns the layout friendly url matching the UUID and group.
+	*
+	* @param uuid the layout friendly url's UUID
+	* @param groupId the primary key of the group
+	* @return the matching layout friendly url, or <code>null</code> if a matching layout friendly url could not be found
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public LayoutFriendlyURL fetchLayoutFriendlyURLByUuidAndGroupId(
+		String uuid, long groupId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public ActionableDynamicQuery getActionableDynamicQuery();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
+		PortletDataContext portletDataContext);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
+
+	/**
+	* Returns the layout friendly url with the primary key.
+	*
+	* @param layoutFriendlyURLId the primary key of the layout friendly url
+	* @return the layout friendly url
+	* @throws PortalException if a layout friendly url with the primary key could not be found
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public LayoutFriendlyURL getLayoutFriendlyURL(long layoutFriendlyURLId)
+		throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public LayoutFriendlyURL getLayoutFriendlyURL(long plid, String languageId)
+		throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public LayoutFriendlyURL getLayoutFriendlyURL(long plid, String languageId,
+		boolean useDefault) throws PortalException;
+
+	/**
+	* Returns the layout friendly url matching the UUID and group.
+	*
+	* @param uuid the layout friendly url's UUID
+	* @param groupId the primary key of the group
+	* @return the matching layout friendly url
+	* @throws PortalException if a matching layout friendly url could not be found
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public LayoutFriendlyURL getLayoutFriendlyURLByUuidAndGroupId(String uuid,
+		long groupId) throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Map<Long, String> getLayoutFriendlyURLs(Group siteGroup,
+		List<Layout> layouts, String languageId);
+
+	/**
 	* Returns a range of all the layout friendly urls.
 	*
 	* <p>
@@ -288,7 +278,7 @@ public interface LayoutFriendlyURLLocalService extends BaseLocalService,
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<LayoutFriendlyURL> getLayoutFriendlyURLs(long plid,
-		java.lang.String friendlyURL, int start, int end);
+		String friendlyURL, int start, int end);
 
 	/**
 	* Returns all the layout friendly urls matching the UUID and company.
@@ -299,7 +289,7 @@ public interface LayoutFriendlyURLLocalService extends BaseLocalService,
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<LayoutFriendlyURL> getLayoutFriendlyURLsByUuidAndCompanyId(
-		java.lang.String uuid, long companyId);
+		String uuid, long companyId);
 
 	/**
 	* Returns a range of layout friendly urls matching the UUID and company.
@@ -313,37 +303,46 @@ public interface LayoutFriendlyURLLocalService extends BaseLocalService,
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<LayoutFriendlyURL> getLayoutFriendlyURLsByUuidAndCompanyId(
-		java.lang.String uuid, long companyId, int start, int end,
+		String uuid, long companyId, int start, int end,
 		OrderByComparator<LayoutFriendlyURL> orderByComparator);
+
+	/**
+	* Returns the number of layout friendly urls.
+	*
+	* @return the number of layout friendly urls
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getLayoutFriendlyURLsCount();
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	public String getOSGiServiceIdentifier();
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
+		throws PortalException;
+
+	/**
+	* Updates the layout friendly url in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param layoutFriendlyURL the layout friendly url
+	* @return the layout friendly url that was updated
+	*/
+	@Indexable(type = IndexableType.REINDEX)
+	public LayoutFriendlyURL updateLayoutFriendlyURL(
+		LayoutFriendlyURL layoutFriendlyURL);
+
+	public LayoutFriendlyURL updateLayoutFriendlyURL(long userId,
+		long companyId, long groupId, long plid, boolean privateLayout,
+		String friendlyURL, String languageId, ServiceContext serviceContext)
+		throws PortalException;
 
 	public List<LayoutFriendlyURL> updateLayoutFriendlyURLs(long userId,
 		long companyId, long groupId, long plid, boolean privateLayout,
-		Map<Locale, java.lang.String> friendlyURLMap,
-		ServiceContext serviceContext) throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Map<java.lang.Long, java.lang.String> getLayoutFriendlyURLs(
-		Group siteGroup, List<Layout> layouts, java.lang.String languageId);
-
-	/**
-	* Returns the number of rows matching the dynamic query.
-	*
-	* @param dynamicQuery the dynamic query
-	* @return the number of rows matching the dynamic query
-	*/
-	public long dynamicQueryCount(DynamicQuery dynamicQuery);
-
-	/**
-	* Returns the number of rows matching the dynamic query.
-	*
-	* @param dynamicQuery the dynamic query
-	* @param projection the projection to apply to the query
-	* @return the number of rows matching the dynamic query
-	*/
-	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection);
-
-	public void deleteLayoutFriendlyURL(long plid, java.lang.String languageId);
-
-	public void deleteLayoutFriendlyURLs(long plid);
+		Map<Locale, String> friendlyURLMap, ServiceContext serviceContext)
+		throws PortalException;
 }

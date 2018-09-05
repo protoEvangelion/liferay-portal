@@ -14,10 +14,10 @@
 
 package com.liferay.portal.webdav.methods;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.webdav.WebDAVException;
 import com.liferay.portal.kernel.webdav.WebDAVRequest;
 import com.liferay.portal.kernel.webdav.WebDAVStorage;
@@ -45,9 +45,8 @@ public class UnlockMethodImpl implements Method {
 		if (storage.unlockResource(webDAVRequest, token)) {
 			return HttpServletResponse.SC_NO_CONTENT;
 		}
-		else {
-			return HttpServletResponse.SC_PRECONDITION_FAILED;
-		}
+
+		return HttpServletResponse.SC_PRECONDITION_FAILED;
 	}
 
 	protected String getToken(HttpServletRequest request) {

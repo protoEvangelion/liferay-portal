@@ -46,17 +46,22 @@
 </tr>
 <tr>
 	<td>NOTIFICATIONS_TITLE</td>
-	<td>//div[@class='title']</td>
+	<td>//div[@class='title'] | //h4/a[contains(.,'${key_portletName} ${key_publicationType} ${key_contentBody}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>NOTIFICATIONS_VERTICAL_ELLIPSIS</td>
+	<td>//li[contains(.,'${key_contentBody}')]//a[span/*[name()='svg'][contains(@class,'icon-ellipsis')]]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>NOTIFICATIONS_WORKFLOW_TITLE</td>
-	<td>//div[@class='body-container']</td>
+	<td>//div[@class='user-notifications']//div[contains(@data-qa-id,'rowItemContent')]//a</td>
 	<td></td>
 </tr>
 <tr>
 	<td>NOTIFICATIONS_CONTENT</td>
-	<td>//div[@class='body-container']//div[@class='body' and contains(.,'${key_contentBody}')]</td>
+	<td>//div[contains(@class,'content')]//div[@class='body' and contains(.,'${key_contentBody}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -118,7 +123,7 @@
 </tr>
 <tr>
 	<td>NOTIFICATION_DELIVERY_PANEL</td>
-	<td>//div[contains(@class,'panel-title')]/a[contains(.,'${key_contentType}')]</td>
+	<td>//div[contains(@class,'panel-heading')]//a[contains(.,'${key_contentType}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -169,7 +174,7 @@
 <!--REQUESTS-->
 <tr>
 	<td>REQUESTS_LIST_TAB</td>
-	<td>//a[@title='Requests List']</td>
+	<td>//a[contains(@class,'nav-link') and contains(.,'${key_navLinkOption}')]</td>
 	<td></td>
 </tr>
 </tbody>

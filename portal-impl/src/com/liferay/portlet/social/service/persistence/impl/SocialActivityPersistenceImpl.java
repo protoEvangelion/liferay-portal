@@ -16,6 +16,8 @@ package com.liferay.portlet.social.service.persistence.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
@@ -32,10 +34,8 @@ import com.liferay.portal.kernel.service.persistence.CompanyProvider;
 import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.ReflectionUtil;
+import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import com.liferay.portlet.social.model.impl.SocialActivityImpl;
@@ -48,6 +48,7 @@ import com.liferay.social.kernel.service.persistence.SocialActivityPersistence;
 import java.io.Serializable;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -306,7 +307,7 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 		msg.append("groupId=");
 		msg.append(groupId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchActivityException(msg.toString());
 	}
@@ -357,7 +358,7 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 		msg.append("groupId=");
 		msg.append(groupId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchActivityException(msg.toString());
 	}
@@ -815,7 +816,7 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 		msg.append("companyId=");
 		msg.append(companyId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchActivityException(msg.toString());
 	}
@@ -866,7 +867,7 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 		msg.append("companyId=");
 		msg.append(companyId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchActivityException(msg.toString());
 	}
@@ -1321,7 +1322,7 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 		msg.append("userId=");
 		msg.append(userId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchActivityException(msg.toString());
 	}
@@ -1371,7 +1372,7 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 		msg.append("userId=");
 		msg.append(userId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchActivityException(msg.toString());
 	}
@@ -1835,7 +1836,7 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 		msg.append("activitySetId=");
 		msg.append(activitySetId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchActivityException(msg.toString());
 	}
@@ -1886,7 +1887,7 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 		msg.append("activitySetId=");
 		msg.append(activitySetId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchActivityException(msg.toString());
 	}
@@ -2158,7 +2159,7 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 			msg.append("mirrorActivityId=");
 			msg.append(mirrorActivityId);
 
-			msg.append(StringPool.CLOSE_CURLY_BRACE);
+			msg.append("}");
 
 			if (_log.isDebugEnabled()) {
 				_log.debug(msg.toString());
@@ -2251,11 +2252,6 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 					result = socialActivity;
 
 					cacheResult(socialActivity);
-
-					if ((socialActivity.getMirrorActivityId() != mirrorActivityId)) {
-						finderCache.putResult(FINDER_PATH_FETCH_BY_MIRRORACTIVITYID,
-							finderArgs, socialActivity);
-					}
 				}
 			}
 			catch (Exception e) {
@@ -2561,7 +2557,7 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 		msg.append("classNameId=");
 		msg.append(classNameId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchActivityException(msg.toString());
 	}
@@ -2612,7 +2608,7 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 		msg.append("classNameId=");
 		msg.append(classNameId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchActivityException(msg.toString());
 	}
@@ -3076,7 +3072,7 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 		msg.append("receiverUserId=");
 		msg.append(receiverUserId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchActivityException(msg.toString());
 	}
@@ -3127,7 +3123,7 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 		msg.append("receiverUserId=");
 		msg.append(receiverUserId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchActivityException(msg.toString());
 	}
@@ -3603,7 +3599,7 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 		msg.append(", classPK=");
 		msg.append(classPK);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchActivityException(msg.toString());
 	}
@@ -3659,7 +3655,7 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 		msg.append(", classPK=");
 		msg.append(classPK);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchActivityException(msg.toString());
 	}
@@ -4171,7 +4167,7 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 		msg.append(", classPK=");
 		msg.append(classPK);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchActivityException(msg.toString());
 	}
@@ -4234,7 +4230,7 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 		msg.append(", classPK=");
 		msg.append(classPK);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchActivityException(msg.toString());
 	}
@@ -4768,7 +4764,7 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 		msg.append(", type=");
 		msg.append(type);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchActivityException(msg.toString());
 	}
@@ -4829,7 +4825,7 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 		msg.append(", type=");
 		msg.append(type);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchActivityException(msg.toString());
 	}
@@ -5410,7 +5406,7 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 		msg.append(", receiverUserId=");
 		msg.append(receiverUserId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchActivityException(msg.toString());
 	}
@@ -5490,7 +5486,7 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 		msg.append(", receiverUserId=");
 		msg.append(receiverUserId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchActivityException(msg.toString());
 	}
@@ -5880,7 +5876,7 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 			msg.append(", receiverUserId=");
 			msg.append(receiverUserId);
 
-			msg.append(StringPool.CLOSE_CURLY_BRACE);
+			msg.append("}");
 
 			if (_log.isDebugEnabled()) {
 				_log.debug(msg.toString());
@@ -6011,17 +6007,6 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 					result = socialActivity;
 
 					cacheResult(socialActivity);
-
-					if ((socialActivity.getGroupId() != groupId) ||
-							(socialActivity.getUserId() != userId) ||
-							(socialActivity.getCreateDate() != createDate) ||
-							(socialActivity.getClassNameId() != classNameId) ||
-							(socialActivity.getClassPK() != classPK) ||
-							(socialActivity.getType() != type) ||
-							(socialActivity.getReceiverUserId() != receiverUserId)) {
-						finderCache.putResult(FINDER_PATH_FETCH_BY_G_U_CD_C_C_T_R,
-							finderArgs, socialActivity);
-					}
 				}
 			}
 			catch (Exception e) {
@@ -6163,8 +6148,10 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 		setModelClass(SocialActivity.class);
 
 		try {
-			Field field = ReflectionUtil.getDeclaredField(BasePersistenceImpl.class,
+			Field field = BasePersistenceImpl.class.getDeclaredField(
 					"_dbColumnNames");
+
+			field.setAccessible(true);
 
 			Map<String, String> dbColumnNames = new HashMap<String, String>();
 
@@ -6425,8 +6412,6 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 
 	@Override
 	protected SocialActivity removeImpl(SocialActivity socialActivity) {
-		socialActivity = toUnwrappedModel(socialActivity);
-
 		Session session = null;
 
 		try {
@@ -6457,9 +6442,23 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 
 	@Override
 	public SocialActivity updateImpl(SocialActivity socialActivity) {
-		socialActivity = toUnwrappedModel(socialActivity);
-
 		boolean isNew = socialActivity.isNew();
+
+		if (!(socialActivity instanceof SocialActivityModelImpl)) {
+			InvocationHandler invocationHandler = null;
+
+			if (ProxyUtil.isProxyClass(socialActivity.getClass())) {
+				invocationHandler = ProxyUtil.getInvocationHandler(socialActivity);
+
+				throw new IllegalArgumentException(
+					"Implement ModelWrapper in socialActivity proxy " +
+					invocationHandler.getClass());
+			}
+
+			throw new IllegalArgumentException(
+				"Implement ModelWrapper in custom SocialActivity implementation " +
+				socialActivity.getClass());
+		}
 
 		SocialActivityModelImpl socialActivityModelImpl = (SocialActivityModelImpl)socialActivity;
 
@@ -6790,34 +6789,6 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 		return socialActivity;
 	}
 
-	protected SocialActivity toUnwrappedModel(SocialActivity socialActivity) {
-		if (socialActivity instanceof SocialActivityImpl) {
-			return socialActivity;
-		}
-
-		SocialActivityImpl socialActivityImpl = new SocialActivityImpl();
-
-		socialActivityImpl.setNew(socialActivity.isNew());
-		socialActivityImpl.setPrimaryKey(socialActivity.getPrimaryKey());
-
-		socialActivityImpl.setActivityId(socialActivity.getActivityId());
-		socialActivityImpl.setGroupId(socialActivity.getGroupId());
-		socialActivityImpl.setCompanyId(socialActivity.getCompanyId());
-		socialActivityImpl.setUserId(socialActivity.getUserId());
-		socialActivityImpl.setCreateDate(socialActivity.getCreateDate());
-		socialActivityImpl.setActivitySetId(socialActivity.getActivitySetId());
-		socialActivityImpl.setMirrorActivityId(socialActivity.getMirrorActivityId());
-		socialActivityImpl.setClassNameId(socialActivity.getClassNameId());
-		socialActivityImpl.setClassPK(socialActivity.getClassPK());
-		socialActivityImpl.setParentClassNameId(socialActivity.getParentClassNameId());
-		socialActivityImpl.setParentClassPK(socialActivity.getParentClassPK());
-		socialActivityImpl.setType(socialActivity.getType());
-		socialActivityImpl.setExtraData(socialActivity.getExtraData());
-		socialActivityImpl.setReceiverUserId(socialActivity.getReceiverUserId());
-
-		return socialActivityImpl;
-	}
-
 	/**
 	 * Returns the social activity with the primary key or throws a {@link com.liferay.portal.kernel.exception.NoSuchModelException} if it could not be found.
 	 *
@@ -6969,12 +6940,12 @@ public class SocialActivityPersistenceImpl extends BasePersistenceImpl<SocialAct
 		for (Serializable primaryKey : uncachedPrimaryKeys) {
 			query.append((long)primaryKey);
 
-			query.append(StringPool.COMMA);
+			query.append(",");
 		}
 
 		query.setIndex(query.index() - 1);
 
-		query.append(StringPool.CLOSE_PARENTHESIS);
+		query.append(")");
 
 		String sql = query.toString();
 

@@ -8,22 +8,7 @@
 <tr><td rowspan="1" colspan="3">SearchResults</td></tr>
 </thead>
 <tbody>
-<tr>
-	<td>FACET_VALUE_REMOVE</td>
-	<td>//span[contains(.,'${key_searchFacetValue}')]/a[contains(@class,'icon-remove')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td></td>
-	<td></td>
-	<td></td>
-</tr>
 <!--ASSET_TYPE_FACET-->
-<tr>
-	<td>ASSET_TYPE_FACET_SEARCH_ASSETS_BOX</td>
-	<td>//div[contains(@class,'search-asset_entries')]</td>
-	<td></td>
-</tr>
 <tr>
 	<td>ASSET_TYPE_FACET_ANY_ASSET</td>
 	<td>//div[contains(@class,'search-facet')]/ul/li[contains(@class,'facet-value') and contains(@class,'default')]/a[contains(.,'Any Asset')]</td>
@@ -46,11 +31,6 @@
 </tr>
 <!--USER_FACET-->
 <tr>
-	<td>USER_FACET_SEARCH_USERS_BOX</td>
-	<td>//div[contains(@class,'search-users')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>USER_FACET_ANY_USER</td>
 	<td>//div[contains(@class,'search-facet')]/ul/li[contains(@class,'facet-value') and contains(@class,'default') and contains(.,'Any User')]/a</td>
 	<td></td>
@@ -71,21 +51,6 @@
 	<td></td>
 </tr>
 <!--MODIFIED_RANGE_FACET-->
-<tr>
-	<td>MODIFIED_RANGE_FACET_SEARCH_TIME_BOX</td>
-	<td>//div[contains(@class,'search-modified')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>MODIFIED_RANGE_FACET_ANY_TIME</td>
-	<td>//div[contains(@class,'search-facet')]/div/ul/li[contains(@class,'facet-value') and contains(@class,'default') and contains(.,'Any Time')]/a</td>
-	<td></td>
-</tr>
-<tr>
-	<td>MODIFIED_RANGE_FACET_FREQUENCY</td>
-	<td>//div[contains(@class,'search-facet')]/div/ul/li[contains(@class,'facet-value') and contains(.,'${key_searchModifiedRange}')]/a/span</td>
-	<td></td>
-</tr>
 <tr>
 	<td>MODIFIED_RANGE_FACET_TIME_RANGE</td>
 	<td>//div[contains(@class,'search-facet')]/div/ul/li[contains(@class,'facet-value') and contains(.,'${key_searchModifiedRange}')]/a</td>
@@ -132,30 +97,42 @@
 	<td></td>
 	<td></td>
 </tr>
-<!--RESULTS_TABLE-->
+<!--RESULTS_PORTLET-->
 <tr>
-	<td>RESULTS_TABLE_GENERIC</td>
-	<td>//div[contains(@class,'lfr-search-container')]</td>
+	<td>RESULTS_PORTLET_SEARCH_QUERY</td>
+	<td>//p[contains(@class,'search-total-label')]</td>
+	<td></td>
+</tr>
+<!--FACET_PORTLET-->
+<tr>
+	<td>FACET_PORTLET_CHECKBOX_LABEL_SPECIFIC</td>
+	<td>//div[contains(@class,'portlet-content')][contains(.,'${key_facetClass}')]//label[contains(.,'${key_checkboxName}')][input[@type='checkbox']]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>RESULTS_TABLE_NUMBER</td>
-	<td>//tr[contains(.,'${key_webContentSearchResultsName}')]/td[1]</td>
+	<td>FACET_PORTLET_CHECKBOX_SPECIFIC</td>
+	<td>//div[contains(@class,'portlet-content')][contains(.,'${key_facetClass}')]//label[contains(.,'${key_checkboxName}')]/input[@type='checkbox']</td>
 	<td></td>
 </tr>
 <tr>
-	<td>RESULTS_TABLE_LANGUAGE</td>
-	<td>//tr[contains(.,'${key_webContentSearchResultsName}')]/td[2]//span/img</td>
+	<td>FACET_PORTLET_CLEAR_GENERIC</td>
+	<td>//div[contains(@class,'search-facet')]//a[contains(@onclick,'clearSelections(event);')]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>RESULTS_TABLE_NAME</td>
-	<td>//tr[contains(.,'${key_webContentSearchResultsName}')]/td[3]</td>
+	<td>FACET_PORTLET_CLEAR_PANEL_TITLE</td>
+	<td>//div[contains(@class,'search-facet') and contains(.,'Clear')]//div[contains(@class,'panel-title')]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>RESULTS_TABLE_CONTENT</td>
-	<td>//tr[contains(.,'${key_webContentSearchResultsName}')]/td[4]</td>
+	<td>FACET_PORTLET_CLEAR_SPECIFIC</td>
+	<td>//div[contains(@class,'search-facet') and contains(@id,'${key_facetClass}')]//a[contains(@onclick,'clearSelections(event);')]</td>
+	<td></td>
+</tr>
+<!--CUSTOM_FACET-->
+<tr>
+	<td>CUSTOM_FACET_CONFIG_AGGREGATION_FIELD</td>
+	<td>//input[contains(@name,'aggregationField')]</td>
 	<td></td>
 </tr>
 </tbody>

@@ -14,8 +14,8 @@
 
 package com.liferay.portal.kernel.servlet.taglib.ui;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.registry.Registry;
 import com.liferay.registry.RegistryUtil;
@@ -157,10 +157,9 @@ public class FormNavigatorEntryUtil {
 		if (formNavigationEntriesOptional.isPresent()) {
 			return formNavigationEntriesOptional.get();
 		}
-		else {
-			return (List)_instance._formNavigatorEntries.getService(
-				_getKey(formNavigatorId, categoryKey));
-		}
+
+		return (List)_instance._formNavigatorEntries.getService(
+			_getKey(formNavigatorId, categoryKey));
 	}
 
 	private static String _getKey(String formNavigatorId, String categoryKey) {
@@ -231,9 +230,8 @@ public class FormNavigatorEntryUtil {
 				if (serviceReference2 == null) {
 					return 0;
 				}
-				else {
-					return 1;
-				}
+
+				return 1;
 			}
 			else if (serviceReference2 == null) {
 				return -1;
@@ -246,9 +244,8 @@ public class FormNavigatorEntryUtil {
 				if (propertyValue2 == null) {
 					return 0;
 				}
-				else {
-					return 1;
-				}
+
+				return 1;
 			}
 			else if (propertyValue2 == null) {
 				return -1;

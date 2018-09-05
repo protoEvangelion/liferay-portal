@@ -38,7 +38,7 @@ import java.util.Objects;
  * @author Raymond Augé
  */
 @OSGiBeanProperties(
-	property = {"model.class.name=com.liferay.portal.kernel.model.Group"}
+	property = "model.class.name=com.liferay.portal.kernel.model.Group"
 )
 public class GroupPermissionImpl
 	implements BaseModelPermissionChecker, GroupPermission {
@@ -118,9 +118,8 @@ public class GroupPermissionImpl
 
 			return contains(permissionChecker, group, actionId);
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	@Override

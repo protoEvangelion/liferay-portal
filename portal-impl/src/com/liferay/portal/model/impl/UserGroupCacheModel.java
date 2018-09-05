@@ -16,12 +16,12 @@ package com.liferay.portal.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.MVCCModel;
 import com.liferay.portal.kernel.model.UserGroup;
 import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -79,12 +79,14 @@ public class UserGroupCacheModel implements CacheModel<UserGroup>,
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(25);
+		StringBundler sb = new StringBundler(27);
 
 		sb.append("{mvccVersion=");
 		sb.append(mvccVersion);
 		sb.append(", uuid=");
 		sb.append(uuid);
+		sb.append(", externalReferenceCode=");
+		sb.append(externalReferenceCode);
 		sb.append(", userGroupId=");
 		sb.append(userGroupId);
 		sb.append(", companyId=");
@@ -117,10 +119,17 @@ public class UserGroupCacheModel implements CacheModel<UserGroup>,
 		userGroupImpl.setMvccVersion(mvccVersion);
 
 		if (uuid == null) {
-			userGroupImpl.setUuid(StringPool.BLANK);
+			userGroupImpl.setUuid("");
 		}
 		else {
 			userGroupImpl.setUuid(uuid);
+		}
+
+		if (externalReferenceCode == null) {
+			userGroupImpl.setExternalReferenceCode("");
+		}
+		else {
+			userGroupImpl.setExternalReferenceCode(externalReferenceCode);
 		}
 
 		userGroupImpl.setUserGroupId(userGroupId);
@@ -128,7 +137,7 @@ public class UserGroupCacheModel implements CacheModel<UserGroup>,
 		userGroupImpl.setUserId(userId);
 
 		if (userName == null) {
-			userGroupImpl.setUserName(StringPool.BLANK);
+			userGroupImpl.setUserName("");
 		}
 		else {
 			userGroupImpl.setUserName(userName);
@@ -151,14 +160,14 @@ public class UserGroupCacheModel implements CacheModel<UserGroup>,
 		userGroupImpl.setParentUserGroupId(parentUserGroupId);
 
 		if (name == null) {
-			userGroupImpl.setName(StringPool.BLANK);
+			userGroupImpl.setName("");
 		}
 		else {
 			userGroupImpl.setName(name);
 		}
 
 		if (description == null) {
-			userGroupImpl.setDescription(StringPool.BLANK);
+			userGroupImpl.setDescription("");
 		}
 		else {
 			userGroupImpl.setDescription(description);
@@ -175,6 +184,7 @@ public class UserGroupCacheModel implements CacheModel<UserGroup>,
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		mvccVersion = objectInput.readLong();
 		uuid = objectInput.readUTF();
+		externalReferenceCode = objectInput.readUTF();
 
 		userGroupId = objectInput.readLong();
 
@@ -198,10 +208,17 @@ public class UserGroupCacheModel implements CacheModel<UserGroup>,
 		objectOutput.writeLong(mvccVersion);
 
 		if (uuid == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(uuid);
+		}
+
+		if (externalReferenceCode == null) {
+			objectOutput.writeUTF("");
+		}
+		else {
+			objectOutput.writeUTF(externalReferenceCode);
 		}
 
 		objectOutput.writeLong(userGroupId);
@@ -211,7 +228,7 @@ public class UserGroupCacheModel implements CacheModel<UserGroup>,
 		objectOutput.writeLong(userId);
 
 		if (userName == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(userName);
@@ -223,14 +240,14 @@ public class UserGroupCacheModel implements CacheModel<UserGroup>,
 		objectOutput.writeLong(parentUserGroupId);
 
 		if (name == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(name);
 		}
 
 		if (description == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(description);
@@ -241,6 +258,7 @@ public class UserGroupCacheModel implements CacheModel<UserGroup>,
 
 	public long mvccVersion;
 	public String uuid;
+	public String externalReferenceCode;
 	public long userGroupId;
 	public long companyId;
 	public long userId;

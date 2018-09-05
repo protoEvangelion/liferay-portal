@@ -16,12 +16,12 @@ package com.liferay.portal.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.MVCCModel;
 import com.liferay.portal.kernel.model.PluginSetting;
 import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -107,21 +107,21 @@ public class PluginSettingCacheModel implements CacheModel<PluginSetting>,
 		pluginSettingImpl.setCompanyId(companyId);
 
 		if (pluginId == null) {
-			pluginSettingImpl.setPluginId(StringPool.BLANK);
+			pluginSettingImpl.setPluginId("");
 		}
 		else {
 			pluginSettingImpl.setPluginId(pluginId);
 		}
 
 		if (pluginType == null) {
-			pluginSettingImpl.setPluginType(StringPool.BLANK);
+			pluginSettingImpl.setPluginType("");
 		}
 		else {
 			pluginSettingImpl.setPluginType(pluginType);
 		}
 
 		if (roles == null) {
-			pluginSettingImpl.setRoles(StringPool.BLANK);
+			pluginSettingImpl.setRoles("");
 		}
 		else {
 			pluginSettingImpl.setRoles(roles);
@@ -158,21 +158,21 @@ public class PluginSettingCacheModel implements CacheModel<PluginSetting>,
 		objectOutput.writeLong(companyId);
 
 		if (pluginId == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(pluginId);
 		}
 
 		if (pluginType == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(pluginType);
 		}
 
 		if (roles == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(roles);

@@ -26,7 +26,9 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.file.SourceDirectorySet;
 import org.gradle.api.plugins.BasePluginConvention;
+import org.gradle.api.plugins.ExtensionAware;
 import org.gradle.api.plugins.PluginContainer;
+import org.gradle.api.tasks.TaskContainer;
 
 /**
  * @author Andrea Di Giorgi
@@ -38,6 +40,18 @@ public class GradleUtil extends com.liferay.gradle.util.GradleUtil {
 			project, BasePluginConvention.class);
 
 		return basePluginConvention.getArchivesBaseName();
+	}
+
+	public static Integer getProperty(
+		ExtensionAware extensionAware, String name, int defaultValue) {
+
+		Object value = getProperty(extensionAware, name);
+
+		if (value == null) {
+			return defaultValue;
+		}
+
+		return toInteger(value);
 	}
 
 	public static File getSrcDir(SourceDirectorySet sourceDirectorySet) {
@@ -89,6 +103,16 @@ public class GradleUtil extends com.liferay.gradle.util.GradleUtil {
 		PluginContainer pluginContainer = project.getPlugins();
 
 		return pluginContainer.hasPlugin(pluginId);
+	}
+
+	public static boolean hasTask(Project project, String name) {
+		TaskContainer taskContainer = project.getTasks();
+
+		if (taskContainer.findByName(name) != null) {
+			return true;
+		}
+
+		return false;
 	}
 
 	public static boolean isRunningInsideDaemon() {

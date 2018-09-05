@@ -16,8 +16,10 @@ package com.liferay.gradle.plugins.workspace.configurators;
 
 import com.liferay.gradle.plugins.workspace.WorkspaceExtension;
 import com.liferay.gradle.plugins.workspace.WorkspacePlugin;
+import com.liferay.gradle.plugins.workspace.internal.configurators.TargetPlatformRootProjectConfigurator;
 import com.liferay.gradle.plugins.workspace.internal.util.FileUtil;
 import com.liferay.gradle.plugins.workspace.internal.util.GradleUtil;
+import com.liferay.gradle.plugins.workspace.tasks.CreateTokenTask;
 import com.liferay.gradle.util.Validator;
 import com.liferay.gradle.util.copy.StripPathSegmentsAction;
 
@@ -28,18 +30,23 @@ import groovy.lang.Closure;
 import java.io.File;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
+
+import org.apache.http.HttpHeaders;
 
 import org.gradle.api.Action;
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
+import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.file.CopySpec;
 import org.gradle.api.file.DuplicatesStrategy;
 import org.gradle.api.file.FileCollection;
@@ -70,6 +77,8 @@ public class RootProjectConfigurator implements Plugin<Project> {
 	public static final String CLEAN_TASK_NAME =
 		LifecycleBasePlugin.CLEAN_TASK_NAME;
 
+	public static final String CREATE_TOKEN_TASK_NAME = "createToken";
+
 	public static final String DIST_BUNDLE_TAR_TASK_NAME = "distBundleTar";
 
 	public static final String DIST_BUNDLE_TASK_NAME = "distBundle";
@@ -79,6 +88,9 @@ public class RootProjectConfigurator implements Plugin<Project> {
 	public static final String DOWNLOAD_BUNDLE_TASK_NAME = "downloadBundle";
 
 	public static final String INIT_BUNDLE_TASK_NAME = "initBundle";
+
+	public static final String PROVIDED_MODULES_CONFIGURATION_NAME =
+		"providedModules";
 
 	/**
 	 * @deprecated As of 1.4.0, replaced by {@link
@@ -97,7 +109,7 @@ public class RootProjectConfigurator implements Plugin<Project> {
 
 	@Override
 	public void apply(Project project) {
-		WorkspaceExtension workspaceExtension = GradleUtil.getExtension(
+		final WorkspaceExtension workspaceExtension = GradleUtil.getExtension(
 			(ExtensionAware)project.getGradle(), WorkspaceExtension.class);
 
 		GradleUtil.applyPlugin(project, LifecycleBasePlugin.class);
@@ -106,11 +118,20 @@ public class RootProjectConfigurator implements Plugin<Project> {
 			GradleUtil.addDefaultRepositories(project);
 		}
 
-		Download downloadBundleTask = _addTaskDownloadBundle(
+		final Configuration providedModulesConfiguration =
+			_addConfigurationProvidedModules(project);
+
+		TargetPlatformRootProjectConfigurator.INSTANCE.apply(project);
+
+		CreateTokenTask createTokenTask = _addTaskCreateToken(
 			project, workspaceExtension);
 
+		Download downloadBundleTask = _addTaskDownloadBundle(
+			createTokenTask, workspaceExtension);
+
 		Copy distBundleTask = _addTaskDistBundle(
-			project, downloadBundleTask, workspaceExtension);
+			project, downloadBundleTask, workspaceExtension,
+			providedModulesConfiguration);
 
 		Tar distBundleTarTask = _addTaskDistBundle(
 			project, DIST_BUNDLE_TAR_TASK_NAME, Tar.class, distBundleTask,
@@ -123,7 +144,9 @@ public class RootProjectConfigurator implements Plugin<Project> {
 			project, DIST_BUNDLE_ZIP_TASK_NAME, Zip.class, distBundleTask,
 			workspaceExtension);
 
-		_addTaskInitBundle(project, downloadBundleTask, workspaceExtension);
+		_addTaskInitBundle(
+			project, downloadBundleTask, workspaceExtension,
+			providedModulesConfiguration);
 	}
 
 	public boolean isDefaultRepositoryEnabled() {
@@ -134,9 +157,22 @@ public class RootProjectConfigurator implements Plugin<Project> {
 		_defaultRepositoryEnabled = defaultRepositoryEnabled;
 	}
 
+	private Configuration _addConfigurationProvidedModules(Project project) {
+		Configuration configuration = GradleUtil.addConfiguration(
+			project, PROVIDED_MODULES_CONFIGURATION_NAME);
+
+		configuration.setDescription(
+			"Configures additional 3rd-party OSGi modules to add to Liferay.");
+		configuration.setTransitive(false);
+		configuration.setVisible(true);
+
+		return configuration;
+	}
+
 	private Copy _addTaskCopyBundle(
 		Project project, String taskName, Download downloadBundleTask,
-		final WorkspaceExtension workspaceExtension) {
+		final WorkspaceExtension workspaceExtension,
+		Configuration providedModulesConfiguration) {
 
 		Copy copy = GradleUtil.addTask(project, taskName, Copy.class);
 
@@ -161,6 +197,17 @@ public class RootProjectConfigurator implements Plugin<Project> {
 				public File call() throws Exception {
 					return new File(
 						workspaceExtension.getConfigsDir(), "common");
+				}
+
+			});
+
+		copy.from(
+			providedModulesConfiguration,
+			new Closure<Void>(project) {
+
+				@SuppressWarnings("unused")
+				public void doCall(CopySpec copySpec) {
+					copySpec.into("osgi/modules");
 				}
 
 			});
@@ -190,13 +237,67 @@ public class RootProjectConfigurator implements Plugin<Project> {
 		return copy;
 	}
 
+	private CreateTokenTask _addTaskCreateToken(
+		Project project, final WorkspaceExtension workspaceExtension) {
+
+		CreateTokenTask createTokenTask = GradleUtil.addTask(
+			project, CREATE_TOKEN_TASK_NAME, CreateTokenTask.class);
+
+		createTokenTask.setDescription("Creates a liferay.com download token.");
+
+		createTokenTask.setEmailAddress(
+			new Callable<String>() {
+
+				@Override
+				public String call() throws Exception {
+					return workspaceExtension.getBundleTokenEmailAddress();
+				}
+
+			});
+
+		createTokenTask.setForce(
+			new Callable<Boolean>() {
+
+				@Override
+				public Boolean call() throws Exception {
+					return workspaceExtension.isBundleTokenForce();
+				}
+
+			});
+
+		createTokenTask.setGroup(BUNDLE_GROUP);
+
+		createTokenTask.setPassword(
+			new Callable<String>() {
+
+				@Override
+				public String call() throws Exception {
+					return workspaceExtension.getBundleTokenPassword();
+				}
+
+			});
+
+		createTokenTask.setPasswordFile(
+			new Callable<File>() {
+
+				@Override
+				public File call() throws Exception {
+					return workspaceExtension.getBundleTokenPasswordFile();
+				}
+
+			});
+
+		return createTokenTask;
+	}
+
 	private Copy _addTaskDistBundle(
 		final Project project, Download downloadBundleTask,
-		WorkspaceExtension workspaceExtension) {
+		WorkspaceExtension workspaceExtension,
+		Configuration providedModulesConfiguration) {
 
 		Copy copy = _addTaskCopyBundle(
 			project, DIST_BUNDLE_TASK_NAME, downloadBundleTask,
-			workspaceExtension);
+			workspaceExtension, providedModulesConfiguration);
 
 		_configureTaskDisableUpToDate(copy);
 
@@ -258,17 +359,67 @@ public class RootProjectConfigurator implements Plugin<Project> {
 	}
 
 	private Download _addTaskDownloadBundle(
-		Project project, final WorkspaceExtension workspaceExtension) {
+		final CreateTokenTask createTokenTask,
+		final WorkspaceExtension workspaceExtension) {
+
+		Project project = createTokenTask.getProject();
 
 		final Download download = GradleUtil.addTask(
 			project, DOWNLOAD_BUNDLE_TASK_NAME, Download.class);
 
-		File destinationDir = new File(
-			System.getProperty("user.home"), ".liferay/bundles");
+		download.doFirst(
+			new Action<Task>() {
 
-		destinationDir.mkdirs();
+				@Override
+				public void execute(Task task) {
+					Logger logger = download.getLogger();
+					Project project = download.getProject();
 
-		download.dest(destinationDir);
+					if (workspaceExtension.isBundleTokenDownload()) {
+						String token = FileUtil.read(
+							createTokenTask.getTokenFile());
+
+						token = token.trim();
+
+						download.header(
+							HttpHeaders.AUTHORIZATION, "Bearer " + token);
+					}
+
+					for (Object src : _getSrcList(download)) {
+						File file = null;
+
+						try {
+							URI uri = project.uri(src);
+
+							file = project.file(uri);
+						}
+						catch (Exception e) {
+							if (logger.isDebugEnabled()) {
+								logger.debug(e.getMessage(), e);
+							}
+						}
+
+						if ((file == null) || !file.exists()) {
+							continue;
+						}
+
+						File destinationFile = download.getDest();
+
+						if (destinationFile.isDirectory()) {
+							destinationFile = new File(
+								destinationFile, file.getName());
+						}
+
+						if (destinationFile.equals(file)) {
+							throw new GradleException(
+								"Download source " + file +
+									" and destination " + destinationFile +
+										" cannot be the same");
+						}
+					}
+				}
+
+			});
 
 		download.onlyIfNewer(true);
 		download.setDescription("Downloads the Liferay bundle zip file.");
@@ -278,26 +429,41 @@ public class RootProjectConfigurator implements Plugin<Project> {
 
 				@Override
 				public void execute(Project project) {
-					Object src = download.getSrc();
+					if (workspaceExtension.isBundleTokenDownload()) {
+						download.dependsOn(createTokenTask);
+					}
 
-					if (src != null) {
-						if (src instanceof List<?>) {
-							List<?> srcList = (List<?>)src;
+					File destinationDir =
+						workspaceExtension.getBundleCacheDir();
 
-							if (!srcList.isEmpty()) {
-								return;
-							}
-						}
-						else {
-							return;
-						}
+					destinationDir.mkdirs();
+
+					download.dest(destinationDir);
+
+					List<?> srcList = _getSrcList(download);
+
+					if (!srcList.isEmpty()) {
+						return;
 					}
 
 					String bundleUrl = workspaceExtension.getBundleUrl();
 
-					bundleUrl = bundleUrl.replace(" ", "%20");
-
 					try {
+						if (bundleUrl.startsWith("file:")) {
+							URL url = new URL(bundleUrl);
+
+							File file = new File(url.getFile());
+
+							file = file.getAbsoluteFile();
+
+							URI uri = file.toURI();
+
+							bundleUrl = uri.toASCIIString();
+						}
+						else {
+							bundleUrl = bundleUrl.replace(" ", "%20");
+						}
+
 						download.src(bundleUrl);
 					}
 					catch (MalformedURLException murle) {
@@ -312,11 +478,12 @@ public class RootProjectConfigurator implements Plugin<Project> {
 
 	private Copy _addTaskInitBundle(
 		Project project, Download downloadBundleTask,
-		final WorkspaceExtension workspaceExtension) {
+		final WorkspaceExtension workspaceExtension,
+		Configuration configurationOsgiModules) {
 
 		Copy copy = _addTaskCopyBundle(
 			project, INIT_BUNDLE_TASK_NAME, downloadBundleTask,
-			workspaceExtension);
+			workspaceExtension, configurationOsgiModules);
 
 		copy.into(
 			new Callable<File>() {
@@ -395,9 +562,8 @@ public class RootProjectConfigurator implements Plugin<Project> {
 					if (fileName.endsWith(".tar.gz")) {
 						return project.tarTree(file);
 					}
-					else {
-						return project.zipTree(file);
-					}
+
+					return project.zipTree(file);
 				}
 
 			},
@@ -489,6 +655,20 @@ public class RootProjectConfigurator implements Plugin<Project> {
 				}
 
 			});
+	}
+
+	private List<?> _getSrcList(Download download) {
+		Object src = download.getSrc();
+
+		if (src == null) {
+			return Collections.emptyList();
+		}
+
+		if (src instanceof List<?>) {
+			return (List<?>)src;
+		}
+
+		return Collections.singletonList(src);
 	}
 
 	private static final boolean _DEFAULT_REPOSITORY_ENABLED = true;

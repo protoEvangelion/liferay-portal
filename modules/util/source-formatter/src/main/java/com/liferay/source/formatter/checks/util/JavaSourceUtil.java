@@ -14,13 +14,10 @@
 
 package com.liferay.source.formatter.checks.util;
 
-import com.liferay.portal.kernel.util.CharPool;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.tools.ToolsUtil;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,17 +29,6 @@ import java.util.regex.Pattern;
  */
 public class JavaSourceUtil extends SourceUtil {
 
-	public static String getAbsolutePath(String fileName) {
-		Path filePath = Paths.get(fileName);
-
-		filePath = filePath.toAbsolutePath();
-
-		filePath = filePath.normalize();
-
-		return StringUtil.replace(
-			filePath.toString(), CharPool.BACK_SLASH, CharPool.SLASH);
-	}
-
 	public static String getClassName(String fileName) {
 		int x = fileName.lastIndexOf(CharPool.SLASH);
 		int y = fileName.lastIndexOf(CharPool.PERIOD);
@@ -50,7 +36,7 @@ public class JavaSourceUtil extends SourceUtil {
 		return fileName.substring(x + 1, y);
 	}
 
-	public static String getPackagePath(String content) {
+	public static String getPackageName(String content) {
 		Matcher matcher = _packagePattern.matcher(content);
 
 		if (matcher.find()) {

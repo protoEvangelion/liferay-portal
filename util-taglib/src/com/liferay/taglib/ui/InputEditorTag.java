@@ -19,7 +19,7 @@ import com.liferay.portal.kernel.editor.configuration.EditorConfiguration;
 import com.liferay.portal.kernel.editor.configuration.EditorConfigurationFactoryUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Portlet;
-import com.liferay.portal.kernel.model.PortletConstants;
+import com.liferay.portal.kernel.portlet.PortletIdCodec;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.servlet.BrowserSnifferUtil;
@@ -120,7 +120,8 @@ public class InputEditorTag extends BaseValidatorTagSupport {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #setEditorName(String)}
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	 *             #setEditorName(String)}
 	 */
 	@Deprecated
 	public void setEditorImpl(String editorImpl) {
@@ -140,7 +141,8 @@ public class InputEditorTag extends BaseValidatorTagSupport {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #setContents(String)}
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	 *             #setContents(String)}
 	 */
 	@Deprecated
 	public void setInitMethod(String initMethod) {
@@ -205,6 +207,8 @@ public class InputEditorTag extends BaseValidatorTagSupport {
 
 	@Override
 	protected void cleanUp() {
+		super.cleanUp();
+
 		_allowBrowseDocuments = true;
 		_autoCreate = true;
 		_configKey = null;
@@ -220,13 +224,13 @@ public class InputEditorTag extends BaseValidatorTagSupport {
 		_inlineEdit = false;
 		_inlineEditSaveURL = null;
 		_name = "editor";
-		_onChangeMethod = null;
 		_onBlurMethod = null;
+		_onChangeMethod = null;
 		_onFocusMethod = null;
 		_onInitMethod = null;
 		_placeholder = null;
-		_resizable = true;
 		_required = false;
+		_resizable = true;
 		_showSource = true;
 		_skipEditorLoading = false;
 		_toolbarSet = _TOOLBAR_SET_DEFAULT;
@@ -293,7 +297,7 @@ public class InputEditorTag extends BaseValidatorTagSupport {
 
 		EditorConfiguration editorConfiguration =
 			EditorConfigurationFactoryUtil.getEditorConfiguration(
-				PortletConstants.getRootPortletId(portletId), getConfigKey(),
+				PortletIdCodec.decodePortletName(portletId), getConfigKey(),
 				getEditorName(request), attributes, themeDisplay,
 				getRequestBackedPortletURLFactory());
 
@@ -446,7 +450,7 @@ public class InputEditorTag extends BaseValidatorTagSupport {
 	private static final String _TOOLBAR_SET_DEFAULT = "liferay";
 
 	private static final ServiceTrackerMap<String, Editor> _serviceTrackerMap =
-		ServiceTrackerCollections.singleValueMap(
+		ServiceTrackerCollections.openSingleValueMap(
 			Editor.class, null,
 			new ServiceReferenceMapper<String, Editor>() {
 
@@ -463,10 +467,6 @@ public class InputEditorTag extends BaseValidatorTagSupport {
 				}
 
 			});
-
-	static {
-		_serviceTrackerMap.open();
-	}
 
 	private boolean _allowBrowseDocuments = true;
 	private boolean _autoCreate = true;

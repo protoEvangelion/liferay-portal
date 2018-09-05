@@ -14,9 +14,9 @@
 
 package com.liferay.portal.kernel.language;
 
-import com.liferay.portal.kernel.concurrent.ConcurrentReferenceValueHashMap;
-import com.liferay.portal.kernel.memory.FinalizeManager;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.petra.concurrent.ConcurrentReferenceValueHashMap;
+import com.liferay.petra.memory.FinalizeManager;
+import com.liferay.petra.string.StringPool;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,13 +29,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
-import java.util.ResourceBundle.Control;
 
 /**
  * @author Raymond Augé
  * @author Shuyang Zhou
  */
-public class UTF8Control extends Control {
+public class UTF8Control extends ResourceBundle.Control {
 
 	public static final UTF8Control INSTANCE = new UTF8Control();
 

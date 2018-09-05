@@ -35,9 +35,11 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author Shuyang Zhou
- * @author Brian Wing Shun Chan
+ * @author     Shuyang Zhou
+ * @author     Brian Wing Shun Chan
+ * @deprecated As of Judson (7.1.x), with no direct replacement
  */
+@Deprecated
 public class RatingsEntryFinderImpl
 	extends RatingsEntryFinderBaseImpl implements RatingsEntryFinder {
 
@@ -64,7 +66,7 @@ public class RatingsEntryFinderImpl
 	public List<RatingsEntry> findByU_C_C(
 		long userId, long classNameId, List<Long> classPKs) {
 
-		Object[] finderArgs = new Object[] {
+		Object[] finderArgs = {
 			userId, classNameId,
 			StringUtil.merge(classPKs.toArray(new Long[classPKs.size()]))
 		};

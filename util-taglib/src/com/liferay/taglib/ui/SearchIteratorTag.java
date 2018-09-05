@@ -15,6 +15,7 @@
 package com.liferay.taglib.ui;
 
 import com.liferay.portal.kernel.dao.search.ResultRowSplitter;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +35,10 @@ public class SearchIteratorTag<R> extends SearchPaginatorTag<R> {
 		return _resultRowSplitter;
 	}
 
+	public String getSearchResultCssClass() {
+		return _searchResultCssClass;
+	}
+
 	public void setDisplayStyle(String displayStyle) {
 		_displayStyle = displayStyle;
 	}
@@ -51,6 +56,10 @@ public class SearchIteratorTag<R> extends SearchPaginatorTag<R> {
 		_resultRowSplitter = resultRowSplitter;
 	}
 
+	public void setSearchResultCssClass(String searchResultCssClass) {
+		_searchResultCssClass = searchResultCssClass;
+	}
+
 	@Override
 	protected void cleanUp() {
 		super.cleanUp();
@@ -59,6 +68,7 @@ public class SearchIteratorTag<R> extends SearchPaginatorTag<R> {
 		_markupView = null;
 		_paginate = true;
 		_resultRowSplitter = null;
+		_searchResultCssClass = null;
 	}
 
 	@Override
@@ -70,8 +80,9 @@ public class SearchIteratorTag<R> extends SearchPaginatorTag<R> {
 		}
 
 		if (Validator.isNotNull(_markupView)) {
-			return "/html/taglib/ui/search_iterator/" + _markupView + "/" +
-				displayStyle + ".jsp";
+			return StringBundler.concat(
+				"/html/taglib/ui/search_iterator/", _markupView, "/",
+				displayStyle, ".jsp");
 		}
 
 		return "/html/taglib/ui/search_iterator/" + displayStyle + ".jsp";
@@ -89,11 +100,15 @@ public class SearchIteratorTag<R> extends SearchPaginatorTag<R> {
 			"liferay-ui:search-iterator:paginate", String.valueOf(_paginate));
 		request.setAttribute(
 			"liferay-ui:search-iterator:resultRowSplitter", _resultRowSplitter);
+		request.setAttribute(
+			"liferay-ui:search-iterator:searchResultCssClass",
+			getSearchResultCssClass());
 	}
 
 	private String _displayStyle = DEFAULT_DISPLAY_STYLE;
 	private String _markupView;
 	private boolean _paginate = true;
 	private ResultRowSplitter _resultRowSplitter;
+	private String _searchResultCssClass;
 
 }

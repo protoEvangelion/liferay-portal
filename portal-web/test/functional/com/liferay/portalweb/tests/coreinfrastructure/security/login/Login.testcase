@@ -1,7 +1,7 @@
 <definition component-name="portal-security">
 	<property name="portal.release" value="true" />
 	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Security" />
+	<property name="testray.main.component.name" value="Login" />
 
 	<set-up>
 		<execute macro="TestCase#setUpPortalInstance" />
@@ -11,7 +11,7 @@
 		<property name="test.name.skip.portal.instance" value="Login#CASSmoke" />
 		<property name="web.plugins.includes" value="cas-web" />
 
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
+		<var method="PropsUtil#get('portal.url')" name="portalURL" />
 
 		<var name="userEmailAddress" value="userea@liferay.com" />
 		<var name="userFirstName" value="userfn" />
@@ -20,7 +20,9 @@
 
 		<execute macro="User#firstLoginPG" />
 
-		<execute macro="ProductMenu#gotoControlPanelUsers">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Users" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
@@ -31,7 +33,9 @@
 			<var name="userScreenName" value="${userScreenName}" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoControlPanelUsers">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Users" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
@@ -40,13 +44,17 @@
 			<var name="userScreenName" value="${userScreenName}" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Instance Settings" />
 		</execute>
 
 		<execute macro="PortalSettings#editConfigurationAuthenticationGeneral">
 			<var name="authenticationMethod" value="By Screen Name" />
 		</execute>
+
+		<execute macro="PortalSettingsNavigator#gotoCAS" />
 
 		<execute macro="PortalSettings#editConfigurationAuthenticationCAS">
 			<var name="casLoginURL" value="${portalURL}/cas-web/login" />
@@ -71,29 +79,28 @@
 	</command>
 
 	<command name="FacebookSSOSmoke" priority="4">
+		<property name="dummy.socket.proxy.disabled" value="true" />
 		<property name="test.name.skip.portal.instance" value="Login#FacebookSSOSmoke" />
 
-		<var name="facebookApplicationID" property-value="facebook.application.id" />
-		<var name="facebookApplicationSecret" property-value="facebook.application.secret" />
-		<var name="facebookEmail" property-value="facebook.email" />
-		<var name="facebookPassword" property-value="facebook.password" />
+		<var method="PropsUtil#get('facebook.application.id')" name="facebookApplicationID" />
+		<var method="PropsUtil#get('facebook.application.secret')" name="facebookApplicationSecret" />
+		<var method="PropsUtil#get('facebook.email')" name="facebookEmail" />
+		<var method="PropsUtil#get('facebook.password')" name="facebookPassword" />
 
 		<execute macro="User#firstLoginPG" />
 
 		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
+			<return name="siteName" />
 			<var name="siteName" value="${siteName}" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Instance Settings" />
 		</execute>
 
-		<execute macro="Panel#expandPanel">
-			<var name="panelHeading" value="Authentication" />
-		</execute>
-
-		<execute macro="PortalSettingsNavigator#gotoAuthenticationFacebook" />
+		<execute macro="PortalSettingsNavigator#gotoFacebook" />
 
 		<execute macro="PortalSettings#editConfigurationAuthenticationFacebook">
 			<var name="facebookApplicationID" value="${facebookApplicationID}" />
@@ -118,29 +125,25 @@
 	</command>
 
 	<command name="GoogleSSOSmoke" priority="4">
+		<property name="dummy.socket.proxy.disabled" value="true" />
 		<property name="test.name.skip.portal.instance" value="Login#GoogleSSOSmoke" />
 
-		<var name="googleClientID" property-value="google.client.id" />
-		<var name="googleClientSecret" property-value="google.client.secret" />
-		<var name="userEmailAddress" property-value="email.address.1" />
-		<var name="userPassword" property-value="email.password.1" />
+		<var method="MathUtil#randomNumber('3')" name="googlePropertiesSet" />
+
+		<var method="PropsUtil#get('google.client.id.${googlePropertiesSet}')" name="googleClientID" />
+		<var method="PropsUtil#get('google.client.secret.${googlePropertiesSet}')" name="googleClientSecret" />
+		<var method="PropsUtil#get('email.address.1')" name="userEmailAddress" />
+		<var method="PropsUtil#get('email.password.1')" name="userPassword" />
 
 		<execute macro="User#firstLoginPG" />
 
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Instance Settings" />
 		</execute>
 
-		<execute macro="Panel#expandPanel">
-			<var name="panelHeading" value="Authentication" />
-		</execute>
-
-		<execute macro="PortalSettingsNavigator#gotoAuthenticationGoogle" />
+		<execute macro="PortalSettingsNavigator#gotoGoogle" />
 
 		<execute macro="PortalSettings#enableGoogleSSOCP">
 			<var name="googleClientID" value="${googleClientID}" />
@@ -150,6 +153,87 @@
 		<execute macro="User#logoutPG" />
 
 		<execute macro="User#loginUserWithGoogleSSOEnabledPG">
+			<var name="userEmailAddress" value="${userEmailAddress}" />
+			<var name="userPassword" value="${userPassword}" />
+		</execute>
+
+		<execute macro="User#logoutPG" />
+
+		<execute macro="User#loginUserPG">
+			<var name="password" value="test" />
+			<var name="userEmailAddress" value="test@liferay.com" />
+		</execute>
+	</command>
+
+	<command ignore="true" name="LoginWithSpanishOnlyEnabledLocale" priority="5">
+		<description message="This is a use case for LPS-72398." />
+
+		<property name="test.name.skip.portal.instance" value="Login#LoginWithSpanishOnlyEnabledLocale" />
+
+		<!-- LPS-78681 -->
+
+		<execute macro="User#firstLoginPG" />
+
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
+			<var name="portlet" value="Instance Settings" />
+		</execute>
+
+		<execute macro="PortalSettings#configureCurrentLanguagesCP">
+			<var name="currentPortalLanguages" value="Spanish (Spain)" />
+		</execute>
+
+		<execute macro="User#logoutPG" />
+
+		<execute macro="Portlet#shutdownServer" />
+
+		<execute macro="Portlet#startServer">
+			<var name="deleteLiferayHome" value="false" />
+		</execute>
+
+		<execute macro="Portlet#assertServerStartup" />
+
+		<execute macro="User#loginPG">
+			<var name="localization" value="ES" />
+			<var name="password" value="test" />
+			<var name="userEmailAddress" value="test@liferay.com" />
+		</execute>
+	</command>
+
+	<command ignore="true" name="OpenIDConnectSmoke" priority="4">
+		<property name="dummy.socket.proxy.disabled" value="true" />
+		<property name="test.name.skip.portal.instance" value="Login#OpenIDConnectSmoke" />
+
+		<var method="MathUtil#randomNumber('3')" name="googlePropertiesSet" />
+
+		<var method="PropsUtil#get('google.client.id.${googlePropertiesSet}')" name="openIDConnectClientID" />
+		<var method="PropsUtil#get('google.client.secret.${googlePropertiesSet}')" name="openIDConnectClientSecret" />
+		<var method="PropsUtil#get('email.address.1')" name="userEmailAddress" />
+		<var method="PropsUtil#get('email.password.1')" name="userPassword" />
+
+		<execute macro="User#firstLoginPG" />
+
+		<execute macro="TestCase#getSiteName">
+			<return name="siteName" />
+			<var name="siteName" value="${siteName}" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
+			<var name="portlet" value="Instance Settings" />
+		</execute>
+
+		<execute macro="PortalSettingsNavigator#gotoOpenIDConnect" />
+
+		<execute macro="PortalSettings#enableOpenIDConnectCP" />
+
+		<execute macro="OpenIDConnect#addProviderInSystemSettings" />
+
+		<execute macro="User#logoutPG" />
+
+		<execute macro="User#loginUserWithOpenIDConnectEnabledPG">
 			<var name="siteName" value="${siteName}" />
 			<var name="userEmailAddress" value="${userEmailAddress}" />
 			<var name="userPassword" value="${userPassword}" />
@@ -163,43 +247,22 @@
 		</execute>
 	</command>
 
-	<command name="Login" priority="4">
-		<property name="test.name.skip.portal.instance" value="Login#Login" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginPG" />
-	</command>
-
-	<command name="LoginFirstTime" priority="4">
-		<execute macro="SignIn#signIn" />
-
-		<execute macro="SignIn#agreeToTermsOfUse" />
-
-		<execute macro="SignIn#setPasswordReminder" />
-
-		<execute macro="Smoke#viewWelcomePage" />
-	</command>
-
 	<command name="OpenIDSmoke" priority="4">
+		<property name="dummy.socket.proxy.disabled" value="true" />
 		<property name="test.name.skip.portal.instance" value="Login#OpenIDSmoke" />
 
-		<var method="TestPropsUtil#get('openid.password')" name="openIDPassword" />
-		<var method="TestPropsUtil#get('openid.username')" name="openIDUsername" />
+		<var method="PropsUtil#get('openid.password')" name="openIDPassword" />
+		<var method="PropsUtil#get('openid.username')" name="openIDUsername" />
 
 		<execute macro="User#firstLoginPG" />
 
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Instance Settings" />
 		</execute>
 
-		<execute macro="Panel#expandPanel">
-			<var name="panelHeading" value="Authentication" />
-		</execute>
-
-		<execute macro="PortalSettingsNavigator#gotoAuthenticationOpenID" />
+		<execute macro="PortalSettingsNavigator#gotoOpenID" />
 
 		<execute macro="PortalSettings#enableOpenIDCP" />
 
@@ -221,7 +284,8 @@
 		</execute>
 	</command>
 
-	<command name="OpenSSOSmoke" priority="5">
+	<command ignore="true" name="OpenSSOSmoke" priority="5">
+		<property name="dummy.socket.proxy.disabled" value="true" />
 		<property name="openam.enabled" value="true" />
 		<property name="test.name.skip.portal.instance" value="Login#OpenSSOSmoke" />
 
@@ -247,7 +311,7 @@
 
 				<var method="MathUtil#sum('${pauseCount}', '1')" name="pauseCount" />
 
-				<echo>Pause count: ${pauseCount}</echo>
+				<echo message="Pause count: ${pauseCount}" />
 			</then>
 		</while>
 
@@ -260,17 +324,15 @@
 
 		<execute macro="User#firstLoginPG" />
 
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Instance Settings" />
 		</execute>
 
 		<execute function="Pause" locator1="30000" />
 
-		<execute macro="Panel#expandPanel">
-			<var name="panelHeading" value="Authentication" />
-		</execute>
-
-		<execute macro="PortalSettingsNavigator#gotoAuthenticationOpenSSO" />
+		<execute macro="PortalSettingsNavigator#gotoOpenSSO" />
 
 		<execute macro="PortalSettings#configureOpenSSO">
 			<var name="OpenSSOLoginURL" value="http://test.able.com:8080/openam/UI/Login?goto=http://www.able.com:8080/c/portal/login" />
@@ -278,7 +340,7 @@
 			<var name="OpenSSOServiceURL" value="http://test.able.com:8080/openam" />
 		</execute>
 
-		<execute macro="PortalSettingsNavigator#gotoAuthenticationOpenSSO" />
+		<execute macro="PortalSettingsNavigator#gotoOpenSSO" />
 
 		<execute macro="PortalSettings#testOpenSSOConnection" />
 
@@ -296,20 +358,20 @@
 
 		<execute macro="User#firstLoginPG" />
 
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="System Settings" />
 		</execute>
 
-		<execute macro="SystemSettings#gotoCategory">
-			<var name="category" value="Foundation" />
-		</execute>
-
-		<execute macro="SystemSettings#viewConfiguration">
+		<execute macro="SystemSettings#gotoConfiguration">
+			<var name="configurationCategory" value="SSO" />
 			<var name="configurationName" value="Token Based SSO" />
+			<var name="configurationScope" value="Virtual Instance Scope" />
 		</execute>
 
-		<execute macro="SystemSettings#enableSetting">
-			<var name="checkboxSetting" value="ENABLED_CHECKBOX" />
+		<execute macro="FormFields#enableCheckbox">
+			<var name="fieldName" value="enabled" />
 		</execute>
 
 		<execute macro="PortletEntry#save" />
@@ -317,5 +379,29 @@
 		<execute macro="User#logoutPG" />
 
 		<execute function="AntCommand" locator1="build-test-authentication.xml" value1="verify-token-based-login" />
+	</command>
+
+	<command name="ViewInstanceSettingsAuthentication" priority="3">
+		<execute macro="User#firstLoginPG" />
+
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
+			<var name="portlet" value="Instance Settings" />
+		</execute>
+
+		<execute macro="PortalSettings#viewAuthenticationGeneralCP" />
+
+		<execute macro="PortalSettings#viewAuthenticationCASCP" />
+
+		<execute macro="PortalSettings#viewAuthenticationLDAPCP" />
+
+		<execute macro="Navigator#gotoBack" />
+
+		<execute macro="PortalSettings#viewAuthenticationNTLMCP" />
+
+		<execute macro="PortalSettings#viewAuthenticationOpenIDCP" />
+
+		<execute macro="PortalSettings#viewAuthenticationOpenSSOCP" />
 	</command>
 </definition>

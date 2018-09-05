@@ -14,77 +14,57 @@
 
 package com.liferay.source.formatter.checkstyle.checks;
 
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.source.formatter.checkstyle.util.DetailASTUtil;
 
-import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
-import com.puppycrawl.tools.checkstyle.utils.CommonUtils;
+import com.puppycrawl.tools.checkstyle.utils.CommonUtil;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Hugo Huijser
  */
-public class PlusStatementCheck extends AbstractCheck {
-
-	public static final String MSG_COMBINE_LITERAL_STRINGS =
-		"literal.string.combine";
-
-	public static final String MSG_INCORRECT_TABBING = "tabbing.incorrect";
-
-	public static final String MSG_INVALID_END_CHARACTER =
-		"end.character.invalid";
-
-	public static final String MSG_INVALID_START_CHARACTER =
-		"start.character.invalid";
-
-	public static final String MSG_MOVE_LITERAL_STRING = "literal.string.move";
-
-	public static final String MSG_STATEMENT_TOO_LONG =
-		"plus.statement.too.long";
+public class PlusStatementCheck extends StringConcatenationCheck {
 
 	@Override
 	public int[] getDefaultTokens() {
 		return new int[] {TokenTypes.PLUS};
 	}
 
-	public void setMaxLineLength(int maxLineLength) {
-		_maxLineLength = maxLineLength;
+	@Override
+	protected void doVisitToken(DetailAST detailAST) {
+		_checkPlusOperator(detailAST);
 	}
 
-	@Override
-	public void visitToken(DetailAST detailAST) {
-		_checkMultiLinesPlusStatement(detailAST);
+	private void _checkPlusOperator(DetailAST detailAST) {
 		_checkTabbing(detailAST);
 
 		if (detailAST.getChildCount() != 2) {
 			return;
 		}
 
-		DetailAST firstChild = detailAST.getFirstChild();
+		DetailAST firstChildAST = detailAST.getFirstChild();
 
-		String literalString1 = _getLiteralString(firstChild);
+		String literalString1 = _getLiteralString(firstChildAST);
 
 		if (literalString1 == null) {
 			return;
 		}
 
-		DetailAST lastChild = detailAST.getLastChild();
+		DetailAST lastChildAST = detailAST.getLastChild();
 
-		String literalString2 = _getLiteralString(lastChild);
+		String literalString2 = _getLiteralString(lastChildAST);
 
 		if (literalString2 == null) {
 			return;
 		}
 
-		if (firstChild.getLineNo() == lastChild.getLineNo()) {
+		if (firstChildAST.getLineNo() == lastChildAST.getLineNo()) {
 			log(
-				firstChild.getLineNo(), MSG_COMBINE_LITERAL_STRINGS,
+				firstChildAST.getLineNo(), MSG_COMBINE_LITERAL_STRINGS,
 				literalString1, literalString2);
 
 			return;
@@ -94,38 +74,24 @@ public class PlusStatementCheck extends AbstractCheck {
 			return;
 		}
 
-		if (literalString1.endsWith(StringPool.SLASH)) {
-			log(
-				detailAST.getLineNo(), MSG_INVALID_END_CHARACTER,
-				literalString1.charAt(literalString1.length() - 1));
-		}
+		checkLiteralStringStartAndEndCharacter(
+			literalString1, literalString2, detailAST.getLineNo());
 
-		if (literalString2.startsWith(StringPool.SPACE) ||
-			(!literalString1.endsWith(StringPool.SPACE) &&
-			 literalString2.matches("^[-:;.].*"))) {
-
-			log(
-				lastChild.getLineNo(), MSG_INVALID_START_CHARACTER,
-				literalString2.charAt(0));
-
-			return;
-		}
-
-		String line1 = getLine(lastChild.getLineNo() - 2);
-		String line2 = getLine(lastChild.getLineNo() - 1);
+		String line1 = getLine(lastChildAST.getLineNo() - 2);
+		String line2 = getLine(lastChildAST.getLineNo() - 1);
 
 		if (_getLeadingTabCount(line1) == _getLeadingTabCount(line2)) {
 			return;
 		}
 
-		int lineLength1 = CommonUtils.lengthExpandedTabs(
+		int lineLength1 = CommonUtil.lengthExpandedTabs(
 			line1, line1.length(), getTabWidth());
 
 		String trimmedLine2 = StringUtil.trim(line2);
 
-		if ((lineLength1 + trimmedLine2.length() - 4) <= _maxLineLength) {
+		if ((lineLength1 + trimmedLine2.length() - 4) <= maxLineLength) {
 			log(
-				lastChild.getLineNo(), MSG_COMBINE_LITERAL_STRINGS,
+				lastChildAST.getLineNo(), MSG_COMBINE_LITERAL_STRINGS,
 				literalString1, literalString2);
 
 			return;
@@ -134,7 +100,7 @@ public class PlusStatementCheck extends AbstractCheck {
 		DetailAST parentAST = detailAST.getParent();
 
 		if ((parentAST.getType() == TokenTypes.PLUS) &&
-			((lineLength1 + literalString2.length()) <= _maxLineLength)) {
+			((lineLength1 + literalString2.length()) <= maxLineLength)) {
 
 			log(
 				detailAST.getLineNo(), MSG_COMBINE_LITERAL_STRINGS,
@@ -143,51 +109,13 @@ public class PlusStatementCheck extends AbstractCheck {
 			return;
 		}
 
-		int pos = _getStringBreakPos(
-			literalString1, literalString2, _maxLineLength - lineLength1);
+		int pos = getStringBreakPos(
+			literalString1, literalString2, maxLineLength - lineLength1);
 
 		if (pos != -1) {
 			log(
-				lastChild.getLineNo(), MSG_MOVE_LITERAL_STRING,
+				lastChildAST.getLineNo(), MSG_MOVE_LITERAL_STRING,
 				literalString2.substring(0, pos + 1));
-		}
-	}
-
-	private void _checkMultiLinesPlusStatement(DetailAST detailAST) {
-		DetailAST firstChildAST = detailAST.getFirstChild();
-
-		if (firstChildAST.getType() == TokenTypes.PLUS) {
-			return;
-		}
-
-		if (DetailASTUtil.hasParentWithTokenType(
-				detailAST, TokenTypes.ANNOTATION) ||
-			!DetailASTUtil.hasParentWithTokenType(
-				detailAST, TokenTypes.CTOR_DEF, TokenTypes.METHOD_DEF)) {
-
-			return;
-		}
-
-		Set<Integer> lineNumbers = new HashSet<>();
-
-		lineNumbers.add(detailAST.getLineNo());
-
-		DetailAST parentAST = detailAST;
-
-		while (true) {
-			if (parentAST.getType() != TokenTypes.PLUS) {
-				break;
-			}
-
-			DetailAST lastChildAST = parentAST.getLastChild();
-
-			lineNumbers.add(lastChildAST.getLineNo());
-
-			parentAST = parentAST.getParent();
-		}
-
-		if (lineNumbers.size() > 3) {
-			log(detailAST.getLineNo(), MSG_STATEMENT_TOO_LONG);
 		}
 	}
 
@@ -209,10 +137,25 @@ public class PlusStatementCheck extends AbstractCheck {
 		String line1 = getLine(detailAST.getLineNo() - 1);
 		String line2 = getLine(afterPlusLineNo - 1);
 
-		int tabCount = _getLeadingTabCount(line1);
+		int tabCount1 = _getLeadingTabCount(line1);
+		int tabCount2 = _getLeadingTabCount(line2);
 
-		if ((tabCount + 1) != _getLeadingTabCount(line2)) {
-			log(afterPlusLineNo, MSG_INCORRECT_TABBING, tabCount + 1);
+		if (tabCount1 == tabCount2) {
+			DetailAST firstChildAST = detailAST.getFirstChild();
+
+			if (firstChildAST != null) {
+				DetailAST lastChildAST = firstChildAST.getLastChild();
+
+				if ((lastChildAST != null) &&
+					(lastChildAST.getType() == TokenTypes.METHOD_CALL)) {
+
+					return;
+				}
+			}
+		}
+
+		if ((tabCount1 + 1) != tabCount2) {
+			log(afterPlusLineNo, _MSG_INCORRECT_TABBING, tabCount1 + 1);
 		}
 	}
 
@@ -251,36 +194,6 @@ public class PlusStatementCheck extends AbstractCheck {
 		return null;
 	}
 
-	private int _getStringBreakPos(String s1, String s2, int i) {
-		if (s2.startsWith(StringPool.SLASH)) {
-			int pos = s2.lastIndexOf(StringPool.SLASH, i);
-
-			if (pos > 0) {
-				return pos - 1;
-			}
-
-			return -1;
-		}
-
-		if (s1.endsWith(StringPool.DASH)) {
-			return Math.max(
-				s2.lastIndexOf(StringPool.DASH, i - 1),
-				s2.lastIndexOf(StringPool.SPACE, i - 1));
-		}
-
-		if (s1.endsWith(StringPool.PERIOD)) {
-			return Math.max(
-				s2.lastIndexOf(StringPool.PERIOD, i - 1),
-				s2.lastIndexOf(StringPool.SPACE, i - 1));
-		}
-
-		if (s1.endsWith(StringPool.SPACE)) {
-			return s2.lastIndexOf(StringPool.SPACE, i - 1);
-		}
-
-		return -1;
-	}
-
 	private boolean _isRegexPattern(DetailAST detailAST) {
 		DetailAST parentAST = detailAST.getParent();
 
@@ -310,8 +223,9 @@ public class PlusStatementCheck extends AbstractCheck {
 			String methodCallClassName = classNameAST.getText();
 			String methodCallMethodName = methodNameAST.getText();
 
-			if (methodCallClassName.equals("Pattern") &&
-				methodCallMethodName.equals("compile")) {
+			if (methodCallMethodName.equals("matches") ||
+				(methodCallClassName.equals("Pattern") &&
+				 methodCallMethodName.equals("compile"))) {
 
 				return true;
 			}
@@ -322,6 +236,6 @@ public class PlusStatementCheck extends AbstractCheck {
 		return false;
 	}
 
-	private int _maxLineLength = 80;
+	private static final String _MSG_INCORRECT_TABBING = "tabbing.incorrect";
 
 }

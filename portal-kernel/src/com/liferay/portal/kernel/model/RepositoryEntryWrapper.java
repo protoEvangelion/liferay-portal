@@ -70,7 +70,7 @@ public class RepositoryEntryWrapper implements RepositoryEntry,
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("repositoryId", getRepositoryId());
 		attributes.put("mappedId", getMappedId());
-		attributes.put("manualCheckInRequired", getManualCheckInRequired());
+		attributes.put("manualCheckInRequired", isManualCheckInRequired());
 		attributes.put("lastPublishDate", getLastPublishDate());
 
 		return attributes;
@@ -159,158 +159,13 @@ public class RepositoryEntryWrapper implements RepositoryEntry,
 	}
 
 	@Override
-	public CacheModel<RepositoryEntry> toCacheModel() {
-		return _repositoryEntry.toCacheModel();
-	}
-
-	@Override
-	public RepositoryEntry toEscapedModel() {
-		return new RepositoryEntryWrapper(_repositoryEntry.toEscapedModel());
-	}
-
-	@Override
-	public RepositoryEntry toUnescapedModel() {
-		return new RepositoryEntryWrapper(_repositoryEntry.toUnescapedModel());
-	}
-
-	/**
-	* Returns the manual check in required of this repository entry.
-	*
-	* @return the manual check in required of this repository entry
-	*/
-	@Override
-	public boolean getManualCheckInRequired() {
-		return _repositoryEntry.getManualCheckInRequired();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _repositoryEntry.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _repositoryEntry.isEscapedModel();
-	}
-
-	/**
-	* Returns <code>true</code> if this repository entry is manual check in required.
-	*
-	* @return <code>true</code> if this repository entry is manual check in required; <code>false</code> otherwise
-	*/
-	@Override
-	public boolean isManualCheckInRequired() {
-		return _repositoryEntry.isManualCheckInRequired();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _repositoryEntry.isNew();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _repositoryEntry.getExpandoBridge();
+	public Object clone() {
+		return new RepositoryEntryWrapper((RepositoryEntry)_repositoryEntry.clone());
 	}
 
 	@Override
 	public int compareTo(RepositoryEntry repositoryEntry) {
 		return _repositoryEntry.compareTo(repositoryEntry);
-	}
-
-	@Override
-	public int hashCode() {
-		return _repositoryEntry.hashCode();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _repositoryEntry.getPrimaryKeyObj();
-	}
-
-	@Override
-	public java.lang.Object clone() {
-		return new RepositoryEntryWrapper((RepositoryEntry)_repositoryEntry.clone());
-	}
-
-	/**
-	* Returns the mapped ID of this repository entry.
-	*
-	* @return the mapped ID of this repository entry
-	*/
-	@Override
-	public java.lang.String getMappedId() {
-		return _repositoryEntry.getMappedId();
-	}
-
-	/**
-	* Returns the user name of this repository entry.
-	*
-	* @return the user name of this repository entry
-	*/
-	@Override
-	public java.lang.String getUserName() {
-		return _repositoryEntry.getUserName();
-	}
-
-	/**
-	* Returns the user uuid of this repository entry.
-	*
-	* @return the user uuid of this repository entry
-	*/
-	@Override
-	public java.lang.String getUserUuid() {
-		return _repositoryEntry.getUserUuid();
-	}
-
-	/**
-	* Returns the uuid of this repository entry.
-	*
-	* @return the uuid of this repository entry
-	*/
-	@Override
-	public java.lang.String getUuid() {
-		return _repositoryEntry.getUuid();
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _repositoryEntry.toString();
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _repositoryEntry.toXmlString();
-	}
-
-	/**
-	* Returns the create date of this repository entry.
-	*
-	* @return the create date of this repository entry
-	*/
-	@Override
-	public Date getCreateDate() {
-		return _repositoryEntry.getCreateDate();
-	}
-
-	/**
-	* Returns the last publish date of this repository entry.
-	*
-	* @return the last publish date of this repository entry
-	*/
-	@Override
-	public Date getLastPublishDate() {
-		return _repositoryEntry.getLastPublishDate();
-	}
-
-	/**
-	* Returns the modified date of this repository entry.
-	*
-	* @return the modified date of this repository entry
-	*/
-	@Override
-	public Date getModifiedDate() {
-		return _repositoryEntry.getModifiedDate();
 	}
 
 	/**
@@ -324,6 +179,21 @@ public class RepositoryEntryWrapper implements RepositoryEntry,
 	}
 
 	/**
+	* Returns the create date of this repository entry.
+	*
+	* @return the create date of this repository entry
+	*/
+	@Override
+	public Date getCreateDate() {
+		return _repositoryEntry.getCreateDate();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _repositoryEntry.getExpandoBridge();
+	}
+
+	/**
 	* Returns the group ID of this repository entry.
 	*
 	* @return the group ID of this repository entry
@@ -331,6 +201,46 @@ public class RepositoryEntryWrapper implements RepositoryEntry,
 	@Override
 	public long getGroupId() {
 		return _repositoryEntry.getGroupId();
+	}
+
+	/**
+	* Returns the last publish date of this repository entry.
+	*
+	* @return the last publish date of this repository entry
+	*/
+	@Override
+	public Date getLastPublishDate() {
+		return _repositoryEntry.getLastPublishDate();
+	}
+
+	/**
+	* Returns the manual check in required of this repository entry.
+	*
+	* @return the manual check in required of this repository entry
+	*/
+	@Override
+	public boolean getManualCheckInRequired() {
+		return _repositoryEntry.getManualCheckInRequired();
+	}
+
+	/**
+	* Returns the mapped ID of this repository entry.
+	*
+	* @return the mapped ID of this repository entry
+	*/
+	@Override
+	public String getMappedId() {
+		return _repositoryEntry.getMappedId();
+	}
+
+	/**
+	* Returns the modified date of this repository entry.
+	*
+	* @return the modified date of this repository entry
+	*/
+	@Override
+	public Date getModifiedDate() {
+		return _repositoryEntry.getModifiedDate();
 	}
 
 	/**
@@ -351,6 +261,11 @@ public class RepositoryEntryWrapper implements RepositoryEntry,
 	@Override
 	public long getPrimaryKey() {
 		return _repositoryEntry.getPrimaryKey();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _repositoryEntry.getPrimaryKeyObj();
 	}
 
 	/**
@@ -381,6 +296,66 @@ public class RepositoryEntryWrapper implements RepositoryEntry,
 	@Override
 	public long getUserId() {
 		return _repositoryEntry.getUserId();
+	}
+
+	/**
+	* Returns the user name of this repository entry.
+	*
+	* @return the user name of this repository entry
+	*/
+	@Override
+	public String getUserName() {
+		return _repositoryEntry.getUserName();
+	}
+
+	/**
+	* Returns the user uuid of this repository entry.
+	*
+	* @return the user uuid of this repository entry
+	*/
+	@Override
+	public String getUserUuid() {
+		return _repositoryEntry.getUserUuid();
+	}
+
+	/**
+	* Returns the uuid of this repository entry.
+	*
+	* @return the uuid of this repository entry
+	*/
+	@Override
+	public String getUuid() {
+		return _repositoryEntry.getUuid();
+	}
+
+	@Override
+	public int hashCode() {
+		return _repositoryEntry.hashCode();
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _repositoryEntry.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _repositoryEntry.isEscapedModel();
+	}
+
+	/**
+	* Returns <code>true</code> if this repository entry is manual check in required.
+	*
+	* @return <code>true</code> if this repository entry is manual check in required; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isManualCheckInRequired() {
+		return _repositoryEntry.isManualCheckInRequired();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _repositoryEntry.isNew();
 	}
 
 	@Override
@@ -464,7 +439,7 @@ public class RepositoryEntryWrapper implements RepositoryEntry,
 	* @param mappedId the mapped ID of this repository entry
 	*/
 	@Override
-	public void setMappedId(java.lang.String mappedId) {
+	public void setMappedId(String mappedId) {
 		_repositoryEntry.setMappedId(mappedId);
 	}
 
@@ -544,7 +519,7 @@ public class RepositoryEntryWrapper implements RepositoryEntry,
 	* @param userName the user name of this repository entry
 	*/
 	@Override
-	public void setUserName(java.lang.String userName) {
+	public void setUserName(String userName) {
 		_repositoryEntry.setUserName(userName);
 	}
 
@@ -554,7 +529,7 @@ public class RepositoryEntryWrapper implements RepositoryEntry,
 	* @param userUuid the user uuid of this repository entry
 	*/
 	@Override
-	public void setUserUuid(java.lang.String userUuid) {
+	public void setUserUuid(String userUuid) {
 		_repositoryEntry.setUserUuid(userUuid);
 	}
 
@@ -564,8 +539,33 @@ public class RepositoryEntryWrapper implements RepositoryEntry,
 	* @param uuid the uuid of this repository entry
 	*/
 	@Override
-	public void setUuid(java.lang.String uuid) {
+	public void setUuid(String uuid) {
 		_repositoryEntry.setUuid(uuid);
+	}
+
+	@Override
+	public CacheModel<RepositoryEntry> toCacheModel() {
+		return _repositoryEntry.toCacheModel();
+	}
+
+	@Override
+	public RepositoryEntry toEscapedModel() {
+		return new RepositoryEntryWrapper(_repositoryEntry.toEscapedModel());
+	}
+
+	@Override
+	public String toString() {
+		return _repositoryEntry.toString();
+	}
+
+	@Override
+	public RepositoryEntry toUnescapedModel() {
+		return new RepositoryEntryWrapper(_repositoryEntry.toUnescapedModel());
+	}
+
+	@Override
+	public String toXmlString() {
+		return _repositoryEntry.toXmlString();
 	}
 
 	@Override

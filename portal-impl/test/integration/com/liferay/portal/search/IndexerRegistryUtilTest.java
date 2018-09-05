@@ -14,18 +14,17 @@
 
 package com.liferay.portal.search;
 
-import static org.junit.Assert.assertNotNull;
-
-import com.liferay.message.boards.kernel.model.MBMessage;
-import com.liferay.message.boards.kernel.model.MBThread;
+import com.liferay.portal.kernel.model.Contact;
+import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.UserGroup;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portlet.messageboards.util.MBMessageIndexer;
-import com.liferay.portlet.messageboards.util.MBThreadIndexer;
+import com.liferay.portlet.usersadmin.util.ContactIndexer;
+import com.liferay.portlet.usersadmin.util.OrganizationIndexer;
 
+import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -38,19 +37,19 @@ public class IndexerRegistryUtilTest {
 
 	@ClassRule
 	@Rule
-	public static final TestRule rule = new LiferayIntegrationTestRule();
+	public static final TestRule testRule = new LiferayIntegrationTestRule();
 
 	@Test
 	public void testGetIndexerByIndexerClassName() throws Exception {
-		Indexer<MBMessage> mbMessageIndexer = IndexerRegistryUtil.getIndexer(
-			MBMessageIndexer.class.getName());
+		Indexer<Contact> contactIndexer = IndexerRegistryUtil.getIndexer(
+			ContactIndexer.class.getName());
 
-		assertNotNull(mbMessageIndexer);
+		Assert.assertNotNull(contactIndexer);
 
-		Indexer<MBThread> mbThreadIndexer = IndexerRegistryUtil.getIndexer(
-			MBThreadIndexer.class.getName());
+		Indexer<Organization> organizationIndexer =
+			IndexerRegistryUtil.getIndexer(OrganizationIndexer.class.getName());
 
-		assertNotNull(mbThreadIndexer);
+		Assert.assertNotNull(organizationIndexer);
 	}
 
 	@Test
@@ -58,12 +57,12 @@ public class IndexerRegistryUtilTest {
 		Indexer<User> userIndexer = IndexerRegistryUtil.getIndexer(
 			User.class.getName());
 
-		assertNotNull(userIndexer);
+		Assert.assertNotNull(userIndexer);
 
 		Indexer<UserGroup> userGroupIndexer = IndexerRegistryUtil.getIndexer(
 			UserGroup.class.getName());
 
-		assertNotNull(userGroupIndexer);
+		Assert.assertNotNull(userGroupIndexer);
 	}
 
 }

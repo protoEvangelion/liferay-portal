@@ -12,13 +12,13 @@
 			</else>
 		</if>
 
-		<execute macro="Portlet#changeDisplayStyle">
-			<var name="displayStyle" value="Descriptive" />
+		<execute macro="LexiconEntry#changeDisplayStyle">
+			<var name="displayStyle" value="list" />
 		</execute>
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="WC#ENTRY_DESCRIPTIVE_TITLE" value1="${webContentTitle}" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="WC#ENTRY_LIST_TITLE" value1="${webContentTitle}" />
 
-		<execute function="Click" locator1="WC#ENTRY_DESCRIPTIVE_MENULIST_ICON" />
+		<execute function="Click" locator1="WC#ENTRY_LIST_MENULIST_ICON" />
 	</command>
 
 	<command name="gotoAddCP">
@@ -28,18 +28,17 @@
 
 		<execute macro="LexiconEntry#gotoAdd" />
 
-		<if>
-			<condition function="IsElementPresent" locator1="MenuItem#BASIC_WEB_CONTENT" />
-			<then>
-				<execute function="AssertClick" locator1="MenuItem#BASIC_WEB_CONTENT" value1="Basic Web Content" />
-			</then>
-		</if>
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Basic Web Content" />
+		</execute>
 
 		<execute function="AssertVisible" locator1="TextInput#TITLE" />
 	</command>
 
 	<command name="gotoAddFeed">
-		<execute macro="WebContentNavigator#gotoFeeds" />
+		<execute macro="Navigator#gotoNavItem">
+			<var name="navItem" value="Feeds" />
+		</execute>
 
 		<execute macro="LexiconEntry#gotoAdd" />
 	</command>
@@ -73,8 +72,41 @@
 	<command name="gotoAddWithStructureCP">
 		<execute macro="LexiconEntry#gotoAdd" />
 
-		<execute function="AssertClick" locator1="MenuItem#ANY_MENU_ITEM" value1="${structureName}">
-			<var name="key_menuItem" value="${structureName}" />
+		<if>
+			<condition function="IsElementPresent" locator1="MenuItem#ANY_MENU_ITEM" value1="${structureName}">
+				<var name="key_menuItem" value="${structureName}" />
+			</condition>
+
+			<then>
+				<execute macro="MenuItem#click">
+					<var name="menuItem" value="${structureName}" />
+				</execute>
+			</then>
+			<else>
+				<execute macro="MenuItem#click">
+					<var name="menuItem" value="More" />
+				</execute>
+
+				<execute macro="IFrame#selectConfigurationFrame" />
+
+				<execute macro="LexiconEntry#gotoEntry">
+					<var name="rowEntry" value="${structureName}" />
+				</execute>
+
+				<execute macro="IFrame#selectTopFrame" />
+			</else>
+		</if>
+	</command>
+
+	<command name="gotoArticleMenuPGViaWCD">
+		<execute function="MouseOver" locator1="WCD#WEB_CONTENT_CONTENT" />
+
+		<execute function="MouseOver#mouseOverNotVisible" locator1="WCD#ARTICLE_ELLIPSIS_ICON">
+			<var name="key_webContentTitle" value="${webContentTitle}" />
+		</execute>
+
+		<execute function="Click" locator1="WCD#ARTICLE_ELLIPSIS_ICON">
+			<var name="key_webContentTitle" value="${webContentTitle}" />
 		</execute>
 	</command>
 
@@ -84,15 +116,17 @@
 			<var name="webContentTitleEscapeCharacter" value="${webContentTitleEscapeCharacter}" />
 		</execute>
 
-		<execute function="AssertClick" locator1="MenuItem#ANY_MENU_ITEM" value1="Edit">
-			<var name="key_menuItem" value="Edit" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Edit" />
 		</execute>
 
 		<execute function="AssertElementPresent" locator1="Icon#BACK" />
 	</command>
 
 	<command name="gotoEditFeed">
-		<execute macro="WebContentNavigator#gotoFeeds" />
+		<execute macro="Navigator#gotoNavItem">
+			<var name="navItem" value="Feeds" />
+		</execute>
 
 		<execute macro="LexiconEntry#gotoEntryMenuItem">
 			<var name="menuItem" value="Edit" />
@@ -101,12 +135,15 @@
 	</command>
 
 	<command name="gotoEditPGViaWCD">
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="Web Content Display" />
-			<var name="portletOption" value="Edit Web Content" />
+		<execute macro="WebContentNavigator#gotoArticleMenuPGViaWCD">
+			<var name="webContentTitle" value="${webContentTitle}" />
 		</execute>
 
-		<execute function="SelectFrame" locator1="IFrame#MODAL_IFRAME" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="${menuItem}" />
+		</execute>
+
+		<execute macro="IFrame#selectEditAssetFrame" />
 
 		<execute function="AssertVisible" locator1="TextInput#TITLE" />
 	</command>
@@ -117,52 +154,6 @@
 		</execute>
 
 		<execute function="SelectFrame" value1="relative=top" />
-	</command>
-
-	<command name="gotoEditTemplate">
-		<execute macro="LexiconEntry#gotoEntryMenuItem">
-			<var name="menuItem" value="Edit" />
-			<var name="rowEntry" value="${templateName}" />
-		</execute>
-	</command>
-
-	<command name="gotoFeeds">
-		<execute function="Click" locator1="Icon#HEADER_VERTICAL_ELLIPSIS" />
-
-		<execute function="AssertClick" locator1="MenuItem#ANY_MENU_ITEM" value1="Feeds">
-			<var name="key_menuItem" value="Feeds" />
-		</execute>
-	</command>
-
-	<command name="gotoLocalizedEditPGViaWCD">
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="${localizedPortletName}" />
-			<var name="portletOption" value="${localizedPortletOption}" />
-		</execute>
-
-		<execute function="SelectFrame" locator1="IFrame#MODAL_IFRAME" />
-
-		<execute function="AssertVisible" locator1="TextInput#TITLE" />
-	</command>
-
-	<command name="gotoManageStructures">
-		<execute function="Click" locator1="Icon#HEADER_VERTICAL_ELLIPSIS" />
-
-		<execute function="AssertClick" locator1="MenuItem#STRUCTURES" value1="Structures" />
-
-		<execute macro="SiteAdmin#viewPortletTitle">
-			<var name="portletTitle" value="Structures" />
-		</execute>
-	</command>
-
-	<command name="gotoManageTemplates">
-		<execute function="Click" locator1="Icon#HEADER_VERTICAL_ELLIPSIS" />
-
-		<execute function="AssertClick" locator1="MenuItem#TEMPLATES" value1="Templates" />
-
-		<execute macro="SiteAdmin#viewPortletTitle">
-			<var name="portletTitle" value="Templates" />
-		</execute>
 	</command>
 
 	<command name="gotoManageTemplatesViaStructures">
@@ -179,19 +170,20 @@
 	<command name="gotoMoreStructuresViaPlusButton">
 		<execute macro="LexiconEntry#gotoAdd" />
 
-		<var name="key_menuItem" value="More" />
-
 		<if>
-			<condition function="IsElementPresent" locator1="MenuItem#ANY_MENU_ITEM" />
+			<condition function="IsElementPresent" locator1="MenuItem#ANY_MENU_ITEM">
+				<var name="key_menuItem" value="More" />
+			</condition>
+
 			<then>
-				<execute function="AssertTextEquals" locator1="Pagination#SHOWING_TOTAL_ITEMS" value1="Showing ${pageMod} Items">
-					<var name="key_pageMod" value="${pageMod}" />
+				<execute macro="MenuItem#viewPresent">
+					<var name="menuItem" value="Showing ${pageMod} Elements" />
 				</execute>
 			</then>
 		</if>
 
-		<execute function="AssertClick" locator1="MenuItem#ANY_MENU_ITEM" value1="More">
-			<var name="key_menuItem" value="More" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="More" />
 		</execute>
 
 		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
@@ -203,8 +195,8 @@
 			<var name="webContentTitleEscapeCharacter" value="${webContentTitleEscapeCharacter}" />
 		</execute>
 
-		<execute function="AssertClick" locator1="MenuItem#ANY_MENU_ITEM" value1="Preview">
-			<var name="key_menuItem" value="Preview" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Preview" />
 		</execute>
 	</command>
 
@@ -213,22 +205,20 @@
 			<var name="portletTitle" value="${webContentTitle}" />
 		</execute>
 
-		<execute function="Click" locator1="Icon#HEADER_VERTICAL_ELLIPSIS" />
-
-		<execute function="AssertClick" locator1="MenuItem#ANY_MENU_ITEM" value1="Preview">
-			<var name="key_menuItem" value="Preview" />
+		<execute macro="LexiconEntry#gotoHeaderMenuItem">
+			<var name="menuItem" value="Preview" />
 		</execute>
 	</command>
 
 	<command name="gotoViewStatus">
 		<var name="key_webContentTitle" value="${webContentTitle}" />
 
-		<execute macro="Portlet#changeDisplayStyle">
-			<var name="displayStyle" value="Descriptive" />
+		<execute macro="LexiconEntry#changeDisplayStyle">
+			<var name="displayStyle" value="list" />
 		</execute>
 
-		<execute function="AssertElementPresent#pauseAssertVisible" locator1="WC#ENTRY_DESCRIPTIVE_THUMBNAIL" />
-		<execute function="AssertTextEquals" locator1="WC#ENTRY_DESCRIPTIVE_WORKFLOW_STATUS" value1="${webContentStatus}" />
+		<execute function="AssertElementPresent#pauseAssertVisible" locator1="WC#ENTRY_LIST_THUMBNAIL" />
+		<execute function="AssertTextEquals" locator1="WC#ENTRY_LIST_WORKFLOW_STATUS" value1="${webContentStatus}" />
 
 		<execute macro="WebContentNavigator#gotoEditCP">
 			<var name="webContentTitle" value="${webContentTitle}" />

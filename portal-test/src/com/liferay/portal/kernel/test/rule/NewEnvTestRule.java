@@ -14,24 +14,21 @@
 
 package com.liferay.portal.kernel.test.rule;
 
-import com.liferay.portal.kernel.process.ClassPathUtil;
-import com.liferay.portal.kernel.process.ProcessCallable;
-import com.liferay.portal.kernel.process.ProcessChannel;
-import com.liferay.portal.kernel.process.ProcessConfig;
-import com.liferay.portal.kernel.process.ProcessConfig.Builder;
-import com.liferay.portal.kernel.process.ProcessException;
-import com.liferay.portal.kernel.process.ProcessExecutor;
-import com.liferay.portal.kernel.process.local.LocalProcessExecutor;
-import com.liferay.portal.kernel.process.local.LocalProcessLauncher.ProcessContext;
-import com.liferay.portal.kernel.process.local.LocalProcessLauncher.ShutdownHook;
-import com.liferay.portal.kernel.test.rule.BaseTestRule.StatementWrapper;
-import com.liferay.portal.kernel.test.rule.NewEnv.JVMArgsLine;
+import com.liferay.petra.process.ClassPathUtil;
+import com.liferay.petra.process.ProcessCallable;
+import com.liferay.petra.process.ProcessChannel;
+import com.liferay.petra.process.ProcessConfig;
+import com.liferay.petra.process.ProcessException;
+import com.liferay.petra.process.ProcessExecutor;
+import com.liferay.petra.process.local.LocalProcessExecutor;
+import com.liferay.petra.process.local.LocalProcessLauncher;
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MethodCache;
 import com.liferay.portal.kernel.util.MethodKey;
 import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.kernel.util.Validator;
@@ -39,6 +36,8 @@ import com.liferay.portal.kernel.util.Validator;
 import java.io.Serializable;
 
 import java.lang.annotation.Annotation;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -46,7 +45,9 @@ import java.net.MalformedURLException;
 import java.net.URLClassLoader;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.regex.Matcher;
@@ -85,11 +86,13 @@ public class NewEnvTestRule implements TestRule {
 			return new RunInNewClassLoaderStatement(statement, description);
 		}
 
-		Builder builder = new Builder();
+		ProcessConfig.Builder builder = new ProcessConfig.Builder();
 
 		builder.setArguments(createArguments(description));
 		builder.setBootstrapClassPath(CLASS_PATH);
 		builder.setRuntimeClassPath(CLASS_PATH);
+
+		setEnvironment(builder, description);
 
 		return new RunInNewJVMStatment(builder.build(), statement, description);
 	}
@@ -99,9 +102,9 @@ public class NewEnvTestRule implements TestRule {
 			return;
 		}
 
-		ProcessContext.attach(
+		LocalProcessLauncher.ProcessContext.attach(
 			message, 1000,
-			new ShutdownHook() {
+			new LocalProcessLauncher.ShutdownHook() {
 
 				@Override
 				public boolean shutdown(
@@ -153,13 +156,14 @@ public class NewEnvTestRule implements TestRule {
 
 		Class<?> testClass = description.getTestClass();
 
-		JVMArgsLine jvmArgsLine = testClass.getAnnotation(JVMArgsLine.class);
+		NewEnv.JVMArgsLine jvmArgsLine = testClass.getAnnotation(
+			NewEnv.JVMArgsLine.class);
 
 		if (jvmArgsLine != null) {
 			arguments.addAll(processJVMArgsLine(jvmArgsLine));
 		}
 
-		jvmArgsLine = description.getAnnotation(JVMArgsLine.class);
+		jvmArgsLine = description.getAnnotation(NewEnv.JVMArgsLine.class);
 
 		if (jvmArgsLine != null) {
 			arguments.addAll(processJVMArgsLine(jvmArgsLine));
@@ -167,7 +171,7 @@ public class NewEnvTestRule implements TestRule {
 
 		arguments.add("-Djava.net.preferIPv4Stack=true");
 
-		if (Boolean.getBoolean("jvm.debug")) {
+		if (_isJPDAEnabled()) {
 			arguments.add(_JPDA_OPTIONS);
 			arguments.add("-Djvm.debug=true");
 		}
@@ -221,27 +225,38 @@ public class NewEnvTestRule implements TestRule {
 		return newEnv;
 	}
 
-	protected List<String> processJVMArgsLine(JVMArgsLine jvmArgsLine) {
+	protected Map<String, String> processEnvironmentVariables(
+		String[] variables) {
+
+		Map<String, String> environmentMap = new HashMap<>();
+
+		for (String variable : variables) {
+			String resolvedVariable = resolveSystemProperty(variable);
+
+			String[] parts = StringUtil.split(resolvedVariable, CharPool.EQUAL);
+
+			if (parts.length != 2) {
+				throw new IllegalArgumentException(
+					StringBundler.concat(
+						"Wrong environment variable ", variable,
+						" resolved as ", resolvedVariable,
+						". Need to be \"key=value\" format"));
+			}
+
+			environmentMap.put(parts[0], parts[1]);
+		}
+
+		return environmentMap;
+	}
+
+	protected List<String> processJVMArgsLine(NewEnv.JVMArgsLine jvmArgsLine) {
 		String[] jvmArgs = StringUtil.split(
 			jvmArgsLine.value(), StringPool.SPACE);
 
 		List<String> jvmArgsList = new ArrayList<>(jvmArgs.length);
 
 		for (String jvmArg : jvmArgs) {
-			Matcher matcher = _systemPropertyReplacePattern.matcher(jvmArg);
-
-			StringBuffer sb = new StringBuffer();
-
-			while (matcher.find()) {
-				String key = matcher.group(1);
-
-				matcher.appendReplacement(
-					sb, GetterUtil.getString(System.getProperty(key)));
-			}
-
-			matcher.appendTail(sb);
-
-			jvmArgsList.add(sb.toString());
+			jvmArgsList.add(resolveSystemProperty(jvmArg));
 		}
 
 		return jvmArgsList;
@@ -254,8 +269,82 @@ public class NewEnvTestRule implements TestRule {
 		return processCallable;
 	}
 
+	protected String resolveSystemProperty(String value) {
+		Matcher matcher = _systemPropertyReplacePattern.matcher(value);
+
+		StringBuffer sb = new StringBuffer();
+
+		while (matcher.find()) {
+			String key = matcher.group(1);
+
+			matcher.appendReplacement(
+				sb,
+				Matcher.quoteReplacement(
+					GetterUtil.getString(System.getProperty(key))));
+		}
+
+		matcher.appendTail(sb);
+
+		return sb.toString();
+	}
+
+	protected void setEnvironment(
+		ProcessConfig.Builder builder, Description description) {
+
+		Map<String, String> environmentMap = new HashMap<>(System.getenv());
+
+		Class<?> testClass = description.getTestClass();
+
+		NewEnv.Environment environment = testClass.getAnnotation(
+			NewEnv.Environment.class);
+
+		if (environment != null) {
+			Map<String, String> map = processEnvironmentVariables(
+				environment.variables());
+
+			if (environment.append()) {
+				environmentMap.putAll(map);
+			}
+			else {
+				environmentMap = map;
+			}
+		}
+
+		environment = description.getAnnotation(NewEnv.Environment.class);
+
+		if (environment != null) {
+			Map<String, String> map = processEnvironmentVariables(
+				environment.variables());
+
+			if (environment.append()) {
+				environmentMap.putAll(map);
+			}
+			else {
+				environmentMap = map;
+			}
+		}
+
+		builder.setEnvironment(environmentMap);
+	}
+
 	protected static final String CLASS_PATH = ClassPathUtil.getJVMClassPath(
 		true);
+
+	private boolean _isJPDAEnabled() {
+		if (Boolean.getBoolean("jvm.debug")) {
+			return true;
+		}
+
+		RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+
+		for (String argument : runtimeMXBean.getInputArguments()) {
+			if (argument.startsWith("-agentlib:jdwp=")) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 
 	private static final String _JPDA_OPTIONS =
 		"-agentlib:jdwp=transport=dt_socket,address=8001,server=y,suspend=y";
@@ -341,7 +430,8 @@ public class NewEnvTestRule implements TestRule {
 
 	}
 
-	private class RunInNewClassLoaderStatement extends StatementWrapper {
+	private class RunInNewClassLoaderStatement
+		extends BaseTestRule.StatementWrapper {
 
 		public RunInNewClassLoaderStatement(
 			Statement statement, Description description) {
@@ -418,7 +508,7 @@ public class NewEnvTestRule implements TestRule {
 
 	}
 
-	private class RunInNewJVMStatment extends StatementWrapper {
+	private class RunInNewJVMStatment extends BaseTestRule.StatementWrapper {
 
 		public RunInNewJVMStatment(
 			ProcessConfig processConfig, Statement statement,

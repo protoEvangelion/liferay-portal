@@ -16,12 +16,12 @@ package com.liferay.portal.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.LayoutFriendlyURL;
 import com.liferay.portal.kernel.model.MVCCModel;
 import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -121,7 +121,7 @@ public class LayoutFriendlyURLCacheModel implements CacheModel<LayoutFriendlyURL
 		layoutFriendlyURLImpl.setMvccVersion(mvccVersion);
 
 		if (uuid == null) {
-			layoutFriendlyURLImpl.setUuid(StringPool.BLANK);
+			layoutFriendlyURLImpl.setUuid("");
 		}
 		else {
 			layoutFriendlyURLImpl.setUuid(uuid);
@@ -133,7 +133,7 @@ public class LayoutFriendlyURLCacheModel implements CacheModel<LayoutFriendlyURL
 		layoutFriendlyURLImpl.setUserId(userId);
 
 		if (userName == null) {
-			layoutFriendlyURLImpl.setUserName(StringPool.BLANK);
+			layoutFriendlyURLImpl.setUserName("");
 		}
 		else {
 			layoutFriendlyURLImpl.setUserName(userName);
@@ -157,14 +157,14 @@ public class LayoutFriendlyURLCacheModel implements CacheModel<LayoutFriendlyURL
 		layoutFriendlyURLImpl.setPrivateLayout(privateLayout);
 
 		if (friendlyURL == null) {
-			layoutFriendlyURLImpl.setFriendlyURL(StringPool.BLANK);
+			layoutFriendlyURLImpl.setFriendlyURL("");
 		}
 		else {
 			layoutFriendlyURLImpl.setFriendlyURL(friendlyURL);
 		}
 
 		if (languageId == null) {
-			layoutFriendlyURLImpl.setLanguageId(StringPool.BLANK);
+			layoutFriendlyURLImpl.setLanguageId("");
 		}
 		else {
 			layoutFriendlyURLImpl.setLanguageId(languageId);
@@ -212,7 +212,7 @@ public class LayoutFriendlyURLCacheModel implements CacheModel<LayoutFriendlyURL
 		objectOutput.writeLong(mvccVersion);
 
 		if (uuid == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(uuid);
@@ -227,7 +227,7 @@ public class LayoutFriendlyURLCacheModel implements CacheModel<LayoutFriendlyURL
 		objectOutput.writeLong(userId);
 
 		if (userName == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(userName);
@@ -241,14 +241,14 @@ public class LayoutFriendlyURLCacheModel implements CacheModel<LayoutFriendlyURL
 		objectOutput.writeBoolean(privateLayout);
 
 		if (friendlyURL == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(friendlyURL);
 		}
 
 		if (languageId == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(languageId);

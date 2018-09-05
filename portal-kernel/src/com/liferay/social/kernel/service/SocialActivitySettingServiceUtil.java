@@ -40,30 +40,15 @@ public class SocialActivitySettingServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.portlet.social.service.impl.SocialActivitySettingServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static com.liferay.portal.kernel.json.JSONArray getJSONActivityDefinitions(
-		long groupId, java.lang.String className)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getJSONActivityDefinitions(groupId, className);
-	}
-
 	public static com.liferay.social.kernel.model.SocialActivityDefinition getActivityDefinition(
-		long groupId, java.lang.String className, int activityType)
+		long groupId, String className, int activityType)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
 				   .getActivityDefinition(groupId, className, activityType);
 	}
 
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	public static java.lang.String getOSGiServiceIdentifier() {
-		return getService().getOSGiServiceIdentifier();
-	}
-
 	public static java.util.List<com.liferay.social.kernel.model.SocialActivityDefinition> getActivityDefinitions(
-		long groupId, java.lang.String className)
+		long groupId, String className)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().getActivityDefinitions(groupId, className);
 	}
@@ -74,14 +59,29 @@ public class SocialActivitySettingServiceUtil {
 		return getService().getActivitySettings(groupId);
 	}
 
-	public static void updateActivitySetting(long groupId,
-		java.lang.String className, boolean enabled)
+	public static com.liferay.portal.kernel.json.JSONArray getJSONActivityDefinitions(
+		long groupId, String className)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getJSONActivityDefinitions(groupId, className);
+	}
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	public static String getOSGiServiceIdentifier() {
+		return getService().getOSGiServiceIdentifier();
+	}
+
+	public static void updateActivitySetting(long groupId, String className,
+		boolean enabled)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		getService().updateActivitySetting(groupId, className, enabled);
 	}
 
-	public static void updateActivitySetting(long groupId,
-		java.lang.String className, int activityType,
+	public static void updateActivitySetting(long groupId, String className,
+		int activityType,
 		com.liferay.social.kernel.model.SocialActivityCounterDefinition activityCounterDefinition)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		getService()
@@ -89,8 +89,8 @@ public class SocialActivitySettingServiceUtil {
 			activityCounterDefinition);
 	}
 
-	public static void updateActivitySettings(long groupId,
-		java.lang.String className, int activityType,
+	public static void updateActivitySettings(long groupId, String className,
+		int activityType,
 		java.util.List<com.liferay.social.kernel.model.SocialActivityCounterDefinition> activityCounterDefinitions)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		getService()

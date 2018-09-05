@@ -1,4 +1,5 @@
 <definition component-name="portal-web-forms-and-data-lists">
+	<property name="custom.properties" value="minifier.enabled=true" />
 	<property name="portal.release" value="true" />
 	<property name="portal.upstream" value="true" />
 	<property name="testray.main.component.name" value="Forms" />
@@ -8,11 +9,13 @@
 
 		<execute macro="User#firstLoginPG" />
 
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
+		<var method="PropsUtil#get('portal.url')" name="portalURL" />
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Forms" />
 		</execute>
 
@@ -76,7 +79,7 @@
 		<execute macro="FormRules#addRule" />
 
 		<execute macro="FormRules#configureConditionOptions">
-			<var name="conditionField" value="Choose Your Destiny" />=
+			<var name="conditionField" value="Choose Your Destiny" />
 			<var name="conditionOperator" value="Is equal to" />
 			<var name="conditionRowNumber" value="1" />
 			<var name="conditionValueField" value="Destiny 2" />
@@ -94,7 +97,7 @@
 		<execute macro="FormRules#addRule" />
 
 		<execute macro="FormRules#configureConditionOptions">
-			<var name="conditionField" value="Choose Your Destiny" />=
+			<var name="conditionField" value="Choose Your Destiny" />
 			<var name="conditionOperator" value="Is equal to" />
 			<var name="conditionRowNumber" value="1" />
 			<var name="conditionValueField" value="Destiny 3" />
@@ -115,7 +118,7 @@
 	</set-up>
 
 	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
 
 		<if>
 			<equals arg1="${testPortalInstance}" arg2="true" />
@@ -125,13 +128,15 @@
 			<else>
 				<execute macro="Navigator#openURL" />
 
-				<execute macro="ProductMenu#gotoSitesContent">
+				<execute macro="ProductMenu#gotoPortlet">
+					<var name="category" value="Content" />
+					<var name="panel" value="Site Administration" />
 					<var name="portlet" value="Forms" />
 				</execute>
 
 				<execute macro="FormsAdmin#teardownForms" />
 
-				<execute macro="Page#tearDownPG" />
+				<execute macro="Page#tearDownCP" />
 			</else>
 		</if>
 	</tear-down>
@@ -162,7 +167,6 @@
 
 	<command name="ViewPagesAfterJump" priority="5">
 		<description message="This is a use case for LPS-69372." />
-		<property name="portal.acceptance" value="pending" />
 
 		<execute macro="Form#publishForm" />
 
@@ -243,10 +247,10 @@
 
 		<var name="key_conditionRowNumber" value="1" />
 
-		<execute function="AssertTextEquals" locator1="FormRules#RULE_BUILDER_CONDITION_FIELD" value1="Edit Label" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="FormRules#RULE_BUILDER_CONDITION_FIELD" value1="Edit Label" />
 	</command>
 
-	<command ignore="true" name="ViewRuleAfterOptionValueEdit" priority="3">
+	<command name="ViewRuleAfterOptionValueEdit" priority="3">
 		<description message="This is a use case for LPS-68227." />
 
 		<execute macro="FormsAdminNavigator#gotoEditField">
@@ -271,7 +275,7 @@
 
 		<var name="key_conditionRowNumber" value="1" />
 
-		<execute function="AssertTextEquals" locator1="FormRules#RULE_BUILDER_CONDITION_VALUE_FIELD" value1="Edited Destiny" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="FormRules#RULE_BUILDER_CONDITION_VALUE_FIELD" value1="Edited Destiny" />
 	</command>
 
 	<command name="ViewRuleAfterPageNameChange" priority="4">
@@ -295,6 +299,6 @@
 
 		<var name="key_actionRowNumber" value="1" />
 
-		<execute function="AssertTextEquals" locator1="FormRules#RULE_BUILDER_JUMP_TO_PAGE_ACTION_TARGET" value1="3 Renamed Page" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="FormRules#RULE_BUILDER_JUMP_TO_PAGE_ACTION_TARGET" value1="3 Renamed Page" />
 	</command>
 </definition>

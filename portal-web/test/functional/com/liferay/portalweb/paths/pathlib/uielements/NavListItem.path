@@ -24,11 +24,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>ADDRESSES</td>
-	<td>//ul[contains(@class,'nav-list')]/li/a[contains(.,'Addresses')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>ADDITIONAL_EMAIL_ADDRESSES</td>
 	<td>//ul[contains(@class,'nav-list')]/li/a[contains(.,'Additional Email Addresses')]</td>
 	<td></td>
@@ -129,11 +124,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>ORGANIZATIONS</td>
-	<td>//ul[contains(@class,'nav-list')]/li/a[contains(.,'Javascript')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>LOOK_AND_FEEL</td>
 	<td>//ul[contains(@class,'nav-list')]/li/a[contains(.,'Look and Feel')]</td>
 	<td></td>
@@ -169,11 +159,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>MOVE_TO_THE_RECYCLE_BIN</td>
-	<td>//ul[contains(@class,'list-group') and contains(@class,'nav')]/li/a[contains(.,'Move to the Recycle Bin')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>ONLINE_TRAINING</td>
 	<td>//ul[contains(@class,'list-group') and contains(@class,'nav')]/li[contains(.,'Online Training')]/a/span</td>
 	<td></td>
@@ -181,11 +166,6 @@
 <tr>
 	<td>OPENID</td>
 	<td>//ul[contains(@class,'nav-list')]/li/a[contains(.,'OpenID')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>ORGANIZATIONS</td>
-	<td>//ul[contains(@class,'nav-list')]/li/a[contains(.,'Organizations')]</td>
 	<td></td>
 </tr>
 <tr>

@@ -22,8 +22,10 @@ import com.liferay.ratings.kernel.service.persistence.RatingsStatsPersistence;
 
 /**
  * @author Brian Wing Shun Chan
+ * @deprecated As of Judson (7.1.x), with no direct replacement
  * @generated
  */
+@Deprecated
 public class RatingsStatsFinderBaseImpl extends BasePersistenceImpl<RatingsStats> {
 	public RatingsStatsFinderBaseImpl() {
 		setModelClass(RatingsStats.class);

@@ -14,17 +14,16 @@
 
 package com.liferay.knowledge.base.service.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.knowledge.base.configuration.KBGroupServiceConfiguration;
 import com.liferay.knowledge.base.constants.AdminActivityKeys;
 import com.liferay.knowledge.base.constants.KBCommentConstants;
+import com.liferay.knowledge.base.constants.KBConstants;
 import com.liferay.knowledge.base.exception.KBCommentContentException;
+import com.liferay.knowledge.base.internal.util.AdminSubscriptionSenderFactory;
 import com.liferay.knowledge.base.model.KBArticle;
 import com.liferay.knowledge.base.model.KBComment;
 import com.liferay.knowledge.base.model.KBTemplate;
 import com.liferay.knowledge.base.service.base.KBCommentLocalServiceBaseImpl;
-import com.liferay.knowledge.base.service.util.AdminSubscriptionSender;
 import com.liferay.knowledge.base.util.comparator.KBCommentCreateDateComparator;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -37,6 +36,7 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.settings.GroupServiceSettingsLocator;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -56,7 +56,6 @@ import java.util.Locale;
 /**
  * @author Peter Shin
  */
-@ProviderType
 public class KBCommentLocalServiceImpl extends KBCommentLocalServiceBaseImpl {
 
 	@Override
@@ -396,8 +395,9 @@ public class KBCommentLocalServiceImpl extends KBCommentLocalServiceBaseImpl {
 			long groupId)
 		throws ConfigurationException {
 
-		return configurationProvider.getGroupConfiguration(
-			KBGroupServiceConfiguration.class, groupId);
+		return configurationProvider.getConfiguration(
+			KBGroupServiceConfiguration.class,
+			new GroupServiceSettingsLocator(groupId, KBConstants.SERVICE_NAME));
 	}
 
 	protected int getUserRating(long userId, long classNameId, long classPK)
@@ -434,9 +434,8 @@ public class KBCommentLocalServiceImpl extends KBCommentLocalServiceBaseImpl {
 			return kbGroupServiceConfiguration.
 				emailKBArticleSuggestionReceivedEnabled();
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	protected void notifySubscribers(
@@ -470,8 +469,9 @@ public class KBCommentLocalServiceImpl extends KBCommentLocalServiceBaseImpl {
 				"src=\"" + serviceContext.getPortalURL() + "/"
 			});
 
-		SubscriptionSender subscriptionSender = new AdminSubscriptionSender(
-			kbArticle, serviceContext);
+		SubscriptionSender subscriptionSender =
+			AdminSubscriptionSenderFactory.createSubscriptionSender(
+				kbArticle, serviceContext);
 
 		subscriptionSender.setBody(body);
 		subscriptionSender.setCompanyId(kbArticle.getCompanyId());
@@ -523,7 +523,7 @@ public class KBCommentLocalServiceImpl extends KBCommentLocalServiceBaseImpl {
 			}
 		}
 		catch (Exception e) {
-			_log.error(e);
+			_log.error("Unable to put title", e);
 		}
 	}
 

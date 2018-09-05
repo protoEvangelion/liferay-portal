@@ -14,7 +14,7 @@
 
 package com.liferay.source.formatter.checks;
 
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.source.formatter.checks.util.BNDSourceUtil;
 
@@ -61,6 +61,12 @@ public class BNDDefinitionKeysCheck extends DefinitionKeysCheck {
 		Map<String, Map<String, String>> fileSpecificDefinitionKeysMap,
 		Map<String, String> generalDefinitionKeysMap) {
 
+		if (definition.endsWith(",\\")) {
+			return StringUtil.replace(
+				content, definition,
+				definition.substring(0, definition.length() - 2));
+		}
+
 		Matcher matcher = _definitionKeyPattern.matcher(definition);
 
 		if (!matcher.find()) {
@@ -94,7 +100,9 @@ public class BNDDefinitionKeysCheck extends DefinitionKeysCheck {
 		}
 
 		if (correctKey == null) {
-			addMessage(fileName, "Unknown key \"" + definitionKey + "\"");
+			addMessage(
+				fileName, "Unknown key \"" + definitionKey + "\"",
+				"bnd_definition_keys.markdown");
 
 			return content;
 		}

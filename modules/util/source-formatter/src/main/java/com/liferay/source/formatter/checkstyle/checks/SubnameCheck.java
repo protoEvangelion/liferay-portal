@@ -14,23 +14,14 @@
 
 package com.liferay.source.formatter.checkstyle.checks;
 
-import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
-import com.puppycrawl.tools.checkstyle.utils.AnnotationUtility;
+import com.puppycrawl.tools.checkstyle.utils.AnnotationUtil;
 
 /**
  * @author Hugo Huijser
  */
-public class SubnameCheck extends AbstractCheck {
-
-	public static final String MSG_METHOD_INVALID_NAME = "method.invalidName";
-
-	public static final String MSG_PARAMETER_INVALID_NAME =
-		"parameter.invalidName";
-
-	public static final String MSG_VARIABLE_INVALID_NAME =
-		"variable.invalidName";
+public class SubnameCheck extends BaseCheck {
 
 	@Override
 	public int[] getDefaultTokens() {
@@ -41,26 +32,34 @@ public class SubnameCheck extends AbstractCheck {
 	}
 
 	@Override
-	public void visitToken(DetailAST detailAST) {
+	protected void doVisitToken(DetailAST detailAST) {
 		DetailAST nameAST = detailAST.findFirstToken(TokenTypes.IDENT);
 
 		String name = nameAST.getText();
 
 		if (detailAST.getType() == TokenTypes.METHOD_DEF) {
 			if (name.matches("(^_?sub|.*Sub)[A-Z].*") &&
-				!AnnotationUtility.containsAnnotation(detailAST, "Override")) {
+				!AnnotationUtil.containsAnnotation(detailAST, "Override")) {
 
-				log(detailAST.getLineNo(), MSG_METHOD_INVALID_NAME, name);
+				log(detailAST.getLineNo(), _MSG_METHOD_INVALID_NAME, name);
 			}
 		}
 		else if (name.matches("^_?sub[A-Z].*")) {
 			if (detailAST.getType() == TokenTypes.PARAMETER_DEF) {
-				log(detailAST.getLineNo(), MSG_PARAMETER_INVALID_NAME, name);
+				log(detailAST.getLineNo(), _MSG_PARAMETER_INVALID_NAME, name);
 			}
 			else {
-				log(detailAST.getLineNo(), MSG_VARIABLE_INVALID_NAME, name);
+				log(detailAST.getLineNo(), _MSG_VARIABLE_INVALID_NAME, name);
 			}
 		}
 	}
+
+	private static final String _MSG_METHOD_INVALID_NAME = "method.invalidName";
+
+	private static final String _MSG_PARAMETER_INVALID_NAME =
+		"parameter.invalidName";
+
+	private static final String _MSG_VARIABLE_INVALID_NAME =
+		"variable.invalidName";
 
 }

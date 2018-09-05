@@ -14,12 +14,14 @@
 
 package com.liferay.source.formatter.checks;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.source.formatter.checks.comparator.ElementComparator;
 import com.liferay.source.formatter.checks.util.SourceUtil;
 
 import java.util.List;
 
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.Element;
 
 /**
@@ -30,7 +32,7 @@ public class XMLResourceActionsFileCheck extends BaseFileCheck {
 	@Override
 	protected String doProcess(
 			String fileName, String absolutePath, String content)
-		throws Exception {
+		throws DocumentException {
 
 		if (fileName.contains("/resource-actions/")) {
 			_checkResourceActionXML(fileName, content, "model");
@@ -42,7 +44,7 @@ public class XMLResourceActionsFileCheck extends BaseFileCheck {
 
 	private void _checkResourceActionXML(
 			String fileName, String content, String type)
-		throws Exception {
+		throws DocumentException {
 
 		Document document = SourceUtil.readXML(content);
 
@@ -54,11 +56,24 @@ public class XMLResourceActionsFileCheck extends BaseFileCheck {
 		for (Element resourceElement : resourceElements) {
 			Element nameElement = resourceElement.element(type + "-name");
 
-			if (nameElement == null) {
-				continue;
+			String name = StringPool.BLANK;
+
+			if (nameElement != null) {
+				name = nameElement.getText();
 			}
 
-			String name = nameElement.getText();
+			Element compositeModelNameElement = resourceElement.element(
+				"composite-model-name");
+
+			checkElementOrder(
+				fileName, compositeModelNameElement, "model-name", name,
+				new ResourceActionNameElementComparator());
+
+			Element portletRefElement = resourceElement.element("portlet-ref");
+
+			checkElementOrder(
+				fileName, portletRefElement, "portlet-name", name,
+				new ResourceActionNameElementComparator());
 
 			Element permissionsElement = resourceElement.element("permissions");
 
@@ -72,7 +87,7 @@ public class XMLResourceActionsFileCheck extends BaseFileCheck {
 			for (Element permissionsChildElement : permissionsChildElements) {
 				checkElementOrder(
 					fileName, permissionsChildElement, "action-key", name,
-					new ResourceActionActionKeyElementComparator());
+					new ResourceActionNameElementComparator());
 			}
 		}
 
@@ -81,12 +96,12 @@ public class XMLResourceActionsFileCheck extends BaseFileCheck {
 			new ResourceActionResourceElementComparator(type + "-name"));
 	}
 
-	private class ResourceActionActionKeyElementComparator
+	private class ResourceActionNameElementComparator
 		extends ElementComparator {
 
 		@Override
-		public String getElementName(Element actionKeyElement) {
-			return actionKeyElement.getStringValue();
+		public String getElementName(Element actionNameElement) {
+			return actionNameElement.getStringValue();
 		}
 
 	}

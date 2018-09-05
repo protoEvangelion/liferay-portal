@@ -71,12 +71,26 @@ public interface CompanyService extends BaseService {
 	* @return the company
 	*/
 	@JSONWebService(mode = JSONWebServiceMode.IGNORE)
-	public Company addCompany(java.lang.String webId,
-		java.lang.String virtualHost, java.lang.String mx, boolean system,
-		int maxUsers, boolean active) throws PortalException;
+	public Company addCompany(String webId, String virtualHost, String mx,
+		boolean system, int maxUsers, boolean active) throws PortalException;
 
 	@JSONWebService(mode = JSONWebServiceMode.IGNORE)
 	public Company deleteCompany(long companyId) throws PortalException;
+
+	/**
+	* Deletes the company's logo.
+	*
+	* @param companyId the primary key of the company
+	*/
+	public void deleteLogo(long companyId) throws PortalException;
+
+	/**
+	* Returns all the companies.
+	*
+	* @return the companies
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Company> getCompanies();
 
 	/**
 	* Returns the company with the primary key.
@@ -103,8 +117,7 @@ public interface CompanyService extends BaseService {
 	* @return Returns the company with the mail domain
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Company getCompanyByMx(java.lang.String mx)
-		throws PortalException;
+	public Company getCompanyByMx(String mx) throws PortalException;
 
 	/**
 	* Returns the company with the virtual host name.
@@ -113,7 +126,7 @@ public interface CompanyService extends BaseService {
 	* @return Returns the company with the virtual host name
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Company getCompanyByVirtualHost(java.lang.String virtualHost)
+	public Company getCompanyByVirtualHost(String virtualHost)
 		throws PortalException;
 
 	/**
@@ -123,7 +136,27 @@ public interface CompanyService extends BaseService {
 	* @return Returns the company with the web domain
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Company getCompanyByWebId(java.lang.String webId)
+	public Company getCompanyByWebId(String webId) throws PortalException;
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	public String getOSGiServiceIdentifier();
+
+	/**
+	* Removes the values that match the keys of the company's preferences.
+	*
+	* This method is called by {@link
+	* com.liferay.portlet.portalsettings.action.EditLDAPServerAction} remotely
+	* through {@link CompanyService}.
+	*
+	* @param companyId the primary key of the company
+	* @param keys the company's preferences keys to be remove
+	*/
+	@JSONWebService(mode = JSONWebServiceMode.IGNORE)
+	public void removePreferences(long companyId, String[] keys)
 		throws PortalException;
 
 	/**
@@ -137,9 +170,8 @@ public interface CompanyService extends BaseService {
 	* @param active whether the company is active
 	* @return the company with the primary key
 	*/
-	public Company updateCompany(long companyId, java.lang.String virtualHost,
-		java.lang.String mx, int maxUsers, boolean active)
-		throws PortalException;
+	public Company updateCompany(long companyId, String virtualHost, String mx,
+		int maxUsers, boolean active) throws PortalException;
 
 	/**
 	* Updates the company with additional account information.
@@ -167,12 +199,10 @@ public interface CompanyService extends BaseService {
 	* @param size the company's account size (optionally <code>null</code>)
 	* @return the the company with the primary key
 	*/
-	public Company updateCompany(long companyId, java.lang.String virtualHost,
-		java.lang.String mx, java.lang.String homeURL, boolean logo,
-		byte[] logoBytes, java.lang.String name, java.lang.String legalName,
-		java.lang.String legalId, java.lang.String legalType,
-		java.lang.String sicCode, java.lang.String tickerSymbol,
-		java.lang.String industry, java.lang.String type, java.lang.String size)
+	public Company updateCompany(long companyId, String virtualHost, String mx,
+		String homeURL, boolean logo, byte[] logoBytes, String name,
+		String legalName, String legalId, String legalType, String sicCode,
+		String tickerSymbol, String industry, String type, String size)
 		throws PortalException;
 
 	/**
@@ -209,14 +239,11 @@ public interface CompanyService extends BaseService {
 	* @return the company with the primary key
 	*/
 	@JSONWebService(mode = JSONWebServiceMode.IGNORE)
-	public Company updateCompany(long companyId, java.lang.String virtualHost,
-		java.lang.String mx, java.lang.String homeURL, boolean logo,
-		byte[] logoBytes, java.lang.String name, java.lang.String legalName,
-		java.lang.String legalId, java.lang.String legalType,
-		java.lang.String sicCode, java.lang.String tickerSymbol,
-		java.lang.String industry, java.lang.String type,
-		java.lang.String size, java.lang.String languageId,
-		java.lang.String timeZoneId, List<Address> addresses,
+	public Company updateCompany(long companyId, String virtualHost, String mx,
+		String homeURL, boolean logo, byte[] logoBytes, String name,
+		String legalName, String legalId, String legalType, String sicCode,
+		String tickerSymbol, String industry, String type, String size,
+		String languageId, String timeZoneId, List<Address> addresses,
 		List<EmailAddress> emailAddresses, List<Phone> phones,
 		List<Website> websites, UnicodeProperties properties)
 		throws PortalException;
@@ -247,17 +274,16 @@ public interface CompanyService extends BaseService {
 	* @param size the company's account size (optionally
 	<code>null</code>)
 	* @return the the company with the primary key
-	* @deprecated As of 7.0.0, replaced by {@link #updateCompany(long, String,
-	String, String, boolean, byte[], String, String, String,
-	String, String, String, String, String, String)}
+	* @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	#updateCompany(long, String, String, String, boolean, byte[],
+	String, String, String, String, String, String, String,
+	String, String)}
 	*/
-	@java.lang.Deprecated
-	public Company updateCompany(long companyId, java.lang.String virtualHost,
-		java.lang.String mx, java.lang.String homeURL, java.lang.String name,
-		java.lang.String legalName, java.lang.String legalId,
-		java.lang.String legalType, java.lang.String sicCode,
-		java.lang.String tickerSymbol, java.lang.String industry,
-		java.lang.String type, java.lang.String size) throws PortalException;
+	@Deprecated
+	public Company updateCompany(long companyId, String virtualHost, String mx,
+		String homeURL, String name, String legalName, String legalId,
+		String legalType, String sicCode, String tickerSymbol, String industry,
+		String type, String size) throws PortalException;
 
 	/**
 	* Updates the company with addition information.
@@ -292,23 +318,31 @@ public interface CompanyService extends BaseService {
 	* @param websites the company's websites
 	* @param properties the company's properties
 	* @return the company with the primary key
-	* @deprecated As of 7.0.0, replaced by {@link #updateCompany(long, String,
-	String, String, boolean, byte[], String, String, String,
+	* @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	#updateCompany(long, String, String, String, boolean, byte[],
 	String, String, String, String, String, String, String,
-	String, List, List, List, List, UnicodeProperties)}
+	String, String, String, String, List, List, List, List,
+	UnicodeProperties)}
 	*/
-	@java.lang.Deprecated
+	@Deprecated
 	@JSONWebService(mode = JSONWebServiceMode.IGNORE)
-	public Company updateCompany(long companyId, java.lang.String virtualHost,
-		java.lang.String mx, java.lang.String homeURL, java.lang.String name,
-		java.lang.String legalName, java.lang.String legalId,
-		java.lang.String legalType, java.lang.String sicCode,
-		java.lang.String tickerSymbol, java.lang.String industry,
-		java.lang.String type, java.lang.String size,
-		java.lang.String languageId, java.lang.String timeZoneId,
+	public Company updateCompany(long companyId, String virtualHost, String mx,
+		String homeURL, String name, String legalName, String legalId,
+		String legalType, String sicCode, String tickerSymbol, String industry,
+		String type, String size, String languageId, String timeZoneId,
 		List<Address> addresses, List<EmailAddress> emailAddresses,
 		List<Phone> phones, List<Website> websites, UnicodeProperties properties)
 		throws PortalException;
+
+	/**
+	* Update the company's display.
+	*
+	* @param companyId the primary key of the company
+	* @param languageId the ID of the company's default user's language
+	* @param timeZoneId the ID of the company's default user's time zone
+	*/
+	public void updateDisplay(long companyId, String languageId,
+		String timeZoneId) throws PortalException;
 
 	/**
 	* Updates the company's logo.
@@ -330,44 +364,6 @@ public interface CompanyService extends BaseService {
 	@JSONWebService(mode = JSONWebServiceMode.IGNORE)
 	public Company updateLogo(long companyId, InputStream inputStream)
 		throws PortalException;
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	public java.lang.String getOSGiServiceIdentifier();
-
-	/**
-	* Deletes the company's logo.
-	*
-	* @param companyId the primary key of the company
-	*/
-	public void deleteLogo(long companyId) throws PortalException;
-
-	/**
-	* Removes the values that match the keys of the company's preferences.
-	*
-	* This method is called by {@link
-	* com.liferay.portlet.portalsettings.action.EditLDAPServerAction} remotely
-	* through {@link CompanyService}.
-	*
-	* @param companyId the primary key of the company
-	* @param keys the company's preferences keys to be remove
-	*/
-	@JSONWebService(mode = JSONWebServiceMode.IGNORE)
-	public void removePreferences(long companyId, java.lang.String[] keys)
-		throws PortalException;
-
-	/**
-	* Update the company's display.
-	*
-	* @param companyId the primary key of the company
-	* @param languageId the ID of the company's default user's language
-	* @param timeZoneId the ID of the company's default user's time zone
-	*/
-	public void updateDisplay(long companyId, java.lang.String languageId,
-		java.lang.String timeZoneId) throws PortalException;
 
 	/**
 	* Updates the company's preferences. The company's default properties are
@@ -399,7 +395,7 @@ public interface CompanyService extends BaseService {
 	logo instead of the enterprise logo
 	*/
 	@JSONWebService(mode = JSONWebServiceMode.IGNORE)
-	public void updateSecurity(long companyId, java.lang.String authType,
+	public void updateSecurity(long companyId, String authType,
 		boolean autoLogin, boolean sendPassword, boolean strangers,
 		boolean strangersWithMx, boolean strangersVerify, boolean siteLogo)
 		throws PortalException;

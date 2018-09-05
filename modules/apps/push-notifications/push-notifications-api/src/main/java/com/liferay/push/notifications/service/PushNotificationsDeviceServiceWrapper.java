@@ -36,17 +36,10 @@ public class PushNotificationsDeviceServiceWrapper
 
 	@Override
 	public com.liferay.push.notifications.model.PushNotificationsDevice addPushNotificationsDevice(
-		java.lang.String token, java.lang.String platform)
+		String token, String platform)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _pushNotificationsDeviceService.addPushNotificationsDevice(token,
 			platform);
-	}
-
-	@Override
-	public com.liferay.push.notifications.model.PushNotificationsDevice deletePushNotificationsDevice(
-		java.lang.String token)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _pushNotificationsDeviceService.deletePushNotificationsDevice(token);
 	}
 
 	@Override
@@ -56,28 +49,35 @@ public class PushNotificationsDeviceServiceWrapper
 		return _pushNotificationsDeviceService.deletePushNotificationsDevice(pushNotificationsDeviceId);
 	}
 
+	@Override
+	public com.liferay.push.notifications.model.PushNotificationsDevice deletePushNotificationsDevice(
+		String token)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _pushNotificationsDeviceService.deletePushNotificationsDevice(token);
+	}
+
 	/**
 	* Returns the OSGi service identifier.
 	*
 	* @return the OSGi service identifier
 	*/
 	@Override
-	public java.lang.String getOSGiServiceIdentifier() {
+	public String getOSGiServiceIdentifier() {
 		return _pushNotificationsDeviceService.getOSGiServiceIdentifier();
 	}
 
 	@Override
-	public void sendPushNotification(java.lang.String platform,
-		java.util.List<java.lang.String> tokens, java.lang.String payload)
+	public void sendPushNotification(long[] toUserIds, String payload)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		_pushNotificationsDeviceService.sendPushNotification(platform, tokens,
-			payload);
+		_pushNotificationsDeviceService.sendPushNotification(toUserIds, payload);
 	}
 
 	@Override
-	public void sendPushNotification(long[] toUserIds, java.lang.String payload)
+	public void sendPushNotification(String platform,
+		java.util.List<String> tokens, String payload)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		_pushNotificationsDeviceService.sendPushNotification(toUserIds, payload);
+		_pushNotificationsDeviceService.sendPushNotification(platform, tokens,
+			payload);
 	}
 
 	@Override

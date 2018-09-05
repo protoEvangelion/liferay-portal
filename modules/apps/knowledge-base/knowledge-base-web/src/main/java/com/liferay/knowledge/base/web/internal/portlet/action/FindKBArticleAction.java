@@ -21,16 +21,17 @@ import com.liferay.knowledge.base.model.KBArticle;
 import com.liferay.knowledge.base.model.KBFolder;
 import com.liferay.knowledge.base.service.KBArticleLocalService;
 import com.liferay.knowledge.base.service.KBFolderLocalService;
-import com.liferay.knowledge.base.service.permission.KBArticlePermission;
-import com.liferay.knowledge.base.service.util.AdminUtil;
+import com.liferay.knowledge.base.util.AdminHelper;
+import com.liferay.knowledge.base.web.internal.security.permission.resource.KBArticlePermission;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.model.LayoutTypePortlet;
 import com.liferay.portal.kernel.model.Portlet;
-import com.liferay.portal.kernel.model.PortletConstants;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
+import com.liferay.portal.kernel.portlet.PortletIdCodec;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.security.auth.AuthTokenUtil;
@@ -47,7 +48,6 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -231,7 +231,7 @@ public class FindKBArticleAction extends BaseStrutsAction {
 			List<Portlet> portlets = layoutTypePortlet.getAllPortlets();
 
 			for (Portlet portlet : portlets) {
-				String rootPortletId = PortletConstants.getRootPortletId(
+				String rootPortletId = PortletIdCodec.decodePortletName(
 					portlet.getPortletId());
 
 				if (rootPortletId.equals(
@@ -263,7 +263,7 @@ public class FindKBArticleAction extends BaseStrutsAction {
 						}
 					}
 					else if (resourcePrimKey ==
-								kbArticle.getResourcePrimKey()) {
+								 kbArticle.getResourcePrimKey()) {
 
 						return getKBArticleURL(
 							layout.getPlid(), portlet.getPortletId(), kbArticle,
@@ -296,7 +296,7 @@ public class FindKBArticleAction extends BaseStrutsAction {
 						continue;
 					}
 
-					String[] sections = AdminUtil.unescapeSections(
+					String[] sections = _adminHelper.unescapeSections(
 						rootKBArticle.getSections());
 
 					for (String section : sections) {
@@ -360,7 +360,7 @@ public class FindKBArticleAction extends BaseStrutsAction {
 
 		String mvcPath = null;
 
-		String rootPortletId = PortletConstants.getRootPortletId(portletId);
+		String rootPortletId = PortletIdCodec.decodePortletName(portletId);
 
 		if (rootPortletId.equals(KBPortletKeys.KNOWLEDGE_BASE_ARTICLE)) {
 			mvcPath = "/article/view_article.jsp";
@@ -449,6 +449,11 @@ public class FindKBArticleAction extends BaseStrutsAction {
 	}
 
 	@Reference(unbind = "-")
+	protected void setAdminUtilHelper(AdminHelper adminHelper) {
+		_adminHelper = adminHelper;
+	}
+
+	@Reference(unbind = "-")
 	protected void setGroupLocalService(GroupLocalService groupLocalService) {
 		_groupLocalService = groupLocalService;
 	}
@@ -479,6 +484,7 @@ public class FindKBArticleAction extends BaseStrutsAction {
 			PropsUtil.get(
 				PropsKeys.PORTLET_ADD_DEFAULT_RESOURCE_CHECK_ENABLED));
 
+	private AdminHelper _adminHelper;
 	private GroupLocalService _groupLocalService;
 	private KBArticleLocalService _kbArticleLocalService;
 	private KBFolderLocalService _kbFolderLocalService;

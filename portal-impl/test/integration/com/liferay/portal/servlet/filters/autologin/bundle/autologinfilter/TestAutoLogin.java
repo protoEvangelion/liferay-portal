@@ -15,9 +15,8 @@
 package com.liferay.portal.servlet.filters.autologin.bundle.autologinfilter;
 
 import com.liferay.portal.kernel.security.auto.login.AutoLogin;
-import com.liferay.portal.kernel.util.StackTraceUtil;
 
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,8 +28,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Philip Jones
  */
 @Component(
-	immediate = true,
-	property = {"service.ranking:Integer=" + Integer.MAX_VALUE}
+	immediate = true, property = "service.ranking:Integer=" + Integer.MAX_VALUE
 )
 public class TestAutoLogin implements AutoLogin {
 
@@ -45,16 +43,16 @@ public class TestAutoLogin implements AutoLogin {
 	public String[] login(
 		HttpServletRequest request, HttpServletResponse response) {
 
-		_atomicReference.set(StackTraceUtil.getCallerKey());
+		_atomicBoolean.set(Boolean.TRUE);
 
 		return null;
 	}
 
 	@Reference(target = "(test=AtomicState)")
-	protected void setAtomicReference(AtomicReference<String> atomicReference) {
-		_atomicReference = atomicReference;
+	protected void setAtomicBoolean(AtomicBoolean atomicBoolean) {
+		_atomicBoolean = atomicBoolean;
 	}
 
-	private AtomicReference<String> _atomicReference;
+	private AtomicBoolean _atomicBoolean;
 
 }

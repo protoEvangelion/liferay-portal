@@ -26,13 +26,6 @@
 	</div>
 
 	<div class="wiki-content">
-		<@liferay_ui["social-bookmarks"]
-			displayStyle="normal"
-			target="_blank"
-			title=entry.getTitle()
-			url=viewURL
-		/>
-
 		${formattedContent}
 	</div>
 
@@ -166,7 +159,7 @@
 </#macro>
 
 <#macro getDiscussion>
-	<#if validator.isNotNull(assetRenderer.getDiscussionPath()) && wikiPortletInstanceOverriddenConfiguration.enableComments()>
+	<#if validator.isNotNull(assetRenderer.getDiscussionPath()) && wikiPortletInstanceConfiguration.enableComments()>
 		<br />
 
 		<#assign discussionURL = renderResponse.createActionURL() />
@@ -178,7 +171,7 @@
 			classPK=entry.getResourcePrimKey()
 			formAction=discussionURL?string
 			formName="fm2"
-			ratingsEnabled=wikiPortletInstanceOverriddenConfiguration.enableCommentRatings()
+			ratingsEnabled=wikiPortletInstanceConfiguration.enableCommentRatings()
 			redirect=currentURL
 			subject=assetRenderer.getTitle(locale)
 			userId=assetRenderer.getUserId()
@@ -238,7 +231,7 @@
 	cssClass
 	entry
 >
-	<#if wikiPortletInstanceOverriddenConfiguration.enablePageRatings()>
+	<#if wikiPortletInstanceConfiguration.enablePageRatings()>
 		<div class="${cssClass}">
 			<@liferay_ui["ratings"]
 				className=wikiPageClassName
@@ -249,9 +242,7 @@
 </#macro>
 
 <#macro getRelatedAssets>
-	<#if assetEntry?? && wikiPortletInstanceOverriddenConfiguration.enableRelatedAssets()>
-		<@liferay_ui["asset-links"]
-			assetEntryId=assetEntry.getEntryId()
-		/>
+	<#if assetEntry?? && wikiPortletInstanceConfiguration.enableRelatedAssets()>
+		<@liferay_ui["asset-links"] assetEntryId=assetEntry.getEntryId() />
 	</#if>
 </#macro>

@@ -60,28 +60,8 @@ public interface RepositoryEntryLocalService extends BaseLocalService,
 	 *
 	 * Never modify or reference this interface directly. Always use {@link RepositoryEntryLocalServiceUtil} to access the repository entry local service. Add custom service methods to {@link com.liferay.portal.service.impl.RepositoryEntryLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public ActionableDynamicQuery getActionableDynamicQuery();
-
-	public DynamicQuery dynamicQuery();
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
-		PortletDataContext portletDataContext);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
-
-	/**
-	* @throws PortalException
-	*/
-	@Override
-	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
-		throws PortalException;
-
-	@Override
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
+	public RepositoryEntry addRepositoryEntry(long userId, long groupId,
+		long repositoryId, String mappedId, ServiceContext serviceContext)
 		throws PortalException;
 
 	/**
@@ -93,27 +73,24 @@ public interface RepositoryEntryLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.REINDEX)
 	public RepositoryEntry addRepositoryEntry(RepositoryEntry repositoryEntry);
 
-	public RepositoryEntry addRepositoryEntry(long userId, long groupId,
-		long repositoryId, java.lang.String mappedId,
-		ServiceContext serviceContext) throws PortalException;
-
 	/**
 	* Creates a new repository entry with the primary key. Does not add the repository entry to the database.
 	*
 	* @param repositoryEntryId the primary key for the new repository entry
 	* @return the new repository entry
 	*/
+	@Transactional(enabled = false)
 	public RepositoryEntry createRepositoryEntry(long repositoryEntryId);
 
 	/**
-	* Deletes the repository entry from the database. Also notifies the appropriate model listeners.
-	*
-	* @param repositoryEntry the repository entry
-	* @return the repository entry that was removed
+	* @throws PortalException
 	*/
-	@Indexable(type = IndexableType.DELETE)
-	public RepositoryEntry deleteRepositoryEntry(
-		RepositoryEntry repositoryEntry);
+	@Override
+	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
+		throws PortalException;
+
+	public void deleteRepositoryEntries(long repositoryId,
+		Iterable<String> mappedIds) throws PortalException;
 
 	/**
 	* Deletes the repository entry with the primary key from the database. Also notifies the appropriate model listeners.
@@ -126,78 +103,20 @@ public interface RepositoryEntryLocalService extends BaseLocalService,
 	public RepositoryEntry deleteRepositoryEntry(long repositoryEntryId)
 		throws PortalException;
 
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public RepositoryEntry fetchRepositoryEntry(long repositoryEntryId);
-
-	/**
-	* Returns the repository entry matching the UUID and group.
-	*
-	* @param uuid the repository entry's UUID
-	* @param groupId the primary key of the group
-	* @return the matching repository entry, or <code>null</code> if a matching repository entry could not be found
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public RepositoryEntry fetchRepositoryEntryByUuidAndGroupId(
-		java.lang.String uuid, long groupId);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public RepositoryEntry getRepositoryEntry(java.lang.String uuid,
-		long groupId) throws PortalException;
-
-	/**
-	* Returns the repository entry with the primary key.
-	*
-	* @param repositoryEntryId the primary key of the repository entry
-	* @return the repository entry
-	* @throws PortalException if a repository entry with the primary key could not be found
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public RepositoryEntry getRepositoryEntry(long repositoryEntryId)
+	public void deleteRepositoryEntry(long repositoryId, String mappedId)
 		throws PortalException;
 
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public RepositoryEntry getRepositoryEntry(long userId, long groupId,
-		long repositoryId, java.lang.String objectId) throws PortalException;
-
 	/**
-	* Returns the repository entry matching the UUID and group.
-	*
-	* @param uuid the repository entry's UUID
-	* @param groupId the primary key of the group
-	* @return the matching repository entry
-	* @throws PortalException if a matching repository entry could not be found
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public RepositoryEntry getRepositoryEntryByUuidAndGroupId(
-		java.lang.String uuid, long groupId) throws PortalException;
-
-	/**
-	* Updates the repository entry in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	* Deletes the repository entry from the database. Also notifies the appropriate model listeners.
 	*
 	* @param repositoryEntry the repository entry
-	* @return the repository entry that was updated
+	* @return the repository entry that was removed
 	*/
-	@Indexable(type = IndexableType.REINDEX)
-	public RepositoryEntry updateRepositoryEntry(
+	@Indexable(type = IndexableType.DELETE)
+	public RepositoryEntry deleteRepositoryEntry(
 		RepositoryEntry repositoryEntry);
 
-	public RepositoryEntry updateRepositoryEntry(long repositoryEntryId,
-		java.lang.String mappedId) throws PortalException;
-
-	/**
-	* Returns the number of repository entries.
-	*
-	* @return the number of repository entries
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getRepositoryEntriesCount();
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	public java.lang.String getOSGiServiceIdentifier();
+	public DynamicQuery dynamicQuery();
 
 	/**
 	* Performs a dynamic query on the database and returns the matching rows.
@@ -239,6 +158,60 @@ public interface RepositoryEntryLocalService extends BaseLocalService,
 		int end, OrderByComparator<T> orderByComparator);
 
 	/**
+	* Returns the number of rows matching the dynamic query.
+	*
+	* @param dynamicQuery the dynamic query
+	* @return the number of rows matching the dynamic query
+	*/
+	public long dynamicQueryCount(DynamicQuery dynamicQuery);
+
+	/**
+	* Returns the number of rows matching the dynamic query.
+	*
+	* @param dynamicQuery the dynamic query
+	* @param projection the projection to apply to the query
+	* @return the number of rows matching the dynamic query
+	*/
+	public long dynamicQueryCount(DynamicQuery dynamicQuery,
+		Projection projection);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public RepositoryEntry fetchRepositoryEntry(long repositoryEntryId);
+
+	/**
+	* Returns the repository entry matching the UUID and group.
+	*
+	* @param uuid the repository entry's UUID
+	* @param groupId the primary key of the group
+	* @return the matching repository entry, or <code>null</code> if a matching repository entry could not be found
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public RepositoryEntry fetchRepositoryEntryByUuidAndGroupId(String uuid,
+		long groupId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public ActionableDynamicQuery getActionableDynamicQuery();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
+		PortletDataContext portletDataContext);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	public String getOSGiServiceIdentifier();
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
+		throws PortalException;
+
+	/**
 	* Returns a range of all the repository entries.
 	*
 	* <p>
@@ -264,7 +237,7 @@ public interface RepositoryEntryLocalService extends BaseLocalService,
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<RepositoryEntry> getRepositoryEntriesByUuidAndCompanyId(
-		java.lang.String uuid, long companyId);
+		String uuid, long companyId);
 
 	/**
 	* Returns a range of repository entries matching the UUID and company.
@@ -278,31 +251,58 @@ public interface RepositoryEntryLocalService extends BaseLocalService,
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<RepositoryEntry> getRepositoryEntriesByUuidAndCompanyId(
-		java.lang.String uuid, long companyId, int start, int end,
+		String uuid, long companyId, int start, int end,
 		OrderByComparator<RepositoryEntry> orderByComparator);
 
 	/**
-	* Returns the number of rows matching the dynamic query.
+	* Returns the number of repository entries.
 	*
-	* @param dynamicQuery the dynamic query
-	* @return the number of rows matching the dynamic query
+	* @return the number of repository entries
 	*/
-	public long dynamicQueryCount(DynamicQuery dynamicQuery);
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getRepositoryEntriesCount();
 
 	/**
-	* Returns the number of rows matching the dynamic query.
+	* Returns the repository entry with the primary key.
 	*
-	* @param dynamicQuery the dynamic query
-	* @param projection the projection to apply to the query
-	* @return the number of rows matching the dynamic query
+	* @param repositoryEntryId the primary key of the repository entry
+	* @return the repository entry
+	* @throws PortalException if a repository entry with the primary key could not be found
 	*/
-	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection);
-
-	public void deleteRepositoryEntries(long repositoryId,
-		java.lang.Iterable<java.lang.String> mappedIds)
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public RepositoryEntry getRepositoryEntry(long repositoryEntryId)
 		throws PortalException;
 
-	public void deleteRepositoryEntry(long repositoryId,
-		java.lang.String mappedId) throws PortalException;
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public RepositoryEntry getRepositoryEntry(long userId, long groupId,
+		long repositoryId, String objectId) throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public RepositoryEntry getRepositoryEntry(String uuid, long groupId)
+		throws PortalException;
+
+	/**
+	* Returns the repository entry matching the UUID and group.
+	*
+	* @param uuid the repository entry's UUID
+	* @param groupId the primary key of the group
+	* @return the matching repository entry
+	* @throws PortalException if a matching repository entry could not be found
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public RepositoryEntry getRepositoryEntryByUuidAndGroupId(String uuid,
+		long groupId) throws PortalException;
+
+	public RepositoryEntry updateRepositoryEntry(long repositoryEntryId,
+		String mappedId) throws PortalException;
+
+	/**
+	* Updates the repository entry in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param repositoryEntry the repository entry
+	* @return the repository entry that was updated
+	*/
+	@Indexable(type = IndexableType.REINDEX)
+	public RepositoryEntry updateRepositoryEntry(
+		RepositoryEntry repositoryEntry);
 }

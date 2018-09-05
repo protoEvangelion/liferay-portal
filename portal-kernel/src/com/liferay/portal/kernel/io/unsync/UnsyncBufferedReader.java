@@ -14,7 +14,7 @@
 
 package com.liferay.portal.kernel.io.unsync;
 
-import com.liferay.portal.kernel.util.CharPool;
+import com.liferay.petra.string.CharPool;
 import com.liferay.portal.kernel.util.StringBundler;
 
 import java.io.IOException;
@@ -175,9 +175,8 @@ public class UnsyncBufferedReader extends Reader {
 				if ((sb != null) && (sb.index() > 0)) {
 					return sb.toString();
 				}
-				else {
-					return null;
-				}
+
+				return null;
 			}
 
 			boolean hasLineBreak = false;

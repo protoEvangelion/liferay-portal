@@ -18,6 +18,7 @@ import com.liferay.source.formatter.checks.comparator.ElementComparator;
 import com.liferay.source.formatter.checks.util.SourceUtil;
 
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 
 /**
  * @author Hugo Huijser
@@ -27,9 +28,11 @@ public class XMLLog4jFileCheck extends BaseFileCheck {
 	@Override
 	protected String doProcess(
 			String fileName, String absolutePath, String content)
-		throws Exception {
+		throws DocumentException {
 
-		if (fileName.endsWith("-log4j.xml")) {
+		if (fileName.endsWith("-log4j-ext.xml") ||
+			fileName.endsWith("-log4j.xml")) {
+
 			_checkLog4jXML(fileName, content);
 		}
 
@@ -37,7 +40,7 @@ public class XMLLog4jFileCheck extends BaseFileCheck {
 	}
 
 	private void _checkLog4jXML(String fileName, String content)
-		throws Exception {
+		throws DocumentException {
 
 		Document document = SourceUtil.readXML(content);
 

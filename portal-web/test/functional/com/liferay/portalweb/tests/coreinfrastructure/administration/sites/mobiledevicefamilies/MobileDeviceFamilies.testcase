@@ -1,6 +1,10 @@
 <definition component-name="portal-mobile-device-rules">
+	<property name="osgi.app.includes" value="portal-mobile-device-detection-fiftyonedegrees-enterprise" />
+	<property name="osgi.module.configuration.file.names" value="com.liferay.portal.bundle.blacklist.internal.BundleBlacklistConfiguration.config" />
+	<property name="osgi.module.configurations" value="blacklistBundleSymbolicNames=" />
 	<property name="portal.release" value="true" />
 	<property name="portal.upstream" value="true" />
+	<property name="test.run.environment" value="EE" />
 	<property name="testray.main.component.name" value="Mobile Device Rules" />
 
 	<set-up>
@@ -10,7 +14,7 @@
 	</set-up>
 
 	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
 
 		<if>
 			<equals arg1="${testPortalInstance}" arg2="true" />
@@ -20,13 +24,19 @@
 			<else>
 				<execute macro="PortalInstances#tearDownCP" />
 
-				<execute macro="Page#tearDownPG" />
+				<execute macro="Page#tearDownCP" />
 			</else>
 		</if>
 	</tear-down>
 
 	<command name="AssertMobileDeviceRuleActionOnSitePage" priority="5">
-		<execute macro="ProductMenu#gotoControlPanelSites">
+		<description message="This is a use case for LPS-42381." />
+
+		<property name="test.name.skip.portal.instance" value="MobileDeviceFamilies#AssertMobileDeviceRuleActionOnSitePage" />
+
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Sites" />
+			<var name="panel" value="Control Panel" />
 			<var name="portlet" value="Sites" />
 		</execute>
 
@@ -34,17 +44,25 @@
 			<var name="siteName" value="Site Name" />
 		</execute>
 
-		<execute macro="Page#add">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Build" />
+			<var name="panel" value="Site Administration" />
+			<var name="portlet" value="Pages" />
+		</execute>
+
+		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Page for Linux" />
 		</execute>
 
-		<execute macro="Page#add">
+		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Page for Windows" />
 		</execute>
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Mobile Device Families" />
 		</execute>
 
@@ -52,7 +70,9 @@
 			<var name="deviceFamilyName" value="Linux Family Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Mobile Device Families" />
 		</execute>
 
@@ -63,7 +83,9 @@
 			<var name="ruleOSScope" value="Linux" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Mobile Device Families" />
 		</execute>
 
@@ -71,7 +93,9 @@
 			<var name="deviceFamilyName" value="Windows Device Family Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesConfiguration">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Mobile Device Families" />
 		</execute>
 
@@ -82,12 +106,19 @@
 			<var name="ruleOSScope" value="Windows" />
 		</execute>
 
-		<execute macro="Page#add">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Build" />
+			<var name="panel" value="Site Administration" />
+			<var name="portlet" value="Pages" />
+		</execute>
+
+		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Mobile Device Family Test Page" />
 		</execute>
 
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Mobile Device Family Test Page" />
+		<execute macro="SitePages#gotoPageMenuItem">
+			<var name="menuItem" value="Configure" />
+			<var name="pageName" value="Mobile Device Family Test Page" />
 		</execute>
 
 		<execute macro="Navigator#gotoNavTab">
@@ -95,7 +126,7 @@
 		</execute>
 
 		<execute macro="Panel#expandPanel">
-			<var name="panelHeading" value="Mobile Device Rules" />
+			<var name="panel" value="Mobile Device Rules" />
 		</execute>
 
 		<execute macro="Page#disableMobileDeviceRulesAreInheritedFromPublicPages" />
@@ -104,12 +135,30 @@
 			<var name="deviceFamilyName" value="Linux Family Name" />
 		</execute>
 
+		<execute macro="LexiconEntry#gotoEntryMenuItem">
+			<var name="menuItem" value="Permissions" />
+			<var name="rowEntry" value="Linux Family Name" />
+		</execute>
+
+		<execute macro="IFrame#selectPermissionsFrame" />
+
+		<execute macro="Role#viewPermissionPG">
+			<var name="permissionDefinitionKey" value="CONTENT_PERMISSIONS_VIEW_CHECKBOX" />
+			<var name="permissionFlagged" value="true" />
+			<var name="roleTitle" value="Owner" />
+		</execute>
+
+		<execute macro="IFrame#closeFrame" />
+
 		<execute macro="Page#manageDeviceFamilyActions">
 			<var name="actionName" value="Mobile Device Family Test Action" />
 			<var name="actionType" value="Redirect to Site" />
+			<var name="deviceFamilyName" value="Linux Family Name" />
 			<var name="pageName" value="Page for Linux" />
 			<var name="siteName" value="Site Name" />
 		</execute>
+
+		<execute function="Refresh" />
 
 		<execute macro="Page#selectMobileDeviceFamily">
 			<var name="deviceFamilyName" value="Windows Device Family Name" />
@@ -118,6 +167,7 @@
 		<execute macro="Page#manageDeviceFamilyActions">
 			<var name="actionName" value="Windows Device Family Test Action" />
 			<var name="actionType" value="Redirect to Site" />
+			<var name="deviceFamilyName" value="Windows Device Family Name" />
 			<var name="pageName" value="Page for Windows" />
 			<var name="siteName" value="Site Name" />
 		</execute>

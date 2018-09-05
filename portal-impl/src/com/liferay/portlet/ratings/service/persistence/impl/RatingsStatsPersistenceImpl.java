@@ -16,6 +16,8 @@ package com.liferay.portlet.ratings.service.persistence.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
@@ -31,9 +33,10 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.persistence.CompanyProvider;
 import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.ProxyUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 
 import com.liferay.portlet.ratings.model.impl.RatingsStatsImpl;
 import com.liferay.portlet.ratings.model.impl.RatingsStatsModelImpl;
@@ -44,6 +47,10 @@ import com.liferay.ratings.kernel.service.persistence.RatingsStatsPersistence;
 
 import java.io.Serializable;
 
+import java.lang.reflect.InvocationHandler;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -86,6 +93,21 @@ public class RatingsStatsPersistenceImpl extends BasePersistenceImpl<RatingsStat
 	public static final FinderPath FINDER_PATH_COUNT_ALL = new FinderPath(RatingsStatsModelImpl.ENTITY_CACHE_ENABLED,
 			RatingsStatsModelImpl.FINDER_CACHE_ENABLED, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll", new String[0]);
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_C_C = new FinderPath(RatingsStatsModelImpl.ENTITY_CACHE_ENABLED,
+			RatingsStatsModelImpl.FINDER_CACHE_ENABLED, RatingsStatsImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByC_C",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				
+			Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_C_C = new FinderPath(RatingsStatsModelImpl.ENTITY_CACHE_ENABLED,
+			RatingsStatsModelImpl.FINDER_CACHE_ENABLED, RatingsStatsImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByC_C",
+			new String[] { Long.class.getName(), Long.class.getName() },
+			RatingsStatsModelImpl.CLASSNAMEID_COLUMN_BITMASK |
+			RatingsStatsModelImpl.CLASSPK_COLUMN_BITMASK);
 	public static final FinderPath FINDER_PATH_FETCH_BY_C_C = new FinderPath(RatingsStatsModelImpl.ENTITY_CACHE_ENABLED,
 			RatingsStatsModelImpl.FINDER_CACHE_ENABLED, RatingsStatsImpl.class,
 			FINDER_CLASS_NAME_ENTITY, "fetchByC_C",
@@ -96,6 +118,252 @@ public class RatingsStatsPersistenceImpl extends BasePersistenceImpl<RatingsStat
 			RatingsStatsModelImpl.FINDER_CACHE_ENABLED, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByC_C",
 			new String[] { Long.class.getName(), Long.class.getName() });
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_COUNT_BY_C_C = new FinderPath(RatingsStatsModelImpl.ENTITY_CACHE_ENABLED,
+			RatingsStatsModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "countByC_C",
+			new String[] { Long.class.getName(), Long.class.getName() });
+
+	/**
+	 * Returns all the ratings statses where classNameId = &#63; and classPK = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link RatingsStatsModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPKs the class pks
+	 * @return the matching ratings statses
+	 */
+	@Override
+	public List<RatingsStats> findByC_C(long classNameId, long[] classPKs) {
+		return findByC_C(classNameId, classPKs, QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the ratings statses where classNameId = &#63; and classPK = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link RatingsStatsModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPKs the class pks
+	 * @param start the lower bound of the range of ratings statses
+	 * @param end the upper bound of the range of ratings statses (not inclusive)
+	 * @return the range of matching ratings statses
+	 */
+	@Override
+	public List<RatingsStats> findByC_C(long classNameId, long[] classPKs,
+		int start, int end) {
+		return findByC_C(classNameId, classPKs, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the ratings statses where classNameId = &#63; and classPK = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link RatingsStatsModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPKs the class pks
+	 * @param start the lower bound of the range of ratings statses
+	 * @param end the upper bound of the range of ratings statses (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching ratings statses
+	 */
+	@Override
+	public List<RatingsStats> findByC_C(long classNameId, long[] classPKs,
+		int start, int end, OrderByComparator<RatingsStats> orderByComparator) {
+		return findByC_C(classNameId, classPKs, start, end, orderByComparator,
+			true);
+	}
+
+	/**
+	 * Returns an ordered range of all the ratings statses where classNameId = &#63; and classPK = &#63;, optionally using the finder cache.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link RatingsStatsModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPK the class pk
+	 * @param start the lower bound of the range of ratings statses
+	 * @param end the upper bound of the range of ratings statses (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching ratings statses
+	 */
+	@Override
+	public List<RatingsStats> findByC_C(long classNameId, long[] classPKs,
+		int start, int end, OrderByComparator<RatingsStats> orderByComparator,
+		boolean retrieveFromCache) {
+		if (classPKs == null) {
+			classPKs = new long[0];
+		}
+		else if (classPKs.length > 1) {
+			classPKs = ArrayUtil.unique(classPKs);
+
+			Arrays.sort(classPKs);
+		}
+
+		if (classPKs.length == 1) {
+			RatingsStats ratingsStats = fetchByC_C(classNameId, classPKs[0]);
+
+			if (ratingsStats == null) {
+				return Collections.emptyList();
+			}
+			else {
+				return Collections.singletonList(ratingsStats);
+			}
+		}
+
+		boolean pagination = true;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+				(orderByComparator == null)) {
+			pagination = false;
+			finderArgs = new Object[] { classNameId, StringUtil.merge(classPKs) };
+		}
+		else {
+			finderArgs = new Object[] {
+					classNameId, StringUtil.merge(classPKs),
+					
+					start, end, orderByComparator
+				};
+		}
+
+		List<RatingsStats> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<RatingsStats>)finderCache.getResult(FINDER_PATH_WITH_PAGINATION_FIND_BY_C_C,
+					finderArgs, this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (RatingsStats ratingsStats : list) {
+					if ((classNameId != ratingsStats.getClassNameId()) ||
+							!ArrayUtil.contains(classPKs,
+								ratingsStats.getClassPK())) {
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			try {
+				if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+						(databaseInMaxParameters > 0) &&
+						(classPKs.length > databaseInMaxParameters)) {
+					list = new ArrayList<RatingsStats>();
+
+					long[][] classPKsPages = (long[][])ArrayUtil.split(classPKs,
+							databaseInMaxParameters);
+
+					for (long[] classPKsPage : classPKsPages) {
+						list.addAll(_findByC_C(classNameId, classPKsPage,
+								start, end, orderByComparator, pagination));
+					}
+
+					Collections.sort(list, orderByComparator);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = _findByC_C(classNameId, classPKs, start, end,
+							orderByComparator, pagination);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(FINDER_PATH_WITH_PAGINATION_FIND_BY_C_C,
+					finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(FINDER_PATH_WITH_PAGINATION_FIND_BY_C_C,
+					finderArgs);
+
+				throw processException(e);
+			}
+		}
+
+		return list;
+	}
+
+	private List<RatingsStats> _findByC_C(long classNameId, long[] classPKs,
+		int start, int end, OrderByComparator<RatingsStats> orderByComparator,
+		boolean pagination) {
+		List<RatingsStats> list = null;
+
+		StringBundler query = new StringBundler();
+
+		query.append(_SQL_SELECT_RATINGSSTATS_WHERE);
+
+		query.append(_FINDER_COLUMN_C_C_CLASSNAMEID_2);
+
+		if (classPKs.length > 0) {
+			query.append("(");
+
+			query.append(_FINDER_COLUMN_C_C_CLASSPK_7);
+
+			query.append(StringUtil.merge(classPKs));
+
+			query.append(")");
+
+			query.append(")");
+		}
+
+		query.setStringAt(removeConjunction(query.stringAt(query.index() - 1)),
+			query.index() - 1);
+
+		if (orderByComparator != null) {
+			appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+				orderByComparator);
+		}
+		else
+		 if (pagination) {
+			query.append(RatingsStatsModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			Query q = session.createQuery(sql);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(classNameId);
+
+			if (!pagination) {
+				list = (List<RatingsStats>)QueryUtil.list(q, getDialect(),
+						start, end, false);
+
+				Collections.sort(list);
+
+				list = Collections.unmodifiableList(list);
+			}
+			else {
+				list = (List<RatingsStats>)QueryUtil.list(q, getDialect(),
+						start, end);
+			}
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+
+		return list;
+	}
 
 	/**
 	 * Returns the ratings stats where classNameId = &#63; and classPK = &#63; or throws a {@link NoSuchStatsException} if it could not be found.
@@ -121,7 +389,7 @@ public class RatingsStatsPersistenceImpl extends BasePersistenceImpl<RatingsStat
 			msg.append(", classPK=");
 			msg.append(classPK);
 
-			msg.append(StringPool.CLOSE_CURLY_BRACE);
+			msg.append("}");
 
 			if (_log.isDebugEnabled()) {
 				_log.debug(msg.toString());
@@ -210,12 +478,6 @@ public class RatingsStatsPersistenceImpl extends BasePersistenceImpl<RatingsStat
 					result = ratingsStats;
 
 					cacheResult(ratingsStats);
-
-					if ((ratingsStats.getClassNameId() != classNameId) ||
-							(ratingsStats.getClassPK() != classPK)) {
-						finderCache.putResult(FINDER_PATH_FETCH_BY_C_C,
-							finderArgs, ratingsStats);
-					}
 				}
 			}
 			catch (Exception e) {
@@ -307,8 +569,115 @@ public class RatingsStatsPersistenceImpl extends BasePersistenceImpl<RatingsStat
 		return count.intValue();
 	}
 
+	/**
+	 * Returns the number of ratings statses where classNameId = &#63; and classPK = any &#63;.
+	 *
+	 * @param classNameId the class name ID
+	 * @param classPKs the class pks
+	 * @return the number of matching ratings statses
+	 */
+	@Override
+	public int countByC_C(long classNameId, long[] classPKs) {
+		if (classPKs == null) {
+			classPKs = new long[0];
+		}
+		else if (classPKs.length > 1) {
+			classPKs = ArrayUtil.unique(classPKs);
+
+			Arrays.sort(classPKs);
+		}
+
+		Object[] finderArgs = new Object[] {
+				classNameId, StringUtil.merge(classPKs)
+			};
+
+		Long count = (Long)finderCache.getResult(FINDER_PATH_WITH_PAGINATION_COUNT_BY_C_C,
+				finderArgs, this);
+
+		if (count == null) {
+			try {
+				if ((databaseInMaxParameters > 0) &&
+						(classPKs.length > databaseInMaxParameters)) {
+					count = Long.valueOf(0);
+
+					long[][] classPKsPages = (long[][])ArrayUtil.split(classPKs,
+							databaseInMaxParameters);
+
+					for (long[] classPKsPage : classPKsPages) {
+						count += Long.valueOf(_countByC_C(classNameId,
+								classPKsPage));
+					}
+				}
+				else {
+					count = Long.valueOf(_countByC_C(classNameId, classPKs));
+				}
+
+				finderCache.putResult(FINDER_PATH_WITH_PAGINATION_COUNT_BY_C_C,
+					finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(FINDER_PATH_WITH_PAGINATION_COUNT_BY_C_C,
+					finderArgs);
+
+				throw processException(e);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private int _countByC_C(long classNameId, long[] classPKs) {
+		Long count = null;
+
+		StringBundler query = new StringBundler();
+
+		query.append(_SQL_COUNT_RATINGSSTATS_WHERE);
+
+		query.append(_FINDER_COLUMN_C_C_CLASSNAMEID_2);
+
+		if (classPKs.length > 0) {
+			query.append("(");
+
+			query.append(_FINDER_COLUMN_C_C_CLASSPK_7);
+
+			query.append(StringUtil.merge(classPKs));
+
+			query.append(")");
+
+			query.append(")");
+		}
+
+		query.setStringAt(removeConjunction(query.stringAt(query.index() - 1)),
+			query.index() - 1);
+
+		String sql = query.toString();
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			Query q = session.createQuery(sql);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(classNameId);
+
+			count = (Long)q.uniqueResult();
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+
+		return count.intValue();
+	}
+
 	private static final String _FINDER_COLUMN_C_C_CLASSNAMEID_2 = "ratingsStats.classNameId = ? AND ";
 	private static final String _FINDER_COLUMN_C_C_CLASSPK_2 = "ratingsStats.classPK = ?";
+	private static final String _FINDER_COLUMN_C_C_CLASSPK_7 = "ratingsStats.classPK IN (";
 
 	public RatingsStatsPersistenceImpl() {
 		setModelClass(RatingsStats.class);
@@ -507,8 +876,6 @@ public class RatingsStatsPersistenceImpl extends BasePersistenceImpl<RatingsStat
 
 	@Override
 	protected RatingsStats removeImpl(RatingsStats ratingsStats) {
-		ratingsStats = toUnwrappedModel(ratingsStats);
-
 		Session session = null;
 
 		try {
@@ -539,9 +906,23 @@ public class RatingsStatsPersistenceImpl extends BasePersistenceImpl<RatingsStat
 
 	@Override
 	public RatingsStats updateImpl(RatingsStats ratingsStats) {
-		ratingsStats = toUnwrappedModel(ratingsStats);
-
 		boolean isNew = ratingsStats.isNew();
+
+		if (!(ratingsStats instanceof RatingsStatsModelImpl)) {
+			InvocationHandler invocationHandler = null;
+
+			if (ProxyUtil.isProxyClass(ratingsStats.getClass())) {
+				invocationHandler = ProxyUtil.getInvocationHandler(ratingsStats);
+
+				throw new IllegalArgumentException(
+					"Implement ModelWrapper in ratingsStats proxy " +
+					invocationHandler.getClass());
+			}
+
+			throw new IllegalArgumentException(
+				"Implement ModelWrapper in custom RatingsStats implementation " +
+				ratingsStats.getClass());
+		}
 
 		RatingsStatsModelImpl ratingsStatsModelImpl = (RatingsStatsModelImpl)ratingsStats;
 
@@ -573,9 +954,41 @@ public class RatingsStatsPersistenceImpl extends BasePersistenceImpl<RatingsStat
 		}
 		else
 		 if (isNew) {
+			Object[] args = new Object[] {
+					ratingsStatsModelImpl.getClassNameId(),
+					ratingsStatsModelImpl.getClassPK()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_C_C, args);
+			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_C_C,
+				args);
+
 			finderCache.removeResult(FINDER_PATH_COUNT_ALL, FINDER_ARGS_EMPTY);
 			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL,
 				FINDER_ARGS_EMPTY);
+		}
+
+		else {
+			if ((ratingsStatsModelImpl.getColumnBitmask() &
+					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_C_C.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						ratingsStatsModelImpl.getOriginalClassNameId(),
+						ratingsStatsModelImpl.getOriginalClassPK()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_C_C, args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_C_C,
+					args);
+
+				args = new Object[] {
+						ratingsStatsModelImpl.getClassNameId(),
+						ratingsStatsModelImpl.getClassPK()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_C_C, args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_C_C,
+					args);
+			}
 		}
 
 		entityCache.putResult(RatingsStatsModelImpl.ENTITY_CACHE_ENABLED,
@@ -588,27 +1001,6 @@ public class RatingsStatsPersistenceImpl extends BasePersistenceImpl<RatingsStat
 		ratingsStats.resetOriginalValues();
 
 		return ratingsStats;
-	}
-
-	protected RatingsStats toUnwrappedModel(RatingsStats ratingsStats) {
-		if (ratingsStats instanceof RatingsStatsImpl) {
-			return ratingsStats;
-		}
-
-		RatingsStatsImpl ratingsStatsImpl = new RatingsStatsImpl();
-
-		ratingsStatsImpl.setNew(ratingsStats.isNew());
-		ratingsStatsImpl.setPrimaryKey(ratingsStats.getPrimaryKey());
-
-		ratingsStatsImpl.setStatsId(ratingsStats.getStatsId());
-		ratingsStatsImpl.setCompanyId(ratingsStats.getCompanyId());
-		ratingsStatsImpl.setClassNameId(ratingsStats.getClassNameId());
-		ratingsStatsImpl.setClassPK(ratingsStats.getClassPK());
-		ratingsStatsImpl.setTotalEntries(ratingsStats.getTotalEntries());
-		ratingsStatsImpl.setTotalScore(ratingsStats.getTotalScore());
-		ratingsStatsImpl.setAverageScore(ratingsStats.getAverageScore());
-
-		return ratingsStatsImpl;
 	}
 
 	/**
@@ -762,12 +1154,12 @@ public class RatingsStatsPersistenceImpl extends BasePersistenceImpl<RatingsStat
 		for (Serializable primaryKey : uncachedPrimaryKeys) {
 			query.append((long)primaryKey);
 
-			query.append(StringPool.COMMA);
+			query.append(",");
 		}
 
 		query.setIndex(query.index() - 1);
 
-		query.append(StringPool.CLOSE_PARENTHESIS);
+		query.append(")");
 
 		String sql = query.toString();
 

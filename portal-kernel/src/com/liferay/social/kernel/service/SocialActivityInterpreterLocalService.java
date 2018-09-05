@@ -55,6 +55,36 @@ public interface SocialActivityInterpreterLocalService extends BaseLocalService 
 	 */
 
 	/**
+	* Adds the activity interpreter to the list of available interpreters.
+	*
+	* @param activityInterpreter the activity interpreter
+	*/
+	public void addActivityInterpreter(
+		SocialActivityInterpreter activityInterpreter);
+
+	/**
+	* Removes the activity interpreter from the list of available interpreters.
+	*
+	* @param activityInterpreter the activity interpreter
+	*/
+	public void deleteActivityInterpreter(
+		SocialActivityInterpreter activityInterpreter);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Map<String, List<SocialActivityInterpreter>> getActivityInterpreters();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<SocialActivityInterpreter> getActivityInterpreters(
+		String selector);
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	public String getOSGiServiceIdentifier();
+
+	/**
 	* Creates a human readable activity feed entry for the activity using an
 	* available compatible activity interpreter.
 	*
@@ -71,41 +101,11 @@ public interface SocialActivityInterpreterLocalService extends BaseLocalService 
 	record or <code>null</code> if a compatible interpreter is not
 	found
 	*/
-	public SocialActivityFeedEntry interpret(java.lang.String selector,
+	public SocialActivityFeedEntry interpret(String selector,
 		SocialActivity activity, ServiceContext serviceContext);
 
-	public SocialActivityFeedEntry interpret(java.lang.String selector,
+	public SocialActivityFeedEntry interpret(String selector,
 		SocialActivitySet activitySet, ServiceContext serviceContext);
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	public java.lang.String getOSGiServiceIdentifier();
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<SocialActivityInterpreter> getActivityInterpreters(
-		java.lang.String selector);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Map<java.lang.String, List<SocialActivityInterpreter>> getActivityInterpreters();
-
-	/**
-	* Adds the activity interpreter to the list of available interpreters.
-	*
-	* @param activityInterpreter the activity interpreter
-	*/
-	public void addActivityInterpreter(
-		SocialActivityInterpreter activityInterpreter);
-
-	/**
-	* Removes the activity interpreter from the list of available interpreters.
-	*
-	* @param activityInterpreter the activity interpreter
-	*/
-	public void deleteActivityInterpreter(
-		SocialActivityInterpreter activityInterpreter);
 
 	public void updateActivitySet(long activityId) throws PortalException;
 }

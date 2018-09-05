@@ -19,6 +19,8 @@ import com.liferay.portal.tools.ImportsFormatter;
 import com.liferay.source.formatter.JSPImportsFormatter;
 import com.liferay.source.formatter.checks.util.JSPSourceUtil;
 
+import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -32,18 +34,18 @@ public class JSPImportsCheck extends BaseFileCheck {
 	@Override
 	protected String doProcess(
 			String fileName, String absolutePath, String content)
-		throws Exception {
+		throws IOException {
 
 		content = _formatJSPImportsOrTaglibs(
-			fileName, content, _compressedJSPImportPattern,
+			fileName, content, _jspImportPattern,
 			_uncompressedJSPImportPattern);
 		content = _formatJSPImportsOrTaglibs(
-			fileName, content, _compressedJSPTaglibPattern,
+			fileName, content, _jspTaglibPattern,
 			_uncompressedJSPTaglibPattern);
 
 		if ((isPortalSource() || isSubrepository()) &&
 			content.contains("page import=") &&
-			!fileName.contains("init.jsp") &&
+			!fileName.contains("init.jsp") && !fileName.contains("init.tag") &&
 			!fileName.contains("init-ext.jsp") &&
 			!fileName.contains("/taglib/aui/") &&
 			!fileName.endsWith("touch.jsp") &&
@@ -55,15 +57,19 @@ public class JSPImportsCheck extends BaseFileCheck {
 		content = JSPSourceUtil.compressImportsOrTaglibs(
 			fileName, content, "<%@ page import=");
 		content = JSPSourceUtil.compressImportsOrTaglibs(
+			fileName, content, "<%@ tag import=");
+		content = JSPSourceUtil.compressImportsOrTaglibs(
 			fileName, content, "<%@ taglib uri=");
 
-		return content;
+		Matcher matcher = _incorrectTaglibPattern.matcher(content);
+
+		return matcher.replaceAll("$1$3 $2");
 	}
 
 	private String _formatJSPImportsOrTaglibs(
 			String fileName, String content, Pattern compressedPattern,
 			Pattern uncompressedPattern)
-		throws Exception {
+		throws IOException {
 
 		if (fileName.endsWith("init-ext.jsp")) {
 			return content;
@@ -83,16 +89,16 @@ public class JSPImportsCheck extends BaseFileCheck {
 
 		String imports = StringUtil.merge(groups, "\n");
 
-		String newImports = StringUtil.replace(
-			imports, new String[] {"<%@\r\n", "<%@\n", " %><%@ "},
-			new String[] {"\r\n<%@ ", "\n<%@ ", " %>\n<%@ "});
+		matcher = _taglibSingleLinePattern.matcher(imports);
+
+		String newImports = matcher.replaceAll("$1 $2 $3 $5\n");
 
 		for (int i = 1; i < groups.size(); i++) {
 			content = StringUtil.removeSubstring(content, groups.get(i));
 		}
 
 		content = StringUtil.replaceFirst(
-			content, groups.get(0), newImports + "\n\n");
+			content, groups.get(0), newImports + "\n");
 
 		content = StringUtil.replaceFirst(content, imports, newImports);
 
@@ -101,12 +107,16 @@ public class JSPImportsCheck extends BaseFileCheck {
 		return importsFormatter.format(content, uncompressedPattern);
 	}
 
-	private final Pattern _compressedJSPImportPattern = Pattern.compile(
-		"(<.*\n*page import=\".*>\n*)+", Pattern.MULTILINE);
-	private final Pattern _compressedJSPTaglibPattern = Pattern.compile(
-		"(<.*\n*taglib uri=\".*>\n*)+", Pattern.MULTILINE);
+	private final Pattern _incorrectTaglibPattern = Pattern.compile(
+		"(taglib )(prefix=\".+\") (uri=\".*\")");
+	private final Pattern _jspImportPattern = Pattern.compile(
+		"(<%@\\s+(page|tag)\\s+import=\".+?\\s+%>\\s*)+");
+	private final Pattern _jspTaglibPattern = Pattern.compile(
+		"(<%@\\s+taglib\\s+uri=\".+?\\s+%>\\s*)+");
+	private final Pattern _taglibSingleLinePattern = Pattern.compile(
+		"(<%@)\\s+(page|tag|taglib)\\s+((import|uri)=.+?)\\s+(%>)\\s*");
 	private final Pattern _uncompressedJSPImportPattern = Pattern.compile(
-		"(<.*page import=\".*>\n*)+", Pattern.MULTILINE);
+		"(<.*(?:page|tag) import=\".*>\n*)+", Pattern.MULTILINE);
 	private final Pattern _uncompressedJSPTaglibPattern = Pattern.compile(
 		"(<.*taglib uri=\".*>\n*)+", Pattern.MULTILINE);
 

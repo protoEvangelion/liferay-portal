@@ -16,7 +16,8 @@ package com.liferay.screens.service;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.osgi.util.ServiceTrackerFactory;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -41,6 +42,12 @@ public class ScreensDDLRecordServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.screens.service.impl.ScreensDDLRecordServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
+	public static com.liferay.portal.kernel.json.JSONObject getDDLRecord(
+		long ddlRecordId, java.util.Locale locale)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getDDLRecord(ddlRecordId, locale);
+	}
+
 	public static com.liferay.portal.kernel.json.JSONArray getDDLRecords(
 		long ddlRecordSetId, java.util.Locale locale, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.lists.model.DDLRecord> obc)
@@ -59,12 +66,6 @@ public class ScreensDDLRecordServiceUtil {
 			obc);
 	}
 
-	public static com.liferay.portal.kernel.json.JSONObject getDDLRecord(
-		long ddlRecordId, java.util.Locale locale)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getDDLRecord(ddlRecordId, locale);
-	}
-
 	public static int getDDLRecordsCount(long ddlRecordSetId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().getDDLRecordsCount(ddlRecordSetId);
@@ -80,7 +81,7 @@ public class ScreensDDLRecordServiceUtil {
 	*
 	* @return the OSGi service identifier
 	*/
-	public static java.lang.String getOSGiServiceIdentifier() {
+	public static String getOSGiServiceIdentifier() {
 		return getService().getOSGiServiceIdentifier();
 	}
 
@@ -88,6 +89,17 @@ public class ScreensDDLRecordServiceUtil {
 		return _serviceTracker.getService();
 	}
 
-	private static ServiceTracker<ScreensDDLRecordService, ScreensDDLRecordService> _serviceTracker =
-		ServiceTrackerFactory.open(ScreensDDLRecordService.class);
+	private static ServiceTracker<ScreensDDLRecordService, ScreensDDLRecordService> _serviceTracker;
+
+	static {
+		Bundle bundle = FrameworkUtil.getBundle(ScreensDDLRecordService.class);
+
+		ServiceTracker<ScreensDDLRecordService, ScreensDDLRecordService> serviceTracker =
+			new ServiceTracker<ScreensDDLRecordService, ScreensDDLRecordService>(bundle.getBundleContext(),
+				ScreensDDLRecordService.class, null);
+
+		serviceTracker.open();
+
+		_serviceTracker = serviceTracker;
+	}
 }

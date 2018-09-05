@@ -14,7 +14,7 @@
 
 package com.liferay.marketplace.util;
 
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.petra.string.StringPool;
 
 /**
  * @author Joan Kim
@@ -57,8 +57,7 @@ public class ContextUtil {
 		return -1;
 	}
 
-	private static final String[] _PLUGIN_TYPES = {
-		"-ext", "-hook", "-layouttpl", "-portlet", "-theme", "-web"
-	};
+	private static final String[] _PLUGIN_TYPES =
+		{"-ext", "-hook", "-layouttpl", "-portlet", "-theme", "-web"};
 
 }

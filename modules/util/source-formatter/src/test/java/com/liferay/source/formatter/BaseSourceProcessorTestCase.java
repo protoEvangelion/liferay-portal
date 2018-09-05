@@ -14,16 +14,17 @@
 
 package com.liferay.source.formatter;
 
-import com.liferay.portal.kernel.util.CharPool;
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.source.formatter.util.FileUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
 import java.net.URL;
@@ -61,7 +62,7 @@ public abstract class BaseSourceProcessorTestCase {
 	}
 
 	@AfterClass
-	public static void tearDownClass() throws Exception {
+	public static void tearDownClass() throws IOException {
 		FileUtils.deleteDirectory(_temporaryRootFolder);
 	}
 
@@ -165,12 +166,12 @@ public abstract class BaseSourceProcessorTestCase {
 				Assert.assertEquals(
 					expectedMessages[i], sourceFormatterMessage.getMessage());
 
-				int lineCount = sourceFormatterMessage.getLineCount();
+				int lineNumber = sourceFormatterMessage.getLineNumber();
 
-				if (lineCount > -1) {
+				if (lineNumber > -1) {
 					Assert.assertEquals(
 						String.valueOf(lineNumbers[i]),
-						String.valueOf(lineCount));
+						String.valueOf(lineNumber));
 				}
 
 				String absolutePath = StringUtil.replace(

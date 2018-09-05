@@ -14,12 +14,14 @@
 
 package com.liferay.source.formatter.checks;
 
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.io.unsync.UnsyncBufferedReader;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringReader;
-import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+
+import java.io.IOException;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,7 +34,7 @@ public class JSPWhitespaceCheck extends WhitespaceCheck {
 	@Override
 	protected String doProcess(
 			String fileName, String absolutePath, String content)
-		throws Exception {
+		throws IOException {
 
 		content = _formatWhitespace(fileName, content);
 
@@ -41,12 +43,12 @@ public class JSPWhitespaceCheck extends WhitespaceCheck {
 		content = StringUtil.replace(
 			content,
 			new String[] {
-				"<br/>", "@page import", "\"%>", ")%>", "function (",
-				"javascript: ", "){\n", "\n\n\n"
+				"<br/>", "@page import", "@tag import", "\"%>", ")%>",
+				"function (", "javascript: ", "){\n", "\n\n\n"
 			},
 			new String[] {
-				"<br />", "@ page import", "\" %>", ") %>", "function(",
-				"javascript:", ") {\n", "\n\n"
+				"<br />", "@ page import", "@ tag import", "\" %>", ") %>",
+				"function(", "javascript:", ") {\n", "\n\n"
 			});
 
 		return content;
@@ -105,7 +107,7 @@ public class JSPWhitespaceCheck extends WhitespaceCheck {
 	}
 
 	private String _formatWhitespace(String fileName, String content)
-		throws Exception {
+		throws IOException {
 
 		StringBundler sb = new StringBundler();
 
@@ -136,8 +138,19 @@ public class JSPWhitespaceCheck extends WhitespaceCheck {
 					line = StringUtil.replace(line, "%>", " %>");
 				}
 
-				if (line.contains("<%=") && !line.contains("<%= ")) {
-					line = StringUtil.replace(line, "<%=", "<%= ");
+				int pos = -1;
+
+				while (true) {
+					pos = line.indexOf("<%=", pos + 1);
+
+					if ((pos == -1) || (pos + 3) == line.length()) {
+						break;
+					}
+
+					if (line.charAt(pos + 3) != CharPool.SPACE) {
+						line = StringUtil.replaceFirst(
+							line, "<%=", "<%= ", pos);
+					}
 				}
 
 				if (trimmedLine.startsWith(StringPool.DOUBLE_SLASH) ||

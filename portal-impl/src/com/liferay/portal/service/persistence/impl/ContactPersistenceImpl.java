@@ -16,6 +16,8 @@ package com.liferay.portal.service.persistence.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
@@ -37,12 +39,13 @@ import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.ContactPersistence;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.model.impl.ContactImpl;
 import com.liferay.portal.model.impl.ContactModelImpl;
 
 import java.io.Serializable;
+
+import java.lang.reflect.InvocationHandler;
 
 import java.util.Collections;
 import java.util.Date;
@@ -297,7 +300,7 @@ public class ContactPersistenceImpl extends BasePersistenceImpl<Contact>
 		msg.append("companyId=");
 		msg.append(companyId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchContactException(msg.toString());
 	}
@@ -346,7 +349,7 @@ public class ContactPersistenceImpl extends BasePersistenceImpl<Contact>
 		msg.append("companyId=");
 		msg.append(companyId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchContactException(msg.toString());
 	}
@@ -798,7 +801,7 @@ public class ContactPersistenceImpl extends BasePersistenceImpl<Contact>
 		msg.append("accountId=");
 		msg.append(accountId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchContactException(msg.toString());
 	}
@@ -847,7 +850,7 @@ public class ContactPersistenceImpl extends BasePersistenceImpl<Contact>
 		msg.append("accountId=");
 		msg.append(accountId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchContactException(msg.toString());
 	}
@@ -1319,7 +1322,7 @@ public class ContactPersistenceImpl extends BasePersistenceImpl<Contact>
 		msg.append(", classPK=");
 		msg.append(classPK);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchContactException(msg.toString());
 	}
@@ -1375,7 +1378,7 @@ public class ContactPersistenceImpl extends BasePersistenceImpl<Contact>
 		msg.append(", classPK=");
 		msg.append(classPK);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchContactException(msg.toString());
 	}
@@ -1780,8 +1783,6 @@ public class ContactPersistenceImpl extends BasePersistenceImpl<Contact>
 
 	@Override
 	protected Contact removeImpl(Contact contact) {
-		contact = toUnwrappedModel(contact);
-
 		Session session = null;
 
 		try {
@@ -1812,9 +1813,23 @@ public class ContactPersistenceImpl extends BasePersistenceImpl<Contact>
 
 	@Override
 	public Contact updateImpl(Contact contact) {
-		contact = toUnwrappedModel(contact);
-
 		boolean isNew = contact.isNew();
+
+		if (!(contact instanceof ContactModelImpl)) {
+			InvocationHandler invocationHandler = null;
+
+			if (ProxyUtil.isProxyClass(contact.getClass())) {
+				invocationHandler = ProxyUtil.getInvocationHandler(contact);
+
+				throw new IllegalArgumentException(
+					"Implement ModelWrapper in contact proxy " +
+					invocationHandler.getClass());
+			}
+
+			throw new IllegalArgumentException(
+				"Implement ModelWrapper in custom Contact implementation " +
+				contact.getClass());
+		}
 
 		ContactModelImpl contactModelImpl = (ContactModelImpl)contact;
 
@@ -1957,49 +1972,6 @@ public class ContactPersistenceImpl extends BasePersistenceImpl<Contact>
 		contact.resetOriginalValues();
 
 		return contact;
-	}
-
-	protected Contact toUnwrappedModel(Contact contact) {
-		if (contact instanceof ContactImpl) {
-			return contact;
-		}
-
-		ContactImpl contactImpl = new ContactImpl();
-
-		contactImpl.setNew(contact.isNew());
-		contactImpl.setPrimaryKey(contact.getPrimaryKey());
-
-		contactImpl.setMvccVersion(contact.getMvccVersion());
-		contactImpl.setContactId(contact.getContactId());
-		contactImpl.setCompanyId(contact.getCompanyId());
-		contactImpl.setUserId(contact.getUserId());
-		contactImpl.setUserName(contact.getUserName());
-		contactImpl.setCreateDate(contact.getCreateDate());
-		contactImpl.setModifiedDate(contact.getModifiedDate());
-		contactImpl.setClassNameId(contact.getClassNameId());
-		contactImpl.setClassPK(contact.getClassPK());
-		contactImpl.setAccountId(contact.getAccountId());
-		contactImpl.setParentContactId(contact.getParentContactId());
-		contactImpl.setEmailAddress(contact.getEmailAddress());
-		contactImpl.setFirstName(contact.getFirstName());
-		contactImpl.setMiddleName(contact.getMiddleName());
-		contactImpl.setLastName(contact.getLastName());
-		contactImpl.setPrefixId(contact.getPrefixId());
-		contactImpl.setSuffixId(contact.getSuffixId());
-		contactImpl.setMale(contact.isMale());
-		contactImpl.setBirthday(contact.getBirthday());
-		contactImpl.setSmsSn(contact.getSmsSn());
-		contactImpl.setFacebookSn(contact.getFacebookSn());
-		contactImpl.setJabberSn(contact.getJabberSn());
-		contactImpl.setSkypeSn(contact.getSkypeSn());
-		contactImpl.setTwitterSn(contact.getTwitterSn());
-		contactImpl.setEmployeeStatusId(contact.getEmployeeStatusId());
-		contactImpl.setEmployeeNumber(contact.getEmployeeNumber());
-		contactImpl.setJobTitle(contact.getJobTitle());
-		contactImpl.setJobClass(contact.getJobClass());
-		contactImpl.setHoursOfOperation(contact.getHoursOfOperation());
-
-		return contactImpl;
 	}
 
 	/**
@@ -2152,12 +2124,12 @@ public class ContactPersistenceImpl extends BasePersistenceImpl<Contact>
 		for (Serializable primaryKey : uncachedPrimaryKeys) {
 			query.append((long)primaryKey);
 
-			query.append(StringPool.COMMA);
+			query.append(",");
 		}
 
 		query.setIndex(query.index() - 1);
 
-		query.append(StringPool.CLOSE_PARENTHESIS);
+		query.append(")");
 
 		String sql = query.toString();
 

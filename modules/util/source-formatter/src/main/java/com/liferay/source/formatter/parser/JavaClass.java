@@ -14,6 +14,8 @@
 
 package com.liferay.source.formatter.parser;
 
+import com.liferay.portal.kernel.util.StringUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,9 +25,14 @@ import java.util.List;
 public class JavaClass extends BaseJavaTerm {
 
 	public JavaClass(
-		String name, String content, String accessModifier, boolean isStatic) {
+		String name, String content, String accessModifier, int lineNumber,
+		boolean isAbstract, boolean isStatic, boolean isInterface,
+		boolean anonymous) {
 
-		super(name, content, accessModifier, isStatic);
+		super(name, content, accessModifier, lineNumber, isAbstract, isStatic);
+
+		_isInterface = isInterface;
+		_anonymous = anonymous;
 	}
 
 	public void addChildJavaTerm(JavaTerm javaTerm) {
@@ -34,10 +41,60 @@ public class JavaClass extends BaseJavaTerm {
 		_childJavaTerms.add(javaTerm);
 	}
 
+	public void addExtendedClassNames(String... extendedClassNames) {
+		for (String extendedClassName : extendedClassNames) {
+			_extendedClassNames.add(StringUtil.trim(extendedClassName));
+		}
+	}
+
+	public void addImplementedClassNames(String... implementedClassNames) {
+		for (String implementedClassName : implementedClassNames) {
+			_implementedClassNames.add(StringUtil.trim(implementedClassName));
+		}
+	}
+
+	public void addImport(String importName) {
+		_imports.add(importName);
+	}
+
 	public List<JavaTerm> getChildJavaTerms() {
 		return _childJavaTerms;
 	}
 
+	public List<String> getExtendedClassNames() {
+		return _extendedClassNames;
+	}
+
+	public List<String> getImplementedClassNames() {
+		return _implementedClassNames;
+	}
+
+	public List<String> getImports() {
+		return _imports;
+	}
+
+	public String getPackageName() {
+		return _packageName;
+	}
+
+	public boolean isAnonymous() {
+		return _anonymous;
+	}
+
+	public boolean isInterface() {
+		return _isInterface;
+	}
+
+	public void setPackageName(String packageName) {
+		_packageName = packageName;
+	}
+
+	private final boolean _anonymous;
 	private final List<JavaTerm> _childJavaTerms = new ArrayList<>();
+	private List<String> _extendedClassNames = new ArrayList<>();
+	private List<String> _implementedClassNames = new ArrayList<>();
+	private List<String> _imports = new ArrayList<>();
+	private final boolean _isInterface;
+	private String _packageName;
 
 }

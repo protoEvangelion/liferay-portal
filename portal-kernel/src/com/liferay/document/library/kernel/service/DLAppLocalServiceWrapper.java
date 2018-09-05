@@ -32,49 +32,10 @@ public class DLAppLocalServiceWrapper implements DLAppLocalService,
 		_dlAppLocalService = dlAppLocalService;
 	}
 
-	/**
-	* Adds the file rank to the existing file entry. This method is only
-	* supported by the Liferay repository.
-	*
-	* @param repositoryId the primary key of the repository
-	* @param companyId the primary key of the company
-	* @param userId the primary key of the file rank's creator/owner
-	* @param fileEntryId the primary key of the file entry
-	* @param serviceContext the service context to be applied
-	* @return the file rank
-	*/
-	@Override
-	public com.liferay.document.library.kernel.model.DLFileRank addFileRank(
-		long repositoryId, long companyId, long userId, long fileEntryId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
-		return _dlAppLocalService.addFileRank(repositoryId, companyId, userId,
-			fileEntryId, serviceContext);
-	}
-
-	/**
-	* Updates a file rank to the existing file entry. This method is only
-	* supported by the Liferay repository.
-	*
-	* @param repositoryId the primary key of the file rank's repository
-	* @param companyId the primary key of the file rank's company
-	* @param userId the primary key of the file rank's creator/owner
-	* @param fileEntryId the primary key of the file rank's file entry
-	* @param serviceContext the service context to be applied
-	* @return the file rank
-	*/
-	@Override
-	public com.liferay.document.library.kernel.model.DLFileRank updateFileRank(
-		long repositoryId, long companyId, long userId, long fileEntryId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
-		return _dlAppLocalService.updateFileRank(repositoryId, companyId,
-			userId, fileEntryId, serviceContext);
-	}
-
 	@Override
 	public com.liferay.portal.kernel.repository.model.FileEntry addFileEntry(
-		long userId, long repositoryId, long folderId,
-		java.lang.String sourceFileName, java.lang.String mimeType,
-		byte[] bytes,
+		long userId, long repositoryId, long folderId, String sourceFileName,
+		String mimeType, byte[] bytes,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _dlAppLocalService.addFileEntry(userId, repositoryId, folderId,
@@ -113,10 +74,9 @@ public class DLAppLocalServiceWrapper implements DLAppLocalService,
 	*/
 	@Override
 	public com.liferay.portal.kernel.repository.model.FileEntry addFileEntry(
-		long userId, long repositoryId, long folderId,
-		java.lang.String sourceFileName, java.lang.String mimeType,
-		java.lang.String title, java.lang.String description,
-		java.lang.String changeLog, byte[] bytes,
+		long userId, long repositoryId, long folderId, String sourceFileName,
+		String mimeType, String title, String description, String changeLog,
+		byte[] bytes,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _dlAppLocalService.addFileEntry(userId, repositoryId, folderId,
@@ -156,10 +116,9 @@ public class DLAppLocalServiceWrapper implements DLAppLocalService,
 	*/
 	@Override
 	public com.liferay.portal.kernel.repository.model.FileEntry addFileEntry(
-		long userId, long repositoryId, long folderId,
-		java.lang.String sourceFileName, java.lang.String mimeType,
-		java.lang.String title, java.lang.String description,
-		java.lang.String changeLog, java.io.File file,
+		long userId, long repositoryId, long folderId, String sourceFileName,
+		String mimeType, String title, String description, String changeLog,
+		java.io.File file,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _dlAppLocalService.addFileEntry(userId, repositoryId, folderId,
@@ -201,10 +160,9 @@ public class DLAppLocalServiceWrapper implements DLAppLocalService,
 	*/
 	@Override
 	public com.liferay.portal.kernel.repository.model.FileEntry addFileEntry(
-		long userId, long repositoryId, long folderId,
-		java.lang.String sourceFileName, java.lang.String mimeType,
-		java.lang.String title, java.lang.String description,
-		java.lang.String changeLog, java.io.InputStream is, long size,
+		long userId, long repositoryId, long folderId, String sourceFileName,
+		String mimeType, String title, String description, String changeLog,
+		java.io.InputStream is, long size,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _dlAppLocalService.addFileEntry(userId, repositoryId, folderId,
@@ -213,205 +171,25 @@ public class DLAppLocalServiceWrapper implements DLAppLocalService,
 	}
 
 	/**
-	* Returns the file entry with the primary key.
+	* Adds the file rank to the existing file entry. This method is only
+	* supported by the Liferay repository.
 	*
+	* @param repositoryId the primary key of the repository
+	* @param companyId the primary key of the company
+	* @param userId the primary key of the file rank's creator/owner
 	* @param fileEntryId the primary key of the file entry
-	* @return the file entry with the primary key
-	*/
-	@Override
-	public com.liferay.portal.kernel.repository.model.FileEntry getFileEntry(
-		long fileEntryId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _dlAppLocalService.getFileEntry(fileEntryId);
-	}
-
-	/**
-	* Returns the file entry with the title in the folder.
-	*
-	* @param groupId the primary key of the file entry's group
-	* @param folderId the primary key of the file entry's folder
-	* @param title the file entry's title
-	* @return the file entry with the title in the folder
-	*/
-	@Override
-	public com.liferay.portal.kernel.repository.model.FileEntry getFileEntry(
-		long groupId, long folderId, java.lang.String title)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _dlAppLocalService.getFileEntry(groupId, folderId, title);
-	}
-
-	/**
-	* Returns the file entry with the UUID and group.
-	*
-	* @param uuid the file entry's UUID
-	* @param groupId the primary key of the file entry's group
-	* @return the file entry with the UUID and group
-	*/
-	@Override
-	public com.liferay.portal.kernel.repository.model.FileEntry getFileEntryByUuidAndGroupId(
-		java.lang.String uuid, long groupId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _dlAppLocalService.getFileEntryByUuidAndGroupId(uuid, groupId);
-	}
-
-	/**
-	* Moves the file entry to the new folder.
-	*
-	* @param userId the primary key of the user
-	* @param fileEntryId the primary key of the file entry
-	* @param newFolderId the primary key of the new folder
 	* @param serviceContext the service context to be applied
-	* @return the file entry
+	* @return the file rank
+	* @deprecated As of Judson (7.1.x), replaced by {@link
+	com.liferay.document.library.file.rank.service.DLFileRankLocalService#addFileRank}
 	*/
+	@Deprecated
 	@Override
-	public com.liferay.portal.kernel.repository.model.FileEntry moveFileEntry(
-		long userId, long fileEntryId, long newFolderId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _dlAppLocalService.moveFileEntry(userId, fileEntryId,
-			newFolderId, serviceContext);
-	}
-
-	/**
-	* Updates a file entry and associated metadata based on a byte array
-	* object. If the file data is <code>null</code>, then only the associated
-	* metadata (i.e., <code>title</code>, <code>description</code>, and
-	* parameters in the <code>serviceContext</code>) will be updated.
-	*
-	* <p>
-	* This method takes two file names, the <code>sourceFileName</code> and the
-	* <code>title</code>. The <code>sourceFileName</code> corresponds to the
-	* name of the actual file being uploaded. The <code>title</code>
-	* corresponds to a name the client wishes to assign this file after it has
-	* been uploaded to the portal.
-	* </p>
-	*
-	* @param userId the primary key of the user
-	* @param fileEntryId the primary key of the file entry
-	* @param sourceFileName the original file's name (optionally
-	<code>null</code>)
-	* @param mimeType the file's MIME type (optionally <code>null</code>)
-	* @param title the new name to be assigned to the file (optionally <code>
-	<code>null</code></code>)
-	* @param description the file's new description
-	* @param changeLog the file's version change log (optionally
-	<code>null</code>)
-	* @param majorVersion whether the new file version is a major version
-	* @param bytes the file's data (optionally <code>null</code>)
-	* @param serviceContext the service context to be applied. Can set the
-	asset category IDs, asset tag names, and expando bridge
-	attributes for the file entry. In a Liferay repository, it may
-	include:  <ul> <li> fileEntryTypeId - ID for a custom file entry
-	type </li> <li> fieldsMap - mapping for fields associated with a
-	custom file entry type </li> </ul>
-	* @return the file entry
-	*/
-	@Override
-	public com.liferay.portal.kernel.repository.model.FileEntry updateFileEntry(
-		long userId, long fileEntryId, java.lang.String sourceFileName,
-		java.lang.String mimeType, java.lang.String title,
-		java.lang.String description, java.lang.String changeLog,
-		boolean majorVersion, byte[] bytes,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _dlAppLocalService.updateFileEntry(userId, fileEntryId,
-			sourceFileName, mimeType, title, description, changeLog,
-			majorVersion, bytes, serviceContext);
-	}
-
-	/**
-	* Updates a file entry and associated metadata based on a {@link File}
-	* object. If the file data is <code>null</code>, then only the associated
-	* metadata (i.e., <code>title</code>, <code>description</code>, and
-	* parameters in the <code>serviceContext</code>) will be updated.
-	*
-	* <p>
-	* This method takes two file names, the <code>sourceFileName</code> and the
-	* <code>title</code>. The <code>sourceFileName</code> corresponds to the
-	* name of the actual file being uploaded. The <code>title</code>
-	* corresponds to a name the client wishes to assign this file after it has
-	* been uploaded to the portal.
-	* </p>
-	*
-	* @param userId the primary key of the user
-	* @param fileEntryId the primary key of the file entry
-	* @param sourceFileName the original file's name (optionally
-	<code>null</code>)
-	* @param mimeType the file's MIME type (optionally <code>null</code>)
-	* @param title the new name to be assigned to the file (optionally <code>
-	<code>null</code></code>)
-	* @param description the file's new description
-	* @param changeLog the file's version change log (optionally
-	<code>null</code>)
-	* @param majorVersion whether the new file version is a major version
-	* @param file the file's data (optionally <code>null</code>)
-	* @param serviceContext the service context to be applied. Can set the
-	asset category IDs, asset tag names, and expando bridge
-	attributes for the file entry. In a Liferay repository, it may
-	include:  <ul> <li> fileEntryTypeId - ID for a custom file entry
-	type </li> <li> fieldsMap - mapping for fields associated with a
-	custom file entry type </li> </ul>
-	* @return the file entry
-	*/
-	@Override
-	public com.liferay.portal.kernel.repository.model.FileEntry updateFileEntry(
-		long userId, long fileEntryId, java.lang.String sourceFileName,
-		java.lang.String mimeType, java.lang.String title,
-		java.lang.String description, java.lang.String changeLog,
-		boolean majorVersion, java.io.File file,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _dlAppLocalService.updateFileEntry(userId, fileEntryId,
-			sourceFileName, mimeType, title, description, changeLog,
-			majorVersion, file, serviceContext);
-	}
-
-	/**
-	* Updates a file entry and associated metadata based on an {@link
-	* InputStream} object. If the file data is <code>null</code>, then only the
-	* associated metadata (i.e., <code>title</code>, <code>description</code>,
-	* and parameters in the <code>serviceContext</code>) will be updated.
-	*
-	* <p>
-	* This method takes two file names, the <code>sourceFileName</code> and the
-	* <code>title</code>. The <code>sourceFileName</code> corresponds to the
-	* name of the actual file being uploaded. The <code>title</code>
-	* corresponds to a name the client wishes to assign this file after it has
-	* been uploaded to the portal.
-	* </p>
-	*
-	* @param userId the primary key of the user
-	* @param fileEntryId the primary key of the file entry
-	* @param sourceFileName the original file's name (optionally
-	<code>null</code>)
-	* @param mimeType the file's MIME type (optionally <code>null</code>)
-	* @param title the new name to be assigned to the file (optionally <code>
-	<code>null</code></code>)
-	* @param description the file's new description
-	* @param changeLog the file's version change log (optionally
-	<code>null</code>)
-	* @param majorVersion whether the new file version is a major version
-	* @param is the file's data (optionally <code>null</code>)
-	* @param size the file's size (optionally <code>0</code>)
-	* @param serviceContext the service context to be applied. Can set the
-	asset category IDs, asset tag names, and expando bridge
-	attributes for the file entry. In a Liferay repository, it may
-	include:  <ul> <li> fileEntryTypeId - ID for a custom file entry
-	type </li> <li> fieldsMap - mapping for fields associated with a
-	custom file entry type </li> </ul>
-	* @return the file entry
-	*/
-	@Override
-	public com.liferay.portal.kernel.repository.model.FileEntry updateFileEntry(
-		long userId, long fileEntryId, java.lang.String sourceFileName,
-		java.lang.String mimeType, java.lang.String title,
-		java.lang.String description, java.lang.String changeLog,
-		boolean majorVersion, java.io.InputStream is, long size,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _dlAppLocalService.updateFileEntry(userId, fileEntryId,
-			sourceFileName, mimeType, title, description, changeLog,
-			majorVersion, is, size, serviceContext);
+	public com.liferay.document.library.kernel.model.DLFileRank addFileRank(
+		long repositoryId, long companyId, long userId, long fileEntryId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		return _dlAppLocalService.addFileRank(repositoryId, companyId, userId,
+			fileEntryId, serviceContext);
 	}
 
 	/**
@@ -437,55 +215,6 @@ public class DLAppLocalServiceWrapper implements DLAppLocalService,
 	}
 
 	/**
-	* Returns the file shortcut with the primary key. This method is only
-	* supported by the Liferay repository.
-	*
-	* @param fileShortcutId the primary key of the file shortcut
-	* @return the file shortcut with the primary key
-	*/
-	@Override
-	public com.liferay.portal.kernel.repository.model.FileShortcut getFileShortcut(
-		long fileShortcutId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _dlAppLocalService.getFileShortcut(fileShortcutId);
-	}
-
-	/**
-	* Updates a file shortcut to the existing file entry. This method is only
-	* supported by the Liferay repository.
-	*
-	* @param userId the primary key of the file shortcut's creator/owner
-	* @param fileShortcutId the primary key of the file shortcut
-	* @param folderId the primary key of the file shortcut's parent folder
-	* @param toFileEntryId the primary key of the file shortcut's file entry
-	* @param serviceContext the service context to be applied. Can set the
-	asset category IDs, asset tag names, and expando bridge
-	attributes for the file entry.
-	* @return the file shortcut
-	*/
-	@Override
-	public com.liferay.portal.kernel.repository.model.FileShortcut updateFileShortcut(
-		long userId, long fileShortcutId, long folderId, long toFileEntryId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _dlAppLocalService.updateFileShortcut(userId, fileShortcutId,
-			folderId, toFileEntryId, serviceContext);
-	}
-
-	/**
-	* Returns the file version with the primary key.
-	*
-	* @param fileVersionId the primary key of the file version
-	* @return the file version with the primary key
-	*/
-	@Override
-	public com.liferay.portal.kernel.repository.model.FileVersion getFileVersion(
-		long fileVersionId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _dlAppLocalService.getFileVersion(fileVersionId);
-	}
-
-	/**
 	* Adds a folder.
 	*
 	* @param userId the primary key of the folder's creator/owner
@@ -501,118 +230,12 @@ public class DLAppLocalServiceWrapper implements DLAppLocalService,
 	*/
 	@Override
 	public com.liferay.portal.kernel.repository.model.Folder addFolder(
-		long userId, long repositoryId, long parentFolderId,
-		java.lang.String name, java.lang.String description,
+		long userId, long repositoryId, long parentFolderId, String name,
+		String description,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _dlAppLocalService.addFolder(userId, repositoryId,
 			parentFolderId, name, description, serviceContext);
-	}
-
-	/**
-	* Returns the folder with the primary key.
-	*
-	* @param folderId the primary key of the folder
-	* @return the folder with the primary key
-	*/
-	@Override
-	public com.liferay.portal.kernel.repository.model.Folder getFolder(
-		long folderId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _dlAppLocalService.getFolder(folderId);
-	}
-
-	/**
-	* Returns the folder with the name in the parent folder.
-	*
-	* @param repositoryId the primary key of the folder's repository
-	* @param parentFolderId the primary key of the folder's parent folder
-	* @param name the folder's name
-	* @return the folder with the name in the parent folder
-	*/
-	@Override
-	public com.liferay.portal.kernel.repository.model.Folder getFolder(
-		long repositoryId, long parentFolderId, java.lang.String name)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _dlAppLocalService.getFolder(repositoryId, parentFolderId, name);
-	}
-
-	/**
-	* Returns the mount folder of the repository with the primary key. This
-	* method is only supported by the Liferay repository.
-	*
-	* @param repositoryId the primary key of the repository
-	* @return the folder used for mounting third-party repositories
-	*/
-	@Override
-	public com.liferay.portal.kernel.repository.model.Folder getMountFolder(
-		long repositoryId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _dlAppLocalService.getMountFolder(repositoryId);
-	}
-
-	@Override
-	public com.liferay.portal.kernel.repository.model.Folder moveFolder(
-		long userId, long folderId, long parentFolderId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _dlAppLocalService.moveFolder(userId, folderId, parentFolderId,
-			serviceContext);
-	}
-
-	/**
-	* Updates the folder.
-	*
-	* @param folderId the primary key of the folder
-	* @param parentFolderId the primary key of the folder's new parent folder
-	* @param name the folder's new name
-	* @param description the folder's new description
-	* @param serviceContext the service context to be applied. In a Liferay
-	repository, it may include:  <ul> <li> defaultFileEntryTypeId -
-	the file entry type to default all Liferay file entries to </li>
-	<li> dlFileEntryTypesSearchContainerPrimaryKeys - a
-	comma-delimited list of file entry type primary keys allowed in
-	the given folder and all descendants </li> <li> restrictionType -
-	specifying restriction type of file entry types allowed </li>
-	<li> workflowDefinitionXYZ - the workflow definition name
-	specified per file entry type. The parameter name must be the
-	string <code>workflowDefinition</code> appended by the
-	<code>fileEntryTypeId</code> (optionally <code>0</code>).</li>
-	</ul>
-	* @return the folder
-	*/
-	@Override
-	public com.liferay.portal.kernel.repository.model.Folder updateFolder(
-		long folderId, long parentFolderId, java.lang.String name,
-		java.lang.String description,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _dlAppLocalService.updateFolder(folderId, parentFolderId, name,
-			description, serviceContext);
-	}
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	@Override
-	public java.lang.String getOSGiServiceIdentifier() {
-		return _dlAppLocalService.getOSGiServiceIdentifier();
-	}
-
-	/**
-	* Returns the file ranks from the user. This method is only supported by
-	* the Liferay repository.
-	*
-	* @param repositoryId the primary key of the repository
-	* @param userId the primary key of the user
-	* @return the file ranks from the user
-	*/
-	@Override
-	public java.util.List<com.liferay.document.library.kernel.model.DLFileRank> getFileRanks(
-		long repositoryId, long userId) {
-		return _dlAppLocalService.getFileRanks(repositoryId, userId);
 	}
 
 	/**
@@ -649,7 +272,10 @@ public class DLAppLocalServiceWrapper implements DLAppLocalService,
 	* only supported by the Liferay repository.
 	*
 	* @param fileEntryId the primary key of the file entry
+	* @deprecated As of Judson (7.1.x), replaced by {@link
+	com.liferay.document.library.file.rank.service.DLFileRankLocalService#deleteFileRanksByFileEntryId}
 	*/
+	@Deprecated
 	@Override
 	public void deleteFileRanksByFileEntryId(long fileEntryId) {
 		_dlAppLocalService.deleteFileRanksByFileEntryId(fileEntryId);
@@ -660,7 +286,10 @@ public class DLAppLocalServiceWrapper implements DLAppLocalService,
 	* supported by the Liferay repository.
 	*
 	* @param userId the primary key of the user
+	* @deprecated As of Judson (7.1.x), replaced by {@link
+	com.liferay.document.library.file.rank.service.DLFileRankLocalService#deleteFileRanksByUserId}
 	*/
+	@Deprecated
 	@Override
 	public void deleteFileRanksByUserId(long userId) {
 		_dlAppLocalService.deleteFileRanksByUserId(userId);
@@ -712,6 +341,171 @@ public class DLAppLocalServiceWrapper implements DLAppLocalService,
 	public void deleteFolder(long folderId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_dlAppLocalService.deleteFolder(folderId);
+	}
+
+	/**
+	* Returns the file entry with the primary key.
+	*
+	* @param fileEntryId the primary key of the file entry
+	* @return the file entry with the primary key
+	*/
+	@Override
+	public com.liferay.portal.kernel.repository.model.FileEntry getFileEntry(
+		long fileEntryId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _dlAppLocalService.getFileEntry(fileEntryId);
+	}
+
+	/**
+	* Returns the file entry with the title in the folder.
+	*
+	* @param groupId the primary key of the file entry's group
+	* @param folderId the primary key of the file entry's folder
+	* @param title the file entry's title
+	* @return the file entry with the title in the folder
+	*/
+	@Override
+	public com.liferay.portal.kernel.repository.model.FileEntry getFileEntry(
+		long groupId, long folderId, String title)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _dlAppLocalService.getFileEntry(groupId, folderId, title);
+	}
+
+	/**
+	* Returns the file entry with the UUID and group.
+	*
+	* @param uuid the file entry's UUID
+	* @param groupId the primary key of the file entry's group
+	* @return the file entry with the UUID and group
+	*/
+	@Override
+	public com.liferay.portal.kernel.repository.model.FileEntry getFileEntryByUuidAndGroupId(
+		String uuid, long groupId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _dlAppLocalService.getFileEntryByUuidAndGroupId(uuid, groupId);
+	}
+
+	/**
+	* Returns the file ranks from the user. This method is only supported by
+	* the Liferay repository.
+	*
+	* @param repositoryId the primary key of the repository
+	* @param userId the primary key of the user
+	* @return the file ranks from the user
+	* @deprecated As of Judson (7.1.x), replaced by {@link
+	com.liferay.document.library.file.rank.service.DLFileRankLocalService#getFileRanks}
+	*/
+	@Deprecated
+	@Override
+	public java.util.List<com.liferay.document.library.kernel.model.DLFileRank> getFileRanks(
+		long repositoryId, long userId) {
+		return _dlAppLocalService.getFileRanks(repositoryId, userId);
+	}
+
+	/**
+	* Returns the file shortcut with the primary key. This method is only
+	* supported by the Liferay repository.
+	*
+	* @param fileShortcutId the primary key of the file shortcut
+	* @return the file shortcut with the primary key
+	*/
+	@Override
+	public com.liferay.portal.kernel.repository.model.FileShortcut getFileShortcut(
+		long fileShortcutId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _dlAppLocalService.getFileShortcut(fileShortcutId);
+	}
+
+	/**
+	* Returns the file version with the primary key.
+	*
+	* @param fileVersionId the primary key of the file version
+	* @return the file version with the primary key
+	*/
+	@Override
+	public com.liferay.portal.kernel.repository.model.FileVersion getFileVersion(
+		long fileVersionId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _dlAppLocalService.getFileVersion(fileVersionId);
+	}
+
+	/**
+	* Returns the folder with the primary key.
+	*
+	* @param folderId the primary key of the folder
+	* @return the folder with the primary key
+	*/
+	@Override
+	public com.liferay.portal.kernel.repository.model.Folder getFolder(
+		long folderId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _dlAppLocalService.getFolder(folderId);
+	}
+
+	/**
+	* Returns the folder with the name in the parent folder.
+	*
+	* @param repositoryId the primary key of the folder's repository
+	* @param parentFolderId the primary key of the folder's parent folder
+	* @param name the folder's name
+	* @return the folder with the name in the parent folder
+	*/
+	@Override
+	public com.liferay.portal.kernel.repository.model.Folder getFolder(
+		long repositoryId, long parentFolderId, String name)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _dlAppLocalService.getFolder(repositoryId, parentFolderId, name);
+	}
+
+	/**
+	* Returns the mount folder of the repository with the primary key. This
+	* method is only supported by the Liferay repository.
+	*
+	* @param repositoryId the primary key of the repository
+	* @return the folder used for mounting third-party repositories
+	*/
+	@Override
+	public com.liferay.portal.kernel.repository.model.Folder getMountFolder(
+		long repositoryId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _dlAppLocalService.getMountFolder(repositoryId);
+	}
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	@Override
+	public String getOSGiServiceIdentifier() {
+		return _dlAppLocalService.getOSGiServiceIdentifier();
+	}
+
+	/**
+	* Moves the file entry to the new folder.
+	*
+	* @param userId the primary key of the user
+	* @param fileEntryId the primary key of the file entry
+	* @param newFolderId the primary key of the new folder
+	* @param serviceContext the service context to be applied
+	* @return the file entry
+	*/
+	@Override
+	public com.liferay.portal.kernel.repository.model.FileEntry moveFileEntry(
+		long userId, long fileEntryId, long newFolderId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _dlAppLocalService.moveFileEntry(userId, fileEntryId,
+			newFolderId, serviceContext);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.repository.model.Folder moveFolder(
+		long userId, long folderId, long parentFolderId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _dlAppLocalService.moveFolder(userId, folderId, parentFolderId,
+			serviceContext);
 	}
 
 	/**
@@ -789,11 +583,194 @@ public class DLAppLocalServiceWrapper implements DLAppLocalService,
 	public void updateAsset(long userId,
 		com.liferay.portal.kernel.repository.model.FileEntry fileEntry,
 		com.liferay.portal.kernel.repository.model.FileVersion fileVersion,
-		long[] assetCategoryIds, java.lang.String[] assetTagNames,
+		long[] assetCategoryIds, String[] assetTagNames,
 		long[] assetLinkEntryIds)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_dlAppLocalService.updateAsset(userId, fileEntry, fileVersion,
 			assetCategoryIds, assetTagNames, assetLinkEntryIds);
+	}
+
+	/**
+	* Updates a file entry and associated metadata based on a byte array
+	* object. If the file data is <code>null</code>, then only the associated
+	* metadata (i.e., <code>title</code>, <code>description</code>, and
+	* parameters in the <code>serviceContext</code>) will be updated.
+	*
+	* <p>
+	* This method takes two file names, the <code>sourceFileName</code> and the
+	* <code>title</code>. The <code>sourceFileName</code> corresponds to the
+	* name of the actual file being uploaded. The <code>title</code>
+	* corresponds to a name the client wishes to assign this file after it has
+	* been uploaded to the portal.
+	* </p>
+	*
+	* @param userId the primary key of the user
+	* @param fileEntryId the primary key of the file entry
+	* @param sourceFileName the original file's name (optionally
+	<code>null</code>)
+	* @param mimeType the file's MIME type (optionally <code>null</code>)
+	* @param title the new name to be assigned to the file (optionally <code>
+	<code>null</code></code>)
+	* @param description the file's new description
+	* @param changeLog the file's version change log (optionally
+	<code>null</code>)
+	* @param majorVersion whether the new file version is a major version
+	* @param bytes the file's data (optionally <code>null</code>)
+	* @param serviceContext the service context to be applied. Can set the
+	asset category IDs, asset tag names, and expando bridge
+	attributes for the file entry. In a Liferay repository, it may
+	include:  <ul> <li> fileEntryTypeId - ID for a custom file entry
+	type </li> <li> fieldsMap - mapping for fields associated with a
+	custom file entry type </li> </ul>
+	* @return the file entry
+	*/
+	@Override
+	public com.liferay.portal.kernel.repository.model.FileEntry updateFileEntry(
+		long userId, long fileEntryId, String sourceFileName, String mimeType,
+		String title, String description, String changeLog,
+		boolean majorVersion, byte[] bytes,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _dlAppLocalService.updateFileEntry(userId, fileEntryId,
+			sourceFileName, mimeType, title, description, changeLog,
+			majorVersion, bytes, serviceContext);
+	}
+
+	/**
+	* Updates a file entry and associated metadata based on a {@link File}
+	* object. If the file data is <code>null</code>, then only the associated
+	* metadata (i.e., <code>title</code>, <code>description</code>, and
+	* parameters in the <code>serviceContext</code>) will be updated.
+	*
+	* <p>
+	* This method takes two file names, the <code>sourceFileName</code> and the
+	* <code>title</code>. The <code>sourceFileName</code> corresponds to the
+	* name of the actual file being uploaded. The <code>title</code>
+	* corresponds to a name the client wishes to assign this file after it has
+	* been uploaded to the portal.
+	* </p>
+	*
+	* @param userId the primary key of the user
+	* @param fileEntryId the primary key of the file entry
+	* @param sourceFileName the original file's name (optionally
+	<code>null</code>)
+	* @param mimeType the file's MIME type (optionally <code>null</code>)
+	* @param title the new name to be assigned to the file (optionally <code>
+	<code>null</code></code>)
+	* @param description the file's new description
+	* @param changeLog the file's version change log (optionally
+	<code>null</code>)
+	* @param majorVersion whether the new file version is a major version
+	* @param file the file's data (optionally <code>null</code>)
+	* @param serviceContext the service context to be applied. Can set the
+	asset category IDs, asset tag names, and expando bridge
+	attributes for the file entry. In a Liferay repository, it may
+	include:  <ul> <li> fileEntryTypeId - ID for a custom file entry
+	type </li> <li> fieldsMap - mapping for fields associated with a
+	custom file entry type </li> </ul>
+	* @return the file entry
+	*/
+	@Override
+	public com.liferay.portal.kernel.repository.model.FileEntry updateFileEntry(
+		long userId, long fileEntryId, String sourceFileName, String mimeType,
+		String title, String description, String changeLog,
+		boolean majorVersion, java.io.File file,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _dlAppLocalService.updateFileEntry(userId, fileEntryId,
+			sourceFileName, mimeType, title, description, changeLog,
+			majorVersion, file, serviceContext);
+	}
+
+	/**
+	* Updates a file entry and associated metadata based on an {@link
+	* InputStream} object. If the file data is <code>null</code>, then only the
+	* associated metadata (i.e., <code>title</code>, <code>description</code>,
+	* and parameters in the <code>serviceContext</code>) will be updated.
+	*
+	* <p>
+	* This method takes two file names, the <code>sourceFileName</code> and the
+	* <code>title</code>. The <code>sourceFileName</code> corresponds to the
+	* name of the actual file being uploaded. The <code>title</code>
+	* corresponds to a name the client wishes to assign this file after it has
+	* been uploaded to the portal.
+	* </p>
+	*
+	* @param userId the primary key of the user
+	* @param fileEntryId the primary key of the file entry
+	* @param sourceFileName the original file's name (optionally
+	<code>null</code>)
+	* @param mimeType the file's MIME type (optionally <code>null</code>)
+	* @param title the new name to be assigned to the file (optionally <code>
+	<code>null</code></code>)
+	* @param description the file's new description
+	* @param changeLog the file's version change log (optionally
+	<code>null</code>)
+	* @param majorVersion whether the new file version is a major version
+	* @param is the file's data (optionally <code>null</code>)
+	* @param size the file's size (optionally <code>0</code>)
+	* @param serviceContext the service context to be applied. Can set the
+	asset category IDs, asset tag names, and expando bridge
+	attributes for the file entry. In a Liferay repository, it may
+	include:  <ul> <li> fileEntryTypeId - ID for a custom file entry
+	type </li> <li> fieldsMap - mapping for fields associated with a
+	custom file entry type </li> </ul>
+	* @return the file entry
+	*/
+	@Override
+	public com.liferay.portal.kernel.repository.model.FileEntry updateFileEntry(
+		long userId, long fileEntryId, String sourceFileName, String mimeType,
+		String title, String description, String changeLog,
+		boolean majorVersion, java.io.InputStream is, long size,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _dlAppLocalService.updateFileEntry(userId, fileEntryId,
+			sourceFileName, mimeType, title, description, changeLog,
+			majorVersion, is, size, serviceContext);
+	}
+
+	/**
+	* Updates a file rank to the existing file entry. This method is only
+	* supported by the Liferay repository.
+	*
+	* @param repositoryId the primary key of the file rank's repository
+	* @param companyId the primary key of the file rank's company
+	* @param userId the primary key of the file rank's creator/owner
+	* @param fileEntryId the primary key of the file rank's file entry
+	* @param serviceContext the service context to be applied
+	* @return the file rank
+	* @deprecated As of Judson (7.1.x), replaced by {@link
+	com.liferay.document.library.file.rank.service.DLFileRankLocalService#updateFileRank}
+	*/
+	@Deprecated
+	@Override
+	public com.liferay.document.library.kernel.model.DLFileRank updateFileRank(
+		long repositoryId, long companyId, long userId, long fileEntryId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		return _dlAppLocalService.updateFileRank(repositoryId, companyId,
+			userId, fileEntryId, serviceContext);
+	}
+
+	/**
+	* Updates a file shortcut to the existing file entry. This method is only
+	* supported by the Liferay repository.
+	*
+	* @param userId the primary key of the file shortcut's creator/owner
+	* @param fileShortcutId the primary key of the file shortcut
+	* @param folderId the primary key of the file shortcut's parent folder
+	* @param toFileEntryId the primary key of the file shortcut's file entry
+	* @param serviceContext the service context to be applied. Can set the
+	asset category IDs, asset tag names, and expando bridge
+	attributes for the file entry.
+	* @return the file shortcut
+	*/
+	@Override
+	public com.liferay.portal.kernel.repository.model.FileShortcut updateFileShortcut(
+		long userId, long fileShortcutId, long folderId, long toFileEntryId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _dlAppLocalService.updateFileShortcut(userId, fileShortcutId,
+			folderId, toFileEntryId, serviceContext);
 	}
 
 	/**
@@ -811,8 +788,8 @@ public class DLAppLocalServiceWrapper implements DLAppLocalService,
 	}
 
 	/**
-	* @deprecated As of 7.0.0, replaced by {@link #updateFileShortcuts(long,
-	long)}
+	* @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	#updateFileShortcuts(long, long)}
 	*/
 	@Deprecated
 	@Override
@@ -821,6 +798,36 @@ public class DLAppLocalServiceWrapper implements DLAppLocalService,
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_dlAppLocalService.updateFileShortcuts(toRepositoryId,
 			oldToFileEntryId, newToFileEntryId);
+	}
+
+	/**
+	* Updates the folder.
+	*
+	* @param folderId the primary key of the folder
+	* @param parentFolderId the primary key of the folder's new parent folder
+	* @param name the folder's new name
+	* @param description the folder's new description
+	* @param serviceContext the service context to be applied. In a Liferay
+	repository, it may include:  <ul> <li> defaultFileEntryTypeId -
+	the file entry type to default all Liferay file entries to </li>
+	<li> dlFileEntryTypesSearchContainerPrimaryKeys - a
+	comma-delimited list of file entry type primary keys allowed in
+	the given folder and all descendants </li> <li> restrictionType -
+	specifying restriction type of file entry types allowed </li>
+	<li> workflowDefinitionXYZ - the workflow definition name
+	specified per file entry type. The parameter name must be the
+	string <code>workflowDefinition</code> appended by the
+	<code>fileEntryTypeId</code> (optionally <code>0</code>).</li>
+	</ul>
+	* @return the folder
+	*/
+	@Override
+	public com.liferay.portal.kernel.repository.model.Folder updateFolder(
+		long folderId, long parentFolderId, String name, String description,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _dlAppLocalService.updateFolder(folderId, parentFolderId, name,
+			description, serviceContext);
 	}
 
 	@Override

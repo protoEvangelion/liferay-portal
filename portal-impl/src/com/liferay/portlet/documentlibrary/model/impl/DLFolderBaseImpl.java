@@ -19,9 +19,9 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.document.library.kernel.model.DLFolder;
 import com.liferay.document.library.kernel.service.DLFolderLocalServiceUtil;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,13 +71,13 @@ public abstract class DLFolderBaseImpl extends DLFolderModelImpl
 
 		StringBundler sb = new StringBundler((dlFolders.size() * 2) + 1);
 
-		sb.append(StringPool.SLASH);
+		sb.append("/");
 
 		for (int i = dlFolders.size() - 1; i >= 0; i--) {
 			dlFolder = dlFolders.get(i);
 
 			sb.append(dlFolder.getFolderId());
-			sb.append(StringPool.SLASH);
+			sb.append("/");
 		}
 
 		return sb.toString();

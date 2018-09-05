@@ -19,9 +19,12 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.model.PortletModel;
 import com.liferay.portal.kernel.model.PortletSoap;
@@ -29,8 +32,6 @@ import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Serializable;
 
@@ -121,7 +122,7 @@ public class PortletModelImpl extends BaseModelImpl<Portlet>
 		model.setCompanyId(soapModel.getCompanyId());
 		model.setPortletId(soapModel.getPortletId());
 		model.setRoles(soapModel.getRoles());
-		model.setActive(soapModel.getActive());
+		model.setActive(soapModel.isActive());
 
 		return model;
 	}
@@ -191,7 +192,7 @@ public class PortletModelImpl extends BaseModelImpl<Portlet>
 		attributes.put("companyId", getCompanyId());
 		attributes.put("portletId", getPortletId());
 		attributes.put("roles", getRoles());
-		attributes.put("active", getActive());
+		attributes.put("active", isActive());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -287,7 +288,7 @@ public class PortletModelImpl extends BaseModelImpl<Portlet>
 	@Override
 	public String getPortletId() {
 		if (_portletId == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _portletId;
@@ -313,7 +314,7 @@ public class PortletModelImpl extends BaseModelImpl<Portlet>
 	@Override
 	public String getRoles() {
 		if (_roles == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _roles;
@@ -378,7 +379,7 @@ public class PortletModelImpl extends BaseModelImpl<Portlet>
 		portletImpl.setCompanyId(getCompanyId());
 		portletImpl.setPortletId(getPortletId());
 		portletImpl.setRoles(getRoles());
-		portletImpl.setActive(getActive());
+		portletImpl.setActive(isActive());
 
 		portletImpl.resetOriginalValues();
 
@@ -476,7 +477,7 @@ public class PortletModelImpl extends BaseModelImpl<Portlet>
 			portletCacheModel.roles = null;
 		}
 
-		portletCacheModel.active = getActive();
+		portletCacheModel.active = isActive();
 
 		return portletCacheModel;
 	}
@@ -496,7 +497,7 @@ public class PortletModelImpl extends BaseModelImpl<Portlet>
 		sb.append(", roles=");
 		sb.append(getRoles());
 		sb.append(", active=");
-		sb.append(getActive());
+		sb.append(isActive());
 		sb.append("}");
 
 		return sb.toString();
@@ -532,7 +533,7 @@ public class PortletModelImpl extends BaseModelImpl<Portlet>
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>active</column-name><column-value><![CDATA[");
-		sb.append(getActive());
+		sb.append(isActive());
 		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
@@ -542,7 +543,7 @@ public class PortletModelImpl extends BaseModelImpl<Portlet>
 
 	private static final ClassLoader _classLoader = Portlet.class.getClassLoader();
 	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
-			Portlet.class
+			Portlet.class, ModelWrapper.class
 		};
 	private long _mvccVersion;
 	private long _id;

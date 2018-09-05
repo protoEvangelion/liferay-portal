@@ -78,8 +78,23 @@ public class ListTypeServiceSoap {
 		}
 	}
 
+	public static com.liferay.portal.kernel.model.ListTypeSoap getListType(
+		String name, String type) throws RemoteException {
+		try {
+			com.liferay.portal.kernel.model.ListType returnValue = ListTypeServiceUtil.getListType(name,
+					type);
+
+			return com.liferay.portal.kernel.model.ListTypeSoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	public static com.liferay.portal.kernel.model.ListTypeSoap[] getListTypes(
-		java.lang.String type) throws RemoteException {
+		String type) throws RemoteException {
 		try {
 			java.util.List<com.liferay.portal.kernel.model.ListType> returnValue =
 				ListTypeServiceUtil.getListTypes(type);
@@ -93,8 +108,8 @@ public class ListTypeServiceSoap {
 		}
 	}
 
-	public static void validate(long listTypeId, long classNameId,
-		java.lang.String type) throws RemoteException {
+	public static void validate(long listTypeId, long classNameId, String type)
+		throws RemoteException {
 		try {
 			ListTypeServiceUtil.validate(listTypeId, classNameId, type);
 		}
@@ -105,7 +120,7 @@ public class ListTypeServiceSoap {
 		}
 	}
 
-	public static void validate(long listTypeId, java.lang.String type)
+	public static void validate(long listTypeId, String type)
 		throws RemoteException {
 		try {
 			ListTypeServiceUtil.validate(listTypeId, type);

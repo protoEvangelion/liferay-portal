@@ -127,98 +127,13 @@ public class AttachmentWrapper implements Attachment, ModelWrapper<Attachment> {
 	}
 
 	@Override
-	public Attachment toEscapedModel() {
-		return new AttachmentWrapper(_attachment.toEscapedModel());
-	}
-
-	@Override
-	public Attachment toUnescapedModel() {
-		return new AttachmentWrapper(_attachment.toUnescapedModel());
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _attachment.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _attachment.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _attachment.isNew();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _attachment.getExpandoBridge();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.CacheModel<Attachment> toCacheModel() {
-		return _attachment.toCacheModel();
+	public Object clone() {
+		return new AttachmentWrapper((Attachment)_attachment.clone());
 	}
 
 	@Override
 	public int compareTo(Attachment attachment) {
 		return _attachment.compareTo(attachment);
-	}
-
-	@Override
-	public int hashCode() {
-		return _attachment.hashCode();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _attachment.getPrimaryKeyObj();
-	}
-
-	@Override
-	public java.lang.Object clone() {
-		return new AttachmentWrapper((Attachment)_attachment.clone());
-	}
-
-	/**
-	* Returns the content path of this attachment.
-	*
-	* @return the content path of this attachment
-	*/
-	@Override
-	public java.lang.String getContentPath() {
-		return _attachment.getContentPath();
-	}
-
-	/**
-	* Returns the file name of this attachment.
-	*
-	* @return the file name of this attachment
-	*/
-	@Override
-	public java.lang.String getFileName() {
-		return _attachment.getFileName();
-	}
-
-	/**
-	* Returns the user uuid of this attachment.
-	*
-	* @return the user uuid of this attachment
-	*/
-	@Override
-	public java.lang.String getUserUuid() {
-		return _attachment.getUserUuid();
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _attachment.toString();
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _attachment.toXmlString();
 	}
 
 	/**
@@ -252,6 +167,31 @@ public class AttachmentWrapper implements Attachment, ModelWrapper<Attachment> {
 	}
 
 	/**
+	* Returns the content path of this attachment.
+	*
+	* @return the content path of this attachment
+	*/
+	@Override
+	public String getContentPath() {
+		return _attachment.getContentPath();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _attachment.getExpandoBridge();
+	}
+
+	/**
+	* Returns the file name of this attachment.
+	*
+	* @return the file name of this attachment
+	*/
+	@Override
+	public String getFileName() {
+		return _attachment.getFileName();
+	}
+
+	/**
 	* Returns the folder ID of this attachment.
 	*
 	* @return the folder ID of this attachment
@@ -281,6 +221,11 @@ public class AttachmentWrapper implements Attachment, ModelWrapper<Attachment> {
 		return _attachment.getPrimaryKey();
 	}
 
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _attachment.getPrimaryKeyObj();
+	}
+
 	/**
 	* Returns the size of this attachment.
 	*
@@ -299,6 +244,36 @@ public class AttachmentWrapper implements Attachment, ModelWrapper<Attachment> {
 	@Override
 	public long getUserId() {
 		return _attachment.getUserId();
+	}
+
+	/**
+	* Returns the user uuid of this attachment.
+	*
+	* @return the user uuid of this attachment
+	*/
+	@Override
+	public String getUserUuid() {
+		return _attachment.getUserUuid();
+	}
+
+	@Override
+	public int hashCode() {
+		return _attachment.hashCode();
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _attachment.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _attachment.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _attachment.isNew();
 	}
 
 	@Override
@@ -347,19 +322,19 @@ public class AttachmentWrapper implements Attachment, ModelWrapper<Attachment> {
 	* @param contentPath the content path of this attachment
 	*/
 	@Override
-	public void setContentPath(java.lang.String contentPath) {
+	public void setContentPath(String contentPath) {
 		_attachment.setContentPath(contentPath);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_attachment.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
 	public void setExpandoBridgeAttributes(
 		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
 		_attachment.setExpandoBridgeAttributes(baseModel);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_attachment.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
@@ -373,7 +348,7 @@ public class AttachmentWrapper implements Attachment, ModelWrapper<Attachment> {
 	* @param fileName the file name of this attachment
 	*/
 	@Override
-	public void setFileName(java.lang.String fileName) {
+	public void setFileName(String fileName) {
 		_attachment.setFileName(fileName);
 	}
 
@@ -443,8 +418,33 @@ public class AttachmentWrapper implements Attachment, ModelWrapper<Attachment> {
 	* @param userUuid the user uuid of this attachment
 	*/
 	@Override
-	public void setUserUuid(java.lang.String userUuid) {
+	public void setUserUuid(String userUuid) {
 		_attachment.setUserUuid(userUuid);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.CacheModel<Attachment> toCacheModel() {
+		return _attachment.toCacheModel();
+	}
+
+	@Override
+	public Attachment toEscapedModel() {
+		return new AttachmentWrapper(_attachment.toEscapedModel());
+	}
+
+	@Override
+	public String toString() {
+		return _attachment.toString();
+	}
+
+	@Override
+	public Attachment toUnescapedModel() {
+		return new AttachmentWrapper(_attachment.toUnescapedModel());
+	}
+
+	@Override
+	public String toXmlString() {
+		return _attachment.toXmlString();
 	}
 
 	@Override

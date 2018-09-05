@@ -14,9 +14,9 @@
 
 package com.liferay.portlet.social.model.impl;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.social.kernel.model.SocialActivityCounterDefinition;
 import com.liferay.social.kernel.util.SocialCounterPeriodUtil;
@@ -66,12 +66,12 @@ public class SocialActivityLimitImpl extends SocialActivityLimitBaseImpl {
 			}
 		}
 		else if (limitPeriod ==
-					SocialActivityCounterDefinition.LIMIT_PERIOD_LIFETIME) {
+					 SocialActivityCounterDefinition.LIMIT_PERIOD_LIFETIME) {
 
 			return count;
 		}
 		else if (limitPeriod ==
-					SocialActivityCounterDefinition.LIMIT_PERIOD_PERIOD) {
+					 SocialActivityCounterDefinition.LIMIT_PERIOD_PERIOD) {
 
 			int activityDay = SocialCounterPeriodUtil.getActivityDay();
 
@@ -97,12 +97,12 @@ public class SocialActivityLimitImpl extends SocialActivityLimitBaseImpl {
 					StringPool.SLASH + String.valueOf(count));
 		}
 		else if (limitPeriod ==
-					SocialActivityCounterDefinition.LIMIT_PERIOD_LIFETIME) {
+					 SocialActivityCounterDefinition.LIMIT_PERIOD_LIFETIME) {
 
 			setValue(String.valueOf(count));
 		}
 		else if (limitPeriod ==
-					SocialActivityCounterDefinition.LIMIT_PERIOD_PERIOD) {
+					 SocialActivityCounterDefinition.LIMIT_PERIOD_PERIOD) {
 
 			StringBundler sb = new StringBundler(5);
 

@@ -54,23 +54,23 @@ public interface DLFileShortcutService extends BaseService {
 		long folderId, long toFileEntryId, ServiceContext serviceContext)
 		throws PortalException;
 
+	public void deleteFileShortcut(long fileShortcutId)
+		throws PortalException;
+
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public DLFileShortcut getFileShortcut(long fileShortcutId)
 		throws PortalException;
-
-	public DLFileShortcut updateFileShortcut(long fileShortcutId,
-		long repositoryId, long folderId, long toFileEntryId,
-		ServiceContext serviceContext) throws PortalException;
 
 	/**
 	* Returns the OSGi service identifier.
 	*
 	* @return the OSGi service identifier
 	*/
-	public java.lang.String getOSGiServiceIdentifier();
+	public String getOSGiServiceIdentifier();
 
-	public void deleteFileShortcut(long fileShortcutId)
-		throws PortalException;
+	public DLFileShortcut updateFileShortcut(long fileShortcutId,
+		long repositoryId, long folderId, long toFileEntryId,
+		ServiceContext serviceContext) throws PortalException;
 
 	public void updateFileShortcuts(long oldToFileEntryId, long newToFileEntryId)
 		throws PortalException;

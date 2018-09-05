@@ -14,6 +14,7 @@
 
 package com.liferay.portlet;
 
+import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
@@ -30,7 +31,6 @@ import com.liferay.portal.kernel.transaction.TransactionConfig;
 import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.kernel.util.ReflectionUtil;
 import com.liferay.portal.spring.transaction.DefaultTransactionExecutor;
 import com.liferay.portal.spring.transaction.TransactionAttributeAdapter;
 import com.liferay.portal.spring.transaction.TransactionInterceptor;
@@ -514,9 +514,9 @@ public class PortalPreferencesImplTest {
 
 	private static final String _VALUE_2 = "value2";
 
-	private static final String[] _VALUES_1 = new String[] {"values1"};
+	private static final String[] _VALUES_1 = {"values1"};
 
-	private static final String[] _VALUES_2 = new String[] {"values2"};
+	private static final String[] _VALUES_2 = {"values2"};
 
 	private static PortalPreferencesLocalService
 		_originalPortalPreferencesLocalService;

@@ -14,6 +14,7 @@
 
 package com.liferay.portal.kernel.model.impl;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -29,7 +30,6 @@ import com.liferay.portal.kernel.util.LayoutTypePortletFactoryUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.List;
@@ -105,11 +105,16 @@ public class VirtualLayout extends LayoutWrapper {
 
 	@Override
 	public LayoutSet getLayoutSet() {
-		if (isPrivateLayout()) {
-			return _targetGroup.getPrivateLayoutSet();
+		if (_layoutSet == null) {
+			if (isPrivateLayout()) {
+				_layoutSet = _targetGroup.getPrivateLayoutSet();
+			}
+			else {
+				_layoutSet = _targetGroup.getPublicLayoutSet();
+			}
 		}
 
-		return _targetGroup.getPublicLayoutSet();
+		return _layoutSet;
 	}
 
 	@Override
@@ -169,6 +174,20 @@ public class VirtualLayout extends LayoutWrapper {
 		return _targetGroup.getGroupId();
 	}
 
+	@Override
+	public void setLayoutSet(LayoutSet layoutSet) {
+		super.setLayoutSet(layoutSet);
+
+		_layoutSet = null;
+	}
+
+	@Override
+	public void setPrivateLayout(boolean privateLayout) {
+		super.setPrivateLayout(privateLayout);
+
+		_layoutSet = null;
+	}
+
 	protected String injectVirtualGroupURL(String layoutURL, Locale locale) {
 		if (_sourceLayout.isTypeURL()) {
 			return layoutURL;
@@ -215,6 +234,7 @@ public class VirtualLayout extends LayoutWrapper {
 
 	private static final Log _log = LogFactoryUtil.getLog(VirtualLayout.class);
 
+	private LayoutSet _layoutSet;
 	private LayoutType _layoutType;
 	private final Layout _sourceLayout;
 	private final Group _targetGroup;

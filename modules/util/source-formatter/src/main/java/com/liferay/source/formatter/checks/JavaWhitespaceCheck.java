@@ -14,12 +14,14 @@
 
 package com.liferay.source.formatter.checks;
 
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.io.unsync.UnsyncBufferedReader;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringReader;
-import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+
+import java.io.IOException;
 
 /**
  * @author Hugo Huijser
@@ -29,7 +31,7 @@ public class JavaWhitespaceCheck extends WhitespaceCheck {
 	@Override
 	protected String doProcess(
 			String fileName, String absolutePath, String content)
-		throws Exception {
+		throws IOException {
 
 		content = _formatWhitespace(fileName, content);
 
@@ -39,7 +41,7 @@ public class JavaWhitespaceCheck extends WhitespaceCheck {
 	}
 
 	private String _formatWhitespace(String fileName, String content)
-		throws Exception {
+		throws IOException {
 
 		StringBundler sb = new StringBundler();
 
@@ -54,6 +56,10 @@ public class JavaWhitespaceCheck extends WhitespaceCheck {
 
 				String trimmedLine = StringUtil.trimLeading(line);
 
+				if (trimmedLine.startsWith("*\t")) {
+					line = StringUtil.replaceFirst(line, "*\t", "* ");
+				}
+
 				if (trimmedLine.startsWith(StringPool.DOUBLE_SLASH) ||
 					trimmedLine.startsWith(StringPool.STAR)) {
 
@@ -66,9 +72,10 @@ public class JavaWhitespaceCheck extends WhitespaceCheck {
 				}
 
 				if (line.contains("\t ") && !previousLine.matches(".*[&|^]") &&
-					!previousLine.contains("\t((") &&
+					!previousLine.contains("\t(") &&
 					!previousLine.contains("\t<") &&
 					!previousLine.contains("\t ") &&
+					!previousLine.contains("\telse if (") &&
 					!previousLine.contains("\tfor (") &&
 					!previousLine.contains("\timplements ") &&
 					!previousLine.contains("\tthrows ")) {

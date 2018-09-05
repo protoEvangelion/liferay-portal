@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author László Csontos
- * @deprecated As of 7.0.0, with no direct replacement
+ * @author     László Csontos
+ * @deprecated As of Judson (7.1.x), with no direct replacement
  */
 @Deprecated
 public class PortletResourceActionsBagImpl

@@ -3,13 +3,15 @@
 	<var name="ddlListName" value="List Name" />
 
 	<command name="gotoAddDisplayTemplate">
-		<execute function="Click" locator1="Button#PLUS" />
+		<execute macro="LexiconEntry#gotoAdd" />
 
-		<execute function="AssertClick" locator1="MenuItem#ADD_DISPLAY_TEMPLATE" value1="Add Display Template" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Add Display Template" />
+		</execute>
 	</command>
 
 	<command name="gotoAddListRecord">
-		<execute function="Click" locator1="Button#PLUS" />
+		<execute function="Click#clickNoMouseOver" locator1="Button#PLUS" />
 
 		<execute macro="SiteAdmin#viewPortletTitle">
 			<var name="portletTitle" value="New ${ddlDataDefinitionName}" />
@@ -19,13 +21,15 @@
 	<command name="gotoDataDefinitionPermissions">
 		<execute macro="DDLNavigator#gotoManageDataDefinitions" />
 
-		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${ddlDataDefinitionName}" />
-
-		<execute function="Click" locator1="Icon#BASIC_SEARCH" />
+		<execute macro="Search#searchCP">
+			<var name="searchTerm" value="${ddlDataDefinitionName}" />
+		</execute>
 
 		<execute function="Click#waitForMenuToggleJSClick" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS_1" />
 
-		<execute function="AssertClick" locator1="MenuItem#PERMISSIONS_LEXICON" value1="Permissions" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Permissions" />
+		</execute>
 	</command>
 
 	<command name="gotoDDLRecordEditViaWorkflow">
@@ -44,7 +48,9 @@
 	<command name="gotoEdit">
 		<execute function="Click" locator1="DDL#RECORD_TABLE_ELLIPSIS_1" />
 
-		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Edit" />
+		</execute>
 	</command>
 
 	<command name="gotoListRecords">
@@ -62,11 +68,11 @@
 	<command name="gotoManageDataDefinitions">
 		<execute function="Pause" locator1="5000" />
 
-		<execute function="Click" locator1="Icon#HEADER_VERTICAL_ELLIPSIS" />
+		<execute macro="LexiconEntry#gotoHeaderMenuItem">
+			<var name="menuItem" value="Manage Data Definitions" />
+		</execute>
 
-		<execute function="AssertClick" locator1="MenuItem#MANAGE_DATA_DEFINTIONS" value1="Manage Data Definitions" />
-
-		<execute function="AssertTextEquals" locator1="ControlMenu#HEADER_TITLE" value1="Structures" />
+		<execute function="AssertTextEquals" locator1="Portlet#HEADER" value1="Data Definitions" />
 	</command>
 
 	<command name="gotoManageTemplates">
@@ -76,7 +82,9 @@
 
 		<execute function="Click#waitForMenuToggleJSClick" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS" />
 
-		<execute function="AssertClick" locator1="MenuItem#MANAGE_TEMPLATES" value1="Manage Templates" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Manage Templates" />
+		</execute>
 	</command>
 
 	<command name="gotoOptionalConfiguration">
@@ -86,20 +94,21 @@
 	</command>
 
 	<command name="gotoSpreadsheetView">
-		<var name="key_ddlListName" value="${ddlListName}" />
+		<execute function="AssertTextEquals" locator1="DDL#LIST_TABLE_NAME" value1="${ddlListName}">
+			<var name="key_ddlListName" value="${ddlListName}" />
+		</execute>
 
-		<execute function="AssertTextEquals" locator1="DDL#LIST_TABLE_NAME" value1="${ddlListName}" />
-
-		<var name="key_rowEntry" value="${ddlListName}" />
-
-		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
-
-		<execute function="AssertClick" locator1="MenuItem#SPREADSHEET_VIEW" value1="Spreadsheet View" />
+		<execute macro="LexiconEntry#gotoEntryMenuItem">
+			<var name="menuItem" value="Spreadsheet View" />
+			<var name="rowEntry" value="${ddlListName}" />
+		</execute>
 	</command>
 
 	<command name="gotoView">
 		<execute function="Click" locator1="DDL#RECORD_TABLE_ELLIPSIS_1" />
 
-		<execute function="AssertClick" locator1="MenuItem#VIEW" value1="View" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="View" />
+		</execute>
 	</command>
 </definition>

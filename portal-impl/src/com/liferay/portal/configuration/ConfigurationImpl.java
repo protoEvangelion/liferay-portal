@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.PropertiesUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.lang.reflect.Field;
@@ -54,40 +55,25 @@ public class ConfigurationImpl
 	implements com.liferay.portal.kernel.configuration.Configuration {
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Judson (7.1.x), replaced by {@link
 	 *             #ConfigurationImpl(ClassLoader, String, long, String)}
 	 */
 	@Deprecated
 	public ConfigurationImpl(ClassLoader classLoader, String name) {
-		this(classLoader, name, CompanyConstants.SYSTEM);
+		this(
+			classLoader, name, CompanyConstants.SYSTEM,
+			_getWebId(CompanyConstants.SYSTEM));
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Judson (7.1.x), replaced by {@link
 	 *             #ConfigurationImpl(ClassLoader, String, long, String)}
 	 */
 	@Deprecated
 	public ConfigurationImpl(
 		ClassLoader classLoader, String name, long companyId) {
 
-		String webId = null;
-
-		if (companyId > CompanyConstants.SYSTEM) {
-			try {
-				Company company = CompanyLocalServiceUtil.getCompanyById(
-					companyId);
-
-				webId = company.getWebId();
-			}
-			catch (Exception e) {
-				_log.error(e, e);
-			}
-		}
-
-		_componentConfiguration = new ClassLoaderComponentConfiguration(
-			classLoader, webId, name);
-
-		printSources(companyId, webId);
+		this(classLoader, name, companyId, _getWebId(companyId));
 	}
 
 	public ConfigurationImpl(
@@ -253,7 +239,7 @@ public class ConfigurationImpl
 			return (String[])value;
 		}
 
-		return _emptyArray;
+		return _EMPTY_ARRAY;
 	}
 
 	@Override
@@ -283,7 +269,7 @@ public class ConfigurationImpl
 			return (String[])value;
 		}
 
-		return _emptyArray;
+		return _EMPTY_ARRAY;
 	}
 
 	@Override
@@ -419,7 +405,9 @@ public class ConfigurationImpl
 
 			if (companyId > CompanyConstants.SYSTEM) {
 				info +=
-					" for {companyId=" + companyId + ", webId=" + webId + "}";
+					StringBundler.concat(
+						" for {companyId=", String.valueOf(companyId),
+						", webId=", webId, "}");
 			}
 
 			System.out.println(info);
@@ -431,6 +419,22 @@ public class ConfigurationImpl
 		Properties properties) {
 
 		return (Map)properties;
+	}
+
+	private static String _getWebId(long companyId) {
+		if (companyId > CompanyConstants.SYSTEM) {
+			try {
+				Company company = CompanyLocalServiceUtil.getCompanyById(
+					companyId);
+
+				return company.getWebId();
+			}
+			catch (Exception e) {
+				_log.error(e, e);
+			}
+		}
+
+		return null;
 	}
 
 	private FilterCacheKey _buildFilterCacheKey(String key, Filter filter) {
@@ -467,12 +471,13 @@ public class ConfigurationImpl
 		return value;
 	}
 
+	private static final String[] _EMPTY_ARRAY = new String[0];
+
 	private static final boolean _PRINT_DUPLICATE_CALLS_TO_GET = false;
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		ConfigurationImpl.class);
 
-	private static final String[] _emptyArray = new String[0];
 	private static final Object _nullValue = new Object();
 
 	private final ComponentConfiguration _componentConfiguration;
@@ -515,6 +520,7 @@ public class ConfigurationImpl
 
 		private FilterCacheKey(String key, Filter filter) {
 			_key = key;
+
 			_selectors = filter.getSelectors();
 		}
 

@@ -18,10 +18,10 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.mail.reader.model.Account;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -133,7 +133,7 @@ public class AccountCacheModel implements CacheModel<Account>, Externalizable {
 		accountImpl.setUserId(userId);
 
 		if (userName == null) {
-			accountImpl.setUserName(StringPool.BLANK);
+			accountImpl.setUserName("");
 		}
 		else {
 			accountImpl.setUserName(userName);
@@ -154,28 +154,28 @@ public class AccountCacheModel implements CacheModel<Account>, Externalizable {
 		}
 
 		if (address == null) {
-			accountImpl.setAddress(StringPool.BLANK);
+			accountImpl.setAddress("");
 		}
 		else {
 			accountImpl.setAddress(address);
 		}
 
 		if (personalName == null) {
-			accountImpl.setPersonalName(StringPool.BLANK);
+			accountImpl.setPersonalName("");
 		}
 		else {
 			accountImpl.setPersonalName(personalName);
 		}
 
 		if (protocol == null) {
-			accountImpl.setProtocol(StringPool.BLANK);
+			accountImpl.setProtocol("");
 		}
 		else {
 			accountImpl.setProtocol(protocol);
 		}
 
 		if (incomingHostName == null) {
-			accountImpl.setIncomingHostName(StringPool.BLANK);
+			accountImpl.setIncomingHostName("");
 		}
 		else {
 			accountImpl.setIncomingHostName(incomingHostName);
@@ -185,7 +185,7 @@ public class AccountCacheModel implements CacheModel<Account>, Externalizable {
 		accountImpl.setIncomingSecure(incomingSecure);
 
 		if (outgoingHostName == null) {
-			accountImpl.setOutgoingHostName(StringPool.BLANK);
+			accountImpl.setOutgoingHostName("");
 		}
 		else {
 			accountImpl.setOutgoingHostName(outgoingHostName);
@@ -195,14 +195,14 @@ public class AccountCacheModel implements CacheModel<Account>, Externalizable {
 		accountImpl.setOutgoingSecure(outgoingSecure);
 
 		if (login == null) {
-			accountImpl.setLogin(StringPool.BLANK);
+			accountImpl.setLogin("");
 		}
 		else {
 			accountImpl.setLogin(login);
 		}
 
 		if (password == null) {
-			accountImpl.setPassword(StringPool.BLANK);
+			accountImpl.setPassword("");
 		}
 		else {
 			accountImpl.setPassword(password);
@@ -211,7 +211,7 @@ public class AccountCacheModel implements CacheModel<Account>, Externalizable {
 		accountImpl.setSavePassword(savePassword);
 
 		if (signature == null) {
-			accountImpl.setSignature(StringPool.BLANK);
+			accountImpl.setSignature("");
 		}
 		else {
 			accountImpl.setSignature(signature);
@@ -220,7 +220,7 @@ public class AccountCacheModel implements CacheModel<Account>, Externalizable {
 		accountImpl.setUseSignature(useSignature);
 
 		if (folderPrefix == null) {
-			accountImpl.setFolderPrefix(StringPool.BLANK);
+			accountImpl.setFolderPrefix("");
 		}
 		else {
 			accountImpl.setFolderPrefix(folderPrefix);
@@ -290,7 +290,7 @@ public class AccountCacheModel implements CacheModel<Account>, Externalizable {
 		objectOutput.writeLong(userId);
 
 		if (userName == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(userName);
@@ -300,28 +300,28 @@ public class AccountCacheModel implements CacheModel<Account>, Externalizable {
 		objectOutput.writeLong(modifiedDate);
 
 		if (address == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(address);
 		}
 
 		if (personalName == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(personalName);
 		}
 
 		if (protocol == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(protocol);
 		}
 
 		if (incomingHostName == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(incomingHostName);
@@ -332,7 +332,7 @@ public class AccountCacheModel implements CacheModel<Account>, Externalizable {
 		objectOutput.writeBoolean(incomingSecure);
 
 		if (outgoingHostName == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(outgoingHostName);
@@ -343,14 +343,14 @@ public class AccountCacheModel implements CacheModel<Account>, Externalizable {
 		objectOutput.writeBoolean(outgoingSecure);
 
 		if (login == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(login);
 		}
 
 		if (password == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(password);
@@ -359,7 +359,7 @@ public class AccountCacheModel implements CacheModel<Account>, Externalizable {
 		objectOutput.writeBoolean(savePassword);
 
 		if (signature == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(signature);
@@ -368,7 +368,7 @@ public class AccountCacheModel implements CacheModel<Account>, Externalizable {
 		objectOutput.writeBoolean(useSignature);
 
 		if (folderPrefix == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(folderPrefix);

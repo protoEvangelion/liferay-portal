@@ -14,9 +14,10 @@
 
 package com.liferay.portal.spring.aop;
 
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.spring.aop.AdvisedSupport;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Serializable;
 
@@ -30,9 +31,6 @@ import java.util.Objects;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
-import org.springframework.aop.TargetSource;
-import org.springframework.aop.framework.AdvisedSupport;
-
 /**
  * @author Shuyang Zhou
  */
@@ -40,7 +38,7 @@ public class ServiceBeanMethodInvocation
 	implements MethodInvocation, Serializable {
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Judson (7.1.x), replaced by {@link
 	 *             #ServiceBeanMethodInvocation(Object, Method, Object[])}
 	 */
 	@Deprecated
@@ -58,9 +56,7 @@ public class ServiceBeanMethodInvocation
 		_method = method;
 		_arguments = arguments;
 
-		if (!_method.isAccessible()) {
-			_method.setAccessible(true);
-		}
+		_method.setAccessible(true);
 
 		if (_method.getDeclaringClass() == Object.class) {
 			String methodName = _method.getName();
@@ -149,10 +145,7 @@ public class ServiceBeanMethodInvocation
 					ServiceBeanAopProxy.getAdvisedSupport(argument);
 
 				if (advisedSupport != null) {
-					TargetSource targetSource =
-						advisedSupport.getTargetSource();
-
-					argument = targetSource.getTarget();
+					argument = advisedSupport.getTarget();
 				}
 			}
 
@@ -178,7 +171,7 @@ public class ServiceBeanMethodInvocation
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
 	 */
 	@Deprecated
 	public ServiceBeanMethodInvocation toCacheKeyModel() {
@@ -209,9 +202,7 @@ public class ServiceBeanMethodInvocation
 		sb.append(_method.getName());
 		sb.append(StringPool.OPEN_PARENTHESIS);
 
-		for (int i = 0; i < parameterTypes.length; i++) {
-			Class<?> parameterType = parameterTypes[i];
-
+		for (Class<?> parameterType : parameterTypes) {
 			sb.append(parameterType.getName());
 
 			sb.append(StringPool.COMMA);

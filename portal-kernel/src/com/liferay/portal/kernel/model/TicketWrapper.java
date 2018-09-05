@@ -134,43 +134,8 @@ public class TicketWrapper implements Ticket, ModelWrapper<Ticket> {
 	}
 
 	@Override
-	public CacheModel<Ticket> toCacheModel() {
-		return _ticket.toCacheModel();
-	}
-
-	@Override
-	public Ticket toEscapedModel() {
-		return new TicketWrapper(_ticket.toEscapedModel());
-	}
-
-	@Override
-	public Ticket toUnescapedModel() {
-		return new TicketWrapper(_ticket.toUnescapedModel());
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _ticket.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _ticket.isEscapedModel();
-	}
-
-	@Override
-	public boolean isExpired() {
-		return _ticket.isExpired();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _ticket.isNew();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _ticket.getExpandoBridge();
+	public Object clone() {
+		return new TicketWrapper((Ticket)_ticket.clone());
 	}
 
 	@Override
@@ -179,88 +144,13 @@ public class TicketWrapper implements Ticket, ModelWrapper<Ticket> {
 	}
 
 	/**
-	* Returns the type of this ticket.
-	*
-	* @return the type of this ticket
-	*/
-	@Override
-	public int getType() {
-		return _ticket.getType();
-	}
-
-	@Override
-	public int hashCode() {
-		return _ticket.hashCode();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _ticket.getPrimaryKeyObj();
-	}
-
-	@Override
-	public java.lang.Object clone() {
-		return new TicketWrapper((Ticket)_ticket.clone());
-	}
-
-	/**
 	* Returns the fully qualified class name of this ticket.
 	*
 	* @return the fully qualified class name of this ticket
 	*/
 	@Override
-	public java.lang.String getClassName() {
+	public String getClassName() {
 		return _ticket.getClassName();
-	}
-
-	/**
-	* Returns the extra info of this ticket.
-	*
-	* @return the extra info of this ticket
-	*/
-	@Override
-	public java.lang.String getExtraInfo() {
-		return _ticket.getExtraInfo();
-	}
-
-	/**
-	* Returns the key of this ticket.
-	*
-	* @return the key of this ticket
-	*/
-	@Override
-	public java.lang.String getKey() {
-		return _ticket.getKey();
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _ticket.toString();
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _ticket.toXmlString();
-	}
-
-	/**
-	* Returns the create date of this ticket.
-	*
-	* @return the create date of this ticket
-	*/
-	@Override
-	public Date getCreateDate() {
-		return _ticket.getCreateDate();
-	}
-
-	/**
-	* Returns the expiration date of this ticket.
-	*
-	* @return the expiration date of this ticket
-	*/
-	@Override
-	public Date getExpirationDate() {
-		return _ticket.getExpirationDate();
 	}
 
 	/**
@@ -294,6 +184,51 @@ public class TicketWrapper implements Ticket, ModelWrapper<Ticket> {
 	}
 
 	/**
+	* Returns the create date of this ticket.
+	*
+	* @return the create date of this ticket
+	*/
+	@Override
+	public Date getCreateDate() {
+		return _ticket.getCreateDate();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _ticket.getExpandoBridge();
+	}
+
+	/**
+	* Returns the expiration date of this ticket.
+	*
+	* @return the expiration date of this ticket
+	*/
+	@Override
+	public Date getExpirationDate() {
+		return _ticket.getExpirationDate();
+	}
+
+	/**
+	* Returns the extra info of this ticket.
+	*
+	* @return the extra info of this ticket
+	*/
+	@Override
+	public String getExtraInfo() {
+		return _ticket.getExtraInfo();
+	}
+
+	/**
+	* Returns the key of this ticket.
+	*
+	* @return the key of this ticket
+	*/
+	@Override
+	public String getKey() {
+		return _ticket.getKey();
+	}
+
+	/**
 	* Returns the mvcc version of this ticket.
 	*
 	* @return the mvcc version of this ticket
@@ -313,6 +248,11 @@ public class TicketWrapper implements Ticket, ModelWrapper<Ticket> {
 		return _ticket.getPrimaryKey();
 	}
 
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _ticket.getPrimaryKeyObj();
+	}
+
 	/**
 	* Returns the ticket ID of this ticket.
 	*
@@ -321,6 +261,41 @@ public class TicketWrapper implements Ticket, ModelWrapper<Ticket> {
 	@Override
 	public long getTicketId() {
 		return _ticket.getTicketId();
+	}
+
+	/**
+	* Returns the type of this ticket.
+	*
+	* @return the type of this ticket
+	*/
+	@Override
+	public int getType() {
+		return _ticket.getType();
+	}
+
+	@Override
+	public int hashCode() {
+		return _ticket.hashCode();
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _ticket.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _ticket.isEscapedModel();
+	}
+
+	@Override
+	public boolean isExpired() {
+		return _ticket.isExpired();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _ticket.isNew();
 	}
 
 	@Override
@@ -334,7 +309,7 @@ public class TicketWrapper implements Ticket, ModelWrapper<Ticket> {
 	}
 
 	@Override
-	public void setClassName(java.lang.String className) {
+	public void setClassName(String className) {
 		_ticket.setClassName(className);
 	}
 
@@ -409,7 +384,7 @@ public class TicketWrapper implements Ticket, ModelWrapper<Ticket> {
 	* @param extraInfo the extra info of this ticket
 	*/
 	@Override
-	public void setExtraInfo(java.lang.String extraInfo) {
+	public void setExtraInfo(String extraInfo) {
 		_ticket.setExtraInfo(extraInfo);
 	}
 
@@ -419,7 +394,7 @@ public class TicketWrapper implements Ticket, ModelWrapper<Ticket> {
 	* @param key the key of this ticket
 	*/
 	@Override
-	public void setKey(java.lang.String key) {
+	public void setKey(String key) {
 		_ticket.setKey(key);
 	}
 
@@ -471,6 +446,31 @@ public class TicketWrapper implements Ticket, ModelWrapper<Ticket> {
 	@Override
 	public void setType(int type) {
 		_ticket.setType(type);
+	}
+
+	@Override
+	public CacheModel<Ticket> toCacheModel() {
+		return _ticket.toCacheModel();
+	}
+
+	@Override
+	public Ticket toEscapedModel() {
+		return new TicketWrapper(_ticket.toEscapedModel());
+	}
+
+	@Override
+	public String toString() {
+		return _ticket.toString();
+	}
+
+	@Override
+	public Ticket toUnescapedModel() {
+		return new TicketWrapper(_ticket.toUnescapedModel());
+	}
+
+	@Override
+	public String toXmlString() {
+		return _ticket.toXmlString();
 	}
 
 	@Override

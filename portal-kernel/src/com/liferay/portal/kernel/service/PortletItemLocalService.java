@@ -57,25 +57,8 @@ public interface PortletItemLocalService extends BaseLocalService,
 	 *
 	 * Never modify or reference this interface directly. Always use {@link PortletItemLocalServiceUtil} to access the portlet item local service. Add custom service methods to {@link com.liferay.portal.service.impl.PortletItemLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public ActionableDynamicQuery getActionableDynamicQuery();
-
-	public DynamicQuery dynamicQuery();
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
-
-	/**
-	* @throws PortalException
-	*/
-	@Override
-	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
-		throws PortalException;
-
-	@Override
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException;
+	public PortletItem addPortletItem(long userId, long groupId, String name,
+		String portletId, String className) throws PortalException;
 
 	/**
 	* Adds the portlet item to the database. Also notifies the appropriate model listeners.
@@ -86,26 +69,21 @@ public interface PortletItemLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.REINDEX)
 	public PortletItem addPortletItem(PortletItem portletItem);
 
-	public PortletItem addPortletItem(long userId, long groupId,
-		java.lang.String name, java.lang.String portletId,
-		java.lang.String className) throws PortalException;
-
 	/**
 	* Creates a new portlet item with the primary key. Does not add the portlet item to the database.
 	*
 	* @param portletItemId the primary key for the new portlet item
 	* @return the new portlet item
 	*/
+	@Transactional(enabled = false)
 	public PortletItem createPortletItem(long portletItemId);
 
 	/**
-	* Deletes the portlet item from the database. Also notifies the appropriate model listeners.
-	*
-	* @param portletItem the portlet item
-	* @return the portlet item that was removed
+	* @throws PortalException
 	*/
-	@Indexable(type = IndexableType.DELETE)
-	public PortletItem deletePortletItem(PortletItem portletItem);
+	@Override
+	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
+		throws PortalException;
 
 	/**
 	* Deletes the portlet item with the primary key from the database. Also notifies the appropriate model listeners.
@@ -118,52 +96,16 @@ public interface PortletItemLocalService extends BaseLocalService,
 	public PortletItem deletePortletItem(long portletItemId)
 		throws PortalException;
 
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public PortletItem fetchPortletItem(long portletItemId);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public PortletItem getPortletItem(long groupId, java.lang.String name,
-		java.lang.String portletId, java.lang.String className)
-		throws PortalException;
-
 	/**
-	* Returns the portlet item with the primary key.
-	*
-	* @param portletItemId the primary key of the portlet item
-	* @return the portlet item
-	* @throws PortalException if a portlet item with the primary key could not be found
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public PortletItem getPortletItem(long portletItemId)
-		throws PortalException;
-
-	/**
-	* Updates the portlet item in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	* Deletes the portlet item from the database. Also notifies the appropriate model listeners.
 	*
 	* @param portletItem the portlet item
-	* @return the portlet item that was updated
+	* @return the portlet item that was removed
 	*/
-	@Indexable(type = IndexableType.REINDEX)
-	public PortletItem updatePortletItem(PortletItem portletItem);
+	@Indexable(type = IndexableType.DELETE)
+	public PortletItem deletePortletItem(PortletItem portletItem);
 
-	public PortletItem updatePortletItem(long userId, long groupId,
-		java.lang.String name, java.lang.String portletId,
-		java.lang.String className) throws PortalException;
-
-	/**
-	* Returns the number of portlet items.
-	*
-	* @return the number of portlet items
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getPortletItemsCount();
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	public java.lang.String getOSGiServiceIdentifier();
+	public DynamicQuery dynamicQuery();
 
 	/**
 	* Performs a dynamic query on the database and returns the matching rows.
@@ -205,28 +147,6 @@ public interface PortletItemLocalService extends BaseLocalService,
 		int end, OrderByComparator<T> orderByComparator);
 
 	/**
-	* Returns a range of all the portlet items.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.model.impl.PortletItemModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param start the lower bound of the range of portlet items
-	* @param end the upper bound of the range of portlet items (not inclusive)
-	* @return the range of portlet items
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<PortletItem> getPortletItems(int start, int end);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<PortletItem> getPortletItems(long groupId,
-		java.lang.String className);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<PortletItem> getPortletItems(long groupId,
-		java.lang.String portletId, java.lang.String className);
-
-	/**
 	* Returns the number of rows matching the dynamic query.
 	*
 	* @param dynamicQuery the dynamic query
@@ -243,4 +163,82 @@ public interface PortletItemLocalService extends BaseLocalService,
 	*/
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
 		Projection projection);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public PortletItem fetchPortletItem(long portletItemId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public ActionableDynamicQuery getActionableDynamicQuery();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	public String getOSGiServiceIdentifier();
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
+		throws PortalException;
+
+	/**
+	* Returns the portlet item with the primary key.
+	*
+	* @param portletItemId the primary key of the portlet item
+	* @return the portlet item
+	* @throws PortalException if a portlet item with the primary key could not be found
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public PortletItem getPortletItem(long portletItemId)
+		throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public PortletItem getPortletItem(long groupId, String name,
+		String portletId, String className) throws PortalException;
+
+	/**
+	* Returns a range of all the portlet items.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.model.impl.PortletItemModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param start the lower bound of the range of portlet items
+	* @param end the upper bound of the range of portlet items (not inclusive)
+	* @return the range of portlet items
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<PortletItem> getPortletItems(int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<PortletItem> getPortletItems(long groupId, String className);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<PortletItem> getPortletItems(long groupId, String portletId,
+		String className);
+
+	/**
+	* Returns the number of portlet items.
+	*
+	* @return the number of portlet items
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getPortletItemsCount();
+
+	public PortletItem updatePortletItem(long userId, long groupId,
+		String name, String portletId, String className)
+		throws PortalException;
+
+	/**
+	* Updates the portlet item in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param portletItem the portlet item
+	* @return the portlet item that was updated
+	*/
+	@Indexable(type = IndexableType.REINDEX)
+	public PortletItem updatePortletItem(PortletItem portletItem);
 }

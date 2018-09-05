@@ -14,11 +14,10 @@
 
 package com.liferay.portal.fabric.status;
 
-import com.liferay.portal.fabric.status.JMXProxyUtil.ProcessCallableExecutor;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.process.ProcessCallable;
 import com.liferay.portal.kernel.process.ProcessException;
 import com.liferay.portal.kernel.test.rule.CodeCoverageAssertor;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Serializable;
 
@@ -45,7 +44,7 @@ public class LocalFabricStatusTest extends BaseFabricStatusTestCase {
 
 	@Test
 	public void testProcessCallableExecutor() throws Exception {
-		ProcessCallableExecutor processCallableExecutor =
+		JMXProxyUtil.ProcessCallableExecutor processCallableExecutor =
 			LocalFabricStatus.processCallableExecutor;
 
 		final Serializable serializable = new Serializable() {};

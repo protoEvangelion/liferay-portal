@@ -19,9 +19,12 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.model.PasswordTracker;
 import com.liferay.portal.kernel.model.PasswordTrackerModel;
 import com.liferay.portal.kernel.model.User;
@@ -31,8 +34,6 @@ import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Serializable;
 
@@ -249,7 +250,7 @@ public class PasswordTrackerModelImpl extends BaseModelImpl<PasswordTracker>
 			return user.getUuid();
 		}
 		catch (PortalException pe) {
-			return StringPool.BLANK;
+			return "";
 		}
 	}
 
@@ -276,7 +277,7 @@ public class PasswordTrackerModelImpl extends BaseModelImpl<PasswordTracker>
 	@Override
 	public String getPassword() {
 		if (_password == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _password;
@@ -504,7 +505,7 @@ public class PasswordTrackerModelImpl extends BaseModelImpl<PasswordTracker>
 
 	private static final ClassLoader _classLoader = PasswordTracker.class.getClassLoader();
 	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
-			PasswordTracker.class
+			PasswordTracker.class, ModelWrapper.class
 		};
 	private long _mvccVersion;
 	private long _passwordTrackerId;

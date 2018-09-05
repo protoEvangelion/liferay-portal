@@ -46,6 +46,7 @@ public class RepositoryModelTitleComparator<T> extends OrderByComparator<T> {
 
 	public RepositoryModelTitleComparator(boolean ascending) {
 		_ascending = ascending;
+
 		_orderByModel = false;
 	}
 
@@ -86,9 +87,8 @@ public class RepositoryModelTitleComparator<T> extends OrderByComparator<T> {
 		if (_ascending) {
 			return value;
 		}
-		else {
-			return -value;
-		}
+
+		return -value;
 	}
 
 	@Override
@@ -97,17 +97,15 @@ public class RepositoryModelTitleComparator<T> extends OrderByComparator<T> {
 			if (_ascending) {
 				return ORDER_BY_MODEL_ASC;
 			}
-			else {
-				return ORDER_BY_MODEL_DESC;
-			}
+
+			return ORDER_BY_MODEL_DESC;
 		}
 		else {
 			if (_ascending) {
 				return ORDER_BY_ASC;
 			}
-			else {
-				return ORDER_BY_DESC;
-			}
+
+			return ORDER_BY_DESC;
 		}
 	}
 

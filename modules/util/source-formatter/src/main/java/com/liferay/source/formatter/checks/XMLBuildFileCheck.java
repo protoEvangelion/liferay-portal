@@ -14,13 +14,14 @@
 
 package com.liferay.source.formatter.checks;
 
-import com.liferay.portal.kernel.util.CharPool;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.source.formatter.checks.comparator.ElementComparator;
 import com.liferay.source.formatter.checks.util.SourceUtil;
 import com.liferay.source.formatter.util.FileUtil;
 
 import java.io.File;
+import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.Element;
 
 /**
@@ -38,7 +40,7 @@ public class XMLBuildFileCheck extends BaseFileCheck {
 	@Override
 	protected String doProcess(
 			String fileName, String absolutePath, String content)
-		throws Exception {
+		throws DocumentException, IOException {
 
 		if (fileName.startsWith(getBaseDirName() + "build") ||
 			(fileName.contains("/build") && !fileName.contains("/tools/"))) {
@@ -70,7 +72,7 @@ public class XMLBuildFileCheck extends BaseFileCheck {
 
 	private void _checkBuildXML(
 			String fileName, String absolutePath, String content)
-		throws Exception {
+		throws DocumentException, IOException {
 
 		Document document = SourceUtil.readXML(content);
 
@@ -96,40 +98,43 @@ public class XMLBuildFileCheck extends BaseFileCheck {
 			addMessage(fileName, "Macrodefs go before targets");
 		}
 
-		_checkImportFiles(fileName, content);
+		if (!isModulesApp(absolutePath, true)) {
+			_checkImportFiles(fileName, content);
+		}
 
 		_checkTargetNames(fileName, absolutePath, content);
 	}
 
 	private void _checkImportFiles(String fileName, String content) {
+		int pos = fileName.lastIndexOf(StringPool.SLASH);
+
+		if (pos == -1) {
+			return;
+		}
+
+		String dirPath = fileName.substring(0, pos + 1);
+
 		Matcher matcher = _importFilePattern.matcher(content);
 
 		while (matcher.find()) {
-			String importFileName = fileName;
+			String importFileName = matcher.group(1);
 
-			int pos = importFileName.lastIndexOf(StringPool.SLASH);
-
-			if (pos == -1) {
-				return;
+			if (importFileName.contains("${")) {
+				continue;
 			}
 
-			importFileName = importFileName.substring(0, pos + 1);
-
-			importFileName = importFileName + matcher.group(1);
-
-			File file = new File(importFileName);
+			File file = new File(dirPath + importFileName);
 
 			if (!file.exists()) {
 				addMessage(
-					fileName,
-					"Incorrect import file '" + matcher.group(1) + "'");
+					fileName, "Incorrect import file '" + importFileName + "'");
 			}
 		}
 	}
 
 	private void _checkTargetName(
 			String targetName, String buildFileName, String fileName)
-		throws Exception {
+		throws DocumentException, IOException {
 
 		List<String> targetNames = _getTargetNames(
 			buildFileName, fileName, null, false);
@@ -151,7 +156,7 @@ public class XMLBuildFileCheck extends BaseFileCheck {
 
 	private void _checkTargetNames(
 			String fileName, String absolutePath, String content)
-		throws Exception {
+		throws DocumentException, IOException {
 
 		Document document = SourceUtil.readXML(content);
 
@@ -234,7 +239,7 @@ public class XMLBuildFileCheck extends BaseFileCheck {
 	private List<String> _getTargetNames(
 			String buildFileName, String fileName, List<String> targetNames,
 			boolean importFile)
-		throws Exception {
+		throws DocumentException, IOException {
 
 		if (buildFileName.contains(StringPool.OPEN_CURLY_BRACE)) {
 			return null;

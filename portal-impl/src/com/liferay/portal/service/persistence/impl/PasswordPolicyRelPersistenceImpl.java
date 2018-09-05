@@ -16,6 +16,8 @@ package com.liferay.portal.service.persistence.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
@@ -35,12 +37,13 @@ import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.PasswordPolicyRelPersistence;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.model.impl.PasswordPolicyRelImpl;
 import com.liferay.portal.model.impl.PasswordPolicyRelModelImpl;
 
 import java.io.Serializable;
+
+import java.lang.reflect.InvocationHandler;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -309,7 +312,7 @@ public class PasswordPolicyRelPersistenceImpl extends BasePersistenceImpl<Passwo
 		msg.append("passwordPolicyId=");
 		msg.append(passwordPolicyId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchPasswordPolicyRelException(msg.toString());
 	}
@@ -362,7 +365,7 @@ public class PasswordPolicyRelPersistenceImpl extends BasePersistenceImpl<Passwo
 		msg.append("passwordPolicyId=");
 		msg.append(passwordPolicyId);
 
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
+		msg.append("}");
 
 		throw new NoSuchPasswordPolicyRelException(msg.toString());
 	}
@@ -645,7 +648,7 @@ public class PasswordPolicyRelPersistenceImpl extends BasePersistenceImpl<Passwo
 			msg.append(", classPK=");
 			msg.append(classPK);
 
-			msg.append(StringPool.CLOSE_CURLY_BRACE);
+			msg.append("}");
 
 			if (_log.isDebugEnabled()) {
 				_log.debug(msg.toString());
@@ -734,12 +737,6 @@ public class PasswordPolicyRelPersistenceImpl extends BasePersistenceImpl<Passwo
 					result = passwordPolicyRel;
 
 					cacheResult(passwordPolicyRel);
-
-					if ((passwordPolicyRel.getClassNameId() != classNameId) ||
-							(passwordPolicyRel.getClassPK() != classPK)) {
-						finderCache.putResult(FINDER_PATH_FETCH_BY_C_C,
-							finderArgs, passwordPolicyRel);
-					}
 				}
 			}
 			catch (Exception e) {
@@ -1038,8 +1035,6 @@ public class PasswordPolicyRelPersistenceImpl extends BasePersistenceImpl<Passwo
 
 	@Override
 	protected PasswordPolicyRel removeImpl(PasswordPolicyRel passwordPolicyRel) {
-		passwordPolicyRel = toUnwrappedModel(passwordPolicyRel);
-
 		Session session = null;
 
 		try {
@@ -1070,9 +1065,23 @@ public class PasswordPolicyRelPersistenceImpl extends BasePersistenceImpl<Passwo
 
 	@Override
 	public PasswordPolicyRel updateImpl(PasswordPolicyRel passwordPolicyRel) {
-		passwordPolicyRel = toUnwrappedModel(passwordPolicyRel);
-
 		boolean isNew = passwordPolicyRel.isNew();
+
+		if (!(passwordPolicyRel instanceof PasswordPolicyRelModelImpl)) {
+			InvocationHandler invocationHandler = null;
+
+			if (ProxyUtil.isProxyClass(passwordPolicyRel.getClass())) {
+				invocationHandler = ProxyUtil.getInvocationHandler(passwordPolicyRel);
+
+				throw new IllegalArgumentException(
+					"Implement ModelWrapper in passwordPolicyRel proxy " +
+					invocationHandler.getClass());
+			}
+
+			throw new IllegalArgumentException(
+				"Implement ModelWrapper in custom PasswordPolicyRel implementation " +
+				passwordPolicyRel.getClass());
+		}
 
 		PasswordPolicyRelModelImpl passwordPolicyRelModelImpl = (PasswordPolicyRelModelImpl)passwordPolicyRel;
 
@@ -1150,27 +1159,6 @@ public class PasswordPolicyRelPersistenceImpl extends BasePersistenceImpl<Passwo
 		passwordPolicyRel.resetOriginalValues();
 
 		return passwordPolicyRel;
-	}
-
-	protected PasswordPolicyRel toUnwrappedModel(
-		PasswordPolicyRel passwordPolicyRel) {
-		if (passwordPolicyRel instanceof PasswordPolicyRelImpl) {
-			return passwordPolicyRel;
-		}
-
-		PasswordPolicyRelImpl passwordPolicyRelImpl = new PasswordPolicyRelImpl();
-
-		passwordPolicyRelImpl.setNew(passwordPolicyRel.isNew());
-		passwordPolicyRelImpl.setPrimaryKey(passwordPolicyRel.getPrimaryKey());
-
-		passwordPolicyRelImpl.setMvccVersion(passwordPolicyRel.getMvccVersion());
-		passwordPolicyRelImpl.setPasswordPolicyRelId(passwordPolicyRel.getPasswordPolicyRelId());
-		passwordPolicyRelImpl.setCompanyId(passwordPolicyRel.getCompanyId());
-		passwordPolicyRelImpl.setPasswordPolicyId(passwordPolicyRel.getPasswordPolicyId());
-		passwordPolicyRelImpl.setClassNameId(passwordPolicyRel.getClassNameId());
-		passwordPolicyRelImpl.setClassPK(passwordPolicyRel.getClassPK());
-
-		return passwordPolicyRelImpl;
 	}
 
 	/**
@@ -1324,12 +1312,12 @@ public class PasswordPolicyRelPersistenceImpl extends BasePersistenceImpl<Passwo
 		for (Serializable primaryKey : uncachedPrimaryKeys) {
 			query.append((long)primaryKey);
 
-			query.append(StringPool.COMMA);
+			query.append(",");
 		}
 
 		query.setIndex(query.index() - 1);
 
-		query.append(StringPool.CLOSE_PARENTHESIS);
+		query.append(")");
 
 		String sql = query.toString();
 

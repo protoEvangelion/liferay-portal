@@ -43,9 +43,32 @@ public class OrgLaborServiceWrapper implements OrgLaborService,
 	}
 
 	@Override
+	public void deleteOrgLabor(long orgLaborId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_orgLaborService.deleteOrgLabor(orgLaborId);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.model.OrgLabor getOrgLabor(long orgLaborId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _orgLaborService.getOrgLabor(orgLaborId);
+	}
+
+	@Override
+	public java.util.List<com.liferay.portal.kernel.model.OrgLabor> getOrgLabors(
+		long organizationId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _orgLaborService.getOrgLabors(organizationId);
+	}
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	@Override
+	public String getOSGiServiceIdentifier() {
+		return _orgLaborService.getOSGiServiceIdentifier();
 	}
 
 	@Override
@@ -58,29 +81,6 @@ public class OrgLaborServiceWrapper implements OrgLaborService,
 		return _orgLaborService.updateOrgLabor(orgLaborId, typeId, sunOpen,
 			sunClose, monOpen, monClose, tueOpen, tueClose, wedOpen, wedClose,
 			thuOpen, thuClose, friOpen, friClose, satOpen, satClose);
-	}
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	@Override
-	public java.lang.String getOSGiServiceIdentifier() {
-		return _orgLaborService.getOSGiServiceIdentifier();
-	}
-
-	@Override
-	public java.util.List<com.liferay.portal.kernel.model.OrgLabor> getOrgLabors(
-		long organizationId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _orgLaborService.getOrgLabors(organizationId);
-	}
-
-	@Override
-	public void deleteOrgLabor(long orgLaborId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_orgLaborService.deleteOrgLabor(orgLaborId);
 	}
 
 	@Override

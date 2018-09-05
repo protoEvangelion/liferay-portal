@@ -46,45 +46,45 @@ public interface PortalService extends BaseService {
 	 *
 	 * Never modify or reference this interface directly. Always use {@link PortalServiceUtil} to access the portal remote service. Add custom service methods to {@link com.liferay.portal.service.impl.PortalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public boolean testHasClassName();
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public String getAutoDeployDirectory();
 
 	@JSONWebService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getBuildNumber();
-
-	public int testGetBuildNumber();
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.lang.String getAutoDeployDirectory();
 
 	/**
 	* Returns the OSGi service identifier.
 	*
 	* @return the OSGi service identifier
 	*/
-	public java.lang.String getOSGiServiceIdentifier();
+	public String getOSGiServiceIdentifier();
 
 	@JSONWebService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.lang.String getVersion();
+	public String getVersion();
+
+	public void testAddClassName_Rollback(String classNameValue);
+
+	public void testAddClassName_Success(String classNameValue);
 
 	public void testAddClassNameAndTestTransactionPortletBar_PortalRollback(
-		java.lang.String transactionPortletBarText);
+		String transactionPortletBarText);
 
 	public void testAddClassNameAndTestTransactionPortletBar_PortletRollback(
-		java.lang.String transactionPortletBarText);
+		String transactionPortletBarText);
 
 	public void testAddClassNameAndTestTransactionPortletBar_Success(
-		java.lang.String transactionPortletBarText);
-
-	public void testAddClassName_Rollback(java.lang.String classNameValue);
-
-	public void testAddClassName_Success(java.lang.String classNameValue);
+		String transactionPortletBarText);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public void testAutoSyncHibernateSessionStateOnTxCreation();
 
 	public void testDeleteClassName() throws PortalException;
 
+	public int testGetBuildNumber();
+
 	public void testGetUserId();
+
+	public boolean testHasClassName();
 }

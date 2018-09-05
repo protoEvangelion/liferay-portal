@@ -14,11 +14,12 @@
 
 package com.liferay.taglib.util;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.PortletConstants;
 import com.liferay.portal.kernel.model.Theme;
+import com.liferay.portal.kernel.portlet.PortletIdCodec;
 import com.liferay.portal.kernel.servlet.PluginContextListener;
 import com.liferay.portal.kernel.servlet.ServletContextPool;
 import com.liferay.portal.kernel.servlet.taglib.DynamicIncludeUtil;
@@ -32,7 +33,7 @@ import com.liferay.portal.kernel.template.TemplateResourceLoaderUtil;
 import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.ThemeHelper;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -81,9 +82,6 @@ public class ThemeUtil {
 		if (extension.equals(ThemeHelper.TEMPLATE_EXTENSION_FTL)) {
 			includeFTL(servletContext, request, response, path, theme, true);
 		}
-		else if (extension.equals(ThemeHelper.TEMPLATE_EXTENSION_VM)) {
-			includeVM(servletContext, request, response, path, theme, true);
-		}
 		else {
 			path = theme.getTemplatesPath() + StringPool.SLASH + path;
 
@@ -112,6 +110,10 @@ public class ThemeUtil {
 			ThemeHelper.TEMPLATE_EXTENSION_JSP);
 	}
 
+	/**
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
+	 */
+	@Deprecated
 	public static String includeVM(
 			ServletContext servletContext, HttpServletRequest request,
 			HttpServletResponse response, String path, Theme theme,
@@ -161,11 +163,6 @@ public class ThemeUtil {
 			else if (extension.equals(ThemeHelper.TEMPLATE_EXTENSION_JSP)) {
 				doIncludeJSP(servletContext, request, response, path, theme);
 			}
-			else if (extension.equals(ThemeHelper.TEMPLATE_EXTENSION_VM)) {
-				return doIncludeVM(
-					servletContext, request, response, path, theme, false,
-					write);
-			}
 
 			return null;
 		}
@@ -207,11 +204,11 @@ public class ThemeUtil {
 			servletContext, portletId, path);
 
 		if (Validator.isNotNull(portletId) &&
-			PortletConstants.hasInstanceId(portletId) &&
+			PortletIdCodec.hasInstanceId(portletId) &&
 			!TemplateResourceLoaderUtil.hasTemplateResource(
 				TemplateConstants.LANG_TYPE_FTL, resourcePath)) {
 
-			String rootPortletId = PortletConstants.getRootPortletId(portletId);
+			String rootPortletId = PortletIdCodec.decodePortletName(portletId);
 
 			resourcePath = theme.getResourcePath(
 				servletContext, rootPortletId, path);
@@ -286,9 +283,8 @@ public class ThemeUtil {
 		if (write) {
 			return null;
 		}
-		else {
-			return writer.toString();
-		}
+
+		return writer.toString();
 	}
 
 	protected static void doIncludeJSP(
@@ -306,8 +302,9 @@ public class ThemeUtil {
 
 			if (themeServletContext == null) {
 				_log.error(
-					"Theme " + theme.getThemeId() + " cannot find its " +
-						"servlet context at " + theme.getServletContextName());
+					StringBundler.concat(
+						"Theme ", theme.getThemeId(), " cannot find its ",
+						"servlet context at ", theme.getServletContextName()));
 			}
 			else {
 				RequestDispatcher requestDispatcher =
@@ -315,8 +312,9 @@ public class ThemeUtil {
 
 				if (requestDispatcher == null) {
 					_log.error(
-						"Theme " + theme.getThemeId() + " does not have " +
-							path);
+						StringBundler.concat(
+							"Theme ", theme.getThemeId(), " does not have ",
+							path));
 				}
 				else {
 					requestDispatcher.include(request, response);
@@ -329,7 +327,8 @@ public class ThemeUtil {
 
 			if (requestDispatcher == null) {
 				_log.error(
-					"Theme " + theme.getThemeId() + " does not have " + path);
+					StringBundler.concat(
+						"Theme ", theme.getThemeId(), " does not have ", path));
 			}
 			else {
 				requestDispatcher.include(request, response);
@@ -337,6 +336,10 @@ public class ThemeUtil {
 		}
 	}
 
+	/**
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
+	 */
+	@Deprecated
 	protected static String doIncludeVM(
 			ServletContext servletContext, HttpServletRequest request,
 			HttpServletResponse response, String page, Theme theme,
@@ -368,12 +371,12 @@ public class ThemeUtil {
 		boolean checkResourceExists = true;
 
 		if (Validator.isNotNull(portletId)) {
-			if (PortletConstants.hasInstanceId(portletId) &&
+			if (PortletIdCodec.hasInstanceId(portletId) &&
 				(checkResourceExists !=
 					TemplateResourceLoaderUtil.hasTemplateResource(
 						TemplateConstants.LANG_TYPE_VM, resourcePath))) {
 
-				String rootPortletId = PortletConstants.getRootPortletId(
+				String rootPortletId = PortletIdCodec.decodePortletName(
 					portletId);
 
 				resourcePath = theme.getResourcePath(
@@ -459,9 +462,8 @@ public class ThemeUtil {
 		if (write) {
 			return null;
 		}
-		else {
-			return writer.toString();
-		}
+
+		return writer.toString();
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(ThemeUtil.class);

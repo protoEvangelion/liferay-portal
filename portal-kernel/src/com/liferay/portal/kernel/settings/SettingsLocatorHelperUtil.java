@@ -22,11 +22,33 @@ import com.liferay.registry.collections.ServiceTrackerList;
  */
 public class SettingsLocatorHelperUtil {
 
+	public static Settings getCompanyConfigurationBeanSettings(
+		long companyId, String configurationPid, Settings parentSettings) {
+
+		return getSettingsLocatorHelper().getCompanyConfigurationBeanSettings(
+			companyId, configurationPid, parentSettings);
+	}
+
 	public static Settings getCompanyPortletPreferencesSettings(
 		long companyId, String settingsId, Settings parentSettings) {
 
 		return getSettingsLocatorHelper().getCompanyPortletPreferencesSettings(
 			companyId, settingsId, parentSettings);
+	}
+
+	public static Settings getGroupConfigurationBeanSettings(
+		long groupId, String configurationPid, Settings parentSettings) {
+
+		return getSettingsLocatorHelper().getGroupConfigurationBeanSettings(
+			groupId, configurationPid, parentSettings);
+	}
+
+	public static Settings getPortletInstanceConfigurationBeanSettings(
+		String portletId, String configurationPid, Settings parentSettings) {
+
+		return getSettingsLocatorHelper().
+			getPortletInstanceConfigurationBeanSettings(
+				portletId, configurationPid, parentSettings);
 	}
 
 	public static SettingsLocatorHelper getSettingsLocatorHelper() {
@@ -39,7 +61,7 @@ public class SettingsLocatorHelperUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of Judson (7.1.x), replaced by {@link
 	 *             #getConfigurationBeanSettings(String)}
 	 */
 	@Deprecated
@@ -65,7 +87,7 @@ public class SettingsLocatorHelperUtil {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
 	 */
 	@Deprecated
 	public Settings getPortalPropertiesSettings() {

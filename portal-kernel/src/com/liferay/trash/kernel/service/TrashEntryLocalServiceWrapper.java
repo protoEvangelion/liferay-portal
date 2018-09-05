@@ -23,8 +23,11 @@ import com.liferay.portal.kernel.service.ServiceWrapper;
  *
  * @author Brian Wing Shun Chan
  * @see TrashEntryLocalService
+ * @deprecated As of Judson (7.1.x), replaced by {@link
+com.liferay.trash.service.impl.TrashEntryLocalServiceImpl}
  * @generated
  */
+@Deprecated
 @ProviderType
 public class TrashEntryLocalServiceWrapper implements TrashEntryLocalService,
 	ServiceWrapper<TrashEntryLocalService> {
@@ -152,6 +155,11 @@ public class TrashEntryLocalServiceWrapper implements TrashEntryLocalService,
 	public com.liferay.trash.kernel.model.TrashEntry deleteEntry(
 		java.lang.String className, long classPK) {
 		return _trashEntryLocalService.deleteEntry(className, classPK);
+	}
+
+	@Override
+	public void deleteEntries(long groupId, boolean deleteTrashedModels) {
+		_trashEntryLocalService.deleteEntries(groupId, deleteTrashedModels);
 	}
 
 	/**

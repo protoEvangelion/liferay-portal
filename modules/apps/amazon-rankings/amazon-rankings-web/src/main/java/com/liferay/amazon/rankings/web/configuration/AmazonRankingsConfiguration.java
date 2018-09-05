@@ -21,25 +21,26 @@ import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClass
 /**
  * @author Jorge Ferrer
  */
-@ExtendedObjectClassDefinition(category = "other")
+@ExtendedObjectClassDefinition(category = "third-party")
 @Meta.OCD(
 	id = "com.liferay.amazon.rankings.web.configuration.AmazonRankingsConfiguration",
 	localization = "content/Language",
-	name = "amazon.rankings.configuration.name"
+	name = "amazon-rankings-configuration-name"
 )
 public interface AmazonRankingsConfiguration {
 
-	@Meta.AD(required = false)
+	@Meta.AD(name = "amazon-access-key-id", required = false)
 	public String amazonAccessKeyId();
 
-	@Meta.AD(required = false)
+	@Meta.AD(name = "amazon-associate-tag", required = false)
 	public String amazonAssociateTag();
 
-	@Meta.AD(required = false)
+	@Meta.AD(name = "amazon-secret-access-key", required = false)
 	public String amazonSecretAccessKey();
 
 	@Meta.AD(
-		deflt = "0066620996|0131412752|0201633612|0310241448", required = false
+		deflt = "0066620996|0131412752|0201633612|0310241448", name = "isbns",
+		required = false
 	)
 	public String[] isbns();
 

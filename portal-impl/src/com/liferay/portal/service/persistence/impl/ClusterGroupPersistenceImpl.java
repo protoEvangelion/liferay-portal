@@ -16,6 +16,8 @@ package com.liferay.portal.service.persistence.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
@@ -31,8 +33,6 @@ import com.liferay.portal.kernel.model.ClusterGroup;
 import com.liferay.portal.kernel.service.persistence.ClusterGroupPersistence;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.impl.ClusterGroupImpl;
 import com.liferay.portal.model.impl.ClusterGroupModelImpl;
 
@@ -231,8 +231,6 @@ public class ClusterGroupPersistenceImpl extends BasePersistenceImpl<ClusterGrou
 
 	@Override
 	protected ClusterGroup removeImpl(ClusterGroup clusterGroup) {
-		clusterGroup = toUnwrappedModel(clusterGroup);
-
 		Session session = null;
 
 		try {
@@ -263,8 +261,6 @@ public class ClusterGroupPersistenceImpl extends BasePersistenceImpl<ClusterGrou
 
 	@Override
 	public ClusterGroup updateImpl(ClusterGroup clusterGroup) {
-		clusterGroup = toUnwrappedModel(clusterGroup);
-
 		boolean isNew = clusterGroup.isNew();
 
 		Session session = null;
@@ -303,25 +299,6 @@ public class ClusterGroupPersistenceImpl extends BasePersistenceImpl<ClusterGrou
 		clusterGroup.resetOriginalValues();
 
 		return clusterGroup;
-	}
-
-	protected ClusterGroup toUnwrappedModel(ClusterGroup clusterGroup) {
-		if (clusterGroup instanceof ClusterGroupImpl) {
-			return clusterGroup;
-		}
-
-		ClusterGroupImpl clusterGroupImpl = new ClusterGroupImpl();
-
-		clusterGroupImpl.setNew(clusterGroup.isNew());
-		clusterGroupImpl.setPrimaryKey(clusterGroup.getPrimaryKey());
-
-		clusterGroupImpl.setMvccVersion(clusterGroup.getMvccVersion());
-		clusterGroupImpl.setClusterGroupId(clusterGroup.getClusterGroupId());
-		clusterGroupImpl.setName(clusterGroup.getName());
-		clusterGroupImpl.setClusterNodeIds(clusterGroup.getClusterNodeIds());
-		clusterGroupImpl.setWholeCluster(clusterGroup.isWholeCluster());
-
-		return clusterGroupImpl;
 	}
 
 	/**
@@ -475,12 +452,12 @@ public class ClusterGroupPersistenceImpl extends BasePersistenceImpl<ClusterGrou
 		for (Serializable primaryKey : uncachedPrimaryKeys) {
 			query.append((long)primaryKey);
 
-			query.append(StringPool.COMMA);
+			query.append(",");
 		}
 
 		query.setIndex(query.index() - 1);
 
-		query.append(StringPool.CLOSE_PARENTHESIS);
+		query.append(")");
 
 		String sql = query.toString();
 

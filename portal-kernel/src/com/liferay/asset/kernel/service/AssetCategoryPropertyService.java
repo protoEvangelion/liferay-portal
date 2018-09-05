@@ -38,8 +38,11 @@ import java.util.List;
  * @see AssetCategoryPropertyServiceUtil
  * @see com.liferay.portlet.asset.service.base.AssetCategoryPropertyServiceBaseImpl
  * @see com.liferay.portlet.asset.service.impl.AssetCategoryPropertyServiceImpl
+ * @deprecated As of Judson (7.1.x), replaced by {@link
+            com.liferay.asset.category.property.service.impl.AssetCategoryPropertyServiceImpl}
  * @generated
  */
+@Deprecated
 @AccessControlled
 @JSONWebService
 @ProviderType
@@ -51,31 +54,31 @@ public interface AssetCategoryPropertyService extends BaseService {
 	 *
 	 * Never modify or reference this interface directly. Always use {@link AssetCategoryPropertyServiceUtil} to access the asset category property remote service. Add custom service methods to {@link com.liferay.portlet.asset.service.impl.AssetCategoryPropertyServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public AssetCategoryProperty addCategoryProperty(long entryId,
-		java.lang.String key, java.lang.String value) throws PortalException;
+	public AssetCategoryProperty addCategoryProperty(long entryId, String key,
+		String value) throws PortalException;
 
-	public AssetCategoryProperty updateCategoryProperty(
-		long categoryPropertyId, java.lang.String key, java.lang.String value)
+	public void deleteCategoryProperty(long categoryPropertyId)
 		throws PortalException;
-
-	public AssetCategoryProperty updateCategoryProperty(long userId,
-		long categoryPropertyId, java.lang.String key, java.lang.String value)
-		throws PortalException;
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	public java.lang.String getOSGiServiceIdentifier();
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<AssetCategoryProperty> getCategoryProperties(long entryId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<AssetCategoryProperty> getCategoryPropertyValues(
-		long companyId, java.lang.String key);
+		long companyId, String key);
 
-	public void deleteCategoryProperty(long categoryPropertyId)
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	public String getOSGiServiceIdentifier();
+
+	public AssetCategoryProperty updateCategoryProperty(long userId,
+		long categoryPropertyId, String key, String value)
+		throws PortalException;
+
+	public AssetCategoryProperty updateCategoryProperty(
+		long categoryPropertyId, String key, String value)
 		throws PortalException;
 }

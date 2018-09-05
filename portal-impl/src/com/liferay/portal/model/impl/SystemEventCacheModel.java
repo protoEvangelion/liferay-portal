@@ -16,12 +16,12 @@ package com.liferay.portal.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.MVCCModel;
 import com.liferay.portal.kernel.model.SystemEvent;
 import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -127,7 +127,7 @@ public class SystemEventCacheModel implements CacheModel<SystemEvent>,
 		systemEventImpl.setUserId(userId);
 
 		if (userName == null) {
-			systemEventImpl.setUserName(StringPool.BLANK);
+			systemEventImpl.setUserName("");
 		}
 		else {
 			systemEventImpl.setUserName(userName);
@@ -144,7 +144,7 @@ public class SystemEventCacheModel implements CacheModel<SystemEvent>,
 		systemEventImpl.setClassPK(classPK);
 
 		if (classUuid == null) {
-			systemEventImpl.setClassUuid(StringPool.BLANK);
+			systemEventImpl.setClassUuid("");
 		}
 		else {
 			systemEventImpl.setClassUuid(classUuid);
@@ -156,7 +156,7 @@ public class SystemEventCacheModel implements CacheModel<SystemEvent>,
 		systemEventImpl.setType(type);
 
 		if (extraData == null) {
-			systemEventImpl.setExtraData(StringPool.BLANK);
+			systemEventImpl.setExtraData("");
 		}
 		else {
 			systemEventImpl.setExtraData(extraData);
@@ -210,7 +210,7 @@ public class SystemEventCacheModel implements CacheModel<SystemEvent>,
 		objectOutput.writeLong(userId);
 
 		if (userName == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(userName);
@@ -223,7 +223,7 @@ public class SystemEventCacheModel implements CacheModel<SystemEvent>,
 		objectOutput.writeLong(classPK);
 
 		if (classUuid == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(classUuid);
@@ -238,7 +238,7 @@ public class SystemEventCacheModel implements CacheModel<SystemEvent>,
 		objectOutput.writeInt(type);
 
 		if (extraData == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(extraData);

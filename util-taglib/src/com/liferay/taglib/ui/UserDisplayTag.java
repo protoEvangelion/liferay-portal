@@ -75,7 +75,7 @@ public class UserDisplayTag extends TagSupport {
 				String.valueOf(_showUserName));
 
 			if (Validator.isNull(_userIconCssClass)) {
-				_userIconCssClass = "user-icon-lg";
+				_userIconCssClass = "user-icon";
 			}
 
 			request.setAttribute(
@@ -110,9 +110,8 @@ public class UserDisplayTag extends TagSupport {
 			if (user != null) {
 				return EVAL_BODY_INCLUDE;
 			}
-			else {
-				return SKIP_BODY;
-			}
+
+			return SKIP_BODY;
 		}
 		catch (Exception e) {
 			throw new JspException(e);

@@ -14,18 +14,16 @@
 
 package com.liferay.source.formatter.checks;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringReader;
-import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.source.formatter.checks.util.JavaSourceUtil;
 import com.liferay.source.formatter.checks.util.SourceUtil;
 import com.liferay.source.formatter.parser.JavaClass;
-import com.liferay.source.formatter.parser.JavaConstructor;
 import com.liferay.source.formatter.parser.JavaTerm;
-import com.liferay.source.formatter.util.ThreadSafeClassLibrary;
+import com.liferay.source.formatter.util.ThreadSafeSortedClassLibraryBuilder;
 
-import com.thoughtworks.qdox.JavaDocBuilder;
-import com.thoughtworks.qdox.model.DefaultDocletTagFactory;
+import com.thoughtworks.qdox.JavaProjectBuilder;
 import com.thoughtworks.qdox.model.JavaMethod;
 import com.thoughtworks.qdox.parser.ParseException;
 
@@ -79,18 +77,18 @@ public class JavaRedundantConstructorCheck extends BaseJavaTermCheck {
 			return constructorContent;
 		}
 
-		JavaDocBuilder javaDocBuilder = new JavaDocBuilder(
-			new DefaultDocletTagFactory(), new ThreadSafeClassLibrary());
+		JavaProjectBuilder javaProjectBuilder = new JavaProjectBuilder(
+			new ThreadSafeSortedClassLibraryBuilder());
 
 		try {
-			javaDocBuilder.addSource(new UnsyncStringReader(fileContent));
+			javaProjectBuilder.addSource(new UnsyncStringReader(fileContent));
 		}
 		catch (ParseException pe) {
 			return constructorContent;
 		}
 
 		com.thoughtworks.qdox.model.JavaClass qdoxJavaClass =
-			javaDocBuilder.getClassByName(
+			javaProjectBuilder.getClassByName(
 				_getClassName(fileContent, javaClass));
 
 		com.thoughtworks.qdox.model.JavaClass superJavaClass =
@@ -100,7 +98,7 @@ public class JavaRedundantConstructorCheck extends BaseJavaTermCheck {
 			superJavaClass.getMethodBySignature(superJavaClass.getName(), null);
 
 		if ((superJavaClassConstructor != null) &&
-			ArrayUtil.isEmpty(superJavaClassConstructor.getExceptions())) {
+			ListUtil.isEmpty(superJavaClassConstructor.getExceptions())) {
 
 			return StringPool.BLANK;
 		}
@@ -115,7 +113,7 @@ public class JavaRedundantConstructorCheck extends BaseJavaTermCheck {
 
 	private String _getClassName(String fileContent, JavaClass javaClass) {
 		if (javaClass.getParentJavaClass() == null) {
-			return JavaSourceUtil.getPackagePath(fileContent) +
+			return JavaSourceUtil.getPackageName(fileContent) +
 				StringPool.PERIOD + javaClass.getName();
 		}
 
@@ -127,7 +125,7 @@ public class JavaRedundantConstructorCheck extends BaseJavaTermCheck {
 		int count = 0;
 
 		for (JavaTerm javaTerm : javaClass.getChildJavaTerms()) {
-			if (javaTerm instanceof JavaConstructor) {
+			if (javaTerm.isJavaConstructor()) {
 				count++;
 			}
 		}

@@ -63,9 +63,9 @@ public class CompanyWrapper implements Company, ModelWrapper<Company> {
 		attributes.put("mx", getMx());
 		attributes.put("homeURL", getHomeURL());
 		attributes.put("logoId", getLogoId());
-		attributes.put("system", getSystem());
+		attributes.put("system", isSystem());
 		attributes.put("maxUsers", getMaxUsers());
-		attributes.put("active", getActive());
+		attributes.put("active", isActive());
 
 		return attributes;
 	}
@@ -140,36 +140,29 @@ public class CompanyWrapper implements Company, ModelWrapper<Company> {
 	}
 
 	@Override
+	public Object clone() {
+		return new CompanyWrapper((Company)_company.clone());
+	}
+
+	@Override
+	public int compareTo(Company company) {
+		return _company.compareTo(company);
+	}
+
+	@Override
 	public Account getAccount()
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _company.getAccount();
 	}
 
+	/**
+	* Returns the account ID of this company.
+	*
+	* @return the account ID of this company
+	*/
 	@Override
-	public CacheModel<Company> toCacheModel() {
-		return _company.toCacheModel();
-	}
-
-	@Override
-	public Company toEscapedModel() {
-		return new CompanyWrapper(_company.toEscapedModel());
-	}
-
-	@Override
-	public Company toUnescapedModel() {
-		return new CompanyWrapper(_company.toUnescapedModel());
-	}
-
-	@Override
-	public Group getGroup()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _company.getGroup();
-	}
-
-	@Override
-	public User getDefaultUser()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _company.getDefaultUser();
+	public long getAccountId() {
+		return _company.getAccountId();
 	}
 
 	/**
@@ -180,6 +173,163 @@ public class CompanyWrapper implements Company, ModelWrapper<Company> {
 	@Override
 	public boolean getActive() {
 		return _company.getActive();
+	}
+
+	@Override
+	public String getAdminName() {
+		return _company.getAdminName();
+	}
+
+	@Override
+	public String getAuthType() {
+		return _company.getAuthType();
+	}
+
+	/**
+	* Returns the company ID of this company.
+	*
+	* @return the company ID of this company
+	*/
+	@Override
+	public long getCompanyId() {
+		return _company.getCompanyId();
+	}
+
+	@Override
+	public User getDefaultUser()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _company.getDefaultUser();
+	}
+
+	@Override
+	public String getDefaultWebId() {
+		return _company.getDefaultWebId();
+	}
+
+	@Override
+	public String getEmailAddress() {
+		return _company.getEmailAddress();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _company.getExpandoBridge();
+	}
+
+	@Override
+	public Group getGroup()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _company.getGroup();
+	}
+
+	@Override
+	public long getGroupId()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _company.getGroupId();
+	}
+
+	/**
+	* Returns the home url of this company.
+	*
+	* @return the home url of this company
+	*/
+	@Override
+	public String getHomeURL() {
+		return _company.getHomeURL();
+	}
+
+	/**
+	* Returns the key of this company.
+	*
+	* @return the key of this company
+	*/
+	@Override
+	public String getKey() {
+		return _company.getKey();
+	}
+
+	@Override
+	public java.security.Key getKeyObj() {
+		return _company.getKeyObj();
+	}
+
+	@Override
+	public java.util.Locale getLocale()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _company.getLocale();
+	}
+
+	/**
+	* Returns the logo ID of this company.
+	*
+	* @return the logo ID of this company
+	*/
+	@Override
+	public long getLogoId() {
+		return _company.getLogoId();
+	}
+
+	/**
+	* Returns the max users of this company.
+	*
+	* @return the max users of this company
+	*/
+	@Override
+	public int getMaxUsers() {
+		return _company.getMaxUsers();
+	}
+
+	/**
+	* Returns the mvcc version of this company.
+	*
+	* @return the mvcc version of this company
+	*/
+	@Override
+	public long getMvccVersion() {
+		return _company.getMvccVersion();
+	}
+
+	/**
+	* Returns the mx of this company.
+	*
+	* @return the mx of this company
+	*/
+	@Override
+	public String getMx() {
+		return _company.getMx();
+	}
+
+	@Override
+	public String getName()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _company.getName();
+	}
+
+	@Override
+	public String getPortalURL(long groupId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _company.getPortalURL(groupId);
+	}
+
+	/**
+	* Returns the primary key of this company.
+	*
+	* @return the primary key of this company
+	*/
+	@Override
+	public long getPrimaryKey() {
+		return _company.getPrimaryKey();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _company.getPrimaryKeyObj();
+	}
+
+	@Override
+	public String getShortName()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _company.getShortName();
 	}
 
 	/**
@@ -193,8 +343,34 @@ public class CompanyWrapper implements Company, ModelWrapper<Company> {
 	}
 
 	@Override
-	public boolean hasCompanyMx(java.lang.String emailAddress) {
+	public java.util.TimeZone getTimeZone()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _company.getTimeZone();
+	}
+
+	@Override
+	public String getVirtualHostname() {
+		return _company.getVirtualHostname();
+	}
+
+	/**
+	* Returns the web ID of this company.
+	*
+	* @return the web ID of this company
+	*/
+	@Override
+	public String getWebId() {
+		return _company.getWebId();
+	}
+
+	@Override
+	public boolean hasCompanyMx(String emailAddress) {
 		return _company.hasCompanyMx(emailAddress);
+	}
+
+	@Override
+	public int hashCode() {
+		return _company.hashCode();
 	}
 
 	/**
@@ -268,207 +444,6 @@ public class CompanyWrapper implements Company, ModelWrapper<Company> {
 	}
 
 	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _company.getExpandoBridge();
-	}
-
-	@Override
-	public int compareTo(Company company) {
-		return _company.compareTo(company);
-	}
-
-	/**
-	* Returns the max users of this company.
-	*
-	* @return the max users of this company
-	*/
-	@Override
-	public int getMaxUsers() {
-		return _company.getMaxUsers();
-	}
-
-	@Override
-	public int hashCode() {
-		return _company.hashCode();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _company.getPrimaryKeyObj();
-	}
-
-	@Override
-	public java.lang.Object clone() {
-		return new CompanyWrapper((Company)_company.clone());
-	}
-
-	@Override
-	public java.lang.String getAdminName() {
-		return _company.getAdminName();
-	}
-
-	@Override
-	public java.lang.String getAuthType() {
-		return _company.getAuthType();
-	}
-
-	@Override
-	public java.lang.String getDefaultWebId() {
-		return _company.getDefaultWebId();
-	}
-
-	@Override
-	public java.lang.String getEmailAddress() {
-		return _company.getEmailAddress();
-	}
-
-	/**
-	* Returns the home url of this company.
-	*
-	* @return the home url of this company
-	*/
-	@Override
-	public java.lang.String getHomeURL() {
-		return _company.getHomeURL();
-	}
-
-	/**
-	* Returns the key of this company.
-	*
-	* @return the key of this company
-	*/
-	@Override
-	public java.lang.String getKey() {
-		return _company.getKey();
-	}
-
-	/**
-	* Returns the mx of this company.
-	*
-	* @return the mx of this company
-	*/
-	@Override
-	public java.lang.String getMx() {
-		return _company.getMx();
-	}
-
-	@Override
-	public java.lang.String getName()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _company.getName();
-	}
-
-	@Override
-	public java.lang.String getPortalURL(long groupId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _company.getPortalURL(groupId);
-	}
-
-	@Override
-	public java.lang.String getShortName()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _company.getShortName();
-	}
-
-	@Override
-	public java.lang.String getVirtualHostname() {
-		return _company.getVirtualHostname();
-	}
-
-	/**
-	* Returns the web ID of this company.
-	*
-	* @return the web ID of this company
-	*/
-	@Override
-	public java.lang.String getWebId() {
-		return _company.getWebId();
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _company.toString();
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _company.toXmlString();
-	}
-
-	@Override
-	public java.security.Key getKeyObj() {
-		return _company.getKeyObj();
-	}
-
-	@Override
-	public java.util.Locale getLocale()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _company.getLocale();
-	}
-
-	@Override
-	public java.util.TimeZone getTimeZone()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _company.getTimeZone();
-	}
-
-	/**
-	* Returns the account ID of this company.
-	*
-	* @return the account ID of this company
-	*/
-	@Override
-	public long getAccountId() {
-		return _company.getAccountId();
-	}
-
-	/**
-	* Returns the company ID of this company.
-	*
-	* @return the company ID of this company
-	*/
-	@Override
-	public long getCompanyId() {
-		return _company.getCompanyId();
-	}
-
-	@Override
-	public long getGroupId()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _company.getGroupId();
-	}
-
-	/**
-	* Returns the logo ID of this company.
-	*
-	* @return the logo ID of this company
-	*/
-	@Override
-	public long getLogoId() {
-		return _company.getLogoId();
-	}
-
-	/**
-	* Returns the mvcc version of this company.
-	*
-	* @return the mvcc version of this company
-	*/
-	@Override
-	public long getMvccVersion() {
-		return _company.getMvccVersion();
-	}
-
-	/**
-	* Returns the primary key of this company.
-	*
-	* @return the primary key of this company
-	*/
-	@Override
-	public long getPrimaryKey() {
-		return _company.getPrimaryKey();
-	}
-
-	@Override
 	public void persist() {
 		_company.persist();
 	}
@@ -529,7 +504,7 @@ public class CompanyWrapper implements Company, ModelWrapper<Company> {
 	* @param homeURL the home url of this company
 	*/
 	@Override
-	public void setHomeURL(java.lang.String homeURL) {
+	public void setHomeURL(String homeURL) {
 		_company.setHomeURL(homeURL);
 	}
 
@@ -539,7 +514,7 @@ public class CompanyWrapper implements Company, ModelWrapper<Company> {
 	* @param key the key of this company
 	*/
 	@Override
-	public void setKey(java.lang.String key) {
+	public void setKey(String key) {
 		_company.setKey(key);
 	}
 
@@ -584,7 +559,7 @@ public class CompanyWrapper implements Company, ModelWrapper<Company> {
 	* @param mx the mx of this company
 	*/
 	@Override
-	public void setMx(java.lang.String mx) {
+	public void setMx(String mx) {
 		_company.setMx(mx);
 	}
 
@@ -619,7 +594,7 @@ public class CompanyWrapper implements Company, ModelWrapper<Company> {
 	}
 
 	@Override
-	public void setVirtualHostname(java.lang.String virtualHostname) {
+	public void setVirtualHostname(String virtualHostname) {
 		_company.setVirtualHostname(virtualHostname);
 	}
 
@@ -629,8 +604,33 @@ public class CompanyWrapper implements Company, ModelWrapper<Company> {
 	* @param webId the web ID of this company
 	*/
 	@Override
-	public void setWebId(java.lang.String webId) {
+	public void setWebId(String webId) {
 		_company.setWebId(webId);
+	}
+
+	@Override
+	public CacheModel<Company> toCacheModel() {
+		return _company.toCacheModel();
+	}
+
+	@Override
+	public Company toEscapedModel() {
+		return new CompanyWrapper(_company.toEscapedModel());
+	}
+
+	@Override
+	public String toString() {
+		return _company.toString();
+	}
+
+	@Override
+	public Company toUnescapedModel() {
+		return new CompanyWrapper(_company.toUnescapedModel());
+	}
+
+	@Override
+	public String toXmlString() {
+		return _company.toXmlString();
 	}
 
 	@Override

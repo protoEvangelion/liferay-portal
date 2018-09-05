@@ -16,9 +16,10 @@ package com.liferay.exportimport.kernel.lar;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.StagedModel;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
 
 /**
  * @author Raymond Augé
@@ -26,23 +27,41 @@ import com.liferay.portal.kernel.util.StringPool;
 @ProviderType
 public class PortletDataException extends PortalException {
 
+	public static final int COMPANY_BEING_DELETED = 14;
+
 	public static final int DEFAULT = 1;
 
 	public static final int DELETE_PORTLET_DATA = 10;
 
-	public static final int END_DATE_IS_MISSING_START_DATE = 1;
+	public static final int END_DATE_IS_MISSING_START_DATE = 17;
+
+	public static final int EXPORT_DATA_GROUP_ELEMENT = 15;
 
 	public static final int EXPORT_PORTLET_DATA = 11;
+
+	public static final int EXPORT_PORTLET_PERMISSIONS = 18;
+
+	public static final int EXPORT_REFERENCED_TEMPLATE = 19;
+
+	public static final int EXPORT_STAGED_MODEL = 23;
 
 	public static final int FUTURE_END_DATE = 2;
 
 	public static final int FUTURE_START_DATE = 3;
 
+	public static final int IMPORT_DATA_GROUP_ELEMENT = 16;
+
 	public static final int IMPORT_PORTLET_DATA = 12;
+
+	public static final int IMPORT_PORTLET_PERMISSIONS = 20;
+
+	public static final int IMPORT_STAGED_MODEL = 24;
 
 	public static final int INVALID_GROUP = 4;
 
 	public static final int MISSING_DEPENDENCY = 5;
+
+	public static final int MISSING_REFERENCE = 14;
 
 	public static final int PREPARE_MANIFEST_SUMMARY = 13;
 
@@ -53,6 +72,10 @@ public class PortletDataException extends PortalException {
 	public static final int STATUS_IN_TRASH = 8;
 
 	public static final int STATUS_UNAVAILABLE = 9;
+
+	public static final int UPDATE_JOURNAL_CONTENT_SEARCH_DATA = 21;
+
+	public static final int UPDATE_PORTLET_PREFERENCES = 22;
 
 	public PortletDataException() {
 	}
@@ -79,6 +102,10 @@ public class PortletDataException extends PortalException {
 		super(cause);
 	}
 
+	public long getCompanyId() {
+		return _companyId;
+	}
+
 	public String getPortletId() {
 		return _portletId;
 	}
@@ -87,8 +114,48 @@ public class PortletDataException extends PortalException {
 		return _stagedModel;
 	}
 
+	public String getStagedModelClassName() {
+		if (!Validator.isBlank(_stagedModelClassName)) {
+			return _stagedModelClassName;
+		}
+
+		if (_stagedModel != null) {
+			return _stagedModel.getModelClassName();
+		}
+
+		return StringPool.BLANK;
+	}
+
+	public String getStagedModelClassPK() {
+		if (!Validator.isBlank(_stagedModelClassPK)) {
+			return _stagedModelClassPK;
+		}
+
+		if (_stagedModel != null) {
+			return String.valueOf(_stagedModel.getPrimaryKeyObj());
+		}
+
+		return StringPool.BLANK;
+	}
+
+	public String getStagedModelDisplayName() {
+		if (!Validator.isBlank(_stagedModelDisplayName)) {
+			return _stagedModelDisplayName;
+		}
+
+		if (_stagedModel != null) {
+			return _stagedModel.getUuid();
+		}
+
+		return StringPool.BLANK;
+	}
+
 	public int getType() {
 		return _type;
+	}
+
+	public void setCompanyId(long companyId) {
+		_companyId = companyId;
 	}
 
 	public void setPortletId(String portletId) {
@@ -99,12 +166,28 @@ public class PortletDataException extends PortalException {
 		_stagedModel = stagedModel;
 	}
 
+	public void setStagedModelClassName(String stagedModelClassName) {
+		_stagedModelClassName = stagedModelClassName;
+	}
+
+	public void setStagedModelClassPK(String stagedModelClassPK) {
+		_stagedModelClassPK = stagedModelClassPK;
+	}
+
+	public void setStagedModelDisplayName(String stagedModelDisplayName) {
+		_stagedModelDisplayName = stagedModelDisplayName;
+	}
+
 	public void setType(int type) {
 		_type = type;
 	}
 
+	private long _companyId;
 	private String _portletId = StringPool.BLANK;
 	private StagedModel _stagedModel;
+	private String _stagedModelClassName = StringPool.BLANK;
+	private String _stagedModelClassPK = StringPool.BLANK;
+	private String _stagedModelDisplayName = StringPool.BLANK;
 	private int _type = DEFAULT;
 
 }

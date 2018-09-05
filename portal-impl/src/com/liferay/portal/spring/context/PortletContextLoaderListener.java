@@ -17,13 +17,10 @@ package com.liferay.portal.spring.context;
 import com.liferay.portal.bean.BeanLocatorImpl;
 import com.liferay.portal.kernel.bean.BeanLocator;
 import com.liferay.portal.kernel.bean.PortletBeanLocatorUtil;
-import com.liferay.portal.kernel.configuration.ConfigurationFactoryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortletClassLoaderUtil;
 import com.liferay.portal.kernel.util.MethodCache;
-import com.liferay.portal.spring.bean.BeanReferenceRefreshUtil;
-import com.liferay.portal.util.PropsValues;
 
 import java.lang.reflect.Method;
 
@@ -31,8 +28,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.WebApplicationContext;
@@ -71,20 +66,6 @@ public class PortletContextLoaderListener extends ContextLoaderListener {
 		}
 
 		super.contextDestroyed(servletContextEvent);
-
-		Object parentApplicationContext = servletContext.getAttribute(
-			_PARENT_APPLICATION_CONTEXT_KEY);
-
-		if (parentApplicationContext instanceof
-				ConfigurableApplicationContext) {
-
-			servletContext.removeAttribute(_PARENT_APPLICATION_CONTEXT_KEY);
-
-			ConfigurableApplicationContext configurableApplicationContext =
-				(ConfigurableApplicationContext)parentApplicationContext;
-
-			configurableApplicationContext.close();
-		}
 	}
 
 	@Override
@@ -108,19 +89,8 @@ public class PortletContextLoaderListener extends ContextLoaderListener {
 		ApplicationContext applicationContext =
 			WebApplicationContextUtils.getWebApplicationContext(servletContext);
 
-		try {
-			BeanReferenceRefreshUtil.refresh(
-				applicationContext.getAutowireCapableBeanFactory());
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-		}
-
 		BeanLocatorImpl beanLocatorImpl = new BeanLocatorImpl(
 			classLoader, applicationContext);
-
-		beanLocatorImpl.setPACLServletContextName(
-			servletContext.getServletContextName());
 
 		try {
 			Class<?> beanLocatorUtilClass = Class.forName(
@@ -174,27 +144,8 @@ public class PortletContextLoaderListener extends ContextLoaderListener {
 	protected ApplicationContext loadParentContext(
 		ServletContext servletContext) {
 
-		try {
-			ConfigurationFactoryUtil.getConfiguration(
-				PortletClassLoaderUtil.getClassLoader(), "service");
-		}
-		catch (Exception e) {
-			return null;
-		}
-
-		ApplicationContext applicationContext =
-			new ClassPathXmlApplicationContext(
-				PropsValues.SPRING_PORTLET_CONFIGS, true);
-
-		servletContext.setAttribute(
-			_PARENT_APPLICATION_CONTEXT_KEY, applicationContext);
-
-		return applicationContext;
+		return super.loadParentContext(servletContext);
 	}
-
-	private static final String _PARENT_APPLICATION_CONTEXT_KEY =
-		PortletContextLoaderListener.class.getName() +
-			"#parentApplicationContext";
 
 	private static final String _PORTAL_CONFIG_LOCATION_PARAM =
 		"portalContextConfigLocation";

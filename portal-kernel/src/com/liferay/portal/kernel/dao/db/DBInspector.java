@@ -14,10 +14,10 @@
 
 package com.liferay.portal.kernel.dao.db;
 
-import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.upgrade.UpgradeException;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -27,7 +27,6 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import java.util.regex.Matcher;
@@ -62,19 +61,17 @@ public class DBInspector {
 	public boolean hasColumn(String tableName, String columnName)
 		throws Exception {
 
-		try (PreparedStatement ps = _connection.prepareStatement(
-				"select * from " + tableName);
-			ResultSet rs = ps.executeQuery()) {
+		DatabaseMetaData databaseMetaData = _connection.getMetaData();
 
-			ResultSetMetaData rsmd = rs.getMetaData();
+		try (ResultSet rs = databaseMetaData.getColumns(
+				getCatalog(), getSchema(), normalizeName(tableName),
+				normalizeName(columnName))) {
 
-			for (int i = 0; i < rsmd.getColumnCount(); i++) {
-				String curColumnName = rsmd.getColumnName(i + 1);
-
-				if (StringUtil.equalsIgnoreCase(curColumnName, columnName)) {
-					return true;
-				}
+			if (!rs.next()) {
+				return false;
 			}
+
+			return true;
 		}
 		catch (Exception e) {
 			_log.error(e, e);
@@ -94,14 +91,14 @@ public class DBInspector {
 		DatabaseMetaData databaseMetaData = _connection.getMetaData();
 
 		try (ResultSet rs = databaseMetaData.getColumns(
-				getCatalog(), getSchema(), tableName, columnName)) {
+				getCatalog(), getSchema(),
+				normalizeName(tableName, databaseMetaData),
+				normalizeName(columnName, databaseMetaData))) {
 
 			if (!rs.next()) {
 				return false;
 			}
 
-			int expectedColumnDataType = _getColumnDataType(
-				tableClass, columnName);
 			int expectedColumnSize = _getColumnSize(columnType);
 			boolean expectedColumnNullable = _isColumnNullable(columnType);
 
@@ -114,6 +111,9 @@ public class DBInspector {
 
 				return false;
 			}
+
+			int expectedColumnDataType = _getColumnDataType(
+				tableClass, columnName);
 
 			if (actualColumnDataType != expectedColumnDataType) {
 				return false;
@@ -166,14 +166,31 @@ public class DBInspector {
 			return false;
 		}
 
-		if (_hasTable(StringUtil.toLowerCase(tableName)) ||
-			_hasTable(StringUtil.toUpperCase(tableName)) ||
-			_hasTable(tableName)) {
+		DatabaseMetaData databaseMetaData = _connection.getMetaData();
 
+		if (_hasTable(normalizeName(tableName, databaseMetaData))) {
 			return true;
 		}
 
 		return false;
+	}
+
+	public String normalizeName(String name) throws SQLException {
+		return normalizeName(name, _connection.getMetaData());
+	}
+
+	public String normalizeName(String name, DatabaseMetaData databaseMetaData)
+		throws SQLException {
+
+		if (databaseMetaData.storesLowerCaseIdentifiers()) {
+			return StringUtil.toLowerCase(name);
+		}
+
+		if (databaseMetaData.storesUpperCaseIdentifiers()) {
+			return StringUtil.toUpperCase(name);
+		}
+
+		return name;
 	}
 
 	private int _getColumnDataType(Class<?> tableClass, String columnName)
@@ -190,8 +207,9 @@ public class DBInspector {
 		}
 
 		throw new UpgradeException(
-			"Table class " + tableClass + " does not have column " +
-				columnName);
+			StringBundler.concat(
+				"Table class ", String.valueOf(tableClass),
+				" does not have column ", columnName));
 	}
 
 	private int _getColumnSize(String columnType) throws UpgradeException {
@@ -209,8 +227,9 @@ public class DBInspector {
 			}
 			catch (NumberFormatException nfe) {
 				throw new UpgradeException(
-					"Column type " + columnType +
-						" has an invalid column size " + columnSize,
+					StringBundler.concat(
+						"Column type ", columnType,
+						" has an invalid column size ", columnSize),
 					nfe);
 			}
 		}
@@ -219,20 +238,14 @@ public class DBInspector {
 	}
 
 	private boolean _hasTable(String tableName) throws Exception {
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+		DatabaseMetaData metadata = _connection.getMetaData();
 
-		try {
-			DatabaseMetaData metadata = _connection.getMetaData();
-
-			rs = metadata.getTables(getCatalog(), getSchema(), tableName, null);
+		try (ResultSet rs = metadata.getTables(
+				getCatalog(), getSchema(), tableName, null);) {
 
 			while (rs.next()) {
 				return true;
 			}
-		}
-		finally {
-			DataAccess.cleanUp(ps, rs);
 		}
 
 		return false;

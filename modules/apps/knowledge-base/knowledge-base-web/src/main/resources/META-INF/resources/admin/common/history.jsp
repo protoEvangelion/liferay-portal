@@ -27,8 +27,6 @@ int targetVersion = ParamUtil.getInteger(request, "targetVersion", kbArticle.get
 String orderByCol = ParamUtil.getString(request, "orderByCol", "version");
 String orderByType = ParamUtil.getString(request, "orderByType", "desc");
 
-KBArticleURLHelper kbArticleURLHelper = new KBArticleURLHelper(renderRequest, renderResponse, templatePath);
-
 boolean portletTitleBasedNavigation = GetterUtil.getBoolean(portletConfig.getInitParameter("portlet-title-based-navigation"));
 
 if (portletTitleBasedNavigation) {
@@ -175,10 +173,12 @@ if (portletTitleBasedNavigation) {
 		</liferay-ui:search-container-row>
 
 		<aui:button-row>
-			<aui:button cssClass="btn-lg" name="compare" type="submit" value="compare-versions" />
+			<aui:button name="compare" type="submit" value="compare-versions" />
 		</aui:button-row>
 
-		<liferay-ui:search-iterator markupView="lexicon" />
+		<liferay-ui:search-iterator
+			markupView="lexicon"
+		/>
 	</liferay-ui:search-container>
 </aui:fieldset>
 

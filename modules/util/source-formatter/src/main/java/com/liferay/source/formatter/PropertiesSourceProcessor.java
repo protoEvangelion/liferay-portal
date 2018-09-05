@@ -14,6 +14,8 @@
 
 package com.liferay.source.formatter;
 
+import java.io.IOException;
+
 import java.util.List;
 
 /**
@@ -22,26 +24,20 @@ import java.util.List;
 public class PropertiesSourceProcessor extends BaseSourceProcessor {
 
 	@Override
-	protected List<String> doGetFileNames() throws Exception {
-		return getFileNames(new String[0], getIncludes());
+	protected List<String> doGetFileNames() throws IOException {
+		return getFileNames(new String[] {"**/docroot/dtd/**"}, getIncludes());
 	}
 
 	@Override
 	protected String[] doGetIncludes() {
-		if (portalSource) {
-			return new String[] {
-				"**/lib/*/dependencies.properties",
-				"**/liferay-plugin-package.properties", "**/portal.properties",
-				"**/portal-ext.properties", "**/portal-legacy-*.properties",
-				"**/portlet.properties", "**/source-formatter.properties",
-				"**/test.properties"
-			};
+		if (isPortalSource() || isSubrepository()) {
+			return new String[] {"**/*.properties"};
 		}
 
 		return new String[] {
 			"**/liferay-plugin-package.properties", "**/portal.properties",
 			"**/portal-ext.properties", "**/portlet.properties",
-			"**/source-formatter.properties"
+			"**/service.properties", "**/source-formatter.properties"
 		};
 	}
 

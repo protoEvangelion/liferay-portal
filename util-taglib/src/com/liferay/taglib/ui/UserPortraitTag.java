@@ -14,7 +14,10 @@
 
 package com.liferay.taglib.ui;
 
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.language.LanguageConstants;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -22,10 +25,9 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.UserConstants;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ServiceProxyFactory;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -35,6 +37,7 @@ import com.liferay.taglib.util.TagResourceBundleUtil;
 import com.liferay.users.admin.kernel.file.uploads.UserFileUploadsSettings;
 
 import java.util.ResourceBundle;
+import java.util.function.Supplier;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspWriter;
@@ -44,38 +47,61 @@ import javax.servlet.jsp.JspWriter;
  */
 public class UserPortraitTag extends IncludeTag {
 
-	@Override
-	public int processEndTag() throws Exception {
-		User user = getUser();
+	public static String getUserPortraitHTML(
+		User user, String cssClass, Supplier<String> userInitialsSupplier,
+		Supplier<String> userPortraitURLSupplier) {
 
-		JspWriter jspWriter = pageContext.getOut();
+		StringBundler sb = new StringBundler(7);
 
-		jspWriter.write("<div class=\"");
+		sb.append("<div class=\"");
 
+		boolean imageDefaultUseInitials =
+			_userFileUploadsSettings.isImageDefaultUseInitials();
 		long userPortraitId = 0;
 
 		if (user != null) {
 			userPortraitId = user.getPortraitId();
+
+			if (LanguageConstants.VALUE_IMAGE.equals(
+					LanguageUtil.get(
+						user.getLocale(),
+						LanguageConstants.KEY_USER_DEFAULT_PORTRAIT,
+						LanguageConstants.VALUE_INITIALS))) {
+
+				imageDefaultUseInitials = false;
+			}
 		}
 
-		if (_userFileUploadsSettings.isImageDefaultUseInitials() &&
-			(userPortraitId == 0)) {
-
-			jspWriter.write(LexiconUtil.getUserColorCssClass(user));
-			jspWriter.write(" ");
-			jspWriter.write(_cssClass);
-			jspWriter.write(" user-icon user-icon-default\"><span>");
-			jspWriter.write(getUserInitials(user));
-			jspWriter.write("</span></div>");
+		if (imageDefaultUseInitials && (userPortraitId == 0)) {
+			sb.append(LexiconUtil.getUserColorCssClass(user));
+			sb.append(" ");
+			sb.append(cssClass);
+			sb.append(" user-icon user-icon-default\"><span>");
+			sb.append(userInitialsSupplier.get());
+			sb.append("</span></div>");
 		}
 		else {
-			jspWriter.write(_cssClass);
-			jspWriter.write(
-				" aspect-ratio-bg-cover user-icon\" style=\"background-image:" +
-					"url(");
-			jspWriter.write(HtmlUtil.escape(getPortraitURL(user)));
-			jspWriter.write(")\"></div>");
+			sb.append(cssClass);
+			sb.append(" aspect-ratio-bg-cover user-icon\" ");
+			sb.append("style=\"background-image:url(");
+			sb.append(HtmlUtil.escape(userPortraitURLSupplier.get()));
+			sb.append(")\"></div>");
 		}
+
+		return sb.toString();
+	}
+
+	@Override
+	public int processEndTag() throws Exception {
+		JspWriter jspWriter = pageContext.getOut();
+
+		User user = getUser();
+
+		String userPortraitHTML = getUserPortraitHTML(
+			user, _cssClass, () -> getUserInitials(user),
+			() -> getPortraitURL(user));
+
+		jspWriter.write(userPortraitHTML);
 
 		return EVAL_PAGE;
 	}
@@ -85,7 +111,7 @@ public class UserPortraitTag extends IncludeTag {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
 	 */
 	@Deprecated
 	public void setImageCssClass(String imageCssClass) {
@@ -105,6 +131,8 @@ public class UserPortraitTag extends IncludeTag {
 
 	@Override
 	protected void cleanUp() {
+		super.cleanUp();
+
 		_cssClass = StringPool.BLANK;
 		_user = null;
 		_userName = StringPool.BLANK;

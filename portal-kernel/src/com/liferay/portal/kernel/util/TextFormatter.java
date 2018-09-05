@@ -14,6 +14,8 @@
 
 package com.liferay.portal.kernel.util;
 
+import com.liferay.petra.string.CharPool;
+
 import java.text.NumberFormat;
 
 import java.util.Locale;
@@ -84,7 +86,7 @@ public class TextFormatter {
 	public static final int O = 14;
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #K}
+	 * @deprecated As of Judson (7.1.x), replaced by {@link #K}
 	 */
 	@Deprecated
 	public static final int P = 15;
@@ -151,9 +153,8 @@ public class TextFormatter {
 		else if (style == Q) {
 			return _formatQ(s);
 		}
-		else {
-			return s;
-		}
+
+		return s;
 	}
 
 	public static String formatName(String name) {
@@ -237,7 +238,7 @@ public class TextFormatter {
 	}
 
 	private static String _formatB(String s) {
-		return StringUtil.strip(StringUtil.toLowerCase(s), CharPool.SPACE);
+		return StringUtil.removeChar(StringUtil.toLowerCase(s), CharPool.SPACE);
 	}
 
 	private static String _formatC(String s) {
@@ -246,7 +247,7 @@ public class TextFormatter {
 	}
 
 	private static String _formatD(String s) {
-		return StringUtil.strip(s, CharPool.SPACE);
+		return StringUtil.removeChar(s, CharPool.SPACE);
 	}
 
 	private static String _formatE(String s) {
@@ -254,7 +255,7 @@ public class TextFormatter {
 	}
 
 	private static String _formatF(String s) {
-		s = StringUtil.strip(s, CharPool.SPACE);
+		s = StringUtil.removeChar(s, CharPool.SPACE);
 
 		if (Character.isUpperCase(s.charAt(0))) {
 			s = StringUtil.toLowerCase(s.substring(0, 1)).concat(
@@ -365,10 +366,9 @@ public class TextFormatter {
 
 			return s;
 		}
-		else {
-			return s = StringUtil.toLowerCase(s.substring(0, 1)).concat(
-				s.substring(1));
-		}
+
+		return s = StringUtil.toLowerCase(s.substring(0, 1)).concat(
+			s.substring(1));
 	}
 
 	private static String _formatM(String s) {

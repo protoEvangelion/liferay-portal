@@ -14,6 +14,7 @@
 
 package com.liferay.portal.fabric.netty.handlers;
 
+import com.liferay.petra.process.ClassPathUtil;
 import com.liferay.portal.fabric.agent.FabricAgent;
 import com.liferay.portal.fabric.netty.agent.NettyFabricAgentStub;
 import com.liferay.portal.fabric.netty.fileserver.FileHelperUtil;
@@ -29,12 +30,11 @@ import com.liferay.portal.kernel.concurrent.BaseFutureListener;
 import com.liferay.portal.kernel.concurrent.FutureListener;
 import com.liferay.portal.kernel.concurrent.NoticeableFuture;
 import com.liferay.portal.kernel.concurrent.NoticeableFutureConverter;
+import com.liferay.portal.kernel.io.PathHolder;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.process.ClassPathUtil;
 import com.liferay.portal.kernel.process.ProcessCallable;
 import com.liferay.portal.kernel.process.ProcessConfig;
-import com.liferay.portal.kernel.process.ProcessConfig.Builder;
 import com.liferay.portal.kernel.process.ProcessException;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -137,18 +137,20 @@ public class NettyFabricWorkerExecutionChannelHandler
 
 		final Map<Path, Path> bootstrapPaths = new LinkedHashMap<>();
 
-		for (String pathString :
-				processConfig.getBootstrapClassPathElements()) {
+		for (PathHolder pathHolder :
+				processConfig.getBootstrapClassPathHolders()) {
 
-			bootstrapPaths.put(Paths.get(pathString), null);
+			bootstrapPaths.put(Paths.get(pathHolder.toString()), null);
 		}
 
 		mergedPaths.putAll(bootstrapPaths);
 
 		final Map<Path, Path> runtimePaths = new LinkedHashMap<>();
 
-		for (String pathString : processConfig.getRuntimeClassPathElements()) {
-			runtimePaths.put(Paths.get(pathString), null);
+		for (PathHolder pathHolder :
+				processConfig.getRuntimeClassPathHolders()) {
+
+			runtimePaths.put(Paths.get(pathHolder.toString()), null);
 		}
 
 		mergedPaths.putAll(runtimePaths);
@@ -320,8 +322,10 @@ public class NettyFabricWorkerExecutionChannelHandler
 
 			if (nettyStubFabricWorker == null) {
 				throw new ProcessException(
-					"Unable to locate fabric worker on channel " + channel +
-						", with fabric worker id " + _id);
+					StringBundler.concat(
+						"Unable to locate fabric worker on channel ",
+						String.valueOf(channel), ", with fabric worker id ",
+						String.valueOf(_id)));
 			}
 
 			if (_throwable != null) {
@@ -383,7 +387,7 @@ public class NettyFabricWorkerExecutionChannelHandler
 		public ProcessConfig toProcessConfig(ProcessConfig processConfig)
 			throws ProcessException {
 
-			Builder builder = new Builder();
+			ProcessConfig.Builder builder = new ProcessConfig.Builder();
 
 			builder.setArguments(processConfig.getArguments());
 			builder.setBootstrapClassPath(_bootstrapClassPath);

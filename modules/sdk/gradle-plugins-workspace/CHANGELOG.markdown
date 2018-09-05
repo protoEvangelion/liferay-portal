@@ -4,7 +4,7 @@
 
 ### Changed
 - [LPS-66853]: Update the [Liferay Gradle Plugins] dependency to version 2.0.41.
-- [LPS-67656]: Use Liferay 7.0.2 GA3 by default.
+- [LPS-67656]: Use Liferay 7.0.2 GA3 as the default bundle in a workspace.
 
 ## 1.1.0 - 2016-09-28
 
@@ -25,7 +25,7 @@ applied:
 ## 1.2.0 - 2016-10-24
 
 ### Added
-- [LPS-68293]: Add the [Liferay CDN](https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public)
+- [LPS-68293]: Add the [Liferay CDN](https://repository-cdn.liferay.com/nexus/content/groups/public)
 as default repository in WAR projects. This behavior can be disabled by setting
 the `liferay.workspace.wars.default.repository.enabled` property in
 `gradle.properties` to `false`.
@@ -97,7 +97,7 @@ extension object into the public API.
 ### Added
 - [LPS-71724]: Add the ability to download and upgrade the Plugins SDK
 directories by executing the `upgradePluginsSDK` task in the root project.
-- [LPS-71724]: Add [Liferay CDN](https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public)
+- [LPS-71724]: Add the [Liferay CDN](https://repository-cdn.liferay.com/nexus/content/groups/public)
 as the default repository in the root project. This behavior can be disabled by
 setting the `liferay.workspace.default.repository.enabled` property to `false`
 in `gradle.properties`.
@@ -105,8 +105,182 @@ in `gradle.properties`.
 ### Changed
 - [LPS-72252]: Update the [Liferay Gradle Plugins] dependency to version 3.3.9.
 
+## 1.5.0 - 2017-07-05
+
+### Added
+- [LPS-73056]: Add the ability to download the Liferay bundle from
+[www.liferay.com](https://www.liferay.com) via authentication token. This
+behavior can be enabled by setting the `liferay.workspace.bundle.token.download`
+property to `true` in `gradle.properties`.
+
+### Changed
+- [LPS-73248]: Use Liferay 7.0.3 GA4 as the default bundle in a workspace.
+- [LPS-73383]: Update the [Liferay Gradle Plugins] dependency to version 3.3.35.
+
+## 1.5.1 - 2017-07-21
+
+### Changed
+- [LPS-72705]: Update the [Liferay Gradle Plugins] dependency to version 3.4.11.
+- [LPS-73746]: Update the [Liferay Portal Tools Bundle Support] dependency to
+version 3.0.2.
+
+### Fixed
+- [LPS-73746]: Trim authentication token in case users add extra lines into
+their token file.
+
+## 1.6.0 - 2017-08-01
+
+### Added
+- [LPS-73913]: Add the ability to pass the Liferay bundle authentication token
+password from a file by setting the
+`liferay.workspace.bundle.token.password.file` property in `gradle.properties`.
+
+### Changed
+- [LPS-73855]: Update the [Liferay Gradle Plugins] dependency to version 3.4.17.
+- [LPS-73913]: Update the [Liferay Portal Tools Bundle Support] dependency to
+version 3.1.0.
+
+## 1.7.0 - 2017-08-11
+
+### Added
+- [LPS-73967]: Update the [Liferay Gradle Plugins] dependency to version 3.4.26.
+- [LPS-74124]: Add the ability to configure the cache directory for downloaded
+Liferay bundles by setting the `liferay.workspace.bundle.cache.dir` property in
+`gradle.properties`.
+
+## 1.7.1 - 2017-10-29
+
+### Fixed
+- [LPS-74818]: Fail the build if the source and destination of the
+`downloadBundle` task are the same.
+- [LPS-75323]: Update the [Liferay Gradle Plugins] dependency to version 3.5.23.
+- [LPS-75479]: Update the [Liferay Portal Tools Bundle Support] dependency to
+version 3.2.1.
+- [LPS-75479]: Use Liferay 7.0.4 GA5 as the default bundle in a workspace.
+
+## 1.8.0 - 2017-12-05
+
+### Added
+- [LPS-76271]: Add the ability to build theme projects with the
+[Liferay Portal Tools Theme Builder]. To enable this, set the
+`liferay.workspace.themes.java.build` property to `true` in `gradle.properties`.
+
+### Changed
+- [LPS-76221]: Update the [Liferay Gradle Plugins] dependency to version 3.5.57.
+
+## 1.9.0 - 2018-03-26
+
+### Added
+- [LPS-77425]: Automatically set the `portal.version` property for all projects
+based on the value of the `liferay.workspace.bundle.url` property.
+- [LPS-77586]: Add support for relative file URLs in the
+`liferay.workspace.bundle.url` project property.
+- [LPS-78149]: Add the ability to deploy additional 3rd-party OSGi modules via
+the `providedModules` configuration of the root project.
+- [LPS-78149]: Apply the [`com.liferay.target.platform.ide`](https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins-target-platform)
+Gradle plugin to the root project if the `target.platform.version` property in
+`gradle.properties` is set.
+
+### Changed
+- [LPS-78911]: Update the [Liferay Gradle Plugins] dependency to version 3.9.11.
+
+## 1.9.1 - 2018-03-30
+
+### Changed
+- [LPS-74544]: Update the [Liferay Gradle Plugins] dependency to version 3.9.22.
+
+## 1.9.2 - 2018-05-02
+
+### Changed
+- [LPS-75479]: Update the [Liferay Portal Tools Bundle Support] dependency to
+version 3.2.2.
+- [LPS-78537]: Update the [Liferay Gradle Plugins Poshi Runner] dependency to
+version 2.2.2.
+- [LPS-80281]: Update the [Liferay Gradle Plugins] dependency to version
+3.11.28.
+
+## 1.10.0 - 2018-05-26
+
+### Added
+- [LPS-79453]: Add support for Ext OSGi modules.
+- [LPS-79453]: Add support for Ext plugins.
+
+### Changed
+- [LPS-80222]: Update the [Liferay Gradle Plugins Target Platform] dependency to
+version 1.0.1.
+- [LPS-80517]: Update the [Liferay Gradle Plugins] dependency to version
+3.12.19.
+- [LPS-80950]: Update the [Liferay Gradle Plugins Poshi Runner] dependency to
+version 2.2.4.
+
+## 1.10.1 - 2018-06-15
+
+### Changed
+- [LPS-77875]: Update the private constant `_DEFAULT_REPOSITORY_URL` to
+`https://repository-cdn.liferay.com/nexus/content/groups/public`.
+- [LPS-77875]: Update the [Liferay Portal Tools Bundle Support] dependency to
+version 3.2.5.
+- [LPS-82534]: Update the [Liferay Gradle Plugins] dependency to version
+3.12.46.
+
+## 1.10.2 - 2018-06-18
+
+### Changed
+- [LPS-74544]: Update the [Liferay Gradle Plugins] dependency to version
+3.12.48.
+
+## 1.10.3 - 2018-06-28
+
+### Changed
+- [LPS-79679]: Update the [Liferay Gradle Plugins] dependency to version
+3.12.59.
+- [LPS-80660]: Support commonly used Liferay Portal versions in the target
+platform version.
+
+## 1.10.4 - 2018-07-17
+
+### Changed
+- [LPS-74544]: Update the [Liferay Gradle Plugins] dependency to version
+3.12.78.
+- [LPS-77359]: Update the [Liferay Gradle Plugins Poshi Runner] dependency to
+version 2.2.5.
+- [LPS-77875]: Update the [Liferay Portal Tools Bundle Support] dependency to
+version 3.2.6.
+- [LPS-82491]: Update the [Liferay Gradle Plugins Target Platform] dependency to
+version 1.1.0.
+
+## 1.10.5 - 2018-07-23
+
+### Changed
+- [LPS-74544]: Update the [Liferay Gradle Plugins] dependency to version
+3.12.84.
+- [LPS-82491]: Update the [Liferay Gradle Plugins Target Platform] dependency to
+version 1.1.1.
+
+## 1.10.6 - 2018-08-07
+
+### Changed
+- [BLADE-255]: Copy themes into `osgi/war` instead of `osgi/modules`.
+- [LPS-74315]: Update the [Liferay Gradle Plugins Theme Builder] dependency to
+version 2.0.4.
+- [LPS-84119]: Update the [Liferay Gradle Plugins] dependency to version
+3.12.102.
+
+## 1.10.7 - 2018-08-08
+
+### Fixed
+- [LPS-83922]: Adjust the target platform configuration to use new BOM IDs.
+- [LPS-83922]: Update the [Liferay Gradle Plugins Target Platform] dependency to
+version 1.1.2.
+
 [Gradle Download Task]: https://github.com/michel-kraemer/gradle-download-task/
 [Liferay Gradle Plugins]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins
+[Liferay Gradle Plugins Poshi Runner]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins-poshi-runner
+[Liferay Gradle Plugins Target Platform]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins-target-platform
+[Liferay Gradle Plugins Theme Builder]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins-theme-builder
+[Liferay Portal Tools Bundle Support]: https://github.com/liferay/liferay-portal/tree/master/modules/util/portal-tools-bundle-support
+[Liferay Portal Tools Theme Builder]: https://github.com/liferay/liferay-portal/tree/master/modules/util/portal-tools-theme-builder
+[BLADE-255]: https://issues.liferay.com/browse/BLADE-255
 [LPS-66853]: https://issues.liferay.com/browse/LPS-66853
 [LPS-66906]: https://issues.liferay.com/browse/LPS-66906
 [LPS-67352]: https://issues.liferay.com/browse/LPS-67352
@@ -127,3 +301,37 @@ in `gradle.properties`.
 [LPS-70677]: https://issues.liferay.com/browse/LPS-70677
 [LPS-71724]: https://issues.liferay.com/browse/LPS-71724
 [LPS-72252]: https://issues.liferay.com/browse/LPS-72252
+[LPS-72705]: https://issues.liferay.com/browse/LPS-72705
+[LPS-73056]: https://issues.liferay.com/browse/LPS-73056
+[LPS-73248]: https://issues.liferay.com/browse/LPS-73248
+[LPS-73383]: https://issues.liferay.com/browse/LPS-73383
+[LPS-73746]: https://issues.liferay.com/browse/LPS-73746
+[LPS-73855]: https://issues.liferay.com/browse/LPS-73855
+[LPS-73913]: https://issues.liferay.com/browse/LPS-73913
+[LPS-73967]: https://issues.liferay.com/browse/LPS-73967
+[LPS-74124]: https://issues.liferay.com/browse/LPS-74124
+[LPS-74315]: https://issues.liferay.com/browse/LPS-74315
+[LPS-74544]: https://issues.liferay.com/browse/LPS-74544
+[LPS-74818]: https://issues.liferay.com/browse/LPS-74818
+[LPS-75323]: https://issues.liferay.com/browse/LPS-75323
+[LPS-75479]: https://issues.liferay.com/browse/LPS-75479
+[LPS-76221]: https://issues.liferay.com/browse/LPS-76221
+[LPS-76271]: https://issues.liferay.com/browse/LPS-76271
+[LPS-77359]: https://issues.liferay.com/browse/LPS-77359
+[LPS-77425]: https://issues.liferay.com/browse/LPS-77425
+[LPS-77586]: https://issues.liferay.com/browse/LPS-77586
+[LPS-77875]: https://issues.liferay.com/browse/LPS-77875
+[LPS-78149]: https://issues.liferay.com/browse/LPS-78149
+[LPS-78537]: https://issues.liferay.com/browse/LPS-78537
+[LPS-78911]: https://issues.liferay.com/browse/LPS-78911
+[LPS-79453]: https://issues.liferay.com/browse/LPS-79453
+[LPS-79679]: https://issues.liferay.com/browse/LPS-79679
+[LPS-80222]: https://issues.liferay.com/browse/LPS-80222
+[LPS-80281]: https://issues.liferay.com/browse/LPS-80281
+[LPS-80517]: https://issues.liferay.com/browse/LPS-80517
+[LPS-80660]: https://issues.liferay.com/browse/LPS-80660
+[LPS-80950]: https://issues.liferay.com/browse/LPS-80950
+[LPS-82491]: https://issues.liferay.com/browse/LPS-82491
+[LPS-82534]: https://issues.liferay.com/browse/LPS-82534
+[LPS-83922]: https://issues.liferay.com/browse/LPS-83922
+[LPS-84119]: https://issues.liferay.com/browse/LPS-84119

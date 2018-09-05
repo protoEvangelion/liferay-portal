@@ -5,24 +5,15 @@
 
 	<command name="_add">
 		<if>
-			<condition function="IsElementNotPresent" locator1="ControlMenu#HEADER_TITLE" />
+			<condition function="IsTextNotEqual" locator1="Portlet#HEADER" value1="Data Definitions" />
 			<then>
-				<var name="key_iframeTitle" value="Data Definitions" />
-
-				<execute function="AssertTextEquals" locator1="IFrame#IFRAME_TITLE" value1="Data Definitions" />
+				<execute function="AssertTextEquals" locator1="Portlet#H3_MODAL_TITLE" value1="Data Definitions" />
 
 				<execute function="SelectFrame" locator1="IFrame#DIALOG" />
-
-				<var name="key_assetTitle" value="Data Definitions" />
-
-				<execute function="AssertTextEquals" locator1="NavBar#ASSET_TITLE" value1="Data Definitions" />
 			</then>
-			<else>
-				<execute function="AssertTextEquals" locator1="ControlMenu#HEADER_TITLE" value1="Structures" />
-			</else>
 		</if>
 
-		<execute function="Click" locator1="Button#PLUS" />
+		<execute macro="LexiconEntry#gotoAdd" />
 
 		<execute macro="DDLDataDefinition#editName">
 			<var name="ddlDataDefinitionName" value="${ddlDataDefinitionName}" />
@@ -95,7 +86,9 @@
 
 		<execute function="Click#waitForMenuToggleJSClick" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS" />
 
-		<execute function="AssertClick" locator1="MenuItem#COPY" value1="Copy" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Copy" />
+		</execute>
 
 		<execute macro="PortletEntry#inputName">
 			<var name="name" value="${ddlDataDefinitionCopyName}" />
@@ -131,7 +124,9 @@
 
 		<execute function="Click#waitForMenuToggleJSClick" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS" />
 
-		<execute function="AssertClickNoError" locator1="MenuItem#DELETE" value1="Delete" />
+		<execute macro="MenuItem#clickNoError">
+			<var name="menuItem" value="Delete" />
+		</execute>
 
 		<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
 
@@ -139,7 +134,9 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Dynamic Data Lists" />
 		</execute>
 
@@ -153,31 +150,33 @@
 	<command name="deleteNoCP">
 		<execute macro="DDLNavigator#gotoManageDataDefinitions" />
 
-		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${ddlDataDefinitionName}" />
-
-		<execute function="Click" locator1="Icon#BASIC_SEARCH" />
+		<execute macro="Search#searchCP">
+			<var name="searchTerm" value="${ddlDataDefinitionName}" />
+		</execute>
 
 		<execute function="Click#waitForMenuToggleJSClick" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS_1" />
 
-		<execute function="AssertClickNoError" locator1="MenuItem#DELETE" value1="Delete" />
+		<execute macro="MenuItem#clickNoError">
+			<var name="menuItem" value="Delete" />
+		</execute>
 
 		<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
 
-		<execute macro="Alert#viewRequestFailedToComplete" />
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="The structure cannot be deleted because it is required by one or more structure links." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR" value1="The structure cannot be deleted because it is required by one or more structure links." />
 	</command>
 
 	<command name="editCP">
 		<execute macro="DDLNavigator#gotoManageDataDefinitions" />
 
-		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${ddlDataDefinitionName}" />
-
-		<execute function="Click" locator1="Icon#BASIC_SEARCH" />
+		<execute macro="Search#searchCP">
+			<var name="searchTerm" value="${ddlDataDefinitionName}" />
+		</execute>
 
 		<execute function="Click#waitForMenuToggleJSClick" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS_1" />
 
-		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Edit" />
+		</execute>
 
 		<execute function="Type#clickAtType" locator1="TextInput#NAME" value1="${ddlDataDefinitionNameEdit}" />
 
@@ -200,7 +199,7 @@
 	</command>
 
 	<command name="save">
-		<execute macro="DDLDataDefinition#clickSave" />
+		<execute macro="Button#clickSave" />
 
 		<execute macro="Alert#viewSuccessMessage" />
 	</command>
@@ -242,13 +241,18 @@
 	<command name="setInputFieldLocalization">
 		<var name="key_languageValue" value="${languageValue}" />
 
-		<execute function="Click" locator1="FieldLocalization#OPTION" />
+		<execute macro="PortletEntry#changeLocale">
+			<var name="fieldName" value="Name" />
+			<var name="locale" value="${languageValue}" />
+		</execute>
 	</command>
 
 	<command name="tearDownCP">
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesContent">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
 			<var name="portlet" value="Dynamic Data Lists" />
 		</execute>
 
@@ -256,9 +260,9 @@
 
 		<var name="ddlDataDefinitionName" value="Data Definition" />
 
-		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${ddlDataDefinitionName}" />
-
-		<execute function="Click" locator1="Icon#BASIC_SEARCH" />
+		<execute macro="Search#searchCP">
+			<var name="searchTerm" value="${ddlDataDefinitionName}" />
+		</execute>
 
 		<execute function="AssertTextNotEquals" locator1="DDMSelectStructure#DDM_STRUCTURE_TABLE_NAME_1" value1="Contacts" />
 
@@ -267,9 +271,9 @@
 		<if>
 			<condition function="IsElementPresent" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS_1" />
 			<then>
-				<execute function="Check#checkAll" locator1="Checkbox#SELECT_ALL" />
+				<execute macro="PortletEntry#selectAll" />
 
-				<execute function="ClickNoError" locator1="Icon#DELETE" />
+				<execute function="ClickNoError" locator1="Icon#TIMES" />
 
 				<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
 
@@ -295,7 +299,7 @@
 
 		<execute function="Click" locator1="DDMSelectStructure#DDM_STRUCTURE_TABLE_NAME_LINK" value1="${ddlDataDefinitionName}" />
 
-		<execute function="AssertTextEquals" locator1="Portlet#HEADER" value1="${ddlDataDefinitionName}" />
+		<execute function="AssertTextEquals" locator1="Portlet#HEADER" value1="Edit ${ddlDataDefinitionName}" />
 
 		<execute function="AssertTextEquals" locator1="TextInput#NAME" value1="${ddlDataDefinitionName}" />
 
@@ -311,9 +315,9 @@
 		<if>
 			<isset var="fieldFieldLabel" />
 			<then>
-				<var name="key_fieldFieldLabel" value="${fieldFieldLabel}" />
-
-				<execute function="AssertElementPresent" locator1="DDMEditStructure#FORM_FIELD" value1="${fieldFieldLabel}" />
+				<execute function="AssertElementPresent" locator1="DDMEditStructure#FORM_FIELD">
+					<var name="key_fieldFieldLabel" value="${fieldFieldLabel}" />
+				</execute>
 			</then>
 		</if>
 	</command>
@@ -324,7 +328,7 @@
 		<execute function="AssertTextEquals" locator1="DDMSelectStructure#DDM_STRUCTURE_TABLE_NAME" value1="${ddlDataDefinitionName}" />
 	</command>
 
-	<command name="viewParentStuctureHeader">
+	<command name="viewParentStructureHeader">
 		<execute function="Click" locator1="DDMEditStructure#DETAILS_TOGGLE" />
 
 		<execute function="AssertClick" locator1="DDMEditStructure#DETAILS_PARENT_SELECT_BUTTON" value1="Select" />

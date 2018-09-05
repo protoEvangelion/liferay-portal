@@ -14,6 +14,7 @@
 
 package com.liferay.source.formatter.checks;
 
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -76,7 +77,9 @@ public class JSPDefineObjectsCheck extends BaseFileCheck {
 
 		while (true) {
 			x = content.indexOf(
-				objectType + " " + variableName + " = " + value + ";", x + 1);
+				StringBundler.concat(
+					objectType, " ", variableName, " = ", value, ";"),
+				x + 1);
 
 			if (x == -1) {
 				return;
@@ -91,9 +94,8 @@ public class JSPDefineObjectsCheck extends BaseFileCheck {
 			}
 
 			addMessage(
-				fileName,
-				"Use '" + tag + ":defineObjects' or rename var, see LPS-62493",
-				getLineCount(content, x));
+				fileName, "Use '" + tag + ":defineObjects' or rename var",
+				"jsp_code_duplication.markdown", getLineNumber(content, x));
 		}
 	}
 
@@ -130,136 +132,124 @@ public class JSPDefineObjectsCheck extends BaseFileCheck {
 		return content;
 	}
 
-	private static final String[][] _LIFERAY_FRONTEND_DEFINE_OBJECTS =
-		new String[][] {
-			new String[] {"String", "currentURL", "currentURLObj.toString()"},
-			new String[] {
-				"PortletURL", "currentURLObj",
-				"PortletURLUtil.getCurrent(liferayPortletRequest, " +
-					"liferayPortletResponse)"
-			},
-			new String[] {
-				"ResourceBundle", "resourceBundle",
-				"ResourceBundleUtil.getBundle(\"content.Language\", locale, " +
-					"getClass()"
-			},
-			new String[] {
-				"WindowState", "windowState",
-				"liferayPortletRequest.getWindowState()"
-			}
-		};
+	private static final String[][] _LIFERAY_FRONTEND_DEFINE_OBJECTS = {
+		{"String", "currentURL", "currentURLObj.toString()"},
+		{
+			"PortletURL", "currentURLObj",
+			"PortletURLUtil.getCurrent(liferayPortletRequest, " +
+				"liferayPortletResponse)"
+		},
+		{
+			"ResourceBundle", "resourceBundle",
+			"ResourceBundleUtil.getBundle(\"content.Language\", locale, " +
+				"getClass()"
+		},
+		{
+			"WindowState", "windowState",
+			"liferayPortletRequest.getWindowState()"
+		}
+	};
 
-	private static final String[][] _LIFERAY_THEME_DEFINE_OBJECTS =
-		new String[][] {
-			new String[] {"Account", "account", "themeDisplay.getAccount()"},
-			new String[] {
-				"ColorScheme", "colorScheme", "themeDisplay.getColorScheme()"
-			},
-			new String[] {"Company", "company", "themeDisplay.getCompany()"},
-			new String[] {"Contact", "contact", "themeDisplay.getContact()"},
-			new String[] {"Layout", "layout", "themeDisplay.getLayout()"},
-			new String[] {
-				"List<Layout>", "layouts", "themeDisplay.getLayouts()"
-			},
-			new String[] {
-				"LayoutTypePortlet", "layoutTypePortlet",
-				"themeDisplay.getLayoutTypePortlet()"
-			},
-			new String[] {"Locale", "locale", "themeDisplay.getLocale()"},
-			new String[] {
-				"PermissionChecker", "permissionChecker",
-				"themeDisplay.getPermissionChecker()"
-			},
-			new String[] {"long", "plid", "themeDisplay.getPlid()"},
-			new String[] {
-				"PortletDisplay", "portletDisplay",
-				"themeDisplay.getPortletDisplay()"
-			},
-			new String[] {"User", "realUser", "themeDisplay.getRealUser()"},
-			new String[] {
-				"long", "scopeGroupId", "themeDisplay.getScopeGroupId()"
-			},
-			new String[] {"Theme", "theme", "themeDisplay.getTheme()"},
-			new String[] {
-				"ThemeDisplay", "themeDisplay",
-				"(ThemeDisplay)request.getAttribute(WebKeys.THEME_DISPLAY)"
-			},
-			new String[] {"TimeZone", "timeZone", "themeDisplay.getTimeZone()"},
-			new String[] {"User", "user", "themeDisplay.getUser()"},
-			new String[] {
-				"long", "portletGroupId", "themeDisplay.getScopeGroupId()"
-			}
-		};
+	private static final String[][] _LIFERAY_THEME_DEFINE_OBJECTS = {
+		{"Account", "account", "themeDisplay.getAccount()"},
+		{"ColorScheme", "colorScheme", "themeDisplay.getColorScheme()"},
+		{"Company", "company", "themeDisplay.getCompany()"},
+		{"Contact", "contact", "themeDisplay.getContact()"},
+		{"Layout", "layout", "themeDisplay.getLayout()"},
+		{"List<Layout>", "layouts", "themeDisplay.getLayouts()"},
+		{
+			"LayoutTypePortlet", "layoutTypePortlet",
+			"themeDisplay.getLayoutTypePortlet()"
+		},
+		{"Locale", "locale", "themeDisplay.getLocale()"},
+		{
+			"PermissionChecker", "permissionChecker",
+			"themeDisplay.getPermissionChecker()"
+		},
+		{"long", "plid", "themeDisplay.getPlid()"},
+		{
+			"PortletDisplay", "portletDisplay",
+			"themeDisplay.getPortletDisplay()"
+		},
+		{"User", "realUser", "themeDisplay.getRealUser()"},
+		{"long", "scopeGroupId", "themeDisplay.getScopeGroupId()"},
+		{"Theme", "theme", "themeDisplay.getTheme()"},
+		{
+			"ThemeDisplay", "themeDisplay",
+			"(ThemeDisplay)request.getAttribute(WebKeys.THEME_DISPLAY)"
+		},
+		{"TimeZone", "timeZone", "themeDisplay.getTimeZone()"},
+		{"User", "user", "themeDisplay.getUser()"},
+		{"long", "portletGroupId", "themeDisplay.getScopeGroupId()"}
+	};
 
-	private static final String[][] _PORTLET_DEFINE_OBJECTS = new String[][] {
-		new String[] {
+	private static final String[][] _PORTLET_DEFINE_OBJECTS = {
+		{
 			"PortletConfig", "portletConfig",
 			"(PortletConfig)request.getAttribute(JavaConstants." +
 				"JAVAX_PORTLET_CONFIG)"
 		},
-		new String[] {
-			"String", "portletName", "portletConfig.getPortletName()"
-		},
-		new String[] {
+		{"String", "portletName", "portletConfig.getPortletName()"},
+		{
 			"LiferayPortletRequest", "liferayPortletRequest",
 			"PortalUtil.getLiferayPortletRequest(portletRequest)"
 		},
-		new String[] {
+		{
 			"PortletRequest", "actionRequest",
 			"(PortletRequest)request.getAttribute(JavaConstants." +
 				"JAVAX_PORTLET_REQUEST)"
 		},
-		new String[] {
+		{
 			"PortletRequest", "eventRequest",
 			"(PortletRequest)request.getAttribute(JavaConstants." +
 				"JAVAX_PORTLET_REQUEST)"
 		},
-		new String[] {
+		{
 			"PortletRequest", "renderRequest",
 			"(PortletRequest)request.getAttribute(JavaConstants." +
 				"JAVAX_PORTLET_REQUEST)"
 		},
-		new String[] {
+		{
 			"PortletRequest", "resourceRequest",
 			"(PortletRequest)request.getAttribute(JavaConstants." +
 				"JAVAX_PORTLET_REQUEST)"
 		},
-		new String[] {
+		{
 			"PortletPreferences", "portletPreferences",
 			"portletRequest.getPreferences()"
 		},
-		new String[] {
+		{
 			"Map<String, String[]>", "portletPreferencesValues",
 			"portletPreferences.getMap()"
 		},
-		new String[] {
+		{
 			"PortletSession", "portletSession",
 			"portletRequest.getPortletSession()"
 		},
-		new String[] {
+		{
 			"Map<String, Object>", "portletSessionScope",
 			"portletSession.getAttributeMap()"
 		},
-		new String[] {
+		{
 			"LiferayPortletResponse", "liferayPortletResponse",
 			"PortalUtil.getLiferayPortletResponse(portletResponse)"
 		},
-		new String[] {
+		{
 			"PortletResponse", "actionResponse",
 			"(PortletResponse)request.getAttribute(JavaConstants." +
 				"JAVAX_PORTLET_RESPONSE)"
 		},
-		new String[] {
+		{
 			"PortletResponse", "eventResponse",
 			"(PortletResponse)request.getAttribute(JavaConstants." +
 				"JAVAX_PORTLET_RESPONSE)"
 		},
-		new String[] {
+		{
 			"PortletResponse", "renderResponse",
 			"(PortletResponse)request.getAttribute(JavaConstants." +
 				"JAVAX_PORTLET_RESPONSE)"
 		},
-		new String[] {
+		{
 			"PortletResponse", "resourceResponse",
 			"(PortletResponse)request.getAttribute(JavaConstants." +
 				"JAVAX_PORTLET_RESPONSE)"

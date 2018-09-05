@@ -26,12 +26,12 @@ public class PrimitiveIntListTest {
 
 	@Test
 	public void testAdd() {
-		int[] expected = new int[] {10, 11, 12};
+		int[] expected = {10, 11, 12};
 
 		PrimitiveIntList primitiveIntList = new PrimitiveIntList();
 
-		for (int i = 0; i < expected.length; i++) {
-			primitiveIntList.add(expected[i]);
+		for (int i : expected) {
+			primitiveIntList.add(i);
 		}
 
 		Assert.assertEquals(expected.length, primitiveIntList.size());
@@ -48,7 +48,7 @@ public class PrimitiveIntListTest {
 
 	@Test
 	public void testAddAll() {
-		int[] expected = new int[] {10, 11, 12};
+		int[] expected = {10, 11, 12};
 
 		PrimitiveIntList primitiveIntList = new PrimitiveIntList();
 

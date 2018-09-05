@@ -19,18 +19,19 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import com.liferay.sync.model.SyncDLObject;
 import com.liferay.sync.model.SyncDLObjectModel;
@@ -510,7 +511,7 @@ public class SyncDLObjectModelImpl extends BaseModelImpl<SyncDLObject>
 			return user.getUuid();
 		}
 		catch (PortalException pe) {
-			return StringPool.BLANK;
+			return "";
 		}
 	}
 
@@ -522,7 +523,7 @@ public class SyncDLObjectModelImpl extends BaseModelImpl<SyncDLObject>
 	@Override
 	public String getUserName() {
 		if (_userName == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _userName;
@@ -618,7 +619,7 @@ public class SyncDLObjectModelImpl extends BaseModelImpl<SyncDLObject>
 	@Override
 	public String getTreePath() {
 		if (_treePath == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _treePath;
@@ -644,7 +645,7 @@ public class SyncDLObjectModelImpl extends BaseModelImpl<SyncDLObject>
 	@Override
 	public String getName() {
 		if (_name == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _name;
@@ -660,7 +661,7 @@ public class SyncDLObjectModelImpl extends BaseModelImpl<SyncDLObject>
 	@Override
 	public String getExtension() {
 		if (_extension == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _extension;
@@ -676,7 +677,7 @@ public class SyncDLObjectModelImpl extends BaseModelImpl<SyncDLObject>
 	@Override
 	public String getMimeType() {
 		if (_mimeType == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _mimeType;
@@ -692,7 +693,7 @@ public class SyncDLObjectModelImpl extends BaseModelImpl<SyncDLObject>
 	@Override
 	public String getDescription() {
 		if (_description == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _description;
@@ -708,7 +709,7 @@ public class SyncDLObjectModelImpl extends BaseModelImpl<SyncDLObject>
 	@Override
 	public String getChangeLog() {
 		if (_changeLog == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _changeLog;
@@ -724,7 +725,7 @@ public class SyncDLObjectModelImpl extends BaseModelImpl<SyncDLObject>
 	@Override
 	public String getExtraSettings() {
 		if (_extraSettings == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _extraSettings;
@@ -740,7 +741,7 @@ public class SyncDLObjectModelImpl extends BaseModelImpl<SyncDLObject>
 	@Override
 	public String getVersion() {
 		if (_version == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _version;
@@ -788,7 +789,7 @@ public class SyncDLObjectModelImpl extends BaseModelImpl<SyncDLObject>
 	@Override
 	public String getChecksum() {
 		if (_checksum == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _checksum;
@@ -804,7 +805,7 @@ public class SyncDLObjectModelImpl extends BaseModelImpl<SyncDLObject>
 	@Override
 	public String getEvent() {
 		if (_event == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _event;
@@ -830,7 +831,7 @@ public class SyncDLObjectModelImpl extends BaseModelImpl<SyncDLObject>
 	@Override
 	public String getLanTokenKey() {
 		if (_lanTokenKey == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _lanTokenKey;
@@ -883,7 +884,7 @@ public class SyncDLObjectModelImpl extends BaseModelImpl<SyncDLObject>
 			return user.getUuid();
 		}
 		catch (PortalException pe) {
-			return StringPool.BLANK;
+			return "";
 		}
 	}
 
@@ -895,7 +896,7 @@ public class SyncDLObjectModelImpl extends BaseModelImpl<SyncDLObject>
 	@Override
 	public String getLockUserName() {
 		if (_lockUserName == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _lockUserName;
@@ -911,7 +912,7 @@ public class SyncDLObjectModelImpl extends BaseModelImpl<SyncDLObject>
 	@Override
 	public String getType() {
 		if (_type == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _type;
@@ -960,7 +961,7 @@ public class SyncDLObjectModelImpl extends BaseModelImpl<SyncDLObject>
 	@Override
 	public String getTypeUuid() {
 		if (_typeUuid == null) {
-			return StringPool.BLANK;
+			return "";
 		}
 		else {
 			return _typeUuid;
@@ -1500,7 +1501,7 @@ public class SyncDLObjectModelImpl extends BaseModelImpl<SyncDLObject>
 
 	private static final ClassLoader _classLoader = SyncDLObject.class.getClassLoader();
 	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
-			SyncDLObject.class
+			SyncDLObject.class, ModelWrapper.class
 		};
 	private long _syncDLObjectId;
 	private long _companyId;

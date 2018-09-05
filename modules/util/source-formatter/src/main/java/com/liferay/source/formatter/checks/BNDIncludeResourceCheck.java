@@ -14,7 +14,7 @@
 
 package com.liferay.source.formatter.checks;
 
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.tools.ImportPackage;
 
@@ -37,13 +37,27 @@ public class BNDIncludeResourceCheck extends BaseFileCheck {
 		String fileName, String absolutePath, String content) {
 
 		if (!fileName.endsWith("test-bnd.bnd")) {
-			content = _formatIncludeResource(content);
+			content = _formatIncludeResource(fileName, content);
 		}
 
 		return content;
 	}
 
-	private String _formatIncludeResource(String content) {
+	private String _formatIncludeResource(String fileName, String content) {
+		if (fileName.endsWith("/bnd.bnd") &&
+			!fileName.endsWith("-test/bnd.bnd")) {
+
+			Matcher matcher = _includeDashResourcePattern.matcher(content);
+
+			if (matcher.find()) {
+				String replacement = StringUtil.replace(
+					matcher.group(), "Include-Resource:", "-includeresource:");
+
+				return StringUtil.replace(
+					content, matcher.group(), replacement);
+			}
+		}
+
 		Matcher matcher = _includeResourcePattern.matcher(content);
 
 		if (!matcher.find()) {
@@ -144,14 +158,14 @@ public class BNDIncludeResourceCheck extends BaseFileCheck {
 		return content;
 	}
 
-	private static final String[] _INCLUDE_RESOURCE_DIRS_BLACKLIST =
-		new String[] {
-			"classes",
-			"META-INF/resources=src/main/resources/META-INF/resources",
-			"META-INF/resources/content=src/main/resources/content",
-			"WEB-INF=src/main/resources/WEB-INF"
-		};
+	private static final String[] _INCLUDE_RESOURCE_DIRS_BLACKLIST = {
+		"classes", "META-INF/resources=src/main/resources/META-INF/resources",
+		"META-INF/resources/content=src/main/resources/content",
+		"WEB-INF=src/main/resources/WEB-INF"
+	};
 
+	private final Pattern _includeDashResourcePattern = Pattern.compile(
+		"^Include-Resource:.+", Pattern.MULTILINE);
 	private final Pattern _includeResourceJarPattern = Pattern.compile(
 		"-[0-9\\.]+\\.jar");
 	private final Pattern _includeResourcePattern = Pattern.compile(

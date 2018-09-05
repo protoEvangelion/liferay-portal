@@ -15,6 +15,7 @@
 package com.liferay.marketplace.app.manager.web.internal.util.comparator;
 
 import com.liferay.marketplace.app.manager.web.internal.constants.BundleConstants;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.GetterUtil;
 
 import java.util.Comparator;
@@ -46,13 +47,13 @@ public class BundleComparator implements Comparator<Bundle> {
 		if (_ascending) {
 			return value;
 		}
-		else {
-			return -value;
-		}
+
+		return -value;
 	}
 
 	protected String getBundleName(Bundle bundle) {
-		Dictionary<String, String> headers = bundle.getHeaders();
+		Dictionary<String, String> headers = bundle.getHeaders(
+			StringPool.BLANK);
 
 		return GetterUtil.getString(headers.get(BundleConstants.BUNDLE_NAME));
 	}

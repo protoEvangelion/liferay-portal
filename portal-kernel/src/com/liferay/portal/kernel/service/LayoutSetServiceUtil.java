@@ -40,34 +40,13 @@ public class LayoutSetServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.portal.service.impl.LayoutSetServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static com.liferay.portal.kernel.model.LayoutSet updateLookAndFeel(
-		long groupId, boolean privateLayout, java.lang.String themeId,
-		java.lang.String colorSchemeId, java.lang.String css)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService()
-				   .updateLookAndFeel(groupId, privateLayout, themeId,
-			colorSchemeId, css);
-	}
-
-	public static com.liferay.portal.kernel.model.LayoutSet updateSettings(
-		long groupId, boolean privateLayout, java.lang.String settings)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().updateSettings(groupId, privateLayout, settings);
-	}
-
-	public static com.liferay.portal.kernel.model.LayoutSet updateVirtualHost(
-		long groupId, boolean privateLayout, java.lang.String virtualHost)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService()
-				   .updateVirtualHost(groupId, privateLayout, virtualHost);
-	}
 
 	/**
 	* Returns the OSGi service identifier.
 	*
 	* @return the OSGi service identifier
 	*/
-	public static java.lang.String getOSGiServiceIdentifier() {
+	public static String getOSGiServiceIdentifier() {
 		return getService().getOSGiServiceIdentifier();
 	}
 
@@ -91,7 +70,7 @@ public class LayoutSetServiceUtil {
 	*/
 	public static void updateLayoutSetPrototypeLinkEnabled(long groupId,
 		boolean privateLayout, boolean layoutSetPrototypeLinkEnabled,
-		java.lang.String layoutSetPrototypeUuid)
+		String layoutSetPrototypeUuid)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		getService()
 			.updateLayoutSetPrototypeLinkEnabled(groupId, privateLayout,
@@ -121,6 +100,28 @@ public class LayoutSetServiceUtil {
 		throws com.liferay.portal.kernel.exception.PortalException {
 		getService()
 			.updateLogo(groupId, privateLayout, logo, inputStream, cleanUpStream);
+	}
+
+	public static com.liferay.portal.kernel.model.LayoutSet updateLookAndFeel(
+		long groupId, boolean privateLayout, String themeId,
+		String colorSchemeId, String css)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .updateLookAndFeel(groupId, privateLayout, themeId,
+			colorSchemeId, css);
+	}
+
+	public static com.liferay.portal.kernel.model.LayoutSet updateSettings(
+		long groupId, boolean privateLayout, String settings)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().updateSettings(groupId, privateLayout, settings);
+	}
+
+	public static com.liferay.portal.kernel.model.LayoutSet updateVirtualHost(
+		long groupId, boolean privateLayout, String virtualHost)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .updateVirtualHost(groupId, privateLayout, virtualHost);
 	}
 
 	public static LayoutSetService getService() {

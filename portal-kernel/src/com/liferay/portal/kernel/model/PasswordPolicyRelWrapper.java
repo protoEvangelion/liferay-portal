@@ -106,58 +106,13 @@ public class PasswordPolicyRelWrapper implements PasswordPolicyRel,
 	}
 
 	@Override
-	public CacheModel<PasswordPolicyRel> toCacheModel() {
-		return _passwordPolicyRel.toCacheModel();
-	}
-
-	@Override
-	public PasswordPolicyRel toEscapedModel() {
-		return new PasswordPolicyRelWrapper(_passwordPolicyRel.toEscapedModel());
-	}
-
-	@Override
-	public PasswordPolicyRel toUnescapedModel() {
-		return new PasswordPolicyRelWrapper(_passwordPolicyRel.toUnescapedModel());
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _passwordPolicyRel.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _passwordPolicyRel.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _passwordPolicyRel.isNew();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _passwordPolicyRel.getExpandoBridge();
+	public Object clone() {
+		return new PasswordPolicyRelWrapper((PasswordPolicyRel)_passwordPolicyRel.clone());
 	}
 
 	@Override
 	public int compareTo(PasswordPolicyRel passwordPolicyRel) {
 		return _passwordPolicyRel.compareTo(passwordPolicyRel);
-	}
-
-	@Override
-	public int hashCode() {
-		return _passwordPolicyRel.hashCode();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _passwordPolicyRel.getPrimaryKeyObj();
-	}
-
-	@Override
-	public java.lang.Object clone() {
-		return new PasswordPolicyRelWrapper((PasswordPolicyRel)_passwordPolicyRel.clone());
 	}
 
 	/**
@@ -166,18 +121,8 @@ public class PasswordPolicyRelWrapper implements PasswordPolicyRel,
 	* @return the fully qualified class name of this password policy rel
 	*/
 	@Override
-	public java.lang.String getClassName() {
+	public String getClassName() {
 		return _passwordPolicyRel.getClassName();
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _passwordPolicyRel.toString();
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _passwordPolicyRel.toXmlString();
 	}
 
 	/**
@@ -208,6 +153,11 @@ public class PasswordPolicyRelWrapper implements PasswordPolicyRel,
 	@Override
 	public long getCompanyId() {
 		return _passwordPolicyRel.getCompanyId();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _passwordPolicyRel.getExpandoBridge();
 	}
 
 	/**
@@ -251,6 +201,31 @@ public class PasswordPolicyRelWrapper implements PasswordPolicyRel,
 	}
 
 	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _passwordPolicyRel.getPrimaryKeyObj();
+	}
+
+	@Override
+	public int hashCode() {
+		return _passwordPolicyRel.hashCode();
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _passwordPolicyRel.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _passwordPolicyRel.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _passwordPolicyRel.isNew();
+	}
+
+	@Override
 	public void persist() {
 		_passwordPolicyRel.persist();
 	}
@@ -261,7 +236,7 @@ public class PasswordPolicyRelWrapper implements PasswordPolicyRel,
 	}
 
 	@Override
-	public void setClassName(java.lang.String className) {
+	public void setClassName(String className) {
 		_passwordPolicyRel.setClassName(className);
 	}
 
@@ -358,6 +333,31 @@ public class PasswordPolicyRelWrapper implements PasswordPolicyRel,
 	@Override
 	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_passwordPolicyRel.setPrimaryKeyObj(primaryKeyObj);
+	}
+
+	@Override
+	public CacheModel<PasswordPolicyRel> toCacheModel() {
+		return _passwordPolicyRel.toCacheModel();
+	}
+
+	@Override
+	public PasswordPolicyRel toEscapedModel() {
+		return new PasswordPolicyRelWrapper(_passwordPolicyRel.toEscapedModel());
+	}
+
+	@Override
+	public String toString() {
+		return _passwordPolicyRel.toString();
+	}
+
+	@Override
+	public PasswordPolicyRel toUnescapedModel() {
+		return new PasswordPolicyRelWrapper(_passwordPolicyRel.toUnescapedModel());
+	}
+
+	@Override
+	public String toXmlString() {
+		return _passwordPolicyRel.toXmlString();
 	}
 
 	@Override

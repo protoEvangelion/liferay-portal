@@ -16,12 +16,12 @@ package com.liferay.portal.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringBundler;
+
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.MVCCModel;
 import com.liferay.portal.kernel.model.WorkflowDefinitionLink;
 import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -123,7 +123,7 @@ public class WorkflowDefinitionLinkCacheModel implements CacheModel<WorkflowDefi
 		workflowDefinitionLinkImpl.setUserId(userId);
 
 		if (userName == null) {
-			workflowDefinitionLinkImpl.setUserName(StringPool.BLANK);
+			workflowDefinitionLinkImpl.setUserName("");
 		}
 		else {
 			workflowDefinitionLinkImpl.setUserName(userName);
@@ -148,7 +148,7 @@ public class WorkflowDefinitionLinkCacheModel implements CacheModel<WorkflowDefi
 		workflowDefinitionLinkImpl.setTypePK(typePK);
 
 		if (workflowDefinitionName == null) {
-			workflowDefinitionLinkImpl.setWorkflowDefinitionName(StringPool.BLANK);
+			workflowDefinitionLinkImpl.setWorkflowDefinitionName("");
 		}
 		else {
 			workflowDefinitionLinkImpl.setWorkflowDefinitionName(workflowDefinitionName);
@@ -200,7 +200,7 @@ public class WorkflowDefinitionLinkCacheModel implements CacheModel<WorkflowDefi
 		objectOutput.writeLong(userId);
 
 		if (userName == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(userName);
@@ -216,7 +216,7 @@ public class WorkflowDefinitionLinkCacheModel implements CacheModel<WorkflowDefi
 		objectOutput.writeLong(typePK);
 
 		if (workflowDefinitionName == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
+			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(workflowDefinitionName);

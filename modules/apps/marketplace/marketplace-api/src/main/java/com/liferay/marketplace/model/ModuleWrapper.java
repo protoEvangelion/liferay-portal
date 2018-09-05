@@ -113,113 +113,13 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	}
 
 	@Override
-	public Module toEscapedModel() {
-		return new ModuleWrapper(_module.toEscapedModel());
-	}
-
-	@Override
-	public Module toUnescapedModel() {
-		return new ModuleWrapper(_module.toUnescapedModel());
-	}
-
-	@Override
-	public boolean isBundle() {
-		return _module.isBundle();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _module.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _module.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _module.isNew();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _module.getExpandoBridge();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.CacheModel<Module> toCacheModel() {
-		return _module.toCacheModel();
+	public Object clone() {
+		return new ModuleWrapper((Module)_module.clone());
 	}
 
 	@Override
 	public int compareTo(Module module) {
 		return _module.compareTo(module);
-	}
-
-	@Override
-	public int hashCode() {
-		return _module.hashCode();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _module.getPrimaryKeyObj();
-	}
-
-	@Override
-	public java.lang.Object clone() {
-		return new ModuleWrapper((Module)_module.clone());
-	}
-
-	/**
-	* Returns the bundle symbolic name of this module.
-	*
-	* @return the bundle symbolic name of this module
-	*/
-	@Override
-	public java.lang.String getBundleSymbolicName() {
-		return _module.getBundleSymbolicName();
-	}
-
-	/**
-	* Returns the bundle version of this module.
-	*
-	* @return the bundle version of this module
-	*/
-	@Override
-	public java.lang.String getBundleVersion() {
-		return _module.getBundleVersion();
-	}
-
-	/**
-	* Returns the context name of this module.
-	*
-	* @return the context name of this module
-	*/
-	@Override
-	public java.lang.String getContextName() {
-		return _module.getContextName();
-	}
-
-	/**
-	* Returns the uuid of this module.
-	*
-	* @return the uuid of this module
-	*/
-	@Override
-	public java.lang.String getUuid() {
-		return _module.getUuid();
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _module.toString();
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _module.toXmlString();
 	}
 
 	/**
@@ -233,6 +133,26 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	}
 
 	/**
+	* Returns the bundle symbolic name of this module.
+	*
+	* @return the bundle symbolic name of this module
+	*/
+	@Override
+	public String getBundleSymbolicName() {
+		return _module.getBundleSymbolicName();
+	}
+
+	/**
+	* Returns the bundle version of this module.
+	*
+	* @return the bundle version of this module
+	*/
+	@Override
+	public String getBundleVersion() {
+		return _module.getBundleVersion();
+	}
+
+	/**
 	* Returns the company ID of this module.
 	*
 	* @return the company ID of this module
@@ -240,6 +160,21 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	@Override
 	public long getCompanyId() {
 		return _module.getCompanyId();
+	}
+
+	/**
+	* Returns the context name of this module.
+	*
+	* @return the context name of this module
+	*/
+	@Override
+	public String getContextName() {
+		return _module.getContextName();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _module.getExpandoBridge();
 	}
 
 	/**
@@ -263,6 +198,46 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	}
 
 	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _module.getPrimaryKeyObj();
+	}
+
+	/**
+	* Returns the uuid of this module.
+	*
+	* @return the uuid of this module
+	*/
+	@Override
+	public String getUuid() {
+		return _module.getUuid();
+	}
+
+	@Override
+	public int hashCode() {
+		return _module.hashCode();
+	}
+
+	@Override
+	public boolean isBundle() {
+		return _module.isBundle();
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _module.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _module.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _module.isNew();
+	}
+
+	@Override
 	public void persist() {
 		_module.persist();
 	}
@@ -283,7 +258,7 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	* @param bundleSymbolicName the bundle symbolic name of this module
 	*/
 	@Override
-	public void setBundleSymbolicName(java.lang.String bundleSymbolicName) {
+	public void setBundleSymbolicName(String bundleSymbolicName) {
 		_module.setBundleSymbolicName(bundleSymbolicName);
 	}
 
@@ -293,7 +268,7 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	* @param bundleVersion the bundle version of this module
 	*/
 	@Override
-	public void setBundleVersion(java.lang.String bundleVersion) {
+	public void setBundleVersion(String bundleVersion) {
 		_module.setBundleVersion(bundleVersion);
 	}
 
@@ -318,19 +293,19 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	* @param contextName the context name of this module
 	*/
 	@Override
-	public void setContextName(java.lang.String contextName) {
+	public void setContextName(String contextName) {
 		_module.setContextName(contextName);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_module.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
 	public void setExpandoBridgeAttributes(
 		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
 		_module.setExpandoBridgeAttributes(baseModel);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_module.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
@@ -374,8 +349,33 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	* @param uuid the uuid of this module
 	*/
 	@Override
-	public void setUuid(java.lang.String uuid) {
+	public void setUuid(String uuid) {
 		_module.setUuid(uuid);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.CacheModel<Module> toCacheModel() {
+		return _module.toCacheModel();
+	}
+
+	@Override
+	public Module toEscapedModel() {
+		return new ModuleWrapper(_module.toEscapedModel());
+	}
+
+	@Override
+	public String toString() {
+		return _module.toString();
+	}
+
+	@Override
+	public Module toUnescapedModel() {
+		return new ModuleWrapper(_module.toUnescapedModel());
+	}
+
+	@Override
+	public String toXmlString() {
+		return _module.toXmlString();
 	}
 
 	@Override

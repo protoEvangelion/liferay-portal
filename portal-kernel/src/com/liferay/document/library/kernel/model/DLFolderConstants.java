@@ -14,8 +14,8 @@
 
 package com.liferay.document.library.kernel.model;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeFormatter;
 
@@ -58,9 +58,8 @@ public class DLFolderConstants {
 		if (folderId != DEFAULT_PARENT_FOLDER_ID) {
 			return folderId;
 		}
-		else {
-			return repositoryId;
-		}
+
+		return repositoryId;
 	}
 
 	/**
@@ -70,9 +69,8 @@ public class DLFolderConstants {
 		if (groupId != dataRepositoryId) {
 			return dataRepositoryId;
 		}
-		else {
-			return DEFAULT_PARENT_FOLDER_ID;
-		}
+
+		return DEFAULT_PARENT_FOLDER_ID;
 	}
 
 	public static String getNameInvalidCharacters(String[] charBlacklist) {

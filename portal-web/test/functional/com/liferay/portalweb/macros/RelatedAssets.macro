@@ -8,40 +8,22 @@
 
 		<var method="StringUtil#upperCase('${assetTypeLocator}')" name="assetTypeLocator" />
 
-		<execute function="AssertClick" locator1="MenuItem#${assetTypeLocator}" value1="${assetType}" />
-	</command>
-
-	<command name="configureFilterByCategories">
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="Related Assets" />
-			<var name="portletOption" value="Configuration" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="${assetType}" />
 		</execute>
-
-		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
-
-		<execute macro="Panel#expandPanel">
-			<var name="panelHeading" value="Filter" />
-		</execute>
-
-		<execute function="Select" locator1="RelatedassetsConfiguration#FILTER_SELECT" value1="Categories" />
-
-		<execute macro="AssetCategorization#addCategory">
-			<var name="categoryName" value="${categoryName}" />
-			<var name="vocabularyName" value="${vocabularyName}" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute function="SelectFrameTop" />
 	</command>
 
 	<command name="gotoBookmarksSelectionPG">
-		<execute function="Click#makeVisibleClickAt" locator1="Portlet#ICON_PLUS_SIGN" />
+		<execute macro="Portlet#clickPortletPlusIconPG">
+			<var name="portletName" value="Bookmarks" />
+		</execute>
 
-		<execute function="AssertClick" locator1="MenuItem#BOOKMARK" value1="Bookmark" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Bookmark" />
+		</execute>
 
 		<execute macro="Panel#expandPanel">
-			<var name="panelHeading" value="Related Assets" />
+			<var name="panel" value="Related Assets" />
 		</execute>
 
 		<execute function="AssertClick" locator1="AssetRelatedAssets#RELATED_ASSETS_SELECT" value1="Select" />
@@ -55,7 +37,7 @@
 		<execute macro="WebContentNavigator#gotoAddCP" />
 
 		<execute macro="Panel#expandPanel">
-			<var name="panelHeading" value="Related Assets" />
+			<var name="panel" value="Related Assets" />
 		</execute>
 
 		<execute macro="RelatedAssets#_selectAssetType">
@@ -82,7 +64,7 @@
 	<command name="viewDefaultPG">
 		<var name="key_portletName" value="Related Assets" />
 
-		<execute function="AssertTextEquals" locator1="Portlet#TITLE" value1="Related Assets" />
+		<execute function="AssertTextEquals#assertTextCaseInsensitive" locator1="Portlet#TITLE" value1="Related Assets" />
 		<execute function="AssertTextEquals" locator1="Message#INFO" value1="There are no related assets available. This application will show all assets related to the main asset of the current page." />
 	</command>
 
@@ -103,6 +85,5 @@
 		</if>
 
 		<execute function="AssertTextEquals" locator1="Relatedassets#ASSET_TITLE_1" value1="${assetTitle}" />
-		<execute function="AssertElementPresent" locator1="Relatedassets#ASSET_EDIT_1" />
 	</command>
 </definition>

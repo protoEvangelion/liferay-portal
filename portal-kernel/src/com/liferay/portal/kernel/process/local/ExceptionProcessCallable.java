@@ -18,8 +18,10 @@ import com.liferay.portal.kernel.process.ProcessCallable;
 import com.liferay.portal.kernel.process.ProcessException;
 
 /**
- * @author Shuyang Zhou
+ * @author     Shuyang Zhou
+ * @deprecated As of Judson (7.1.x), with no direct replacement
  */
+@Deprecated
 public class ExceptionProcessCallable
 	implements ProcessCallable<ProcessException> {
 
@@ -28,8 +30,8 @@ public class ExceptionProcessCallable
 	}
 
 	@Override
-	public ProcessException call() {
-		return _processException;
+	public ProcessException call() throws ProcessException {
+		throw _processException;
 	}
 
 	private static final long serialVersionUID = 1L;

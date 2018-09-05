@@ -14,6 +14,7 @@
 
 package com.liferay.portal.deploy;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.events.GlobalStartupAction;
 import com.liferay.portal.kernel.deploy.DeployManager;
 import com.liferay.portal.kernel.deploy.auto.AutoDeployDir;
@@ -23,12 +24,10 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.plugin.PluginPackage;
 import com.liferay.portal.kernel.plugin.RequiredPluginPackageException;
 import com.liferay.portal.kernel.plugin.Version;
-import com.liferay.portal.kernel.security.pacl.DoPrivileged;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ReleaseInfo;
 import com.liferay.portal.kernel.util.ServerDetector;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.plugin.PluginPackageUtil;
 
@@ -44,7 +43,6 @@ import java.util.Properties;
  * @author Brian Wing Shun Chan
  * @author Ryan Park
  */
-@DoPrivileged
 public class DeployManagerImpl implements DeployManager {
 
 	public DeployManagerImpl() {
@@ -70,8 +68,10 @@ public class DeployManagerImpl implements DeployManager {
 
 			if (_log.isDebugEnabled()) {
 				_log.debug(
-					"Level " + i + " required deployment WAR file names " +
-						levelRequiredDeploymentWARFileNamesString);
+					StringBundler.concat(
+						"Level ", String.valueOf(i),
+						" required deployment WAR file names ",
+						levelRequiredDeploymentWARFileNamesString));
 			}
 
 			String[] levelRequiredDeploymentWARFileNames = StringUtil.split(
@@ -87,7 +87,7 @@ public class DeployManagerImpl implements DeployManager {
 				levelRequiredDeploymentContexts);
 
 			for (int j = 0; j < levelRequiredDeploymentWARFileNames.length;
-				j++) {
+					j++) {
 
 				String warFileName = levelRequiredDeploymentWARFileNames[j];
 
@@ -108,8 +108,10 @@ public class DeployManagerImpl implements DeployManager {
 
 			if (_log.isDebugEnabled()) {
 				_log.debug(
-					"Level " + i + " required deployment contexts " +
-						StringUtil.merge(levelRequiredDeploymentContexts));
+					StringBundler.concat(
+						"Level ", String.valueOf(i),
+						" required deployment contexts ",
+						StringUtil.merge(levelRequiredDeploymentContexts)));
 			}
 		}
 	}
